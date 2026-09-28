@@ -28,6 +28,10 @@ npm run build    # production build into dist/
 npm run preview  # preview the production build locally
 ```
 
+> **Note:** opening `index.html` directly from disk (`file://...`) shows a blank page —
+> the whole UI is rendered by JavaScript and must be served. Always view the app via
+> `npm run dev` (or `npm run preview`) and open the printed local address.
+
 ## License
 
 AGPL-3.0 — required because Swiss Ephemeris is AGPL. See [`LICENSE`](./LICENSE).
