@@ -6,6 +6,27 @@
 // Run with: npm test
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 
+// The heavy WASM chart engine is mocked in these UI tests — the real
+// calculations are covered by tests/astro.test.js (Node + real WASM).
+vi.mock('../src/astro.js', () => ({
+  initEphemeris: vi.fn(async () => ({})),
+  computeKundli: vi.fn(() => ({
+    jd: 2448026.875,
+    ayanamsa: 23.72255,
+    ascendant: {
+      key: 'asc', name: 'Ascendant', short: 'Asc', longitude: 157.037, rashi: 5,
+      degInSign: 7.037, nakshatra: 12, pada: 3, speed: 0, retro: false,
+      rashiLord: 'mercury', house: 1,
+    },
+    planets: [
+      { key: 'sun', name: 'Sun', short: 'Su', longitude: 30.5498, rashi: 1, degInSign: 0.5498, nakshatra: 3, pada: 2, speed: 0.96, retro: false, rashiLord: 'venus', house: 9 },
+      { key: 'moon', name: 'Moon', short: 'Mo', longitude: 271.8937, rashi: 9, degInSign: 1.8937, nakshatra: 21, pada: 2, speed: 12.3, retro: false, rashiLord: 'saturn', house: 5 },
+      { key: 'rahu', name: 'Rahu', short: 'Ra', longitude: 287.62, rashi: 9, degInSign: 17.62, nakshatra: 22, pada: 1, speed: -0.053, retro: true, rashiLord: 'saturn', house: 5 },
+      { key: 'ketu', name: 'Ketu', short: 'Ke', longitude: 107.62, rashi: 3, degInSign: 17.62, nakshatra: 9, pada: 1, speed: -0.053, retro: true, rashiLord: 'moon', house: 11 },
+    ],
+  })),
+}))
+
 beforeAll(async () => {
   document.body.innerHTML = '<div id="app"></div>'
   await import('../src/main.js')
@@ -272,5 +293,26 @@ describe('Phase 4 — time conversion in the summary', () => {
     const values = ddTexts()
     expect(values).toContain('Asia/Kolkata (UTC+06:30)')
     expect(values).toContain('15 मई 1943, 08:00:00 UTC')
+  })
+})
+
+describe('Phase 5 — calculated chart in the summary', () => {
+  it('shows lagna, ayanamsa and planet positions after submit', async () => {
+    setValue('#f-offset', '')
+    setValue('#f-year', '1990')
+    setValue('#f-tz', 'Asia/Kolkata')
+    submitForm()
+
+    await vi.waitFor(() => {
+      expect(document.querySelector('.kundli-mini')).toBeTruthy()
+    })
+
+    const values = ddTexts()
+    expect(values).toContain("राशि 6 · 7°02'") // lagna: Kanya/Virgo
+    expect(values).toContain("23°43'") // Lahiri ayanamsa
+
+    const mini = document.querySelector('.kundli-mini').textContent
+    expect(mini).toContain("Su · राशि 2 · 0°33' · भाव 9")
+    expect(mini).toContain('वक्री') // Rahu/Ketu are retrograde
   })
 })

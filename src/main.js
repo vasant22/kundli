@@ -1,10 +1,10 @@
 // main.js — Kundli app entry point: header + birth-details form.
-// Coming phases: calculations (5), full bilingual data (6), charts (7),
-// results page (8).
+// Coming phases: full bilingual data (6), charts (7), results page (8).
 import './style.css'
 import { t, getLang, setLang, months } from './i18n.js'
 import { searchPlace } from './geocode.js'
 import { formatUtcOffset, isValidTimeZone, parseUtcOffset, wallTimeToUtc } from './timeutil.js'
+import { computeKundli, initEphemeris } from './astro.js'
 
 const app = document.querySelector('#app')
 
@@ -149,6 +149,17 @@ let lastSearch = { at: 0, query: '' } // tiny cooldown so rapid repeats don't hi
 // ---------------------------------------------------------------------------
 const toInt = (s) => (s === '' ? NaN : Number(s))
 
+// 7.037 → "7°02'" (degrees + arcminutes within the sign)
+function formatDegMin(deg) {
+  let d = Math.floor(deg)
+  let m = Math.floor((deg - d) * 60 + 0.5)
+  if (m === 60) {
+    d += 1
+    m = 0
+  }
+  return `${d}°${String(m).padStart(2, '0')}'`
+}
+
 function daysInMonth(year, month) {
   return new Date(year, month, 0).getDate()
 }
@@ -179,6 +190,26 @@ function computeConversion(values) {
     console.error('Time conversion failed:', err)
     return null
   }
+}
+
+// The WASM ephemeris is heavy; load it once, on the first calculation.
+let swePromise = null
+function ensureEphemeris() {
+  if (!swePromise) swePromise = initEphemeris()
+  return swePromise
+}
+
+// Latitude/longitude for the chart (manual fields win — same as validation).
+function resolveCoordinates(values) {
+  const manualUsed =
+    values.manual.lat !== '' && values.manual.lon !== '' && values.manual.tz !== ''
+  if (manualUsed) {
+    return { latitude: Number(values.manual.lat), longitude: Number(values.manual.lon) }
+  }
+  if (values.selectedPlace) {
+    return { latitude: values.selectedPlace.latitude, longitude: values.selectedPlace.longitude }
+  }
+  return null
 }
 
 // ---------------------------------------------------------------------------
@@ -393,9 +424,43 @@ function showSummary(values, scroll) {
   }
   card.append(list)
 
+  // The calculated chart (Phase 5): lagna, ayanamsa + a compact planet list.
+  const kundli = values.kundli
+  if (kundli && !kundli.error) {
+    const asc = kundli.ascendant
+    addRow(t('summary.lagna'), `${t('k.rashi')} ${asc.rashi + 1} · ${formatDegMin(asc.degInSign)}`)
+    addRow(t('summary.ayanamsa'), formatDegMin(kundli.ayanamsa))
+
+    const mini = document.createElement('div')
+    mini.className = 'kundli-mini'
+    const miniTitle = document.createElement('p')
+    miniTitle.className = 'kundli-mini-title'
+    miniTitle.textContent = t('summary.planets')
+    mini.append(miniTitle)
+    const ul = document.createElement('ul')
+    kundli.planets.forEach((p) => {
+      const li = document.createElement('li')
+      li.textContent =
+        `${p.short} · ${t('k.rashi')} ${p.rashi + 1} · ${formatDegMin(p.degInSign)} · ` +
+        `${t('k.house')} ${p.house}` +
+        (p.retro ? ` · ${t('k.retro')}` : '')
+      ul.append(li)
+    })
+    mini.append(ul)
+    card.append(mini)
+  }
+
   const note = document.createElement('p')
   note.className = 'note'
-  note.textContent = t('summary.note')
+  if (values.kundliError) {
+    note.textContent = t('summary.engineError')
+  } else if (kundli && kundli.error === 'polar') {
+    note.textContent = t('err.polar')
+  } else if (values.kundliPending) {
+    note.textContent = t('summary.calculating')
+  } else {
+    note.textContent = t('summary.note')
+  }
   card.append(note)
 
   output.append(card)
@@ -500,7 +565,7 @@ placeInput.addEventListener('input', () => {
   }
 })
 
-form.addEventListener('submit', (event) => {
+form.addEventListener('submit', async (event) => {
   event.preventDefault()
 
   const values = readForm()
@@ -518,8 +583,29 @@ form.addEventListener('submit', (event) => {
   }
 
   values.converted = computeConversion(values)
+  values.kundli = null
+  values.kundliPending = true
   lastValues = values
   showSummary(values, true)
+
+  // The chart itself: loads the WASM engine on first use, then calculates.
+  try {
+    const swe = await ensureEphemeris()
+    const coords = resolveCoordinates(values)
+    if (coords && values.converted) {
+      values.kundli = computeKundli(swe, {
+        utc: values.converted.utc,
+        ...coords,
+        nodeType: 'mean',
+      })
+    }
+  } catch (err) {
+    console.error('Chart calculation failed:', err)
+    values.kundliError = true
+  } finally {
+    values.kundliPending = false
+    if (lastValues === values) showSummary(values, false)
+  }
 })
 
 // ---------------------------------------------------------------------------

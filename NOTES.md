@@ -1,7 +1,7 @@
 # Kundli / जन्मपत्री App — Project Notes (handoff)
 
-Created: 2026-09-28. Status: **Phase 4 done (2026-09-28) → start Phase 5 (astrology calculations — Lahiri sidereal planets + Asc + houses).**
-First thing to do in a fresh chat: read this file + `docs/kundli-guide.txt`, then begin the next phase (Phase 5 per the guide).
+Created: 2026-09-28. Status: **Phase 5 done (2026-09-28) → start Phase 6 (full bilingual data: rashis, grahas, nakshatras + all UI strings + Devanagari font).**
+First thing to do in a fresh chat: read this file + `docs/kundli-guide.txt`, then begin the next phase (Phase 6 per the guide).
 
 ## What to build
 Static, browser-only Vedic "Kundli / Birth Chart" web app for mybapuji.com.
@@ -23,7 +23,7 @@ Hard requirements (summary):
 - User = Vasant (non-technical). Talk in SIMPLE HINDI, short updates, no heavy jargon.
 - After EVERY phase: report what was done + tokens spent + what's next (and pause for a tiny "आगे बढ़ो" if convenient).
 - Token-budget conscious (AutoClaw credits): keep turns lean, batch work, terse command outputs, no unnecessary browsing (spec is fixed).
-- Token spend can be checked from app logs: `~/.openclaw-autoclaw/logs/autoclaw-compat.log` → `grep "Wallet v2 response"` → `total=NNNN` (credits; user calls them "tokens"). Baseline just before Phase 5: **~9.0k** (2026-09-28; Phase 4 spent ≈325).
+- Token spend can be checked from app logs: `~/.openclaw-autoclaw/logs/autoclaw-compat.log` → `grep "Wallet v2 response"` → `total=NNNN` (credits; user calls them "tokens"). Baseline just before Phase 6: **~8.2k** (2026-09-28; Phase 5 spent ≈800).
 - Verify locally each phase (npm run dev / npm test). User will hand-verify 10 charts vs AstroSage later (`tests/VALIDATION.md`).
 - Git: init repo in this folder; commit after each phase. GitHub repo + Pages + DNS are later steps (Cloudflare keys in `~/.openclaw-autoclaw/workspace/.secrets/keys.env`; user needs GitHub account).
 - If blocked: choose sensible default, note it, continue (per guide).
@@ -69,3 +69,11 @@ Hard requirements (summary):
 - Tests: +9 timeutil (2000 India; **1943 India wartime +06:30**; US DST summer/winter; midnight edges; offset parsing; IANA validation) and +3 form tests (override wins; bad offset rejected; 1943 historical case in the summary). **28/28 passing** — including a Julian Day check against the real Swiss Ephemeris WASM in Node (J2000 = 2451545.0 exactly).
 - Note: full in-app Julian Day display comes with Phase 5 (that's when the WASM engine gets initialized at submit time).
 - Next: **Phase 5** — `src/astro.js`: sidereal Lahiri; Sun–Saturn + mean Rahu + Ketu; Ascendant & whole-sign houses; per-planet rashi/degree/nakshatra/pada/retro/house/rashi-lord from one data object.
+
+### 2026-09-28 — Phase 5 done
+- `src/astro.js`: Lahiri sidereal mode; Sun–Saturn + Rahu (mean default, True Node option) + Ketu = Rahu+180°; Ascendant + whole-sign houses via `houses_ex(…, 'W')`; per body: rashi (0-11), degInSign, nakshatra (1-27), pada (1-4), retro, house, rashiLord — one clean data object for both charts later.
+- App: submit loads the WASM engine on first use and computes the chart in the background; the summary now shows **लग्न, अयनांश (लाहिरी) and a compact planet list**. Polar-latitude guard returns a friendly error.
+- Tests: **40/40 passing** (+11 astro tests with real WASM in Node; +1 form test with mocked engine). Verified: lagna Kanya 7°02′, ayanamsa 23°43′ (1990), Sun 0°33′ Vrishabha, retro Me/Sa/Ra/Ke, True-vs-Mean node, sign/nakshatra boundary edges, tropical−sidereal = ayanamsa.
+- Real-browser end-to-end ✓: searched & picked Varanasi (real Open-Meteo), submitted → browser loaded the WASM and the summary matched the Node reference exactly (लग्न राशि 6 · 7°02′; Su राशि 2 · 0°33′ · भाव 9; Sa वक्री; etc.).
+- ⚠️ Side-panel automation learnings (for future browser checks): fragment-navigate (`#get-btn`) = full RELOAD → wipes form state (never use between filling and submitting); after results expand, click an inert area then press “End” to scroll to the bottom (that's how submit was reached!); click+type = one pair per message; snapshot often; elementId clicks OK for visible elements.
+- Next: **Phase 6** — full bilingual data lists (12 rashis, 9 grahas, 27 nakshatras, Hindi+English), all UI strings, self-hosted Noto Sans Devanagari font.

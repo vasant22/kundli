@@ -14,8 +14,8 @@ All calculations run in the visitor's browser — **no backend, no database, no 
 
 ## Status
 
-**Phases 1–4 complete** — Vite scaffold with Swiss Ephemeris WASM verified; input form with validation, month chips and a Hindi ⇄ English toggle; place search (Open-Meteo) with manual fallback; local→UTC time conversion with historical timezone rules and an optional UTC-offset override (28 tests, `npm test`).
-The full app is built in phases (see `NOTES.md`); calculations, charts and the results page follow in later phases.
+**Phases 1–5 complete** — Vite scaffold with Swiss Ephemeris WASM verified; input form (validation, month chips, Hindi ⇄ English toggle); place search (Open-Meteo) with manual fallback; local→UTC conversion with historical timezone rules; **sidereal Lahiri calculations** — planets, lagna, whole-sign houses — verified end-to-end in the browser (40 tests, `npm test`).
+The full app is built in phases (see `NOTES.md`); bilingual data, charts and the results page follow in later phases.
 
 ## Development
 

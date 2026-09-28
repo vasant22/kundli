@@ -391,3 +391,23 @@ details.manual[open] summary {
 .offset-mini {
   margin-top: 0.35rem;
 }
+
+/* ---------- calculated chart mini-list (Phase 5) ---------- */
+.kundli-mini {
+  margin: 0 0 0.7rem;
+}
+
+.kundli-mini-title {
+  margin: 0 0 0.25rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.kundli-mini ul {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.kundli-mini li {
+  margin: 0.1rem 0;
+}
