@@ -477,6 +477,16 @@ details.manual[open] summary {
   box-sizing: border-box;
 }
 
+/* ---------- footer & privacy (Phase 10) ---------- */
+.site-footer {
+  padding: 0.5rem 0 1.75rem;
+}
+
+.site-footer .note {
+  text-align: center;
+  font-size: 0.8rem;
+}
+
 /* ---------- print (Phase 8) ---------- */
 @media print {
   .site-header,

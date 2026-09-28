@@ -120,8 +120,12 @@ app.innerHTML = `
         <button class="primary" type="submit" id="get-btn" data-i18n="btn.get"></button>
       </form>
 
-      <section id="output" hidden></section>
+      <section id="output" aria-live="polite" hidden></section>
     </main>
+
+    <footer class="site-footer">
+      <p class="note" data-i18n="footer.privacy"></p>
+    </footer>
   </div>
 `
 
@@ -241,9 +245,12 @@ function chartMeta(values) {
 }
 
 // Save the current chart as a PNG (SVG → canvas → PNG download, Phase 8).
-function downloadChartPng(values) {
+function downloadChartPng(values, onError) {
   const svg = document.querySelector('.chart-box svg')
-  if (!svg) return
+  if (!svg) {
+    if (onError) onError()
+    return
+  }
   const clone = svg.cloneNode(true)
   clone.setAttribute('font-family', "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif")
   const xml = new XMLSerializer().serializeToString(clone)
@@ -260,7 +267,10 @@ function downloadChartPng(values) {
       ctx.fillRect(0, 0, size, size)
       ctx.drawImage(img, 0, 0, size, size)
       canvas.toBlob((blob) => {
-        if (!blob) return
+        if (!blob) {
+          if (onError) onError()
+          return
+        }
         const a = document.createElement('a')
         a.href = URL.createObjectURL(blob)
         a.download = values.chartStyle === 'south' ? 'kundli-south.png' : 'kundli-north.png'
@@ -274,6 +284,7 @@ function downloadChartPng(values) {
   img.onerror = () => {
     console.error('Chart PNG export failed')
     URL.revokeObjectURL(url)
+    if (onError) onError()
   }
   img.src = url
 }
@@ -543,6 +554,8 @@ function showSummary(values, scroll) {
       )
       northBtn.classList.toggle('active', values.chartStyle !== 'south')
       southBtn.classList.toggle('active', values.chartStyle === 'south')
+      northBtn.setAttribute('aria-pressed', String(values.chartStyle !== 'south'))
+      southBtn.setAttribute('aria-pressed', String(values.chartStyle === 'south'))
     }
     northBtn.addEventListener('click', () => {
       values.chartStyle = 'north'
@@ -601,12 +614,21 @@ function showSummary(values, scroll) {
     // Actions: PNG / Print / Copy details (Phase 8).
     const actions = document.createElement('div')
     actions.className = 'actions'
+    const actionMsg = document.createElement('p')
+    actionMsg.className = 'note'
+    actionMsg.setAttribute('aria-live', 'polite')
+    actionMsg.hidden = true
     const pngBtn = document.createElement('button')
     pngBtn.type = 'button'
     pngBtn.className = 'secondary'
     pngBtn.dataset.action = 'png'
     pngBtn.textContent = t('btn.downloadPng')
-    pngBtn.addEventListener('click', () => downloadChartPng(values))
+    pngBtn.addEventListener('click', () =>
+      downloadChartPng(values, () => {
+        actionMsg.textContent = t('msg.pngFailed')
+        actionMsg.hidden = false
+      })
+    )
     const printBtn = document.createElement('button')
     printBtn.type = 'button'
     printBtn.className = 'secondary'
@@ -618,25 +640,22 @@ function showSummary(values, scroll) {
     copyBtn.className = 'secondary'
     copyBtn.dataset.action = 'copy'
     copyBtn.textContent = t('btn.copy')
-    const copyMsg = document.createElement('p')
-    copyMsg.className = 'note'
-    copyMsg.hidden = true
     copyBtn.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(buildDetailsText(values))
-        copyMsg.textContent = t('msg.copied')
+        actionMsg.textContent = t('msg.copied')
       } catch (err) {
         console.error('Copy failed:', err)
-        copyMsg.textContent = t('msg.copyFailed')
+        actionMsg.textContent = t('msg.copyFailed')
       }
-      copyMsg.hidden = false
+      actionMsg.hidden = false
     })
-    actions.append(pngBtn, printBtn, copyBtn, copyMsg)
+    actions.append(pngBtn, printBtn, copyBtn, actionMsg)
     card.append(actions)
   }
 
   const note = document.createElement('p')
-  note.className = 'note'
+  note.className = 'note summary-note'
   if (values.kundliError) {
     note.textContent = t('summary.engineError')
   } else if (kundli && kundli.error === 'polar') {
@@ -786,6 +805,7 @@ form.addEventListener('submit', async (event) => {
     }
   } catch (err) {
     console.error('Chart calculation failed:', err)
+    swePromise = null // allow a retry on the next attempt
     values.kundliError = true
   } finally {
     values.kundliPending = false

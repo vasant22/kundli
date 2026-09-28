@@ -1,7 +1,7 @@
 # Kundli / जन्मपत्री App — Project Notes (handoff)
 
-Created: 2026-09-28. Status: **Phase 8 done (2026-09-28) → start Phase 9 (testing & accuracy validation: known-chart tests + manual checklist vs reference site).**
-First thing to do in a fresh chat: read this file + `docs/kundli-guide.txt`, then begin the next phase (Phase 9 per the guide).
+Created: 2026-09-28. Status: **Phase 10 done (2026-09-28) → start Phase 11 (AGPL compliance polish: footer links & credits, README).**
+First thing to do in a fresh chat: read this file + `docs/kundli-guide.txt`, then begin the next phase (Phase 11 per the guide).
 
 ## What to build
 Static, browser-only Vedic "Kundli / Birth Chart" web app for mybapuji.com.
@@ -23,7 +23,7 @@ Hard requirements (summary):
 - User = Vasant (non-technical). Talk in SIMPLE HINDI, short updates, no heavy jargon.
 - After EVERY phase: report what was done + tokens spent + what's next (and pause for a tiny "आगे बढ़ो" if convenient).
 - Token-budget conscious (AutoClaw credits): keep turns lean, batch work, terse command outputs, no unnecessary browsing (spec is fixed).
-- Token spend can be checked from app logs: `~/.openclaw-autoclaw/logs/autoclaw-compat.log` → `grep "Wallet v2 response"` → `total=NNNN` (credits; user calls them "tokens"). Baseline just before Phase 9: **~6.2k** (2026-09-28; Phase 8 spent ≈1,140).
+- Token spend can be checked from app logs: `~/.openclaw-autoclaw/logs/autoclaw-compat.log` → `grep "Wallet v2 response"` → `total=NNNN` (credits; user calls them "tokens"). Baseline just before Phase 11: **~5.4k** (2026-09-28; Phase 10 spent ≈150).
 - Verify locally each phase (npm run dev / npm test). User will hand-verify 10 charts vs AstroSage later (`tests/VALIDATION.md`).
 - Git: init repo in this folder; commit after each phase. GitHub repo + Pages + DNS are later steps (Cloudflare keys in `~/.openclaw-autoclaw/workspace/.secrets/keys.env`; user needs GitHub account).
 - If blocked: choose sensible default, note it, continue (per guide).
@@ -105,3 +105,11 @@ Hard requirements (summary):
 - README: new **“Accuracy & known differences”** section (Mean vs True Rahu, Lahiri variants, whole-sign houses).
 - Tests total: **59/59 passing**.
 - Next: **Phase 10** — performance, privacy & robustness (bundle size, no trackers, graceful errors, accessibility).
+
+### 2026-09-28 — Phase 10 done
+- Size: `dist/` = **2.9 MB** total (target < 3 MB): swisseph.data 2.05 MB + wasm 552 KB + JS 119 KB + fonts 156 KB + css/html. Compression-friendly separate files; gzip: data ≈1.93 MB, wasm ≈261 KB, JS ≈35 KB, CSS ≈2 KB.
+- Privacy: no analytics/trackers/cookies/external scripts; only network request = user-triggered Open-Meteo search. **Bilingual privacy note added in the footer**; README “Privacy” section added.
+- Robustness: engine failure → friendly message + **retry works now** (failed engine promise resets); PNG failure → visible message; copy failure → message; font `display: swap`.
+- Accessibility: `aria-live` on results; chart toggle buttons get `aria-pressed`; charts have `role="img"` + `aria-label`; all inputs labelled.
+- Tests: **62/62 passing** (+3 form tests: engine-failure & retry, footer privacy, aria-pressed). Real-browser smoke ✓ (footer note renders).
+- Next: **Phase 11** — AGPL compliance: footer “Source code” + Swiss Ephemeris credit, README polish (run/build/contribute).

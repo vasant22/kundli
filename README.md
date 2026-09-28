@@ -14,8 +14,8 @@ All calculations run in the visitor's browser — **no backend, no database, no 
 
 ## Status
 
-**Phases 1–8 complete** — Vite scaffold with Swiss Ephemeris WASM verified; input form (validation, month chips, Hindi ⇄ English toggle); place search (Open-Meteo) with manual fallback; local→UTC conversion with historical timezone rules; sidereal Lahiri calculations verified end-to-end; bilingual data lists + self-hosted Devanagari font; SVG North & South Indian charts with toggle; full results page (bilingual table, PNG/Print/Copy). (53 tests, `npm test`)
-The full app is built in phases (see `NOTES.md`); testing & accuracy validation, performance and deployment follow next.
+**Phases 1–10 complete** — full static Kundli app: birth-details form + validation, place search (Open-Meteo), historical timezone conversion, Lahiri sidereal calculations, bilingual data, North/South Indian SVG charts, results page with PNG/Print/Copy — everything runs in the visitor's browser. Accuracy verified (6 reference charts + 10-chart manual checklist); privacy, performance & accessibility pass done. (62 tests, `npm test`)
+Deployment (GitHub Pages) and the final report follow next.
 
 ## Development
 
@@ -31,6 +31,11 @@ npm run preview  # preview the production build locally
 > **Note:** opening `index.html` directly from disk (`file://...`) shows a blank page —
 > the whole UI is rendered by JavaScript and must be served. Always view the app via
 > `npm run dev` (or `npm run preview`) and open the printed local address.
+
+## Privacy
+
+- All calculations run in the visitor's browser. Nothing is stored or sent — no analytics, no trackers, no cookies, no external scripts.
+- The only network request is the optional **Open-Meteo** place search, and only when you press “Search / खोजें”.
 
 ## Accuracy & known differences
 

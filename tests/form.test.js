@@ -403,3 +403,59 @@ describe('Phase 8 — results table, actions & instant language switching', () =
     })
   })
 })
+
+describe('Phase 10 — robustness, privacy note & accessibility', () => {
+  it('shows a friendly message if the calculation fails, and retries work', async () => {
+    const { computeKundli } = await import('../src/astro.js')
+    const errSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    computeKundli.mockImplementationOnce(() => {
+      throw new Error('calculation failed')
+    })
+
+    setValue('#f-offset', '')
+    setValue('#f-year', '1990')
+    setValue('#f-tz', 'Asia/Kolkata')
+    submitForm()
+
+    await vi.waitFor(() => {
+      expect(document.querySelector('.summary-note').textContent).toContain('गणना इंजन लोड नहीं हो सका')
+    })
+
+    // Retry: after a failure the engine promise is reset, so a second attempt works.
+    submitForm()
+    await vi.waitFor(() => {
+      expect(document.querySelector('.chart-box svg')).toBeTruthy()
+    })
+
+    errSpy.mockRestore()
+  })
+
+  it('shows the bilingual privacy note in the footer', () => {
+    const footer = document.querySelector('.site-footer .note')
+    expect(footer.textContent).toContain('ब्राउज़र में ही रहता है')
+    $('#lang-toggle').click()
+    expect(footer.textContent).toContain('stay in your browser')
+    $('#lang-toggle').click()
+  })
+
+  it('marks the charts and the toggle buttons for accessibility', async () => {
+    setValue('#f-offset', '')
+    submitForm()
+
+    await vi.waitFor(() => {
+      expect(document.querySelector('.chart-box svg')).toBeTruthy()
+    })
+
+    const svg = document.querySelector('.chart-box svg')
+    expect(svg.getAttribute('role')).toBe('img')
+    expect(svg.getAttribute('aria-label')).toContain('chart')
+
+    const north = document.querySelector('.chart-toggle [data-style="north"]')
+    const south = document.querySelector('.chart-toggle [data-style="south"]')
+    expect(north.getAttribute('aria-pressed')).toBe('true')
+    south.click()
+    expect(south.getAttribute('aria-pressed')).toBe('true')
+    expect(north.getAttribute('aria-pressed')).toBe('false')
+    north.click()
+  })
+})
