@@ -98,3 +98,10 @@ Hard requirements (summary):
 - Tests: **53/53 passing** (+3: table contents & degree format `0°32'59"`; header switching; copy flow with mocked clipboard).
 - Real-browser end-to-end ✓: table rendered fully; Copy → “✓ कॉपी हो गया”; PNG → a **valid 1080×1080 PNG** landed in ~/Downloads (checked with `file`; saved copy as `~/Downloads/kundli-north.png`). (Side-panel browser saves it with a temp name `.com.zhipuai.autoclaw.*`; normal browsers → `kundli-north.png`. Cosmetic.)
 - Next: **Phase 9** — testing & accuracy validation: automated known-chart tests + `tests/VALIDATION.md` (10 births for the user to compare vs AstroSage), + browser/device checks.
+
+### 2026-09-28 — Phase 9 done
+- `tests/accuracy.test.js`: **6 known charts** (Varanasi-1990, Kolkata-1943 wartime, Delhi-1975 near-midnight, Nairobi-1980 southern hemisphere, New York-1976 US DST, Chennai-2005) — asserts lagna rashi + all 9 planets' rashis + longitudes (≤ 0.01°) + ayanamsa, vs reference values generated with **pyswisseph 2.10.03** (`scripts/gen-fixtures.py`; same Swiss version as our WASM build — verifies our integration exactly; independent third-party check = the user's manual pass). All pass.
+- `tests/VALIDATION.md`: manual checklist — 10 births (different cities/decades/hemispheres, incl. pre-1950 Lahore-1920, near-midnight Delhi-1975); “Our result” column **pre-filled** from our engine; user fills Reference (AstroSage) + Match. Plus browser/device checklist.
+- README: new **“Accuracy & known differences”** section (Mean vs True Rahu, Lahiri variants, whole-sign houses).
+- Tests total: **59/59 passing**.
+- Next: **Phase 10** — performance, privacy & robustness (bundle size, no trackers, graceful errors, accessibility).

@@ -32,6 +32,16 @@ npm run preview  # preview the production build locally
 > the whole UI is rendered by JavaScript and must be served. Always view the app via
 > `npm run dev` (or `npm run preview`) and open the printed local address.
 
+## Accuracy & known differences
+
+- Ephemeris: **Swiss Ephemeris 2.10.03** (compiled to WebAssembly in this repo; Moshier fallback is bundled). Sidereal mode: **Lahiri**; houses: **whole-sign**.
+- `tests/accuracy.test.js` verifies six birth charts (lagna + every planet's rashi and longitude, ≤ 0.01°) against reference values generated with **pyswisseph 2.10.03** — regenerate them with `scripts/gen-fixtures.py`.
+- Manual validation list (10 births to compare against a reference site by hand): see [`tests/VALIDATION.md`](./tests/VALIDATION.md).
+- Known acceptable differences vs other websites:
+  - **Rahu**: this app uses the **Mean node** by default (a True Node option exists); sites that default to True can differ by up to ~1°.
+  - **Lahiri variants**: implementations differ by arcseconds–arcminutes; we follow Swiss Ephemeris' Lahiri.
+  - **House display**: we show whole-sign houses; some sites use Placidus/KP cusps for a planet's “house” column. Planet rashis are unaffected.
+
 ## License
 
 AGPL-3.0 — required because Swiss Ephemeris is AGPL. See [`LICENSE`](./LICENSE).
