@@ -7,6 +7,10 @@ import { formatUtcOffset, isValidTimeZone, parseUtcOffset, wallTimeToUtc } from 
 import { computeKundli, initEphemeris } from './astro.js'
 import { buildNorthChart, buildSouthChart } from './charts.js'
 
+// Where the public source code lives — confirmed/adjusted when the GitHub
+// repo is created (deploy phase).
+const SOURCE_URL = 'https://github.com/basanthariom/kundli'
+
 const app = document.querySelector('#app')
 
 // ---------------------------------------------------------------------------
@@ -125,6 +129,10 @@ app.innerHTML = `
 
     <footer class="site-footer">
       <p class="note" data-i18n="footer.privacy"></p>
+      <p class="note footer-credit-line">
+        <span data-i18n="footer.poweredBy"></span><a href="https://www.astro.com/swisseph/" target="_blank" rel="noopener">Swiss Ephemeris</a> (Astrodienst AG) ·
+        <a class="footer-source" href="${SOURCE_URL}" target="_blank" rel="noopener" data-i18n="footer.source"></a>
+      </p>
     </footer>
   </div>
 `

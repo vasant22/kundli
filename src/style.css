@@ -487,6 +487,15 @@ details.manual[open] summary {
   font-size: 0.8rem;
 }
 
+.site-footer a {
+  color: var(--saffron-dark);
+  text-decoration: underline;
+}
+
+.site-footer .footer-credit-line {
+  margin-top: 0.25rem;
+}
+
 /* ---------- print (Phase 8) ---------- */
 @media print {
   .site-header,

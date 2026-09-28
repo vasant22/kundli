@@ -430,12 +430,25 @@ describe('Phase 10 — robustness, privacy note & accessibility', () => {
     errSpy.mockRestore()
   })
 
-  it('shows the bilingual privacy note in the footer', () => {
-    const footer = document.querySelector('.site-footer .note')
+  it('shows the bilingual privacy note and the footer links', () => {
+    const footer = document.querySelector('.site-footer')
     expect(footer.textContent).toContain('ब्राउज़र में ही रहता है')
+
+    const source = footer.querySelector('.footer-source')
+    expect(source.getAttribute('href')).toContain('github.com')
+    expect(source.getAttribute('target')).toBe('_blank')
+    expect(source.getAttribute('rel')).toBe('noopener')
+
+    const swissLink = footer.querySelector('a[href*="astro.com"]')
+    expect(swissLink.textContent).toBe('Swiss Ephemeris')
+    expect(swissLink.getAttribute('target')).toBe('_blank')
+    expect(swissLink.getAttribute('rel')).toBe('noopener')
+
     $('#lang-toggle').click()
     expect(footer.textContent).toContain('stay in your browser')
+    expect(source.textContent).toBe('Source code (GitHub)')
     $('#lang-toggle').click()
+    expect(source.textContent).toBe('सोर्स कोड (GitHub)')
   })
 
   it('marks the charts and the toggle buttons for accessibility', async () => {

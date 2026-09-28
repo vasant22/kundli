@@ -97,6 +97,8 @@ const STRINGS = {
     'msg.copyFailed': 'कॉपी नहीं हो सका',
     'msg.pngFailed': 'PNG नहीं बन सकी — फिर कोशिश करें।',
     'footer.privacy': '🔒 निजता: जन्म-विवरण आपके ब्राउज़र में ही रहता है — कहीं भेजा या सेव नहीं होता।',
+    'footer.poweredBy': 'गणना इंजन: ',
+    'footer.source': 'सोर्स कोड (GitHub)',
 
     'month.1': 'जनवरी',
     'month.2': 'फ़रवरी',
@@ -206,6 +208,8 @@ const STRINGS = {
     'msg.copyFailed': 'Could not copy',
     'msg.pngFailed': 'PNG could not be created — please try again.',
     'footer.privacy': '🔒 Privacy: your birth details stay in your browser — never sent or stored anywhere.',
+    'footer.poweredBy': 'Powered by ',
+    'footer.source': 'Source code (GitHub)',
 
     'month.1': 'January',
     'month.2': 'February',

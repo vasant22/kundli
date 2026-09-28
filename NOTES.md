@@ -1,7 +1,7 @@
 # Kundli / जन्मपत्री App — Project Notes (handoff)
 
-Created: 2026-09-28. Status: **Phase 10 done (2026-09-28) → start Phase 11 (AGPL compliance polish: footer links & credits, README).**
-First thing to do in a fresh chat: read this file + `docs/kundli-guide.txt`, then begin the next phase (Phase 11 per the guide).
+Created: 2026-09-28. Status: **Phase 11 done (2026-09-28) → start Phase 12 (deploy: GitHub repo + Actions + Pages + Cloudflare DNS).**
+First thing to do in a fresh chat: read this file + `docs/kundli-guide.txt`, then begin the next phase (Phase 12 per the guide).
 
 ## What to build
 Static, browser-only Vedic "Kundli / Birth Chart" web app for mybapuji.com.
@@ -23,7 +23,7 @@ Hard requirements (summary):
 - User = Vasant (non-technical). Talk in SIMPLE HINDI, short updates, no heavy jargon.
 - After EVERY phase: report what was done + tokens spent + what's next (and pause for a tiny "आगे बढ़ो" if convenient).
 - Token-budget conscious (AutoClaw credits): keep turns lean, batch work, terse command outputs, no unnecessary browsing (spec is fixed).
-- Token spend can be checked from app logs: `~/.openclaw-autoclaw/logs/autoclaw-compat.log` → `grep "Wallet v2 response"` → `total=NNNN` (credits; user calls them "tokens"). Baseline just before Phase 11: **~5.4k** (2026-09-28; Phase 10 spent ≈150).
+- Token spend can be checked from app logs: `~/.openclaw-autoclaw/logs/autoclaw-compat.log` → `grep "Wallet v2 response"` → `total=NNNN` (credits; user calls them "tokens"). Baseline just before Phase 12: **~5.1k** (2026-09-28; Phase 11 spent ≈100).
 - Verify locally each phase (npm run dev / npm test). User will hand-verify 10 charts vs AstroSage later (`tests/VALIDATION.md`).
 - Git: init repo in this folder; commit after each phase. GitHub repo + Pages + DNS are later steps (Cloudflare keys in `~/.openclaw-autoclaw/workspace/.secrets/keys.env`; user needs GitHub account).
 - If blocked: choose sensible default, note it, continue (per guide).
@@ -113,3 +113,10 @@ Hard requirements (summary):
 - Accessibility: `aria-live` on results; chart toggle buttons get `aria-pressed`; charts have `role="img"` + `aria-label`; all inputs labelled.
 - Tests: **62/62 passing** (+3 form tests: engine-failure & retry, footer privacy, aria-pressed). Real-browser smoke ✓ (footer note renders).
 - Next: **Phase 11** — AGPL compliance: footer “Source code” + Swiss Ephemeris credit, README polish (run/build/contribute).
+
+### 2026-09-28 — Phase 11 done
+- Footer: **“गणना इंजन: Swiss Ephemeris (Astrodienst AG)”** link (astro.com/swisseph) + **“सोर्स कोड (GitHub)”** link, both `target="_blank" rel="noopener"`, bilingual label. Privacy note above them (Phase 10).
+- LICENSE (full AGPL-3.0) ✓ already in repo; README got a **Contributing** section (issues/PRs + local dev commands + link).
+- ⚠️ **SOURCE_URL** in `src/main.js` currently points to `https://github.com/basanthariom/kundli` — confirm the GitHub username/repo in Phase 12 and update.
+- Tests: **62/62 passing** (footer test extended: href/target/rel + bilingual label). Browser ✓ footer line renders.
+- Next: **Phase 12** — deployment: create GitHub repo + Actions + Pages + Cloudflare DNS (needs the user's GitHub account; Cloudflare keys in `.secrets/keys.env`).

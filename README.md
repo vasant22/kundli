@@ -32,6 +32,19 @@ npm run preview  # preview the production build locally
 > the whole UI is rendered by JavaScript and must be served. Always view the app via
 > `npm run dev` (or `npm run preview`) and open the printed local address.
 
+## Contributing
+
+Bug reports and pull requests are welcome — please open an issue or a PR on GitHub
+(<https://github.com/basanthariom/kundli>).
+
+For local development, Node.js 18+ is enough:
+
+```bash
+npm install
+npm run dev    # dev server
+npm test       # test suite
+```
+
 ## Privacy
 
 - All calculations run in the visitor's browser. Nothing is stored or sent — no analytics, no trackers, no cookies, no external scripts.
