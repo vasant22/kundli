@@ -1,7 +1,7 @@
 # Kundli / जन्मपत्री App — Project Notes (handoff)
 
-Created: 2026-09-28. Status: **Phase 3 done (2026-09-28) → start Phase 4 (time conversion + unit tests).**
-First thing to do in a fresh chat: read this file + `docs/kundli-guide.txt`, then begin the next phase (Phase 4 per the guide).
+Created: 2026-09-28. Status: **Phase 4 done (2026-09-28) → start Phase 5 (astrology calculations — Lahiri sidereal planets + Asc + houses).**
+First thing to do in a fresh chat: read this file + `docs/kundli-guide.txt`, then begin the next phase (Phase 5 per the guide).
 
 ## What to build
 Static, browser-only Vedic "Kundli / Birth Chart" web app for mybapuji.com.
@@ -23,7 +23,7 @@ Hard requirements (summary):
 - User = Vasant (non-technical). Talk in SIMPLE HINDI, short updates, no heavy jargon.
 - After EVERY phase: report what was done + tokens spent + what's next (and pause for a tiny "आगे बढ़ो" if convenient).
 - Token-budget conscious (AutoClaw credits): keep turns lean, batch work, terse command outputs, no unnecessary browsing (spec is fixed).
-- Token spend can be checked from app logs: `~/.openclaw-autoclaw/logs/autoclaw-compat.log` → `grep "Wallet v2 response"` → `total=NNNN` (credits; user calls them "tokens"). Baseline just before Phase 4: **~9.3k** (2026-09-28; Phase 3 spent ≈300).
+- Token spend can be checked from app logs: `~/.openclaw-autoclaw/logs/autoclaw-compat.log` → `grep "Wallet v2 response"` → `total=NNNN` (credits; user calls them "tokens"). Baseline just before Phase 5: **~9.0k** (2026-09-28; Phase 4 spent ≈325).
 - Verify locally each phase (npm run dev / npm test). User will hand-verify 10 charts vs AstroSage later (`tests/VALIDATION.md`).
 - Git: init repo in this folder; commit after each phase. GitHub repo + Pages + DNS are later steps (Cloudflare keys in `~/.openclaw-autoclaw/workspace/.secrets/keys.env`; user needs GitHub account).
 - If blocked: choose sensible default, note it, continue (per guide).
@@ -62,3 +62,10 @@ Hard requirements (summary):
 - Tests grew to **16/16 passing** (+4 geocode unit tests; +6 form tests: results render, pick, submit-with-pick, friendly messages, manual validation, edit-clears-pick).
 - Browser check (real network): searched "Varanasi" → 6+ real results; picked first → "✔ चुना गया: Varanasi, Uttar Pradesh, India · 25.31668, 83.01041 · Asia/Kolkata". (Note: after the results list expands, the submit button is below the fold and the side-panel bridge can't scroll — submit-with-pick is covered by the tests instead.)
 - Next: **Phase 4** — local birth time → UTC with historical timezone rules + manual UTC-offset override + unit tests (2000 India, 1943 India, US DST, midnight edges), then Julian Day via Swiss Ephemeris.
+
+### 2026-09-28 — Phase 4 done
+- `src/timeutil.js`: local birth time → UTC via the system timezone database (`Intl.DateTimeFormat`, historical rules included); fixed-offset zones ("+05:30"); offset parsing/formatting; IANA validation; `toJulianDay(utc, julday)` wrapper for Swiss Ephemeris.
+- Form: new optional **"UTC ऑफ़सेट (वैकल्पिक)"** field under birth time (validated); the summary now shows **समय क्षेत्र (offset used)** and **UTC समय** rows.
+- Tests: +9 timeutil (2000 India; **1943 India wartime +06:30**; US DST summer/winter; midnight edges; offset parsing; IANA validation) and +3 form tests (override wins; bad offset rejected; 1943 historical case in the summary). **28/28 passing** — including a Julian Day check against the real Swiss Ephemeris WASM in Node (J2000 = 2451545.0 exactly).
+- Note: full in-app Julian Day display comes with Phase 5 (that's when the WASM engine gets initialized at submit time).
+- Next: **Phase 5** — `src/astro.js`: sidereal Lahiri; Sun–Saturn + mean Rahu + Ketu; Ascendant & whole-sign houses; per-planet rashi/degree/nakshatra/pada/retro/house/rashi-lord from one data object.

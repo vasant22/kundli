@@ -119,6 +119,8 @@ describe('Phase 2 — input form', () => {
     expect(values).toContain('14:30:00')
     expect(values).toContain('Varanasi')
     expect(values).toContain('25.31668, 83.01041 · Asia/Kolkata')
+    expect(values).toContain('Asia/Kolkata (UTC+05:30)')
+    expect(values).toContain('15 मई 1990, 09:00:00 UTC')
   })
 
   it('language toggle switches labels, month names and the live summary', () => {
@@ -240,5 +242,35 @@ describe('Phase 3 — place search & manual fallback', () => {
     setValue('#f-place', 'Var')
     $('#f-place').dispatchEvent(new Event('input'))
     expect($('#place-confirm').hidden).toBe(true)
+  })
+})
+
+describe('Phase 4 — time conversion in the summary', () => {
+  it('manual UTC offset override wins and is shown', () => {
+    setValue('#f-offset', '+02:00')
+    submitForm()
+    expect($('#output').hidden).toBe(false)
+    const values = ddTexts()
+    expect(values).toContain('+02:00 (हाथ से भरा)')
+    expect(values).toContain('15 मई 1990, 12:30:00 UTC')
+    setValue('#f-offset', '')
+  })
+
+  it('rejects a bad offset', () => {
+    setValue('#f-offset', 'abc')
+    submitForm()
+    expect($('#err-offset').textContent).toBe('ऑफ़सेट ठीक नहीं लगा — जैसे +05:30 या -08:00 लिखें।')
+    expect($('#output').hidden).toBe(true)
+    setValue('#f-offset', '')
+  })
+
+  it('uses historical timezone rules (1943 India wartime +06:30)', () => {
+    setValue('#f-tz', 'Asia/Kolkata')
+    setValue('#f-year', '1943')
+    submitForm()
+    expect($('#output').hidden).toBe(false)
+    const values = ddTexts()
+    expect(values).toContain('Asia/Kolkata (UTC+06:30)')
+    expect(values).toContain('15 मई 1943, 08:00:00 UTC')
   })
 })

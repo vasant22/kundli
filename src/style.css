@@ -386,3 +386,8 @@ details.manual[open] summary {
 .credit a {
   color: var(--muted);
 }
+
+/* ---------- time conversion (Phase 4) ---------- */
+.offset-mini {
+  margin-top: 0.35rem;
+}

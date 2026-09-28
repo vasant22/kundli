@@ -1,9 +1,10 @@
 // main.js — Kundli app entry point: header + birth-details form.
-// Coming phases: time conversion (4), calculations (5), full bilingual data (6),
-// charts (7), results page (8).
+// Coming phases: calculations (5), full bilingual data (6), charts (7),
+// results page (8).
 import './style.css'
 import { t, getLang, setLang, months } from './i18n.js'
 import { searchPlace } from './geocode.js'
+import { formatUtcOffset, isValidTimeZone, parseUtcOffset, wallTimeToUtc } from './timeutil.js'
 
 const app = document.querySelector('#app')
 
@@ -75,6 +76,12 @@ app.innerHTML = `
             </div>
           </div>
           <p class="err" id="err-time" aria-live="polite"></p>
+          <div class="mini offset-mini">
+            <label for="f-offset" data-i18n="time.offset"></label>
+            <input id="f-offset" type="text" placeholder="+05:30" />
+            <p class="note" data-i18n="time.offsetHint"></p>
+          </div>
+          <p class="err" id="err-offset" aria-live="polite"></p>
         </div>
 
         <div class="field">
@@ -146,11 +153,32 @@ function daysInMonth(year, month) {
   return new Date(year, month, 0).getDate()
 }
 
-// Accepts an IANA name (Asia/Kolkata), "UTC", or a UTC offset (+05:30, -8).
-function isValidTimezone(value) {
-  const offset = /^[+-]?\d{1,2}(:[0-5]\d)?$/
-  const ianaName = /^[A-Za-z]+(?:[_/][A-Za-z0-9+_-]+)+$|^UTC$/
-  return offset.test(value) || ianaName.test(value)
+// Where will the birth time be converted from? (override > picked place > manual tz)
+function resolveZone(values) {
+  if (values.offset !== '') return values.offset
+  if (values.selectedPlace && values.selectedPlace.timezone) return values.selectedPlace.timezone
+  if (values.manual.tz !== '') return values.manual.tz
+  return null
+}
+
+// Local birth time → UTC + the offset that was applied (null if impossible).
+function computeConversion(values) {
+  const zone = resolveZone(values)
+  if (!zone) return null
+  try {
+    const birth = {
+      year: Number(values.year),
+      month: Number(values.month),
+      day: Number(values.day),
+      hour: Number(values.hour),
+      minute: Number(values.minute),
+      second: Number(values.second),
+    }
+    return { zone, ...wallTimeToUtc(birth, zone) }
+  } catch (err) {
+    console.error('Time conversion failed:', err)
+    return null
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -217,6 +245,7 @@ function readForm() {
     hour: raw('f-hour'),
     minute: raw('f-minute'),
     second: raw('f-second'),
+    offset: raw('f-offset'),
     place: raw('f-place'),
     selectedPlace,
     manual: { lat: raw('f-lat'), lon: raw('f-lon'), tz: raw('f-tz') },
@@ -256,6 +285,11 @@ function validate(v) {
     errors.time = t('err.second')
   }
 
+  // Optional manual UTC offset override (e.g. +05:30).
+  if (v.offset !== '' && parseUtcOffset(v.offset) === null) {
+    errors.offset = t('err.offsetInvalid')
+  }
+
   // Place: either picked from the search results, or filled in manually.
   // (If any manual field is filled, the manual values win — user was explicit.)
   const manualAny = v.manual.lat !== '' || v.manual.lon !== '' || v.manual.tz !== ''
@@ -268,7 +302,7 @@ function validate(v) {
       errors.manual = t('err.latRange')
     } else if (!Number.isFinite(lon) || lon < -180 || lon > 180) {
       errors.manual = t('err.lonRange')
-    } else if (!isValidTimezone(v.manual.tz)) {
+    } else if (parseUtcOffset(v.manual.tz) === null && !isValidTimeZone(v.manual.tz)) {
       errors.manual = t('err.tzInvalid')
     }
   } else if (!v.selectedPlace) {
@@ -323,6 +357,25 @@ function showSummary(values, scroll) {
   addRow(t('summary.gender'), t(`gender.${values.gender}`))
   addRow(t('summary.date'), dateText)
   addRow(t('summary.time'), timeText)
+
+  // UTC conversion details (Phase 4).
+  const conv = values.converted
+  if (conv) {
+    let tzText
+    if (values.offset !== '') {
+      tzText = `${conv.offsetText} (${t('summary.manualOffset')})`
+    } else if (parseUtcOffset(conv.zone) !== null) {
+      tzText = `UTC${conv.offsetText}`
+    } else {
+      tzText = `${conv.zone} (UTC${conv.offsetText})`
+    }
+    addRow(t('summary.tz'), tzText)
+    const u = conv.utc
+    addRow(
+      t('summary.utc'),
+      `${u.day} ${t('month.' + u.month)} ${u.year}, ${pad(u.hour)}:${pad(u.minute)}:${pad(u.second)} UTC`
+    )
+  }
 
   // Location row(s): the picked place if any, plus coordinates + timezone.
   const place = values.selectedPlace
@@ -464,6 +517,7 @@ form.addEventListener('submit', (event) => {
     return
   }
 
+  values.converted = computeConversion(values)
   lastValues = values
   showSummary(values, true)
 })

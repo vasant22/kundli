@@ -26,6 +26,8 @@ const STRINGS = {
     'time.hour': 'घंटा',
     'time.minute': 'मिनट',
     'time.second': 'सेकंड',
+    'time.offset': 'UTC ऑफ़सेट (वैकल्पिक)',
+    'time.offsetHint': 'ख़ाली छोड़ें — जगह से अपने-आप तय होगा। पुराने जन्मों के लिए जैसे: +05:30',
     'form.place': 'जन्म स्थान',
     'form.placePh': 'गाँव / शहर का नाम',
     'form.search': 'खोजें',
@@ -56,6 +58,7 @@ const STRINGS = {
     'err.latRange': 'अक्षांश -90 से 90 के बीच हो।',
     'err.lonRange': 'देशांतर -180 से 180 के बीच हो।',
     'err.tzInvalid': 'समय क्षेत्र ठीक नहीं लगा — जैसे Asia/Kolkata या +05:30।',
+    'err.offsetInvalid': 'ऑफ़सेट ठीक नहीं लगा — जैसे +05:30 या -08:00 लिखें।',
 
     'summary.title': '✅ जानकारी सही है',
     'summary.name': 'नाम',
@@ -64,6 +67,9 @@ const STRINGS = {
     'summary.time': 'जन्म समय',
     'summary.place': 'जन्म स्थान',
     'summary.coords': 'निर्देशांक',
+    'summary.tz': 'समय क्षेत्र',
+    'summary.utc': 'UTC समय',
+    'summary.manualOffset': 'हाथ से भरा',
     'summary.note': 'कुंडली की गणना और चार्ट आगे के चरणों में जुड़ेंगे — तब पूरा फल यहीं दिखेगा।',
 
     'month.1': 'जनवरी',
@@ -103,6 +109,8 @@ const STRINGS = {
     'time.hour': 'Hour',
     'time.minute': 'Minute',
     'time.second': 'Second',
+    'time.offset': 'UTC offset override (optional)',
+    'time.offsetHint': 'Leave empty to auto-detect from the place. For old births e.g. +05:30',
     'form.place': 'Birth place',
     'form.placePh': 'Village / city name',
     'form.search': 'Search',
@@ -133,6 +141,7 @@ const STRINGS = {
     'err.latRange': 'Latitude must be between -90 and 90.',
     'err.lonRange': 'Longitude must be between -180 and 180.',
     'err.tzInvalid': 'This time zone looks wrong — e.g. Asia/Kolkata or +05:30.',
+    'err.offsetInvalid': 'Offset looks wrong — e.g. +05:30 or -08:00.',
 
     'summary.title': '✅ Details are valid',
     'summary.name': 'Name',
@@ -141,6 +150,9 @@ const STRINGS = {
     'summary.time': 'Birth time',
     'summary.place': 'Birth place',
     'summary.coords': 'Coordinates',
+    'summary.tz': 'Time zone',
+    'summary.utc': 'UTC time',
+    'summary.manualOffset': 'entered manually',
     'summary.note': 'The chart calculation will be added in the coming steps — the full result will appear here.',
 
     'month.1': 'January',
