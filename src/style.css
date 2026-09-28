@@ -394,24 +394,46 @@ details.manual[open] summary {
   margin-top: 0.35rem;
 }
 
-/* ---------- calculated chart mini-list (Phase 5) ---------- */
-.kundli-mini {
-  margin: 0 0 0.7rem;
-}
-
-.kundli-mini-title {
-  margin: 0 0 0.25rem;
+/* ---------- results table & actions (Phase 8) ---------- */
+.kundli-table-title {
+  margin: 0 0 0.35rem;
   font-weight: 600;
   font-size: 0.95rem;
 }
 
-.kundli-mini ul {
-  margin: 0;
-  padding-left: 1.1rem;
+.table-wrap {
+  overflow-x: auto;
+  margin: 0 0 0.8rem;
 }
 
-.kundli-mini li {
-  margin: 0.1rem 0;
+.kundli-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.kundli-table th,
+.kundli-table td {
+  border: 1px solid var(--border);
+  padding: 0.3rem 0.45rem;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.kundli-table th {
+  background: var(--saffron-soft);
+  color: var(--saffron-dark);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.2rem 0 0.6rem;
+}
+
+.actions .note {
+  flex-basis: 100%;
 }
 
 /* ---------- charts (Phase 7) ---------- */
@@ -453,4 +475,32 @@ details.manual[open] summary {
   border-radius: 12px;
   padding: 8px;
   box-sizing: border-box;
+}
+
+/* ---------- print (Phase 8) ---------- */
+@media print {
+  .site-header,
+  #kundli-form,
+  .chart-toggle,
+  .actions {
+    display: none !important;
+  }
+
+  body {
+    background: #fff;
+  }
+
+  .wrap {
+    max-width: 100%;
+    padding: 0;
+  }
+
+  .card {
+    border: none;
+    box-shadow: none;
+  }
+
+  .chart-box svg {
+    max-width: 320px;
+  }
 }

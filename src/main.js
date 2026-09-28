@@ -1,7 +1,7 @@
 // main.js — Kundli app entry point: header + birth-details form.
 // Coming phases: full bilingual data (6), charts (7), results page (8).
 import './style.css'
-import { t, getLang, setLang, months, rashiLabel, grahaLabel, monthEn } from './i18n.js'
+import { t, getLang, setLang, months, rashiLabel, grahaLabel, nakshatraLabel, monthEn } from './i18n.js'
 import { searchPlace } from './geocode.js'
 import { formatUtcOffset, isValidTimeZone, parseUtcOffset, wallTimeToUtc } from './timeutil.js'
 import { computeKundli, initEphemeris } from './astro.js'
@@ -161,6 +161,22 @@ function formatDegMin(deg) {
   return `${d}°${String(m).padStart(2, '0')}'`
 }
 
+// 0.5498 → "0°32'59\"" (degrees + minutes + seconds within the sign)
+function formatDegMinSec(deg) {
+  let d = Math.floor(deg)
+  let m = Math.floor((deg - d) * 60)
+  let s = Math.round(((deg - d) * 60 - m) * 60)
+  if (s === 60) {
+    s = 0
+    m += 1
+  }
+  if (m === 60) {
+    m = 0
+    d += 1
+  }
+  return `${d}°${String(m).padStart(2, '0')}'${String(s).padStart(2, '0')}"`
+}
+
 function daysInMonth(year, month) {
   return new Date(year, month, 0).getDate()
 }
@@ -222,6 +238,66 @@ function chartMeta(values) {
     timeText: `${pad(Number(values.hour))}:${pad(Number(values.minute))}:${pad(Number(values.second))}`,
     placeText: values.selectedPlace ? values.selectedPlace.name : values.place,
   }
+}
+
+// Save the current chart as a PNG (SVG → canvas → PNG download, Phase 8).
+function downloadChartPng(values) {
+  const svg = document.querySelector('.chart-box svg')
+  if (!svg) return
+  const clone = svg.cloneNode(true)
+  clone.setAttribute('font-family', "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif")
+  const xml = new XMLSerializer().serializeToString(clone)
+  const url = URL.createObjectURL(new Blob([xml], { type: 'image/svg+xml;charset=utf-8' }))
+  const img = new Image()
+  img.onload = () => {
+    try {
+      const size = 1080 // 3× for a crisp PNG
+      const canvas = document.createElement('canvas')
+      canvas.width = size
+      canvas.height = size
+      const ctx = canvas.getContext('2d')
+      ctx.fillStyle = '#ffffff'
+      ctx.fillRect(0, 0, size, size)
+      ctx.drawImage(img, 0, 0, size, size)
+      canvas.toBlob((blob) => {
+        if (!blob) return
+        const a = document.createElement('a')
+        a.href = URL.createObjectURL(blob)
+        a.download = values.chartStyle === 'south' ? 'kundli-south.png' : 'kundli-north.png'
+        a.click()
+        setTimeout(() => URL.revokeObjectURL(a.href), 5000)
+      }, 'image/png')
+    } finally {
+      URL.revokeObjectURL(url)
+    }
+  }
+  img.onerror = () => {
+    console.error('Chart PNG export failed')
+    URL.revokeObjectURL(url)
+  }
+  img.src = url
+}
+
+// Plain-text version of the results (for the Copy button, Phase 8).
+function buildDetailsText(values) {
+  const k = values.kundli
+  const meta = chartMeta(values)
+  const lines = ['कुंडली / Kundli', '']
+  if (values.name) lines.push(`${t('summary.name')}: ${values.name}`)
+  lines.push(`${t('summary.date')}: ${meta.dateText}`)
+  lines.push(`${t('summary.time')}: ${meta.timeText}`)
+  lines.push(`${t('summary.place')}: ${meta.placeText}`)
+  lines.push(`${t('summary.lagna')}: ${rashiLabel(k.ascendant.rashi)}`)
+  lines.push(`${t('summary.ayanamsa')}: ${formatDegMin(k.ayanamsa)}`)
+  lines.push('')
+  k.planets.forEach((p) => {
+    lines.push(
+      `${grahaLabel(p.key)} — ${rashiLabel(p.rashi)} — ${formatDegMinSec(p.degInSign)} — ` +
+        `${nakshatraLabel(p.nakshatra)} ${t('table.pada')} ${p.pada} — ${t('table.house')} ${p.house}` +
+        (p.retro ? ` — ${t('k.retro')}` : '')
+    )
+  })
+  return lines.join('\n')
 }
 
 // ---------------------------------------------------------------------------
@@ -481,23 +557,82 @@ function showSummary(values, scroll) {
     card.append(chartWrap)
     paintChart()
 
-    const mini = document.createElement('div')
-    mini.className = 'kundli-mini'
-    const miniTitle = document.createElement('p')
-    miniTitle.className = 'kundli-mini-title'
-    miniTitle.textContent = t('summary.planets')
-    mini.append(miniTitle)
-    const ul = document.createElement('ul')
-    kundli.planets.forEach((p) => {
-      const li = document.createElement('li')
-      li.textContent =
-        `${grahaLabel(p.key)} · ${rashiLabel(p.rashi)} · ${formatDegMin(p.degInSign)} · ` +
-        `${t('k.house')} ${p.house}` +
-        (p.retro ? ` · ${t('k.retro')}` : '')
-      ul.append(li)
+    // Full bilingual planet table (Phase 8).
+    const tableTitle = document.createElement('p')
+    tableTitle.className = 'kundli-table-title'
+    tableTitle.textContent = t('summary.planets')
+    const tableWrap = document.createElement('div')
+    tableWrap.className = 'table-wrap'
+    const table = document.createElement('table')
+    table.className = 'kundli-table'
+    const thead = document.createElement('thead')
+    const headerRow = document.createElement('tr')
+    for (const key of ['table.planet', 'table.rashi', 'table.degree', 'table.nakshatra', 'table.house', 'table.retro']) {
+      const th = document.createElement('th')
+      th.textContent = t(key)
+      headerRow.append(th)
+    }
+    thead.append(headerRow)
+    table.append(thead)
+    const tbody = document.createElement('tbody')
+    const addPlanetRow = (nameText, body) => {
+      const tr = document.createElement('tr')
+      const cells = [
+        nameText,
+        rashiLabel(body.rashi),
+        formatDegMinSec(body.degInSign),
+        `${nakshatraLabel(body.nakshatra)} · ${t('table.pada')} ${body.pada}`,
+        String(body.house),
+        body.retro ? t('k.retro') : '—',
+      ]
+      for (const cellText of cells) {
+        const td = document.createElement('td')
+        td.textContent = cellText
+        tr.append(td)
+      }
+      return tr
+    }
+    tbody.append(addPlanetRow(t('table.asc'), kundli.ascendant))
+    kundli.planets.forEach((p) => tbody.append(addPlanetRow(grahaLabel(p.key), p)))
+    table.append(tbody)
+    tableWrap.append(table)
+    card.append(tableTitle, tableWrap)
+
+    // Actions: PNG / Print / Copy details (Phase 8).
+    const actions = document.createElement('div')
+    actions.className = 'actions'
+    const pngBtn = document.createElement('button')
+    pngBtn.type = 'button'
+    pngBtn.className = 'secondary'
+    pngBtn.dataset.action = 'png'
+    pngBtn.textContent = t('btn.downloadPng')
+    pngBtn.addEventListener('click', () => downloadChartPng(values))
+    const printBtn = document.createElement('button')
+    printBtn.type = 'button'
+    printBtn.className = 'secondary'
+    printBtn.dataset.action = 'print'
+    printBtn.textContent = t('btn.print')
+    printBtn.addEventListener('click', () => window.print())
+    const copyBtn = document.createElement('button')
+    copyBtn.type = 'button'
+    copyBtn.className = 'secondary'
+    copyBtn.dataset.action = 'copy'
+    copyBtn.textContent = t('btn.copy')
+    const copyMsg = document.createElement('p')
+    copyMsg.className = 'note'
+    copyMsg.hidden = true
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(buildDetailsText(values))
+        copyMsg.textContent = t('msg.copied')
+      } catch (err) {
+        console.error('Copy failed:', err)
+        copyMsg.textContent = t('msg.copyFailed')
+      }
+      copyMsg.hidden = false
     })
-    mini.append(ul)
-    card.append(mini)
+    actions.append(pngBtn, printBtn, copyBtn, copyMsg)
+    card.append(actions)
   }
 
   const note = document.createElement('p')

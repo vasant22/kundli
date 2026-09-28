@@ -304,16 +304,20 @@ describe('Phase 5 — calculated chart in the summary', () => {
     submitForm()
 
     await vi.waitFor(() => {
-      expect(document.querySelector('.kundli-mini')).toBeTruthy()
+      expect(document.querySelector('.kundli-table')).toBeTruthy()
     })
 
     const values = ddTexts()
     expect(values).toContain("कन्या / Virgo · 7°02'") // lagna: Kanya/Virgo
     expect(values).toContain("23°43'") // Lahiri ayanamsa
 
-    const mini = document.querySelector('.kundli-mini').textContent
-    expect(mini).toContain("सूर्य / Sun · वृषभ / Taurus · 0°33' · भाव 9")
-    expect(mini).toContain('वक्री') // Rahu/Ketu are retrograde
+    const table = document.querySelector('.kundli-table').textContent
+    expect(table).toContain('लग्न / Ascendant')
+    expect(table).toContain('सूर्य / Sun')
+    expect(table).toContain('वृषभ / Taurus')
+    expect(table).toContain(`0°32'59"`)
+    expect(table).toContain('कृत्तिका / Krittika')
+    expect(table).toContain('वक्री') // Mercury (and Rahu/Ketu) are retrograde
   })
 })
 
@@ -340,5 +344,62 @@ describe('Phase 7 — charts in the summary', () => {
     expect(svg.getAttribute('data-chart')).toBe('south')
     expect(svg.querySelector('.lagna-mark')).toBeTruthy()
     expect(computeKundli.mock.calls.length).toBe(callsBefore) // no recalculation
+  })
+})
+
+describe('Phase 8 — results table, actions & instant language switching', () => {
+  it('shows the full bilingual planet table and the action buttons', async () => {
+    setValue('#f-offset', '')
+    setValue('#f-year', '1990')
+    setValue('#f-tz', 'Asia/Kolkata')
+    submitForm()
+
+    await vi.waitFor(() => {
+      expect(document.querySelector('.kundli-table')).toBeTruthy()
+    })
+
+    const headers = Array.from(document.querySelectorAll('.kundli-table th')).map((th) => th.textContent)
+    expect(headers).toEqual(['ग्रह', 'राशि', 'अंश', 'नक्षत्र', 'भाव', 'वक्री'])
+
+    const text = document.querySelector('.kundli-table').textContent
+    expect(text).toContain('लग्न / Ascendant')
+    expect(text).toContain(`7°02'13"`) // lagna degree
+    expect(text).toContain('सूर्य / Sun')
+    expect(text).toContain(`0°32'59"`)
+    expect(text).toContain('कृत्तिका / Krittika')
+    expect(text).toContain('वक्री')
+
+    expect(document.querySelector('.actions [data-action="png"]')).toBeTruthy()
+    expect(document.querySelector('.actions [data-action="print"]')).toBeTruthy()
+    expect(document.querySelector('.actions [data-action="copy"]')).toBeTruthy()
+  })
+
+  it('switches the table headers instantly with the language toggle', () => {
+    $('#lang-toggle').click()
+    const headers = Array.from(document.querySelectorAll('.kundli-table th')).map((th) => th.textContent)
+    expect(headers).toEqual(['Planet', 'Rashi', 'Degree', 'Nakshatra', 'House', 'Retro'])
+    // Values stay bilingual in both languages:
+    expect(document.querySelector('.kundli-table').textContent).toContain('सूर्य / Sun')
+    $('#lang-toggle').click() // back to Hindi
+  })
+
+  it('copies the details via the Copy button', async () => {
+    const writeText = vi.fn(async () => {})
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true })
+
+    document.querySelector('.actions [data-action="copy"]').click()
+    await vi.waitFor(() => {
+      expect(writeText).toHaveBeenCalled()
+    })
+
+    const copied = writeText.mock.calls[0][0]
+    expect(copied).toContain('कुंडली / Kundli')
+    expect(copied).toContain('सूर्य / Sun')
+    expect(copied).toContain('कन्या / Virgo')
+    expect(copied).toContain('कृत्तिका / Krittika पद 2')
+
+    await vi.waitFor(() => {
+      expect(document.querySelector('.actions .note').textContent).toBe('✓ कॉपी हो गया')
+    })
   })
 })

@@ -1,7 +1,7 @@
 # Kundli / जन्मपत्री App — Project Notes (handoff)
 
-Created: 2026-09-28. Status: **Phase 7 done (2026-09-28) → start Phase 8 (results page: bilingual table, header block, PNG/Print/Copy, instant language toggle).**
-First thing to do in a fresh chat: read this file + `docs/kundli-guide.txt`, then begin the next phase (Phase 8 per the guide).
+Created: 2026-09-28. Status: **Phase 8 done (2026-09-28) → start Phase 9 (testing & accuracy validation: known-chart tests + manual checklist vs reference site).**
+First thing to do in a fresh chat: read this file + `docs/kundli-guide.txt`, then begin the next phase (Phase 9 per the guide).
 
 ## What to build
 Static, browser-only Vedic "Kundli / Birth Chart" web app for mybapuji.com.
@@ -23,7 +23,7 @@ Hard requirements (summary):
 - User = Vasant (non-technical). Talk in SIMPLE HINDI, short updates, no heavy jargon.
 - After EVERY phase: report what was done + tokens spent + what's next (and pause for a tiny "आगे बढ़ो" if convenient).
 - Token-budget conscious (AutoClaw credits): keep turns lean, batch work, terse command outputs, no unnecessary browsing (spec is fixed).
-- Token spend can be checked from app logs: `~/.openclaw-autoclaw/logs/autoclaw-compat.log` → `grep "Wallet v2 response"` → `total=NNNN` (credits; user calls them "tokens"). Baseline just before Phase 8: **~7.4k** (2026-09-28; Phase 7 spent ≈410).
+- Token spend can be checked from app logs: `~/.openclaw-autoclaw/logs/autoclaw-compat.log` → `grep "Wallet v2 response"` → `total=NNNN` (credits; user calls them "tokens"). Baseline just before Phase 9: **~6.2k** (2026-09-28; Phase 8 spent ≈1,140).
 - Verify locally each phase (npm run dev / npm test). User will hand-verify 10 charts vs AstroSage later (`tests/VALIDATION.md`).
 - Git: init repo in this folder; commit after each phase. GitHub repo + Pages + DNS are later steps (Cloudflare keys in `~/.openclaw-autoclaw/workspace/.secrets/keys.env`; user needs GitHub account).
 - If blocked: choose sensible default, note it, continue (per guide).
@@ -91,3 +91,10 @@ Hard requirements (summary):
 - Tests: **50/50 passing** (+6 chart tests; +1 form test: toggle without recalculation).
 - Real-browser end-to-end ✓: North chart rendered with every planet in the right house (Mo Sa(R) Ra(R) together in house 5…); toggled to South — planets in correct fixed rashi cells, "Asc" in the Kanya cell, centre box “15 May 1990 / 14:30:00 / Varanasi”.
 - Next: **Phase 8** — full results page: bilingual planet table (planet / rashi / degree / nakshatra+pada / house / retro), header block (ayanamsa, lagna, birth details), Download-PNG, Print, Copy details, instant language toggle.
+
+### 2026-09-28 — Phase 8 done
+- Results page: full **bilingual planet table** — ग्रह/Planet · राशि · अंश (deg°min′sec″) · नक्षत्र+पद · भाव · वक्री — all 9 grahas + an Ascendant row, values side-by-side “हिंदी / English”. Header block (birth details, coordinates, tz used, ayanamsa, lagna) kept above the chart.
+- Actions: **PNG सेव करें** (SVG → canvas → 1080×1080 PNG download), **प्रिंट करें** (print stylesheet hides form/toggle/actions), **विवरण कॉपी करें** (clipboard + “✓” message). Language toggle re-renders headers/labels instantly; values stay bilingual.
+- Tests: **53/53 passing** (+3: table contents & degree format `0°32'59"`; header switching; copy flow with mocked clipboard).
+- Real-browser end-to-end ✓: table rendered fully; Copy → “✓ कॉपी हो गया”; PNG → a **valid 1080×1080 PNG** landed in ~/Downloads (checked with `file`; saved copy as `~/Downloads/kundli-north.png`). (Side-panel browser saves it with a temp name `.com.zhipuai.autoclaw.*`; normal browsers → `kundli-north.png`. Cosmetic.)
+- Next: **Phase 9** — testing & accuracy validation: automated known-chart tests + `tests/VALIDATION.md` (10 births for the user to compare vs AstroSage), + browser/device checks.
