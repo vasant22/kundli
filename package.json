@@ -1,0 +1,16 @@
+{
+  "name": "kundli",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Free, static, browser-only Vedic Kundli / Birth Chart web app (Hindi + English)",
+  "license": "AGPL-3.0",
+  "scripts": {
+    "sync-wasm": "node scripts/copy-wasm.mjs",
+    "predev": "npm run sync-wasm",
+    "dev": "vite",
+    "prebuild": "npm run sync-wasm",
+    "build": "vite build",
+    "preview": "vite preview"
+  }
+}

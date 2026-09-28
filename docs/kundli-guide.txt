@@ -1,0 +1,157 @@
+Kundli / जन्मपत्री Web App
+mybapuji.com के लिए free, static, GitHub Pages पर चलने वाला project: शुरू से अंत तक क्रमवार मार्गदर्शिका
+भाग 1: इस project के फ़ायदे
+	•	पूरी तरह free और unlimited: कोई API key, monthly fee या request-limit नहीं।
+	•	आपकी website पर शून्य load: code GitHub Pages पर रहेगा, गणना visitor के browser में होगी। mybapuji.com पर सिर्फ़ subdomain का link जुड़ेगा।
+	•	AstroSage जैसी सुविधा, आपकी अपनी शर्तों पर: कोई विज्ञापन, दूसरे की branding या tracking नहीं।
+	•	Hindi + English दोनों: लोग अपनी भाषा में परिणाम पढ़ सकेंगे।
+	•	North और South Indian दोनों चार्ट एक ही बटन से बदले जा सकेंगे।
+	•	आगे बढ़ाने लायक: बाद में दशा, नवांश और आपके BNN सिद्धांतों वाला विश्लेषण उसी ग्रह-डेटा पर जुड़ सकता है।
+	•	Privacy: जन्म-विवरण किसी server पर save नहीं होगा।
+भाग 2: हमारी requirements
+बात
+तय
+Chart style
+North Indian और South Indian, toggle से बदलें
+Chart के अंदर की भरावट
+सिर्फ़ English (Su, Mo, Ma, Me, Ju, Ve, Sa, Ra, Ke, Asc)
+बाकी output (तालिकाएँ, नाम, विवरण)
+Hindi और English दोनों साथ में
+Interface भाषा
+Hindi/English toggle
+Ayanamsa
+Lahiri (चित्रपक्ष)
+Hosting
+GitHub Pages (static, free)
+Domain
+subdomain, जैसे kundli.mybapuji.com
+Backend/database
+कुछ नहीं
+License
+AGPL-3.0, क्योंकि Swiss Ephemeris AGPL है
+भाग 3: AI tool को देने वाला Prompt
+नीचे के box का पूरा text एक साथ copy करके Claude Code, Cursor, Codex या किसी भी coding AI tool में paste करें। Prompt English में है क्योंकि coding tools इसमें ज़्यादा सटीक काम करते हैं। Chart, Hindi नाम और output की शर्तें इसमें साफ़ लिखी हैं।
+कैसे copy करें: box की पहली पंक्ति ("You are a senior full-stack developer...") पर click करें, Shift दबाकर आख़िरी पंक्ति ("...show results before moving on.") पर click करें, फिर Ctrl+C।
+You are a senior full-stack developer. Build a free, static, browser-only Vedic astrology "Kundli / Birth Chart" web app. Work in the phases below, IN ORDER. After each phase, run/test it, tell me what you did, and only then move to the next phase. Do not skip any phase. Do not invent library function names: always read the actual package README / type definitions in node_modules before using an API.
+ 
+## PROJECT GOAL
+A public website where anyone enters Name, Gender, Birth Date, Birth Time, Birth Place and gets a Vedic (sidereal) birth chart, calculated entirely in the visitor's browser. It will be hosted free on GitHub Pages under a subdomain of my site (mybapuji.com). There must be NO backend, NO database, NO paid API, NO API key.
+ 
+## HARD REQUIREMENTS
+1. Two chart styles: North Indian (diamond) and South Indian (4x4 grid). A toggle button switches between them.
+2. Text INSIDE the charts is ENGLISH only: planet abbreviations Su, Mo, Ma, Me, Ju, Ve, Sa, Ra, Ke, and "Asc" for the ascendant, plus rashi numbers 1-12.
+3. All other output (planet table, details, headings, buttons, messages) must support BOTH Hindi and English, with a language toggle (Hindi default). In result tables show Hindi and English side by side (e.g. "सूर्य / Sun", "मेष / Aries").
+4. Ayanamsa: Lahiri. Zodiac: sidereal. House system for charts: whole-sign.
+5. Calculation library: Swiss Ephemeris compiled to WebAssembly (use the npm package `swisseph-wasm` or a better maintained equivalent you verify works in browser). Use the built-in Moshier ephemeris mode, so no .se1 data files are needed. All files (JS + WASM) must be served locally from the same site, with no external CDN dependency for calculation.
+6. Must work well on mobile (most users are on phones), be lightweight, and load fast.
+7. Open source under AGPL-3.0 (Swiss Ephemeris is AGPL).
+ 
+## PHASE 1: Project setup
+- Create a Vite vanilla-JS project (no framework). Set `base: './'` in vite config.
+- Folder structure: `index.html`, `src/main.js`, `src/astro.js` (calculation), `src/geocode.js`, `src/timeutil.js`, `src/charts.js` (SVG drawing), `src/i18n.js` (Hindi/English strings), `src/style.css`, `public/` (wasm + fonts + CNAME), `tests/`.
+- Initialize git. Add `.gitignore`. Add `README.md`, and a `LICENSE` file with the AGPL-3.0 text.
+- Install and confirm the Swiss Ephemeris WASM package loads in the browser (vite dev). Make sure the .wasm file is copied to the build output and loads correctly from a relative path.
+ 
+## PHASE 2: Input form (UI)
+Fields: Name (optional), Gender (Male/Female/Other), Birth date (day, month, year), Birth time (hour, minute, second, 24-hour), Birth place (text) with a "Search" button.
+- Validate all inputs (valid dates, hour 0-23, minute/second 0-59).
+- A "Get Kundli" button.
+- Clean, orange/saffron themed, responsive layout, similar in spirit to a simple astrology site form.
+ 
+## PHASE 3: Birth place lookup (free)
+- Use the Open-Meteo Geocoding API: https://geocoding-api.open-meteo.com/v1/search?name=<query>&count=8&language=en&format=json (free, no key). It returns latitude, longitude, timezone (IANA), country, admin1.
+- Trigger search ONLY on button press or Enter (no autocomplete on every keystroke), with a small debounce, to be polite to the free API.
+- Show up to 8 results as a selectable list: "Name, State, Country" so the user picks the right place (many villages share names).
+- Add a manual fallback: fields for latitude, longitude and timezone (IANA name or UTC offset), in case search fails.
+- Handle network errors with a friendly bilingual message.
+- Add a small credit line: "Geocoding by Open-Meteo.com".
+ 
+## PHASE 4: Time conversion (most common bug area, be careful)
+- Convert the birth local date-time to UTC using the IANA timezone with historical rules (use `Intl.DateTimeFormat` with the timeZone option, or the lightweight Luxon library). It must handle historical offsets correctly (e.g. India before 1947, wartime time in 1942-45, DST periods in other countries).
+- Allow the user to manually override the UTC offset (e.g. +5:30) for very old births where timezone data may be wrong.
+- Compute the Julian Day (UT) using the Swiss Ephemeris julday function.
+- Write unit tests for the time conversion with at least: an Indian birth in 2000, an Indian birth in 1943, a US birth during daylight saving, a birth just before/after midnight.
+ 
+## PHASE 5: Astrology calculations (src/astro.js)
+Using Swiss Ephemeris:
+1. Set sidereal mode to Lahiri.
+2. Calculate Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn with the sidereal + speed flags. Negative speed means retrograde.
+3. Rahu = Mean Node by default (provide a setting to switch to True Node). Ketu = Rahu + 180 degrees.
+4. Ascendant (Lagna) and houses using the houses function with sidereal flag. Use whole-sign houses: the rashi of the Ascendant is the 1st house.
+5. For each body compute: longitude (0-360), rashi (0-11), degree within sign, nakshatra (27, each 13 deg 20 min), nakshatra pada (1-4), retrograde flag, house number (whole-sign from Lagna), and rashi lord.
+6. Return a clean JSON-like object, e.g. {name:'Mars', short:'Ma', rashi:4, deg:12.53, nakshatra:5, pada:2, retro:false, house:7, ...} plus the Ascendant object. Both charts must be drawn from this single data object.
+7. Handle edge cases: longitude exactly on a sign boundary, latitude near polar regions (house calculation may fail, so show a friendly message).
+ 
+## PHASE 6: Hindi/English data (src/i18n.js)
+Provide bilingual lists:
+- 12 Rashis: मेष, वृषभ, मिथुन, कर्क, सिंह, कन्या, तुला, वृश्चिक, धनु, मकर, कुंभ, मीन (with English names).
+- 9 Grahas: सूर्य, चंद्र, मंगल, बुध, गुरु, शुक्र, शनि, राहु, केतु (with English names and English chart abbreviations).
+- 27 Nakshatras in Hindi and English: अश्विनी ... रेवती (write all 27 correctly).
+- UI strings for every label, button, message, in Hindi and English.
+- Self-host the font "Noto Sans Devanagari" (subset, woff2) in `public/fonts`, so there is no Google Fonts dependency. Add a system-font fallback.
+ 
+## PHASE 7: Draw the charts as SVG (src/charts.js)
+Both charts are generated from the same planet data. Chart text is ENGLISH ONLY.
+ 
+NORTH INDIAN (diamond) chart:
+- A square, with both diagonals and the inner diamond joining the midpoints of the sides. This creates 12 houses.
+- The house POSITIONS are fixed. House 1 (Lagna) is the top-center diamond. Houses increase ANTI-CLOCKWISE: 2 = top-left triangle, 3 = left-upper triangle, 4 = left-center diamond, 5 = left-lower triangle, 6 = bottom-left triangle, 7 = bottom-center diamond, 8 = bottom-right triangle, 9 = right-lower triangle, 10 = right-center diamond, 11 = right-upper triangle, 12 = top-right triangle.
+- In each house write the rashi NUMBER (1-12, Aries=1...; the Lagna house shows the Lagna rashi number, then the rest follow in zodiac order) and the abbreviations of planets in that house (add "(R)" or "R" for retrograde). Mark the Lagna house with "Asc".
+- Precompute a table of the centre point of each of the 12 regions for text placement. Auto-shrink font if a house has many planets.
+ 
+SOUTH INDIAN chart:
+- A 4x4 grid; the 4 central cells are merged and show Name, date, time, place (in English) or are left blank.
+- RASHIS are fixed: top row left-to-right = Pisces, Aries, Taurus, Gemini; right column downward = Cancer, Leo; bottom row right-to-left = Virgo, Libra, Scorpio, Sagittarius; left column upward = Capricorn, Aquarius. (Aries is the 2nd cell of the top row; signs run clockwise.)
+- Put planet abbreviations in the cell of the rashi they occupy. Mark the Lagna cell with a diagonal line in the corner and the text "Asc".
+ 
+Both charts: responsive (use viewBox), readable on a 360px-wide phone, high contrast, clean lines. A toggle switches the view without recalculation.
+ 
+## PHASE 8: Results page
+- Show both: the chart (with toggle) and a bilingual table with columns: Planet (Hindi/English), Rashi (Hindi/English), Degree (deg min sec), Nakshatra + Pada (Hindi/English), House, Retrograde (वक्री/Retro).
+- Show a header block: name, birth details, place, latitude/longitude, timezone used, Lahiri ayanamsa value, Lagna rashi (Hindi/English).
+- Buttons: "Download chart as PNG" (SVG to canvas to PNG), "Print" (with a clean print stylesheet), and "Copy details".
+- Language toggle applies instantly to all non-chart text.
+ 
+## PHASE 9: Testing and accuracy validation
+- Add an automated test file with at least 5 known birth charts (use well-known published data) and assert Lagna rashi and each planet's rashi.
+- Write a manual checklist in `tests/VALIDATION.md` with 10 test births (different cities, different decades including before 1950, different hemispheres, one near midnight). I will compare these against a reference site by hand. Leave columns for "Reference result", "Our result", "Match?".
+- Known acceptable differences: Mean vs True Rahu, and Lahiri variants. Document them in the README.
+- Test in Chrome, Firefox, Safari (iOS) and a low-end Android phone (or emulate).
+ 
+## PHASE 10: Performance, privacy, robustness
+- Total build size should be small (target under 3 MB including WASM). Enable compression-friendly output.
+- No analytics, no trackers, no cookies, no external scripts. The only external request is the Open-Meteo place search. Add a short bilingual privacy note on the page: "Your birth details are calculated in your browser and are not stored or sent anywhere."
+- Graceful errors for every failure (WASM failed to load, no internet during place search, invalid input).
+- Accessibility: labels for all inputs, keyboard navigation, alt/aria-label on the SVG charts.
+ 
+## PHASE 11: AGPL compliance
+- `LICENSE` = AGPL-3.0.
+- Footer of the page with: a "Source code" link to the public GitHub repo, and the credit "Calculations by Swiss Ephemeris (Astrodienst AG), used under AGPL".
+- README explains the license, how to run locally, how to build, and how to contribute.
+ 
+## PHASE 12: GitHub Pages deployment
+- Add a GitHub Actions workflow `.github/workflows/deploy.yml` that on every push to `main` runs `npm ci`, `npm run build`, and deploys `dist/` to GitHub Pages.
+- Add `public/CNAME` containing my subdomain (I will tell you the exact one, e.g. kundli.mybapuji.com).
+- Make sure the WASM file is served with the right MIME type on GitHub Pages and that the app works under the custom domain root.
+- Write `DEPLOY.md` with exact manual steps for me: create the GitHub repo, push code, enable Pages (Source: GitHub Actions), add the DNS CNAME record at my domain provider pointing the subdomain to <my-github-username>.github.io, and turn on "Enforce HTTPS".
+ 
+## PHASE 13: Final check
+Give me a final report: what was built, the exact commands to run locally (`npm install`, `npm run dev`, `npm run build`, `npm test`), the list of files, any known limitations, and a list of optional future features (Vimshottari Dasha, Navamsa D9 chart, more divisional charts, PDF export).
+ 
+## GENERAL RULES
+- Ask me a question ONLY if truly blocked; otherwise choose the sensible default and tell me.
+- Keep the code commented and simple, since a beginner will maintain it.
+- Never skip verification: run the app, run the tests, and show results before moving on.
+
+भाग 4: आपके अपने काम (AI tool नहीं करेगा)
+	•	GitHub account बनाएँ (अगर नहीं है) और एक public repository बनाएँ, जैसे `kundli`। Public रखना AGPL की शर्त के लिए ज़रूरी है।
+	•	Project बनने के बाद code उसमें push करें (AI tool यह भी कर देगा, बस उसे कह दें)।
+	•	Repo की Settings → Pages में Source: GitHub Actions चुनें।
+	•	अपने domain के DNS में एक CNAME record जोड़ें: नाम `kundli`, मान `आपका-github-username.github.io`।
+	•	Pages settings में custom domain डालें और Enforce HTTPS चालू करें।
+	•	mybapuji.com के menu या page पर `kundli.mybapuji.com` का link लगा दें।
+कुछ ज़रूरी सलाह
+	•	Prompt को एक साथ देना बेहतर है, फिर tool हर phase के बाद रुककर बताएगा। बीच में "ठीक है, आगे बढ़ो" लिख दें।
+	•	Phase 9 (जाँच) आपको खुद करनी होगी: 10 कुंडलियाँ AstroSage से मिलाइए। यहाँ आपका अनुभव सबसे काम आएगा, क्योंकि AI tool यह नहीं परख सकता कि चार्ट "सही लग रहा है" या नहीं।
+	•	अगर tool `swisseph-wasm` package से अटक जाए, तो उसे कहें कि README पढ़कर दूसरा maintained विकल्प चुने। Prompt में यह छूट पहले से दी है।
+	•	Open-Meteo की free सेवा non-commercial उपयोग के लिए है। आपकी site free है, इसलिए यह ठीक बैठता है।

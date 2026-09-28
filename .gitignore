@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Generated: wasm copies for the production build (created by scripts/copy-wasm.mjs)
+public/wasm/
+
+# Logs & local env
+*.log
+.env
+.env.*
+
+# Editor / OS
+.DS_Store
+.vite/

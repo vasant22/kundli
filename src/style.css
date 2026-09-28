@@ -1,0 +1,52 @@
+/* Kundli app styles — mobile-first, saffron/orange theme.
+   (Phase 1: base styles only; full form & results styling comes in Phases 2 and 8.) */
+
+:root {
+  --saffron: #e8730c;
+  --saffron-dark: #a94f05;
+  --bg: #fffaf3;
+  --card: #ffffff;
+  --ink: #2b1a0e;
+  --muted: #7a6a5c;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    'Noto Sans Devanagari',
+    sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.55;
+}
+
+.page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+h1 {
+  color: var(--saffron-dark);
+  font-size: 1.5rem;
+}
+
+#status {
+  background: var(--card);
+  border: 1px solid #f0dcc4;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+}
