@@ -1,7 +1,7 @@
 # Kundli / जन्मपत्री App — Project Notes (handoff)
 
-Created: 2026-09-28. Status: **Phase 2 done (2026-09-28) → start Phase 3 (birth-place search via Open-Meteo).**
-First thing to do in a fresh chat: read this file + `docs/kundli-guide.txt`, then begin the next phase (Phase 3 per the guide).
+Created: 2026-09-28. Status: **Phase 3 done (2026-09-28) → start Phase 4 (time conversion + unit tests).**
+First thing to do in a fresh chat: read this file + `docs/kundli-guide.txt`, then begin the next phase (Phase 4 per the guide).
 
 ## What to build
 Static, browser-only Vedic "Kundli / Birth Chart" web app for mybapuji.com.
@@ -23,7 +23,7 @@ Hard requirements (summary):
 - User = Vasant (non-technical). Talk in SIMPLE HINDI, short updates, no heavy jargon.
 - After EVERY phase: report what was done + tokens spent + what's next (and pause for a tiny "आगे बढ़ो" if convenient).
 - Token-budget conscious (AutoClaw credits): keep turns lean, batch work, terse command outputs, no unnecessary browsing (spec is fixed).
-- Token spend can be checked from app logs: `~/.openclaw-autoclaw/logs/autoclaw-compat.log` → `grep "Wallet v2 response"` → `total=NNNN` (credits; user calls them "tokens"). Baseline just before Phase 3: **~9.6k** (2026-09-28; Phase 2 spent ≈1,070).
+- Token spend can be checked from app logs: `~/.openclaw-autoclaw/logs/autoclaw-compat.log` → `grep "Wallet v2 response"` → `total=NNNN` (credits; user calls them "tokens"). Baseline just before Phase 4: **~9.3k** (2026-09-28; Phase 3 spent ≈300).
 - Verify locally each phase (npm run dev / npm test). User will hand-verify 10 charts vs AstroSage later (`tests/VALIDATION.md`).
 - Git: init repo in this folder; commit after each phase. GitHub repo + Pages + DNS are later steps (Cloudflare keys in `~/.openclaw-autoclaw/workspace/.secrets/keys.env`; user needs GitHub account).
 - If blocked: choose sensible default, note it, continue (per guide).
@@ -55,3 +55,10 @@ Hard requirements (summary):
 - Tests: `tests/form.test.js` (vitest + jsdom — 6 tests: render, empty-submit errors, invalid date/time/year, valid-submit summary, toggle both ways). `npm test` = 6/6 pass. Test tooling was brought forward from Phase 4/9 scope because verification needed it; it will keep growing there.
 - Browser check (real side-panel browser): empty submit → 4 errors shown; sample filled (राधा शर्मा / 15 मई 1990 / 14:30:00 / Varanasi) → ✅ summary card. Automation notes for future phases: the side-panel bridge cannot drive native `<select>` dropdowns or key events (Tab/arrows) — avoid native selects for new inputs, prefer buttons/chips; also type into ONE field per step (no batched click+type).
 - Next: **Phase 3** — Open-Meteo place search (button/Enter only, ≤8 results, manual lat/lon/tz fallback, "Geocoding by Open-Meteo.com" credit).
+
+### 2026-09-28 — Phase 3 done
+- Place search: `src/geocode.js` calls Open-Meteo geocoding (`count=8&language=en`), only on Search button / Enter (small cooldown between identical searches); results appear as a clickable list "Name, State, Country"; picking one shows "✔ चुना गया …" with lat/lon + timezone, and the summary uses it.
+- Manual fallback: collapsible `<details>` with latitude, longitude, time zone (IANA name or UTC offset `+05:30`), validated; auto-opens itself when it has an error. Credit line "Geocoding by Open-Meteo.com" added. Bilingual messages for: empty query, not found, network failure, searching….
+- Tests grew to **16/16 passing** (+4 geocode unit tests; +6 form tests: results render, pick, submit-with-pick, friendly messages, manual validation, edit-clears-pick).
+- Browser check (real network): searched "Varanasi" → 6+ real results; picked first → "✔ चुना गया: Varanasi, Uttar Pradesh, India · 25.31668, 83.01041 · Asia/Kolkata". (Note: after the results list expands, the submit button is below the fold and the side-panel bridge can't scroll — submit-with-pick is covered by the tests instead.)
+- Next: **Phase 4** — local birth time → UTC with historical timezone rules + manual UTC-offset override + unit tests (2000 India, 1943 India, US DST, midnight edges), then Julian Day via Swiss Ephemeris.

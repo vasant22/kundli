@@ -331,3 +331,58 @@ button.primary:hover {
   font-weight: 600;
   overflow-wrap: anywhere;
 }
+
+/* ---------- place search (Phase 3) ---------- */
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.result-item {
+  text-align: left;
+  border: 1px solid var(--input-border);
+  background: #fff;
+  border-radius: 10px;
+  padding: 0.55rem 0.7rem;
+  font: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.result-item:hover {
+  background: var(--saffron-soft);
+}
+
+.result-item.selected {
+  border-color: var(--saffron);
+  background: var(--saffron-soft);
+}
+
+.note.ok {
+  color: #1e7e34;
+}
+
+details.manual {
+  border-top: 1px dashed var(--border);
+  padding-top: 0.6rem;
+}
+
+details.manual summary {
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--saffron-dark);
+}
+
+details.manual[open] summary {
+  margin-bottom: 0.6rem;
+}
+
+.manual-row {
+  margin-bottom: 0.5rem;
+}
+
+.credit a {
+  color: var(--muted);
+}

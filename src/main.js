@@ -1,8 +1,9 @@
-// main.js — Kundli app entry point: header + birth-details form (Phase 2).
-// Coming phases: place search (3), time conversion (4), calculations (5),
-// full bilingual data (6), charts (7), results page (8).
+// main.js — Kundli app entry point: header + birth-details form.
+// Coming phases: time conversion (4), calculations (5), full bilingual data (6),
+// charts (7), results page (8).
 import './style.css'
 import { t, getLang, setLang, months } from './i18n.js'
+import { searchPlace } from './geocode.js'
 
 const app = document.querySelector('#app')
 
@@ -83,7 +84,29 @@ app.innerHTML = `
             <button id="search-btn" class="secondary" type="button" data-i18n="form.search"></button>
           </div>
           <p class="note" id="search-note" hidden></p>
+          <div id="results" class="results" hidden></div>
+          <p class="note ok" id="place-confirm" hidden></p>
           <p class="err" id="err-place" aria-live="polite"></p>
+          <details id="manual-box" class="manual">
+            <summary class="manual-summary" data-i18n="manual.summary"></summary>
+            <div class="row-3 manual-row">
+              <div class="mini">
+                <label for="f-lat" data-i18n="manual.lat"></label>
+                <input id="f-lat" type="number" step="0.0001" inputmode="decimal" placeholder="25.3176" />
+              </div>
+              <div class="mini">
+                <label for="f-lon" data-i18n="manual.lon"></label>
+                <input id="f-lon" type="number" step="0.0001" inputmode="decimal" placeholder="82.9739" />
+              </div>
+              <div class="mini">
+                <label for="f-tz" data-i18n="manual.tz"></label>
+                <input id="f-tz" type="text" placeholder="Asia/Kolkata" />
+              </div>
+            </div>
+            <p class="note" data-i18n="manual.hint"></p>
+            <p class="err" id="err-manual" aria-live="polite"></p>
+          </details>
+          <p class="note credit">Geocoding by <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo.com</a></p>
         </div>
 
         <button class="primary" type="submit" id="get-btn" data-i18n="btn.get"></button>
@@ -102,9 +125,17 @@ const output = document.querySelector('#output')
 const langToggle = document.querySelector('#lang-toggle')
 const searchBtn = document.querySelector('#search-btn')
 const searchNote = document.querySelector('#search-note')
+const placeInput = document.querySelector('#f-place')
+const resultsBox = document.querySelector('#results')
+const placeConfirm = document.querySelector('#place-confirm')
+const manualBox = document.querySelector('#manual-box')
 
 let lastValues = null // last successfully validated form values
 let lastErrors = {} // last validation errors (to re-render on language switch)
+let selectedPlace = null // place picked from search results: {name, admin1, country, latitude, longitude, timezone}
+let lastResults = [] // current search results (array of places)
+let lastNoteKey = null // key of the currently shown search note (for language switching)
+let lastSearch = { at: 0, query: '' } // tiny cooldown so rapid repeats don't hit the free API
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -113,6 +144,13 @@ const toInt = (s) => (s === '' ? NaN : Number(s))
 
 function daysInMonth(year, month) {
   return new Date(year, month, 0).getDate()
+}
+
+// Accepts an IANA name (Asia/Kolkata), "UTC", or a UTC offset (+05:30, -8).
+function isValidTimezone(value) {
+  const offset = /^[+-]?\d{1,2}(:[0-5]\d)?$/
+  const ianaName = /^[A-Za-z]+(?:[_/][A-Za-z0-9+_-]+)+$|^UTC$/
+  return offset.test(value) || ianaName.test(value)
 }
 
 // ---------------------------------------------------------------------------
@@ -156,7 +194,8 @@ function applyLanguage() {
 
   updateMonthLabels()
   langToggle.textContent = t('lang.switchTo')
-  if (!searchNote.hidden) searchNote.textContent = t('search.comingSoon')
+  if (!searchNote.hidden && lastNoteKey) searchNote.textContent = t(lastNoteKey)
+  renderConfirm()
 
   // Keep visible errors / summary in the current language as well.
   if (Object.keys(lastErrors).length > 0) showErrors(lastErrors)
@@ -179,6 +218,8 @@ function readForm() {
     minute: raw('f-minute'),
     second: raw('f-second'),
     place: raw('f-place'),
+    selectedPlace,
+    manual: { lat: raw('f-lat'), lon: raw('f-lon'), tz: raw('f-tz') },
   }
 }
 
@@ -215,7 +256,24 @@ function validate(v) {
     errors.time = t('err.second')
   }
 
-  if (v.place === '') errors.place = t('err.place')
+  // Place: either picked from the search results, or filled in manually.
+  // (If any manual field is filled, the manual values win — user was explicit.)
+  const manualAny = v.manual.lat !== '' || v.manual.lon !== '' || v.manual.tz !== ''
+  if (manualAny) {
+    const lat = Number(v.manual.lat)
+    const lon = Number(v.manual.lon)
+    if (v.manual.lat === '' || v.manual.lon === '' || v.manual.tz === '') {
+      errors.manual = t('err.latlonRequired')
+    } else if (!Number.isFinite(lat) || lat < -90 || lat > 90) {
+      errors.manual = t('err.latRange')
+    } else if (!Number.isFinite(lon) || lon < -180 || lon > 180) {
+      errors.manual = t('err.lonRange')
+    } else if (!isValidTimezone(v.manual.tz)) {
+      errors.manual = t('err.tzInvalid')
+    }
+  } else if (!v.selectedPlace) {
+    errors.place = v.place === '' ? t('err.place') : t('place.errSelect')
+  }
 
   return errors
 }
@@ -265,7 +323,21 @@ function showSummary(values, scroll) {
   addRow(t('summary.gender'), t(`gender.${values.gender}`))
   addRow(t('summary.date'), dateText)
   addRow(t('summary.time'), timeText)
-  addRow(t('summary.place'), values.place)
+
+  // Location row(s): the picked place if any, plus coordinates + timezone.
+  const place = values.selectedPlace
+  const placeLabel = place
+    ? [place.name, place.admin1, place.country].filter(Boolean).join(', ')
+    : values.place
+  addRow(t('summary.place'), placeLabel || '—')
+
+  const manualUsed =
+    values.manual && values.manual.lat !== '' && values.manual.lon !== '' && values.manual.tz !== ''
+  if (manualUsed) {
+    addRow(t('summary.coords'), `${values.manual.lat}, ${values.manual.lon} · ${values.manual.tz}`)
+  } else if (place) {
+    addRow(t('summary.coords'), `${place.latitude}, ${place.longitude} · ${place.timezone}`)
+  }
   card.append(list)
 
   const note = document.createElement('p')
@@ -288,10 +360,91 @@ langToggle.addEventListener('click', () => {
   applyLanguage()
 })
 
-searchBtn.addEventListener('click', () => {
-  // Real place search (Open-Meteo) is wired in Phase 3 — see NOTES.md
-  searchNote.textContent = t('search.comingSoon')
-  searchNote.hidden = false
+function setNote(key) {
+  lastNoteKey = key
+  searchNote.hidden = !key
+  searchNote.textContent = key ? t(key) : ''
+}
+
+function displayName(place) {
+  return [place.name, place.admin1, place.country].filter(Boolean).join(', ')
+}
+
+function renderResults() {
+  resultsBox.replaceChildren()
+  resultsBox.hidden = lastResults.length === 0
+  lastResults.forEach((place) => {
+    const item = document.createElement('button')
+    item.type = 'button'
+    item.className = 'result-item' + (place === selectedPlace ? ' selected' : '')
+    item.textContent = displayName(place)
+    item.addEventListener('click', () => {
+      selectedPlace = place
+      setNote(null)
+      renderConfirm()
+      renderResults()
+    })
+    resultsBox.append(item)
+  })
+}
+
+function renderConfirm() {
+  placeConfirm.hidden = !selectedPlace
+  if (selectedPlace) {
+    const p = selectedPlace
+    placeConfirm.textContent =
+      `✔ ${t('search.selected')}: ${displayName(p)} · ${p.latitude}, ${p.longitude} · ${p.timezone}`
+  }
+}
+
+async function runSearch() {
+  const query = placeInput.value.trim()
+  if (!query) {
+    setNote('search.enterName')
+    return
+  }
+
+  // Small cooldown between identical searches — polite to the free API.
+  const now = Date.now()
+  if (query === lastSearch.query && now - lastSearch.at < 300) return
+  lastSearch = { at: now, query }
+
+  searchBtn.disabled = true
+  setNote('search.busy')
+  try {
+    lastResults = await searchPlace(query, 8)
+    if (lastResults.length === 0) {
+      resultsBox.hidden = true
+      setNote('search.none')
+    } else {
+      setNote(null)
+      renderResults()
+    }
+  } catch (err) {
+    console.error(err)
+    resultsBox.hidden = true
+    setNote('search.error')
+  } finally {
+    searchBtn.disabled = false
+  }
+}
+
+searchBtn.addEventListener('click', runSearch)
+
+// Enter in the place field runs the search (instead of submitting the form).
+placeInput.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') {
+    event.preventDefault()
+    runSearch()
+  }
+})
+
+// Editing the place text invalidates a previously picked place.
+placeInput.addEventListener('input', () => {
+  if (selectedPlace) {
+    selectedPlace = null
+    renderConfirm()
+  }
 })
 
 form.addEventListener('submit', (event) => {
@@ -305,6 +458,7 @@ form.addEventListener('submit', (event) => {
   if (Object.keys(errors).length > 0) {
     lastValues = null
     output.hidden = true
+    if (errors.manual) manualBox.open = true // make sure the error is visible
     const firstInvalid = form.querySelector('.has-error input, .has-error select')
     if (firstInvalid) firstInvalid.focus()
     return
