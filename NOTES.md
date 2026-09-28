@@ -1,7 +1,7 @@
 # Kundli / जन्मपत्री App — Project Notes (handoff)
 
-Created: 2026-09-28. Status: **Phase 1 done (2026-09-28) → start Phase 2 (input form UI).**
-First thing to do in a fresh chat: read this file + `docs/kundli-guide.txt`, then begin the next phase (Phase 2 per the guide).
+Created: 2026-09-28. Status: **Phase 2 done (2026-09-28) → start Phase 3 (birth-place search via Open-Meteo).**
+First thing to do in a fresh chat: read this file + `docs/kundli-guide.txt`, then begin the next phase (Phase 3 per the guide).
 
 ## What to build
 Static, browser-only Vedic "Kundli / Birth Chart" web app for mybapuji.com.
@@ -23,7 +23,7 @@ Hard requirements (summary):
 - User = Vasant (non-technical). Talk in SIMPLE HINDI, short updates, no heavy jargon.
 - After EVERY phase: report what was done + tokens spent + what's next (and pause for a tiny "आगे बढ़ो" if convenient).
 - Token-budget conscious (AutoClaw credits): keep turns lean, batch work, terse command outputs, no unnecessary browsing (spec is fixed).
-- Token spend can be checked from app logs: `~/.openclaw-autoclaw/logs/autoclaw-compat.log` → `grep "Wallet v2 response"` → `total=NNNN` (credits; user calls them "tokens"). Baseline just before Phase 2: **~10.7k** (2026-09-28; Phase 1 spent ≈250).
+- Token spend can be checked from app logs: `~/.openclaw-autoclaw/logs/autoclaw-compat.log` → `grep "Wallet v2 response"` → `total=NNNN` (credits; user calls them "tokens"). Baseline just before Phase 3: **~9.6k** (2026-09-28; Phase 2 spent ≈1,070).
 - Verify locally each phase (npm run dev / npm test). User will hand-verify 10 charts vs AstroSage later (`tests/VALIDATION.md`).
 - Git: init repo in this folder; commit after each phase. GitHub repo + Pages + DNS are later steps (Cloudflare keys in `~/.openclaw-autoclaw/workspace/.secrets/keys.env`; user needs GitHub account).
 - If blocked: choose sensible default, note it, continue (per guide).
@@ -48,3 +48,10 @@ Hard requirements (summary):
 - Git: initialised on `main`; commit `6dcf3fe`. Local git identity: `Vasant / basanthariom@users.noreply.github.com` (placeholder — change if the GitHub account differs).
 - ⚠️ Before pushing the repo PUBLIC in Phase 12: decide whether to keep this NOTES.md in the repo (it contains internal workflow notes).
 - Next: **Phase 2** — input form (name, gender, date, time, place + validation), orange/saffron responsive UI per guide.
+
+### 2026-09-28 — Phase 2 done
+- Input form: name, gender, birth date, birth time (24h, separate hour/minute/second), birth place + Search button (stub until Phase 3), "Get Kundli"; inline bilingual validation; live language toggle (Hindi default ⇄ English) that also re-renders the summary card.
+- Month input = **12 tappable chips** (radio group) instead of a dropdown — bigger touch targets on phones and fully automatable for tests.
+- Tests: `tests/form.test.js` (vitest + jsdom — 6 tests: render, empty-submit errors, invalid date/time/year, valid-submit summary, toggle both ways). `npm test` = 6/6 pass. Test tooling was brought forward from Phase 4/9 scope because verification needed it; it will keep growing there.
+- Browser check (real side-panel browser): empty submit → 4 errors shown; sample filled (राधा शर्मा / 15 मई 1990 / 14:30:00 / Varanasi) → ✅ summary card. Automation notes for future phases: the side-panel bridge cannot drive native `<select>` dropdowns or key events (Tab/arrows) — avoid native selects for new inputs, prefer buttons/chips; also type into ONE field per step (no batched click+type).
+- Next: **Phase 3** — Open-Meteo place search (button/Enter only, ≤8 results, manual lat/lon/tz fallback, "Geocoding by Open-Meteo.com" credit).

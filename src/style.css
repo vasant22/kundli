@@ -1,13 +1,16 @@
-/* Kundli app styles — mobile-first, saffron/orange theme.
-   (Phase 1: base styles only; full form & results styling comes in Phases 2 and 8.) */
+/* Kundli app styles — mobile-first, saffron/orange theme. */
 
 :root {
   --saffron: #e8730c;
   --saffron-dark: #a94f05;
+  --saffron-soft: #fff1e2;
+  --border: #f0dcc4;
+  --input-border: #dcc7ae;
   --bg: #fffaf3;
   --card: #ffffff;
   --ink: #2b1a0e;
   --muted: #7a6a5c;
+  --err: #c62828;
 }
 
 * {
@@ -33,20 +36,298 @@ body {
   line-height: 1.55;
 }
 
-.page {
-  max-width: 720px;
+.wrap {
+  max-width: 640px;
   margin: 0 auto;
-  padding: 1rem;
+  padding: 0 1rem 2.5rem;
 }
 
-h1 {
+[hidden] {
+  display: none !important;
+}
+
+/* ---------- header ---------- */
+.site-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.1rem 0 0.9rem;
+}
+
+.site-header h1 {
+  margin: 0;
+  font-size: 1.45rem;
+  line-height: 1.2;
   color: var(--saffron-dark);
-  font-size: 1.5rem;
 }
 
-#status {
+.site-header .sub {
+  margin: 0.15rem 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.lang-toggle {
+  flex-shrink: 0;
+  border: 1px solid var(--saffron);
+  background: #fff;
+  color: var(--saffron-dark);
+  border-radius: 999px;
+  padding: 0.45rem 0.95rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.lang-toggle:hover {
+  background: var(--saffron-soft);
+}
+
+/* ---------- cards & form ---------- */
+.card {
   background: var(--card);
-  border: 1px solid #f0dcc4;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.1rem 1rem 1.3rem;
+  box-shadow: 0 1px 3px rgba(90, 50, 10, 0.06);
+}
+
+form.card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.05rem;
+}
+
+.form-heading {
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--saffron-dark);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.field > label,
+.field .group-label,
+.field legend {
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0;
+}
+
+fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.muted {
+  color: var(--muted);
+  font-weight: 400;
+  font-size: 0.8rem;
+}
+
+input[type='text'],
+input[type='number'],
+select {
+  width: 100%;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--input-border);
   border-radius: 10px;
-  padding: 0.75rem 1rem;
+  font: inherit;
+  font-size: 1rem;
+  background: #fff;
+  color: var(--ink);
+}
+
+input:focus,
+select:focus {
+  outline: 2px solid var(--saffron);
+  outline-offset: 1px;
+  border-color: var(--saffron);
+}
+
+.row-3 {
+  display: grid;
+  grid-template-columns: 1fr 1.55fr 1.1fr;
+  gap: 0.5rem;
+}
+
+.row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 0.5rem;
+}
+
+.mini-label {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.chips {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.4rem;
+}
+
+.chips label {
+  position: relative;
+  display: block;
+  cursor: pointer;
+  text-align: center;
+  border: 1px solid var(--input-border);
+  border-radius: 999px;
+  padding: 0.38rem 0.25rem;
+  font-size: 0.88rem;
+}
+
+.chips label:has(input:checked) {
+  background: var(--saffron-soft);
+  border-color: var(--saffron);
+}
+
+.chips label:focus-within {
+  outline: 2px solid var(--saffron);
+  outline-offset: 1px;
+}
+
+.chips input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.mini {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.mini label {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.radio-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.radio-row label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid var(--input-border);
+  border-radius: 999px;
+  padding: 0.45rem 0.85rem;
+  cursor: pointer;
+}
+
+.radio-row label:has(input:checked) {
+  background: var(--saffron-soft);
+  border-color: var(--saffron);
+}
+
+.radio-row input {
+  accent-color: var(--saffron);
+  margin: 0;
+}
+
+.search-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.search-row input {
+  flex: 1;
+}
+
+button.secondary {
+  border: 1px solid var(--saffron);
+  background: #fff;
+  color: var(--saffron-dark);
+  border-radius: 10px;
+  padding: 0.6rem 1.05rem;
+  font: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+button.secondary:hover {
+  background: var(--saffron-soft);
+}
+
+button.primary {
+  margin-top: 0.2rem;
+  border: 0;
+  background: var(--saffron);
+  color: #fff;
+  font: inherit;
+  font-size: 1.05rem;
+  font-weight: 600;
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+button.primary:hover {
+  background: var(--saffron-dark);
+}
+
+.err {
+  margin: 0;
+  color: var(--err);
+  font-size: 0.85rem;
+}
+
+.err:empty {
+  display: none;
+}
+
+.note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.has-error input,
+.has-error select {
+  border-color: var(--err);
+}
+
+.field.has-error .chips label {
+  border-color: var(--err);
+}
+
+/* ---------- output ---------- */
+#output {
+  margin-top: 1rem;
+}
+
+.summary h2 {
+  margin: 0 0 0.6rem;
+  font-size: 1.05rem;
+  color: #1e7e34;
+}
+
+.summary dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.3rem 1rem;
+  margin: 0 0 0.7rem;
+}
+
+.summary dt {
+  color: var(--muted);
+}
+
+.summary dd {
+  margin: 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
 }

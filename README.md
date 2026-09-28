@@ -14,8 +14,8 @@ All calculations run in the visitor's browser — **no backend, no database, no 
 
 ## Status
 
-**Phase 1 complete** — project scaffold, Swiss Ephemeris WASM loads in the browser, git repo initialised.
-The full app is built in phases (see `NOTES.md`); UI, calculations, charts and tests follow in later phases.
+**Phases 1–2 complete** — Vite scaffold with Swiss Ephemeris WASM verified in the browser; birth-details input form with validation, month chips and a Hindi ⇄ English toggle (6 jsdom tests, `npm test`).
+The full app is built in phases (see `NOTES.md`); place search, calculations, charts and tests follow in later phases.
 
 ## Development
 
