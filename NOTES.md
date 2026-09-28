@@ -1,7 +1,7 @@
 # Kundli / जन्मपत्री App — Project Notes (handoff)
 
-Created: 2026-09-28. Status: **Phase 11 done (2026-09-28) → start Phase 12 (deploy: GitHub repo + Actions + Pages + Cloudflare DNS).**
-First thing to do in a fresh chat: read this file + `docs/kundli-guide.txt`, then begin the next phase (Phase 12 per the guide).
+Created: 2026-09-28. Status: **Phase 12 IN PROGRESS — deploy scaffolding ready (workflow + CNAME + DEPLOY.md); waiting on the GitHub username to create the repo, push, fix SOURCE_URL, and finish Pages + DNS.**
+First thing to do in a fresh chat: read this file + `docs/kundli-guide.txt`, then finish Phase 12 (see “Phase 12 (part 1)” log entry).
 
 ## What to build
 Static, browser-only Vedic "Kundli / Birth Chart" web app for mybapuji.com.
@@ -120,3 +120,9 @@ Hard requirements (summary):
 - ⚠️ **SOURCE_URL** in `src/main.js` currently points to `https://github.com/basanthariom/kundli` — confirm the GitHub username/repo in Phase 12 and update.
 - Tests: **62/62 passing** (footer test extended: href/target/rel + bilingual label). Browser ✓ footer line renders.
 - Next: **Phase 12** — deployment: create GitHub repo + Actions + Pages + Cloudflare DNS (needs the user's GitHub account; Cloudflare keys in `.secrets/keys.env`).
+
+### 2026-09-28 — Phase 12 (part 1): deploy scaffolding
+- `.github/workflows/deploy.yml`: push to `main` → `npm ci` → `npm test` → `npm run build` → deploy to Pages (`upload-pages-artifact` + `deploy-pages`).
+- `public/CNAME` = `kundli.mybapuji.com` (flows into `dist/` on build).
+- `DEPLOY.md`: simple Hindi walkthrough (create repo → push → Pages settings → Cloudflare CNAME DNS-only → enforce HTTPS) + checklist.
+- Waiting on **user's GitHub username/account** to: create/push the repo, fix `SOURCE_URL` (footer), optionally add the Cloudflare DNS record. Cloudflare keys file has `CF_ACCOUNT`/`CF_EMAIL` (no API token seen — ask if needed).

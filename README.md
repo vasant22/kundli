@@ -32,6 +32,10 @@ npm run preview  # preview the production build locally
 > the whole UI is rendered by JavaScript and must be served. Always view the app via
 > `npm run dev` (or `npm run preview`) and open the printed local address.
 
+## Deployment
+
+The app deploys to **GitHub Pages** (custom domain `kundli.mybapuji.com`) via GitHub Actions — step-by-step in [`DEPLOY.md`](./DEPLOY.md).
+
 ## Contributing
 
 Bug reports and pull requests are welcome — please open an issue or a PR on GitHub
