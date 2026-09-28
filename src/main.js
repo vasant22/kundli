@@ -9,7 +9,7 @@ import { buildNorthChart, buildSouthChart } from './charts.js'
 
 // Where the public source code lives — confirmed/adjusted when the GitHub
 // repo is created (deploy phase).
-const SOURCE_URL = 'https://github.com/basanthariom/kundli'
+const SOURCE_URL = 'https://github.com/vasant22/kundli'
 
 const app = document.querySelector('#app')
 
