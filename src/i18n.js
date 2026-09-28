@@ -79,6 +79,8 @@ const STRINGS = {
     'k.rashi': 'राशि',
     'k.house': 'भाव',
     'k.retro': 'वक्री',
+    'chart.north': 'उत्तर भारतीय',
+    'chart.south': 'दक्षिण भारतीय',
     'summary.note': 'ग्रहों की विस्तृत तालिका और चार्ट अगले चरणों में जुड़ेंगे।',
 
     'month.1': 'जनवरी',
@@ -171,6 +173,8 @@ const STRINGS = {
     'k.rashi': 'Sign',
     'k.house': 'House',
     'k.retro': 'Retro',
+    'chart.north': 'North Indian',
+    'chart.south': 'South Indian',
     'summary.note': 'The full planet table and the charts arrive in the next steps.',
 
     'month.1': 'January',
@@ -286,4 +290,9 @@ export function t(key) {
 // List of the 12 month names in the active language.
 export function months() {
   return Array.from({ length: 12 }, (_, i) => t(`month.${i + 1}`))
+}
+
+// English month name regardless of the active language (charts are English).
+export function monthEn(number) {
+  return STRINGS.en[`month.${number}`] ?? ''
 }

@@ -413,3 +413,44 @@ details.manual[open] summary {
 .kundli-mini li {
   margin: 0.1rem 0;
 }
+
+/* ---------- charts (Phase 7) ---------- */
+.chart-wrap {
+  margin: 0 0 0.8rem;
+}
+
+.chart-toggle {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.chart-toggle button {
+  flex: 1;
+  border: 1px solid var(--saffron);
+  background: #fff;
+  color: var(--saffron-dark);
+  border-radius: 999px;
+  padding: 0.45rem 0.6rem;
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.chart-toggle button.active {
+  background: var(--saffron);
+  color: #fff;
+}
+
+.chart-box svg {
+  display: block;
+  width: 100%;
+  max-width: 380px;
+  height: auto;
+  margin: 0 auto;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 8px;
+  box-sizing: border-box;
+}

@@ -1,10 +1,11 @@
 // main.js — Kundli app entry point: header + birth-details form.
 // Coming phases: full bilingual data (6), charts (7), results page (8).
 import './style.css'
-import { t, getLang, setLang, months, rashiLabel, grahaLabel } from './i18n.js'
+import { t, getLang, setLang, months, rashiLabel, grahaLabel, monthEn } from './i18n.js'
 import { searchPlace } from './geocode.js'
 import { formatUtcOffset, isValidTimeZone, parseUtcOffset, wallTimeToUtc } from './timeutil.js'
 import { computeKundli, initEphemeris } from './astro.js'
+import { buildNorthChart, buildSouthChart } from './charts.js'
 
 const app = document.querySelector('#app')
 
@@ -210,6 +211,17 @@ function resolveCoordinates(values) {
     return { latitude: values.selectedPlace.latitude, longitude: values.selectedPlace.longitude }
   }
   return null
+}
+
+// Little info lines for the South chart's centre box (English chart text).
+function chartMeta(values) {
+  const pad = (n) => String(n).padStart(2, '0')
+  return {
+    name: values.name,
+    dateText: `${Number(values.day)} ${monthEn(Number(values.month))} ${Number(values.year)}`,
+    timeText: `${pad(Number(values.hour))}:${pad(Number(values.minute))}:${pad(Number(values.second))}`,
+    placeText: values.selectedPlace ? values.selectedPlace.name : values.place,
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -430,6 +442,44 @@ function showSummary(values, scroll) {
     const asc = kundli.ascendant
     addRow(t('summary.lagna'), `${rashiLabel(asc.rashi)} · ${formatDegMin(asc.degInSign)}`)
     addRow(t('summary.ayanamsa'), formatDegMin(kundli.ayanamsa))
+
+    // Charts (Phase 7): North/South toggle drawn from the same data object.
+    const chartWrap = document.createElement('div')
+    chartWrap.className = 'chart-wrap'
+    const toggleBar = document.createElement('div')
+    toggleBar.className = 'chart-toggle'
+    const northBtn = document.createElement('button')
+    northBtn.type = 'button'
+    northBtn.dataset.style = 'north'
+    northBtn.textContent = t('chart.north')
+    const southBtn = document.createElement('button')
+    southBtn.type = 'button'
+    southBtn.dataset.style = 'south'
+    southBtn.textContent = t('chart.south')
+    const chartBox = document.createElement('div')
+    chartBox.className = 'chart-box'
+    const paintChart = () => {
+      chartBox.replaceChildren()
+      chartBox.append(
+        values.chartStyle === 'south'
+          ? buildSouthChart(kundli, chartMeta(values))
+          : buildNorthChart(kundli)
+      )
+      northBtn.classList.toggle('active', values.chartStyle !== 'south')
+      southBtn.classList.toggle('active', values.chartStyle === 'south')
+    }
+    northBtn.addEventListener('click', () => {
+      values.chartStyle = 'north'
+      paintChart()
+    })
+    southBtn.addEventListener('click', () => {
+      values.chartStyle = 'south'
+      paintChart()
+    })
+    toggleBar.append(northBtn, southBtn)
+    chartWrap.append(toggleBar, chartBox)
+    card.append(chartWrap)
+    paintChart()
 
     const mini = document.createElement('div')
     mini.className = 'kundli-mini'

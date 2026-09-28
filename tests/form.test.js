@@ -316,3 +316,29 @@ describe('Phase 5 — calculated chart in the summary', () => {
     expect(mini).toContain('वक्री') // Rahu/Ketu are retrograde
   })
 })
+
+describe('Phase 7 — charts in the summary', () => {
+  it('draws the North chart by default and toggles to South without recalculating', async () => {
+    setValue('#f-offset', '')
+    setValue('#f-tz', 'Asia/Kolkata')
+    submitForm()
+
+    await vi.waitFor(() => {
+      expect(document.querySelector('.chart-box svg')).toBeTruthy()
+    })
+
+    let svg = document.querySelector('.chart-box svg')
+    expect(svg.getAttribute('data-chart')).toBe('north')
+    expect(svg.querySelectorAll('[data-house]')).toHaveLength(12)
+    expect(svg.querySelector('[data-house="1"]').textContent).toContain('Asc')
+
+    const { computeKundli } = await import('../src/astro.js')
+    const callsBefore = computeKundli.mock.calls.length
+
+    document.querySelector('.chart-toggle button[data-style="south"]').click()
+    svg = document.querySelector('.chart-box svg')
+    expect(svg.getAttribute('data-chart')).toBe('south')
+    expect(svg.querySelector('.lagna-mark')).toBeTruthy()
+    expect(computeKundli.mock.calls.length).toBe(callsBefore) // no recalculation
+  })
+})
