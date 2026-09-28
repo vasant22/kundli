@@ -1,7 +1,7 @@
 # Kundli / जन्मपत्री App — Project Notes (handoff)
 
-Created: 2026-09-28. Status: **Phase 0 done → start Phase 1.**
-First thing to do in a fresh chat: read this file + `docs/kundli-guide.txt`, then begin Phase 1 below.
+Created: 2026-09-28. Status: **Phase 1 done (2026-09-28) → start Phase 2 (input form UI).**
+First thing to do in a fresh chat: read this file + `docs/kundli-guide.txt`, then begin the next phase (Phase 2 per the guide).
 
 ## What to build
 Static, browser-only Vedic "Kundli / Birth Chart" web app for mybapuji.com.
@@ -23,14 +23,28 @@ Hard requirements (summary):
 - User = Vasant (non-technical). Talk in SIMPLE HINDI, short updates, no heavy jargon.
 - After EVERY phase: report what was done + tokens spent + what's next (and pause for a tiny "आगे बढ़ो" if convenient).
 - Token-budget conscious (AutoClaw credits): keep turns lean, batch work, terse command outputs, no unnecessary browsing (spec is fixed).
-- Token spend can be checked from app logs: `~/.openclaw-autoclaw/logs/autoclaw-compat.log` → `grep "Wallet v2"` → `total_balance` (credits; user calls them "tokens"). Baseline just before Phase 1: **~11.0k** (2026-09-28).
+- Token spend can be checked from app logs: `~/.openclaw-autoclaw/logs/autoclaw-compat.log` → `grep "Wallet v2 response"` → `total=NNNN` (credits; user calls them "tokens"). Baseline just before Phase 2: **~10.7k** (2026-09-28; Phase 1 spent ≈250).
 - Verify locally each phase (npm run dev / npm test). User will hand-verify 10 charts vs AstroSage later (`tests/VALIDATION.md`).
 - Git: init repo in this folder; commit after each phase. GitHub repo + Pages + DNS are later steps (Cloudflare keys in `~/.openclaw-autoclaw/workspace/.secrets/keys.env`; user needs GitHub account).
 - If blocked: choose sensible default, note it, continue (per guide).
 
-## Phase 1 checklist (start here)
-- [ ] Scaffold Vite vanilla JS project in this folder (`npm create vite@latest . -- --template vanilla` or manual) + `base: './'`.
-- [ ] Structure: `index.html`, `src/{main,astro,geocode,timeutil,charts,i18n}.js`, `src/style.css`, `public/`, `tests/`.
-- [ ] `npm i swisseph-wasm`; read its README; make wasm load in browser via vite dev from a RELATIVE path (add to build output correctly).
-- [ ] `git init`, `.gitignore`, `README.md`, `LICENSE` (full AGPL-3.0 text).
-- [ ] Quick verify: dev server runs; wasm module loads; report Phase 1 done in Hindi + token cost.
+## Phase 1 checklist (DONE — 2026-09-28, see progress log)
+- [x] Scaffold Vite vanilla JS project in this folder (manual scaffold) + `base: './'`.
+- [x] Structure: `index.html`, `src/{main,astro,geocode,timeutil,charts,i18n}.js`, `src/style.css`, `public/`, `tests/` (+ `scripts/`).
+- [x] `npm i swisseph-wasm` + read its README/llms.txt; wasm loads in browser (dev) and in the build from a relative path (`/wasm/`).
+- [x] `git init`, `.gitignore`, `README.md`, `LICENSE` (full AGPL-3.0 text).
+- [x] Quick verify: dev server runs; wasm module loads & calculates in browser; report Phase 1 done in Hindi + token cost.
+
+## Progress log
+
+### 2026-09-28 — Phase 1 done
+- Stack: Vite 8.3.1 (vanilla), `swisseph-wasm` 0.1.0, Node 25.5.
+- Verified in a real browser, both dev server and `npm run preview` (production build): page shows `JD 2451545` and Sun longitude `280.37°` — engine works. (2451545 is the known J2000.0 Julian Day; Sun ≈280.37° is correct.)
+- Build size: `dist/` = 2.7 MB total (budget < 3 MB): JS ~83 kB, CSS ~0.5 kB, wasm 562 kB + ephemeris data 2.05 MB (both served from `/wasm/`).
+- Gotchas solved (keep for later phases):
+  - `optimizeDeps.exclude: ['swisseph-wasm']` in `vite.config.js` — keeps its internal `new URL('../wasm/...')` file resolution working in dev.
+  - `scripts/copy-wasm.mjs` copies `swisseph.{wasm,data}` into `public/wasm/` on `predev`/`prebuild` (folder is gitignored).
+  - Small Vite plugin in `vite.config.js` drops a dead fallback `.wasm` asset from the bundle (else `dist/` would be ~3.3 MB).
+- Git: initialised on `main`; commit `6dcf3fe`. Local git identity: `Vasant / basanthariom@users.noreply.github.com` (placeholder — change if the GitHub account differs).
+- ⚠️ Before pushing the repo PUBLIC in Phase 12: decide whether to keep this NOTES.md in the repo (it contains internal workflow notes).
+- Next: **Phase 2** — input form (name, gender, date, time, place + validation), orange/saffron responsive UI per guide.
