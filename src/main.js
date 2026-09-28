@@ -1,7 +1,7 @@
 // main.js — Kundli app entry point: header + birth-details form.
 // Coming phases: full bilingual data (6), charts (7), results page (8).
 import './style.css'
-import { t, getLang, setLang, months } from './i18n.js'
+import { t, getLang, setLang, months, rashiLabel, grahaLabel } from './i18n.js'
 import { searchPlace } from './geocode.js'
 import { formatUtcOffset, isValidTimeZone, parseUtcOffset, wallTimeToUtc } from './timeutil.js'
 import { computeKundli, initEphemeris } from './astro.js'
@@ -428,7 +428,7 @@ function showSummary(values, scroll) {
   const kundli = values.kundli
   if (kundli && !kundli.error) {
     const asc = kundli.ascendant
-    addRow(t('summary.lagna'), `${t('k.rashi')} ${asc.rashi + 1} · ${formatDegMin(asc.degInSign)}`)
+    addRow(t('summary.lagna'), `${rashiLabel(asc.rashi)} · ${formatDegMin(asc.degInSign)}`)
     addRow(t('summary.ayanamsa'), formatDegMin(kundli.ayanamsa))
 
     const mini = document.createElement('div')
@@ -441,7 +441,7 @@ function showSummary(values, scroll) {
     kundli.planets.forEach((p) => {
       const li = document.createElement('li')
       li.textContent =
-        `${p.short} · ${t('k.rashi')} ${p.rashi + 1} · ${formatDegMin(p.degInSign)} · ` +
+        `${grahaLabel(p.key)} · ${rashiLabel(p.rashi)} · ${formatDegMin(p.degInSign)} · ` +
         `${t('k.house')} ${p.house}` +
         (p.retro ? ` · ${t('k.retro')}` : '')
       ul.append(li)

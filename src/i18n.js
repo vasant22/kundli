@@ -188,6 +188,86 @@ const STRINGS = {
   },
 }
 
+// ---------------------------------------------------------------------------
+// Bilingual Vedic data lists (Phase 6) — Hindi + English side by side.
+// These are THE canonical lists used by tables, charts and results.
+// ---------------------------------------------------------------------------
+
+// 12 rashis; index 0 = Mesha (Aries).
+export const RASHIS = [
+  { hi: 'मेष', en: 'Aries' },
+  { hi: 'वृषभ', en: 'Taurus' },
+  { hi: 'मिथुन', en: 'Gemini' },
+  { hi: 'कर्क', en: 'Cancer' },
+  { hi: 'सिंह', en: 'Leo' },
+  { hi: 'कन्या', en: 'Virgo' },
+  { hi: 'तुला', en: 'Libra' },
+  { hi: 'वृश्चिक', en: 'Scorpio' },
+  { hi: 'धनु', en: 'Sagittarius' },
+  { hi: 'मकर', en: 'Capricorn' },
+  { hi: 'कुंभ', en: 'Aquarius' },
+  { hi: 'मीन', en: 'Pisces' },
+]
+
+// 9 grahas, in chart order, with the English chart abbreviations.
+export const GRAHAS = [
+  { key: 'sun', short: 'Su', hi: 'सूर्य', en: 'Sun' },
+  { key: 'moon', short: 'Mo', hi: 'चंद्र', en: 'Moon' },
+  { key: 'mars', short: 'Ma', hi: 'मंगल', en: 'Mars' },
+  { key: 'mercury', short: 'Me', hi: 'बुध', en: 'Mercury' },
+  { key: 'jupiter', short: 'Ju', hi: 'गुरु', en: 'Jupiter' },
+  { key: 'venus', short: 'Ve', hi: 'शुक्र', en: 'Venus' },
+  { key: 'saturn', short: 'Sa', hi: 'शनि', en: 'Saturn' },
+  { key: 'rahu', short: 'Ra', hi: 'राहु', en: 'Rahu' },
+  { key: 'ketu', short: 'Ke', hi: 'केतु', en: 'Ketu' },
+]
+
+// 27 nakshatras; index 0 = Ashwini.
+export const NAKSHATRAS = [
+  { hi: 'अश्विनी', en: 'Ashwini' },
+  { hi: 'भरणी', en: 'Bharani' },
+  { hi: 'कृत्तिका', en: 'Krittika' },
+  { hi: 'रोहिणी', en: 'Rohini' },
+  { hi: 'मृगशिरा', en: 'Mrigashira' },
+  { hi: 'आर्द्रा', en: 'Ardra' },
+  { hi: 'पुनर्वसु', en: 'Punarvasu' },
+  { hi: 'पुष्य', en: 'Pushya' },
+  { hi: 'आश्लेषा', en: 'Ashlesha' },
+  { hi: 'मघा', en: 'Magha' },
+  { hi: 'पूर्वा फाल्गुनी', en: 'Purva Phalguni' },
+  { hi: 'उत्तरा फाल्गुनी', en: 'Uttara Phalguni' },
+  { hi: 'हस्त', en: 'Hasta' },
+  { hi: 'चित्रा', en: 'Chitra' },
+  { hi: 'स्वाति', en: 'Swati' },
+  { hi: 'विशाखा', en: 'Vishakha' },
+  { hi: 'अनुराधा', en: 'Anuradha' },
+  { hi: 'ज्येष्ठा', en: 'Jyeshtha' },
+  { hi: 'मूल', en: 'Mula' },
+  { hi: 'पूर्वाषाढ़ा', en: 'Purva Ashadha' },
+  { hi: 'उत्तराषाढ़ा', en: 'Uttara Ashadha' },
+  { hi: 'श्रवण', en: 'Shravana' },
+  { hi: 'धनिष्ठा', en: 'Dhanishtha' },
+  { hi: 'शतभिषा', en: 'Shatabhisha' },
+  { hi: 'पूर्वा भाद्रपद', en: 'Purva Bhadrapada' },
+  { hi: 'उत्तरा भाद्रपद', en: 'Uttara Bhadrapada' },
+  { hi: 'रेवती', en: 'Revati' },
+]
+
+// "कन्या / Virgo" — the side-by-side format used in results.
+function sideBySide(item) {
+  return item ? `${item.hi} / ${item.en}` : ''
+}
+export function rashiLabel(index) {
+  return sideBySide(RASHIS[index])
+}
+export function grahaLabel(key) {
+  const graha = GRAHAS.find((g) => g.key === key)
+  return graha ? sideBySide(graha) : key
+}
+export function nakshatraLabel(number) {
+  return sideBySide(NAKSHATRAS[number - 1])
+}
+
 let lang = 'hi' // Hindi is the default language
 
 export function getLang() {

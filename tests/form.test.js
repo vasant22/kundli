@@ -308,11 +308,11 @@ describe('Phase 5 — calculated chart in the summary', () => {
     })
 
     const values = ddTexts()
-    expect(values).toContain("राशि 6 · 7°02'") // lagna: Kanya/Virgo
+    expect(values).toContain("कन्या / Virgo · 7°02'") // lagna: Kanya/Virgo
     expect(values).toContain("23°43'") // Lahiri ayanamsa
 
     const mini = document.querySelector('.kundli-mini').textContent
-    expect(mini).toContain("Su · राशि 2 · 0°33' · भाव 9")
+    expect(mini).toContain("सूर्य / Sun · वृषभ / Taurus · 0°33' · भाव 9")
     expect(mini).toContain('वक्री') // Rahu/Ketu are retrograde
   })
 })
