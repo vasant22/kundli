@@ -434,3 +434,77 @@ export function months() {
 export function monthEn(number) {
   return STRINGS.en[`month.${number}`] ?? ''
 }
+
+// ---------------------------------------------------------------------------
+// Panchang support data — the Samvatsara list is needed by src/panchang.js
+// (Phase 3). The remaining Panchang lists (30 tithis, 27 yogas, 11 karanas,
+// vaars, lunar months, ritus, muhurat names, directions, UI strings) arrive
+// with Panchang Phase 6 per the project guide.
+// ---------------------------------------------------------------------------
+
+// 60 Samvatsara (Jovian cycle) names; index 0 = Prabhava (cf. Shaka +12 mod 60).
+// Hindi forms follow the traditional published list (transliterations where
+// usage varies); verified against the cycle position on the reference sites
+// (e.g. Shaka 1948 → Parabhava, #40).
+export const SAMVATSARA_NAMES = [
+  { hi: 'प्रभव', en: 'Prabhava' },
+  { hi: 'विभव', en: 'Vibhava' },
+  { hi: 'शुक्ल', en: 'Shukla' },
+  { hi: 'प्रमोद', en: 'Pramoda' },
+  { hi: 'प्रजापति', en: 'Prajapati' },
+  { hi: 'अंगिरस', en: 'Angirasa' },
+  { hi: 'श्रीमुख', en: 'Shrimukha' },
+  { hi: 'भव', en: 'Bhava' },
+  { hi: 'युवा', en: 'Yuva' },
+  { hi: 'धाता', en: 'Dhata' },
+  { hi: 'ईश्वर', en: 'Ishvara' },
+  { hi: 'बहुधान्य', en: 'Bahudhanya' },
+  { hi: 'प्रमाथी', en: 'Pramathi' },
+  { hi: 'विक्रम', en: 'Vikrama' },
+  { hi: 'वृष', en: 'Vrisha' },
+  { hi: 'चित्रभानु', en: 'Chitrabhanu' },
+  { hi: 'स्वभानु', en: 'Svabhanu' },
+  { hi: 'तारण', en: 'Tarana' },
+  { hi: 'पार्थिव', en: 'Parthiva' },
+  { hi: 'व्यय', en: 'Vyaya' },
+  { hi: 'सर्वजित', en: 'Sarvajit' },
+  { hi: 'सर्वधारी', en: 'Sarvadhari' },
+  { hi: 'विरोधी', en: 'Virodhi' },
+  { hi: 'विकृति', en: 'Vikriti' },
+  { hi: 'खर', en: 'Khara' },
+  { hi: 'नंदन', en: 'Nandana' },
+  { hi: 'विजय', en: 'Vijaya' },
+  { hi: 'जय', en: 'Jaya' },
+  { hi: 'मन्मथ', en: 'Manmatha' },
+  { hi: 'दुर्मुख', en: 'Durmukha' },
+  { hi: 'हेमलंब', en: 'Hemalamba' },
+  { hi: 'विलंबी', en: 'Vilambi' },
+  { hi: 'विकारी', en: 'Vikari' },
+  { hi: 'शार्वरी', en: 'Sharvari' },
+  { hi: 'प्लव', en: 'Plava' },
+  { hi: 'शुभकृत', en: 'Shubhakrit' },
+  { hi: 'शोभकृत', en: 'Shobhakrit' },
+  { hi: 'क्रोधी', en: 'Krodhi' },
+  { hi: 'विश्वावसु', en: 'Vishvavasu' },
+  { hi: 'पराभव', en: 'Parabhava' },
+  { hi: 'प्लवंग', en: 'Plavanga' },
+  { hi: 'कीलक', en: 'Kilaka' },
+  { hi: 'सौम्य', en: 'Saumya' },
+  { hi: 'साधारण', en: 'Sadharana' },
+  { hi: 'विरोधकृत', en: 'Virodhikrit' },
+  { hi: 'परिधावी', en: 'Paridhavi' },
+  { hi: 'प्रमादी', en: 'Pramadi' },
+  { hi: 'आनंद', en: 'Ananda' },
+  { hi: 'राक्षस', en: 'Rakshasa' },
+  { hi: 'अनल', en: 'Anala' },
+  { hi: 'पिंगल', en: 'Pingala' },
+  { hi: 'कलयुक्त', en: 'Kalayukta' },
+  { hi: 'सिद्धार्थी', en: 'Siddharthi' },
+  { hi: 'रौद्र', en: 'Raudra' },
+  { hi: 'दुर्मति', en: 'Durmati' },
+  { hi: 'दुंदुभि', en: 'Dundubhi' },
+  { hi: 'रुधिरोद्गारी', en: 'Rudhirodgari' },
+  { hi: 'रक्ताक्ष', en: 'Raktaksha' },
+  { hi: 'क्रोधन', en: 'Krodhana' },
+  { hi: 'अक्षय', en: 'Akshaya' },
+]

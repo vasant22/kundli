@@ -1,6 +1,6 @@
 # Kundli / जन्मपत्री App — Project Notes (handoff)
 
-Created: 2026-09-28. Status: **Main app COMPLETE; “Kundli Matching” (Ashtakoot Guna Milan) COMPLETE — Phases 1–8 done 2026-09-29, live at https://kundli.mybapuji.com/match/** (same repo; nav link added on the main page). **Third project “Panchang” (Phases 1–11) STARTED — Phase 1 (formula research) done 2026-09-29.** User-side remainders: 10-chart AstroSage validation (tests/VALIDATION.md) + matching hand-checks (tests/MATCH_VALIDATION.md), mybapuji.com link, device checks.
+Created: 2026-09-28. Status: **Main app COMPLETE; “Kundli Matching” (Ashtakoot Guna Milan) COMPLETE — Phases 1–8 done 2026-09-29, live at https://kundli.mybapuji.com/match/** (same repo; nav link added on the main page). **Third project “Panchang” — Phases 1–3 done 2026-09-29** (research + sunrise.js + panchang.js core; 195 tests passing). User-side remainders: 10-chart AstroSage validation (tests/VALIDATION.md) + matching hand-checks (tests/MATCH_VALIDATION.md), mybapuji.com link, device checks.
 First thing to do in a fresh chat: read this file + `docs/kundli-matching-guide.txt` (current task spec; `docs/kundli-guide.txt` = spec of the completed main app, reference only). Old HTTPS-cert notes below are resolved — no action needed.
 
 ## What to build
@@ -179,3 +179,26 @@ Hard requirements (summary):
 - New calib tools: `scripts/panchang-calib/{probe-moon,diff-sunrise,check-sunrise}.mjs`, `drik-rise-set.json`.
 - Next: **Phase 3** — `src/panchang.js` core (tithi/nakshatra/yoga/karana + end times via
   bisection, samvat years, amanta/purnimanta months incl. Adhika, ritu, moon sign, day duration).
+
+### 2026-09-29 — Panchang Phase 3 done: core calculation (`src/panchang.js`)
+- `src/panchang.js`: tithi/nakshatra/yoga/karana with exact end moments (bisection) + reference
+  display rules (max 2 entries per limb; extended-hours "27:20:03"; "upto Full Night" flag);
+  Vaar; Samvat trio + Samvatsara name; Pravishte; Amanta/Purnimanta (+Adhika, evaluated at
+  sunrise); Ritu; Moon sign; day duration.
+- **Two Phase-1 rules corrected in this phase** (re-verified vs AstroSage + Drik pins):
+  (1) **Vikram flips on the first sunrise after Phalguna Purnima** (purnimanta Chaitra day 1):
+  2024 Mar 26 / 2025 Mar 15 / 2026 Mar 4 / 2027 Mar 23 — a plain `Shaka+135` is wrong in early
+  March (offset is +136 between the Vikram flip and the Chaitra Pratipada flip).
+  (2) **Ritu uses the TROPICAL Sun** at sunrise, boundaries 330°+60k (12/12 boundary pairs of
+  2026 matched; Drik agrees on spot checks).
+- Shaka/Kali flip = first sunrise after the Chaitra new moon (2024 Apr 9 / 2025 Mar 30 / 2026
+  Mar 20 ✓; Kali = Shaka+3179). Adhika Jyeshtha 2026 (May 16–Jun 15) handled; month naming now
+  evaluated at SUNRISE (fixes the 15-Jun-2026 boundary).
+- Shared code: astro.js +`sunMoonLongitudes`, +`sunSayanaLongitude`; i18n.js +`SAMVATSARA_NAMES`
+  (60 names, hi+en — pulled ahead for Phase 3; other Panchang lists stay in Phase 6).
+- Tests: +71 (`tests/panchang.test.js`: 63 reference dates + focused flips/Night/adhika/
+  Pravishte-edges/polar) → **195 passing**. Documented skips: Pravishte AS divergences
+  (5 dates) + karana razor 2025-03-29.
+- Tools: `scripts/panchang-calib/check-panchang.mjs`; `astrosage.json` grew to 63 records.
+- Next: **Phase 4** — `src/muhurat.js` (8-part Rahu/Yamaganda/Gulika; 15-part Kulika/Kantaka/
+  Kalavela/Yamaghanta/Dushta/Abhijit — tables in docs/PANCHANG_FORMULAS.md §11).

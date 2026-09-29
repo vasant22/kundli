@@ -71,6 +71,31 @@ export function navamsaOf(longitude) {
   return { rashi, degInSign }
 }
 
+// Sun & Moon sidereal longitudes + speeds for an arbitrary Julian Day (UT).
+// Standalone helper for the Panchang module — keeps all Swiss Ephemeris calls
+// in one place (no duplication). Same flags as the birth-chart calculations:
+// Lahiri sidereal, speed included.
+export function sunMoonLongitudes(swe, jd) {
+  const flags = swe.SEFLG_SWIEPH | swe.SEFLG_SIDEREAL | swe.SEFLG_SPEED
+  const sun = swe.calc_ut(jd, swe.SE_SUN, flags)
+  const moon = swe.calc_ut(jd, swe.SE_MOON, flags)
+  const n = (x) => ((x % 360) + 360) % 360
+  return {
+    sunLon: n(sun[0]),
+    sunSpeed: sun[3],
+    moonLon: n(moon[0]),
+    moonSpeed: moon[3],
+  }
+}
+
+// Tropical (sayana) Sun longitude — the Panchang's Ritu (season) is reckoned
+// on the tropical sun by the reference sites (boundaries 330°/30°/90°/…°).
+// Verified empirically over 12 boundary dates in 2026 (see formulas doc §10).
+export function sunSayanaLongitude(swe, jd) {
+  const r = swe.calc_ut(jd, swe.SE_SUN, swe.SEFLG_SWIEPH)
+  return ((r[0] % 360) + 360) % 360
+}
+
 // Compute the full kundli data object.
 // birth: { utc: {year,month,day,hour,minute,second}, latitude, longitude,
 //          nodeType?: 'mean' | 'true' }

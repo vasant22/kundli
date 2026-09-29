@@ -39,6 +39,8 @@ the place's local timezone at the place's **sunrise** unless noted.
    next sunrise, it is expressed as `24+H:MM:SS` ("hours past midnight" convention; e.g.
    `27:20:03` = 03:20:03 the next calendar day). The reference site shows these for first AND
    second elements alike (e.g. Tithi "24:15:26" on Apr 14, 2026).
+   **Entry cap:** each limb shows at most **two** entries (verified: 2026-09-29 has three
+   karana ends before the next sunrise; only the first two are shown).
 3. One further reference quirk: Tithi can read "upto Full Night" (e.g. Mar 13, 2026) — [FLAG]
    rendering TBD in Phase 3 (element spans the whole night; display "Full Night" text).
 4. **Moon rise/set (Phase 2 findings):** the reference shows the FIRST moonrise and moonset
@@ -99,18 +101,17 @@ the place's local timezone at the place's **sunrise** unless noted.
   for ends between midnight and next sunrise (§0.2). Sun/moon rise/set are computed for the place
   (Phase 2).
 
-## 6. Samvat years — CONFIRMED with fixtures
+## 6. Samvat years — CONFIRMED with fixtures (Vikram rule corrected in Phase 3)
 
-Increment day for all three = **Chaitra Shukla Pratipada** as rendered by the reference
-(i.e. the new-year flip happens on the day of the Chaitra new moon per the display convention):
-- Verified: Mar 19, 2026 → Shaka 1947 / Vikram 2082 / Kali 5126; Mar 20, 2026 → **Shaka 1948 /
-  Vikram 2083 / Kali 5127**. (Chaitra Pratipada 2026: tithi began 06:55 Mar 19, ended 04:50
-  Mar 20 — the flip landed on **Mar 20**, i.e. the first sunrise-day after the conjunction.)
-  Implementation rule to reproduce this: flip = first date whose sunrise follows the moment of
-  the Chaitra new moon (Moon = Sun). **[FLAG]** exact edge convention for years where Pratipada
-  starts/ends near sunrise to be re-verified in Phase 3 with 2025/2027 fixtures.
-- Offsets (constant between flips): **Vikram = Shaka + 135**; **Kali = Shaka + 3179** (verified on
-  every calibration record, incl. Kali 5127 in Sep 2026 and Mar 2027 records).
+- **Shaka & Kali**: flip = **first sunrise after the Chaitra new moon** (the new moon with Sun
+  in Meena). Verified: 2024 → Apr 9, 2025 → Mar 30, 2026 → Mar 20. Offsets: **Kali = Shaka + 3179**.
+- **Vikram flips EARLIER than Shaka/Kali**: on the first day of the *Purnimanta* Chaitra = the
+  **first sunrise after the Phalguna full moon** (the last full moon before the Chaitra new
+  moon). Verified: 2024 Mar 26, 2025 Mar 15, 2026 Mar 4 (Purnima Mar 3), 2027 Mar 23. So for
+  ~2 weeks each spring the displayed offset is +136, then +135 after the Chaitra Pratipada flip
+  (a naive `Shaka + 135` is wrong in early March).
+- Fixtures: Mar 19, 2026 → 1947/2082/5126; Mar 20 → 1948/2083/5127; Mar 5, 2026 → Vikram 2083
+  with Shaka still 1947.
 
 ## 7. Samvatsara (60-year cycle) name — CONFIRMED
 
@@ -176,13 +177,15 @@ dates across 2026–2027; the stateful rule that reproduces **AstroSage** is:
   display `"<Month> (Adhik)"` (Amanta and Purnimanta both). Nija months follow.
   Fixture: **Adhika Jyeshtha = May 16 – Jun 15, 2026** (both sites).
 
-## 10. Ritu (season) — CONFIRMED
+## 10. Ritu (season) — CONFIRMED, computed on the TROPICAL (sayana) Sun
 
-Six ritus, each = 2 sidereal solar months; keyed on the Sun's current sidereal sign:
-- Meena/Mesha → **Vasanta**; Vrishabha/Mithuna → **Grishma**; Karka/Simha → **Varsha**;
-  Kanya/Tula → **Sharad**; Vrischika/Dhanu → **Hemanta**; Makara/Kumbha → **Shishira**.
-- Fixtures: Sep 29, 2026 (Sun in Kanya) → Sharad ✓; Mar–Apr 2026 (Meena/Mesha) → Vasanta ✓;
-  Jan 15, 2026 (Makara) → Shishir ✓.
+**Phase-3 correction:** the reference Ritu is NOT the sidereal sign calendar — it uses the
+**tropical Sun at sunrise** with boundaries at **330°, 30°, 90°, 150°, 210°, 270°** (60° steps
+starting at 330°). Implementation: `ritu = floor(((sayanaSun(sunrise) + 30) % 360) / 60)` →
+0=Vasanta, 1=Grishma, 2=Varsha, 3=Sharad, 4=Hemanta, 5=Shishir. Verified on all 12 boundary
+pairs of 2026 (e.g. Feb 18→19: 329.3°→330.4°; Apr 20→21: 29.9°→30.9°; Jun 21→22: 89.7°→90.6°;
+Dec 21→22: 269.1°→270.1°) and spot-checked for 2025. Drik's "Drik Ritu" agrees on checked dates
+(20-Sep-2026 Sharad, 25-Aug-2026 Sharad, 21-Apr-2026 Grishma).
 
 ## 11. Muhurat / Kaal windows — tables VERIFIED on all 7 weekdays (AstroSage + Drik)
 
@@ -300,16 +303,21 @@ normalized square, grid lines at 1/3 and ~2/3 in both axes, four corner cells sp
 
 ## 17. Flags / open items carried into later phases
 
-1. Pravishte edge cases & the two reference sites' divergence (see §8) — we follow AstroSage;
-   keep the fixture list + this note for the user.
-2. Samvat flip edge convention (Pratipada near sunrise) — verify 2025 & 2027 flips in Phase 3.
-3. "upto Full Night" tithi rendering — decide in Phase 3.
-4. Kulika/Kantaka/Kalavela/Yamaghanta classical attribution — cite vernacular Muhūrta source in
-   README; numbers verified empirically ×7 days ×2 sites; do not change without a source.
+1. Pravishte edge cases & the two reference sites' divergence (see §8) — we follow the smooth
+   day-count (Drik-verified); AstroSage diverges on 2026 Srabon ("2" repeat) and 16–17 Jul 2027
+   (glitch). Tests skip-list: `['18-07-2026','15-08-2026','16-08-2026','16-07-2027','17-07-2027']`.
+2. Karana razor-divergence: 2025-03-29 Chatushpada→Naga boundary within ~1 min of sunrise
+   (ours 65 s before, reference ~1 min after) — tests skip that date's karana list; every other
+   field of the date matches.
+3. "upto Full Night" implemented: first entry ending >5 s past the next sunrise → `fullNight`
+   flag (fixture 2026-03-13 ✓). Second+ entries ending past the next sunrise are omitted.
+4. Kulika/Kantaka/Kalavela/Yamaghanta classical attribution — cite a vernacular Muhūrta source
+   in the README; numbers verified empirically ×7 days ×2 sites; do not change without a source.
 5. East Indian chart cross-check vs a printed pañjikā (Phase 8).
-6. Modern planets (Uranus/Neptune/Pluto): the reference DOES plot them in its charts
-   (Asc Su Mo Ma Me Ju Ve Sa Ra Ke Ur Ne Pl) but the user's prompt says optional sub-section only.
-   Default: skip in the planetary table; note in Phase 8 decision.
-7. **Moon conventions:** selection + disc = AstroSage-style (see §0.4). Drik's moon values differ
-   by design; our fixtures mark them "documentation only". Keep the divergence note in the
-   README if users compare against Drik.
+6. Modern planets (Uranus/Neptune/Pluto): the reference DOES plot them in its charts but the
+   prompt says optional/labelled only — default skip; Phase 8 decision.
+7. **Moon conventions** (selection + disc = AstroSage-style, §0.4; Drik differs by design).
+8. Element end times vs AstroSage can reach ~±3 min on some dates (inter-site drift; ours sit
+   within ~1 min of Drik). Tests: element ends tolerance 180 s, sun times 60 s.
+9. Labels (Hindi/English names for tithis etc.) are wired via i18n in Phase 6; Panchang core
+   returns indices/keys by design.
