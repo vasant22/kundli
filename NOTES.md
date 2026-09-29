@@ -1,6 +1,6 @@
 # Kundli / जन्मपत्री App — Project Notes (handoff)
 
-Created: 2026-09-28. Status: **Main app COMPLETE; “Kundli Matching” (Ashtakoot Guna Milan) COMPLETE — Phases 1–8 done 2026-09-29, live at https://kundli.mybapuji.com/match/** (same repo; nav link added on the main page). User-side remainders: 10-chart AstroSage validation (tests/VALIDATION.md) + matching hand-checks (tests/MATCH_VALIDATION.md), mybapuji.com link, device checks.
+Created: 2026-09-28. Status: **Main app COMPLETE; “Kundli Matching” (Ashtakoot Guna Milan) COMPLETE — Phases 1–8 done 2026-09-29, live at https://kundli.mybapuji.com/match/** (same repo; nav link added on the main page). **Third project “Panchang” (Phases 1–11) STARTED — Phase 1 (formula research) done 2026-09-29.** User-side remainders: 10-chart AstroSage validation (tests/VALIDATION.md) + matching hand-checks (tests/MATCH_VALIDATION.md), mybapuji.com link, device checks.
 First thing to do in a fresh chat: read this file + `docs/kundli-matching-guide.txt` (current task spec; `docs/kundli-guide.txt` = spec of the completed main app, reference only). Old HTTPS-cert notes below are resolved — no action needed.
 
 ## What to build

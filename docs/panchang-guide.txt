@@ -1,0 +1,120 @@
+You are continuing work on an existing project: a Vedic Kundli calculator and Kundli Matching tool (Swiss Ephemeris WASM, sidereal Lahiri, Hindi/English bilingual, hosted on GitHub Pages at kundli.mybapuji.com). REUSE the existing calculation module (astro.js, geocode.js, timeutil.js, i18n.js, charts.js) wherever possible — do NOT rewrite Sun/Moon longitude calculation or chart-drawing from scratch if a usable function already exists; extract a shared helper if needed instead of duplicating. This new feature is a "Panchang" (daily Hindu almanac) system: a small homepage widget (similar to astrosage.com's homepage Panchang box) AND a full standalone Panchang page matching the detail level of https://panchang.astrosage.com/panchang/aajkapanchang (the "Today Panchang" page). The homepage widget is to be embedded on mybapuji.com (a separate WordPress site, NOT the GitHub Pages kundli site); the full page is hosted on the existing GitHub Pages site.
+ 
+Work in the phases below, IN ORDER. After each phase, run/test it, tell me what you did, then move to the next phase. Do not skip any phase. Panchang and Muhurat calculations have real classical subtlety (sunrise-based day boundary, elements spanning midnight, day/night division into unequal-by-season parts for Kaal calculations, two Samvat systems, two month-naming systems, a 60-year Samvatsara name cycle) — verify every rule against a published classical source before coding it in; do not guess formulas.
+ 
+## PROJECT GOAL
+Two deliverables from one shared calculation core:
+1. A small "Panchang" card on the mybapuji.com homepage (fields: location+date, Tithi, Month Amanta, Month Purnimanta, Day+Samvat, Nakshatra, Yoga, Karan, and a "Today Panchang" button), auto-updating daily.
+2. A full standalone Panchang page (e.g. kundli.mybapuji.com/panchang/) that reproduces ALL the sections listed below, matching https://panchang.astrosage.com/panchang/aajkapanchang in content and level of detail (styling should match the existing site's own theme, not copy AstroSage's design/branding/ads).
+ 
+Full page sections required (from the reference page):
+- Header: place name + full date, with a date-change control and a place-search box (reuse existing geocode.js).
+- Panchang For Today: Tithi (name + "upto HH:MM:SS", with paksha shown separately), Nakshatra (name + end time), Karana (one or two, each name + end time), Yoga (one or two, each name + end time, with the "hours past midnight" convention for a second element ending after the next midnight, e.g. "27:20:03"), Day (Vaar name).
+- Sun And Moon Calculations: Sun Rise, Sun Set, Moon Sign (Moon's current rashi), Moon Rise, Moon Set, Ritu (the current classical season).
+- Hindu Month And Year: Shaka Samvat (numeric year + its Samvatsara name from the 60-year Jovian/Brihaspati cycle), Vikram Samvat, Kali Samvat, Pravishte / Gate (the elapsed solar month count used in Bengali/Odia calendars), Month Purnimanta, Month Amanta, Day Duration (sunrise-to-sunset duration).
+- Inauspicious Timings (Ashubha Muhurat): Dushta Muhurtas, Kulika, Kantaka/Mrityu, Rahu Kaal, Kalavela/Ardhayaam, Yamaghanta, Yamaganda, Gulika Kaal — each as a "From HH:MM:SS To HH:MM:SS" range.
+- Auspicious Timings (Shubha Muhurat): Abhijit Muhurat, as a "From ... To ..." range.
+- Disha Shoola: the inauspicious travel direction for the day.
+- Chandrabalam And Tarabalam: Tara Bala (list of favorable nakshatras relative to the Moon's current nakshatra) and Chandra Bala (list of favorable rashis relative to the Moon's current rashi).
+- Lagna Chart at Sunrise: the chart cast for the moment of sunrise (not the visitor's own birth chart), viewable in North Indian, South Indian, AND East Indian (Bengali/Odia style) layouts via tabs.
+- Planetary Position at Sunrise: a table with Rashi, Longitude (degrees-minutes-seconds within sign), Nakshatra, and Pada for the 9 classical grahas (Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn, Rahu, Ketu) at the moment of sunrise. Do NOT include Uranus/Neptune/Pluto by default, since they have no role in classical Vedic astrology (astrosage.com shows them for informational purposes only) — implement them ONLY as an optional, clearly-labelled "modern planets (not used in traditional Vedic astrology)" sub-section if easy to add from Swiss Ephemeris, otherwise skip them and note this decision to me.
+ 
+Skip anything from the reference page that is clearly third-party monetization (astrologer consultations, gemstone/yantra/rudraksh shopping, app-install banners, ads, newsletter popups) — none of that is in scope.
+ 
+## PHASE 1: Research and confirm formulas before coding
+Before writing any calculation code, produce a short internal reference document (docs/PANCHANG_FORMULAS.md) listing, with sources, the exact classical formulas for:
+1. Tithi (angle = Moon longitude - Sun longitude, mod 360; each tithi = 12 degrees; 30 tithis; paksha = Shukla for tithi 1-15, Krishna for 16-30).
+2. Nakshatra (Moon longitude only; 27 nakshatras of 13d20m each) — already implemented in the existing project's astro.js; confirm it can be reused with END-TIME calculation added (not just the nakshatra active at a fixed moment).
+3. Yoga (angle = Sun longitude + Moon longitude, mod 360; 27 yogas of 13d20m each).
+4. Karana (half of a tithi, 6 degrees each; 11 named karanas: 4 fixed - Shakuni, Chatushpada, Naga, Kimstughna - and 7 repeating - Bava, Balava, Kaulava, Taitila, Gara, Vanija, Vishti - confirm the fixed placement of the 4 fixed karanas in the lunar month and the cycle order of the 7 repeating ones).
+5. Sunrise-based day boundary: a Panchang's "day" runs sunrise-to-sunrise. Confirm how this affects which Tithi/Nakshatra/Yoga/Karana/Muhurat set is reported as "today's".
+6. Vikram Samvat, Shaka Samvat, and Kali Samvat year calculations (each has a different epoch and a different point in the year where it increments — confirm each precisely, do not assume a fixed Gregorian-year offset applies year-round).
+7. The 60-year Samvatsara name cycle (used to give Shaka Samvat a name like "Parabhava") — confirm the full list of 60 names and how the current one is selected from the Shaka Samvat year.
+8. Pravishte / Gate (elapsed solar month reckoning used in Bengali/Odia calendars) — confirm the formula.
+9. Amanta vs Purnimanta lunar month naming.
+10. Ritu (season) — confirm the mapping from solar month/Sun's sidereal position to the 6 classical Ritus.
+11. Muhurat formulas: how Rahu Kaal, Gulika Kaal, Yamaganda are computed by dividing the sunrise-to-sunset daytime into 8 equal parts, with the specific part-number assigned to each varying by weekday (confirm the exact weekday-to-part-number table); how Yamaghanta, Kantaka/Mrityu, Kalavela/Ardhayaam, Dushta Muhurtas, and Kulika are computed (some use daytime 8ths at different offsets, some use different divisions — confirm each individually, do not assume they all use the same rule as Rahu Kaal); how Abhijit Muhurat is computed (the 8th of 15 equal parts of the day, centered on local apparent midday).
+12. Disha Shoola — confirm the fixed weekday-to-direction lookup table.
+13. Tara Bala — confirm the 9-nakshatra-group method (same Tara-group logic as the Ashtakoot Tara koota built in the Kundli Matching project; reuse that lookup table rather than re-deriving it) and how it is used to list ALL favorable nakshatras relative to the Moon's current nakshatra (not just a compatibility score).
+14. Chandra Bala — confirm the fixed set of rashi-distances from the Moon's current rashi that are considered favorable, and list them.
+15. East Indian (Bengali/Odia) chart style layout — confirm its fixed house arrangement (distinct from both North and South Indian styles).
+Cite the specific classical/published source used for each formula. Flag anything you are not fully certain of.
+ 
+## PHASE 2: Sunrise, sunset, moonrise, moonset (src/sunrise.js)
+- Using Swiss Ephemeris (already integrated in the project), implement sunrise, sunset, moonrise, and moonset calculation for a given date, latitude, longitude, and timezone (use the rise/transit function if the existing Swiss Ephemeris WASM build exposes it; otherwise implement the standard astronomical algorithm using the already-available Sun/Moon position functions).
+- Handle the case where moonrise or moonset does not occur within the civil day (it can be absent or occur twice near certain lunar phases) — show a sensible bilingual fallback ("N/A" equivalent) rather than crashing.
+- This must be accurate to within about a minute, since Tithi/Nakshatra/Yoga/Karana end-times AND all Muhurat windows are anchored to sunrise/sunset.
+- Add unit tests comparing computed sunrise/sunset against published values for at least 3 different Indian cities and 3 different dates across the year (including near solstices).
+ 
+## PHASE 3: Panchang core calculation (src/panchang.js)
+Reusing astro.js's Sun/Moon longitude function (refactor astro.js to expose a standalone "get sidereal Sun and Moon longitude for a given Julian Day" helper if it does not already exist, rather than duplicating the Swiss Ephemeris calls):
+1. For the given date and place, determine the sunrise-to-sunrise window (Phase 2).
+2. Tithi: compute the angle at sunrise, determine the current tithi and paksha, then find the exact moment (iteratively, e.g. binary search on Sun/Moon angle vs time) when it crosses into the next tithi. If a second tithi also ends before the following sunrise, include it too.
+3. Nakshatra: same method using Moon longitude only.
+4. Yoga: same method using Sun+Moon longitude sum. If a second yoga's end time falls after the next civil midnight but before/around the next sunrise, express that end time in the "hours past midnight" convention (e.g. "27:20:03") matching the reference site, and explain this in a code comment.
+5. Karana: same method, half-tithi granularity; show one or two as applicable.
+6. Weekday (Vaar): from the civil weekday of the sunrise date, mapped to the Sanskrit/Hindi vaar name.
+7. Vikram Samvat, Shaka Samvat (+ its Samvatsara name), and Kali Samvat: compute per the rules confirmed in Phase 1.
+8. Pravishte / Gate: compute per the rule confirmed in Phase 1.
+9. Amanta and Purnimanta month names: compute per the rule confirmed in Phase 1.
+10. Ritu (season): compute per the rule confirmed in Phase 1.
+11. Moon Sign: the Moon's current rashi (already derivable from the Moon longitude).
+12. Day Duration: sunset minus sunrise, formatted as HH:MM:SS.
+13. Return one structured bilingual object with every field above.
+ 
+## PHASE 4: Muhurat calculations (src/muhurat.js)
+Using the sunrise/sunset times from Phase 2 and the weekday from Phase 3, per the formulas confirmed in Phase 1:
+1. Divide the sunrise-to-sunset daytime into 8 equal parts. Compute Rahu Kaal, Gulika Kaal, and Yamaganda as the specific part (by weekday) confirmed in Phase 1, each returned as a "from HH:MM:SS to HH:MM:SS" window.
+2. Compute Yamaghanta, Kantaka/Mrityu, Kalavela/Ardhayaam, Dushta Muhurtas, and Kulika using their own confirmed formulas (do not assume they reuse the same 8-part daytime division unless Phase 1 confirms that).
+3. Compute Abhijit Muhurat as the confirmed part of the day centered on local apparent midday.
+4. Return a structured bilingual object with each muhurat's name and its from/to window.
+5. Add unit tests checking at least 3 of these windows against published values for known dates/places (tolerance: a few minutes).
+ 
+## PHASE 5: Disha Shoola, Tara Bala, Chandra Bala (src/panchang-extras.js)
+1. Disha Shoola: a fixed weekday-to-direction lookup (confirmed in Phase 1) returning the direction name bilingually.
+2. Tara Bala: using the same 9-group Tara lookup table already built for the Kundli Matching project's Ashtakoot Tara koota (reuse, do not re-derive), return the full list of nakshatra names that fall in a favorable Tara group relative to the Moon's current nakshatra.
+3. Chandra Bala: using the confirmed favorable rashi-distances from Phase 1, return the full list of rashi names that are favorable relative to the Moon's current rashi.
+ 
+## PHASE 6: Hindi/English data additions (extend i18n.js)
+Add to the existing i18n.js (do not create a separate file):
+- 30 Tithi names, 27 Yoga names, 11 Karana names, 7 Vaar names (Hindi + English).
+- 12 Amanta month names and 12 Purnimanta month names (Hindi + English).
+- 6 Ritu names (Hindi + English).
+- 60 Samvatsara cycle names (Hindi + English, or transliteration if no standard Hindi form is published — note this in comments).
+- Names for each Muhurat (Dushta Muhurtas, Kulika, Kantaka/Mrityu, Rahu Kaal, Kalavela/Ardhayaam, Yamaghanta, Yamaganda, Gulika Kaal, Abhijit) in Hindi + English.
+- 8 direction names for Disha Shoola (Hindi + English).
+- UI strings needed for every new section, in Hindi and English.
+ 
+## PHASE 7: Homepage widget (embeddable on WordPress)
+- Build a small, self-contained, dependency-light HTML/JS bundle (reusing the existing Swiss Ephemeris WASM setup) embeddable on the WordPress homepage — implement via an iframe pointing to a small page hosted on the existing GitHub Pages site (e.g. kundli.mybapuji.com/panchang-widget/), sized to fit the card layout, with a background that blends into the WordPress theme. Only consider a direct JS-snippet-on-WordPress approach if the iframe has a real drawback, and explain the tradeoff.
+- Default location: a fixed location for the ashram (I will provide exact latitude/longitude/timezone, or a place name to geocode once at build time — do NOT call the geocoding API on every homepage visitor).
+- Default date: the visitor's current date in the fixed location's timezone, refreshing automatically without requiring a click.
+- Fields and order: Location+date header, Tithi, Month Amanta, Month Purnimanta, Day + Samvat, Nakshatra, Yoga, Karan, and a "Today Panchang / aaj ka panchang" button linking to the full page.
+- Keep the widget visually consistent with the existing site's orange/saffron theme and fonts.
+ 
+## PHASE 8: Standalone full Panchang page
+- A full page (e.g. kundli.mybapuji.com/panchang/) reusing geocode.js for place-search, with a date picker (default: today) and a "Get Panchang" button.
+- Render EVERY section listed in "PROJECT GOAL" above: Panchang For Today, Sun And Moon Calculations, Hindu Month And Year, Inauspicious Timings, Auspicious Timings, Disha Shoola, Chandrabalam And Tarabalam, Lagna Chart at Sunrise (with North/South/East tabs — reuse the existing charts.js North/South drawing code and add a new East Indian layout function), and Planetary Position at Sunrise (table of the 9 classical grahas; modern planets only as an optional labelled sub-section per the Phase 1/PROJECT GOAL decision).
+- Style it consistently with the existing site's theme — do not copy AstroSage's visual design, ads, or branding.
+- Add a "Panchang for a date range" (e.g. next 7 days in a table) ONLY if it does not complicate Phase 7's widget reuse; otherwise note it as a future feature.
+ 
+## PHASE 9: Testing and validation
+- Automated tests asserting Tithi, Nakshatra, Yoga, Karana, Vaar, all three Samvat years (+ Samvatsara name), Ritu, and Moon Sign for at least 5 known dates/places, checking element AND end time to within a small tolerance (2 minutes).
+- Automated tests for at least 3 Muhurat windows (e.g. Rahu Kaal, Abhijit, Gulika Kaal) against published values for known dates/places.
+- Automated tests for Disha Shoola (weekday lookup), and for at least 2 example dates checking the Tara Bala and Chandra Bala favorable-lists against a published reference.
+- Write tests/PANCHANG_VALIDATION.md: a manual checklist of 10 dates (spread across the year, including one date with two tithis/yogas/karanas in a day, one date near a Samvat year change, and one date to spot-check the Lagna Chart at Sunrise and Planetary Position table) with columns "Reference site result", "Our result", "Match?" for me to verify by hand against a trusted Panchang reference (e.g. Drik Panchang or a similar established source).
+- Document in the README any formula or edge case you were not fully certain of, so I can verify it against my own knowledge.
+ 
+## PHASE 10: Deploy
+- Deploy the widget page and full Panchang page through the existing GitHub Actions/GitHub Pages pipeline — no new hosting needed for those.
+- Give me exact, step-by-step instructions for embedding the iframe on the mybapuji.com WordPress homepage: which WordPress block/widget to use, the exact HTML to paste, and how to size it responsively.
+- Confirm the widget refreshes correctly across a real midnight in the ashram's timezone.
+ 
+## PHASE 11: Final report
+Give me: what was built, exact local commands to test, list of new/changed files, the exact embed code and instructions for the WordPress homepage, which classical formulas or edge cases you were unsure about (especially Muhurat divisions, the 60-year Samvatsara names, and the East Indian chart layout), and optional future additions (multi-day Panchang calendar view, festival/vrat highlighting, Choghadiya).
+ 
+## GENERAL RULES
+- Panchang and Muhurat calculations have real classical subtlety — do not guess or oversimplify without flagging it to me clearly.
+- Ask me a question ONLY if truly blocked on a rule you cannot verify from a credible source; otherwise implement the most widely-published version and clearly comment where you made a judgement call.
+- Keep code commented and simple.
+- Never skip verification: run tests and show results before moving to the next phase.
