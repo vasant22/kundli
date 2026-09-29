@@ -423,3 +423,11 @@ Hard requirements (summary):
   underline + गहरा रंग)। Print में निजता-लाइन `#8f8f8f` (PDF पढ़ने लायक); credit line print
   में छिपी रहती है (पहले जैसा)। 393 tests ✓; style.css बदला — तीनों pages (main/match/
   panchang) पर असर।
+
+### 2026-09-29 — Favicon: mybapuji का 🌿 icon कुंडली साइट पर (`6c8bf85`)
+- User request: mybapuji.com वाला छोटा tab-icon (favicon) kundli.mybapuji.com पर भी।
+- `public/favicon-32.png` + `public/favicon.png` (mybapuji के site-icon से, 32+192px); सभी
+  6 pages के `<head>` में `<link rel="icon">` (relative paths — custom domain + किसी भी
+  sub-path दोनों पर सही)। Built output में verify: files 200 + links हर page पर। 393 tests ✓।
+- ⚠️ पुराने browsers tab-icon ज़िद्दी cache करते हैं — user को hard refresh / नया tab चाहिए
+  हो सकता है; नए visitors को तुरंत दिखेगा।
