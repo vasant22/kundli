@@ -14,8 +14,11 @@ All calculations run in the visitor's browser — **no backend, no database, no 
 
 ## Status
 
-**Project complete (Phases 1–13)** — a full browser-only Vedic Kundli app, live at **kundli.mybapuji.com** (custom domain; HTTPS auto-provisions). Source: <https://github.com/vasant22/kundli>. Final report: [`docs/final-report.html`](./docs/final-report.html).
-User-side remainders: the 10-chart reference validation ([`tests/VALIDATION.md`](./tests/VALIDATION.md)), linking the app from mybapuji.com, and cross-device checks.
+**Main app complete (Phases 1–13)** — a full browser-only Vedic Kundli app, live at **kundli.mybapuji.com** (custom domain; HTTPS auto-provisions). Source: <https://github.com/vasant22/kundli>. Final report: [`docs/final-report.html`](./docs/final-report.html).
+
+**Kundli Matching (`/match/`) complete** — two-step form, Ashtakoot Guna Milan (36 points), Mangal Dosha, bilingual report with PNG/PDF export. Calibrated 100% against the reference calculators over 269 pairs; manual checklist: [`tests/MATCH_VALIDATION.md`](./tests/MATCH_VALIDATION.md).
+
+User-side remainders: the 10-chart reference validation ([`tests/VALIDATION.md`](./tests/VALIDATION.md)), the matching checklist ([`tests/MATCH_VALIDATION.md`](./tests/MATCH_VALIDATION.md)), linking the app from mybapuji.com, and cross-device checks.
 
 ## Development
 
@@ -63,6 +66,44 @@ npm test       # test suite
   - **Rahu**: this app uses the **Mean node** by default (a True Node option exists); sites that default to True can differ by up to ~1°.
   - **Lahiri variants**: implementations differ by arcseconds–arcminutes; we follow Swiss Ephemeris' Lahiri.
   - **House display**: we show whole-sign houses; some sites use Placidus/KP cusps for a planet's “house” column. Planet rashis are unaffected.
+
+## Kundli Matching — rules, calibration & known variations
+
+The `/match/` page adds **Ashtakoot Guna Milan (36 points)** plus **Mangal Dosha** checks for two
+people. Code: `src/match.js` (page), `src/ashtakoot.js` (all 8 kootas), `src/mangaldosha.js`,
+`src/matchcard.js` (PNG scorecard).
+
+Every lookup table was verified before coding and then **calibrated cell-by-cell against the
+industry-standard reference calculators** (the AstroSage matchmaking tool as primary reference,
+cross-checked against Saravali.de's classical "Maitreya" documentation and the open-source
+PyJHora library). Result: **2152/2152 koota values and 269/269 totals match the reference across
+269 test pairs** — see `tests/fixtures/ashtakoot-calibration.json`; the one-time verification
+scripts are in `scripts/calib/` (see its README).
+
+Known variations where published sources differ (we follow the reference implementation used for
+calibration — adjust the noted spots if your tradition differs; each is commented in the code):
+
+- **Varna** — Kshatriya→Vaishya→Shudra→Brahmin cycles through the signs (some books map by
+  element only, swapping Air/Earth = Vaishya/Shudra).
+- **Vashya** — 5×5 score table with half-sign splits for Dhanu/Makar; some published tables differ
+  in a few cells (e.g. Chatushpada–Vanachara = 0, Manava–Jalachara = 0.5 here).
+- **Tara** — each direction gives 1.5 unless its count ≡ 3/5/7 (mod 9); display names follow the
+  same convention as the reference.
+- **Gana** — asymmetric table (rows = groom, columns = bride); Saravali.de's published table reads
+  transposed relative to the reference — we keep the reference orientation (verified 9/9 cells).
+- **Graha Maitri** — the scale includes 0.5/1/3/4/5 values for enemy combinations (some sources
+  use 0/1/2/3/4/5).
+- **Bhakoot** — flat rule: 2/12, 5/9, 6/8 → 0, else 7. Classical "nivaran" cases (same lord or
+  mutual-friend lords) are shown as an informational **note only** — the reference doesn't cancel
+  the dosha either; flip this if your tradition cancels.
+- **Nadi** — strict same-Nadi = 0; classical exceptions (e.g. same nakshatra, different pada) are
+  **not** applied — flagged in code comments for review.
+- **Mangal Dosha** — houses {1, 4, 7, 8, 12} counted from **both Lagna and Moon** (the reference
+  does not count the 2nd house — verified with dedicated probe charts). Own-sign/exaltation and
+  "both manglik" cancellations are surfaced as notes only.
+- **Score bands** — below 18 not recommended · 18–24 average · 24–32 good · 32–36 excellent.
+
+Manual hand-verification checklist for the user: [`tests/MATCH_VALIDATION.md`](./tests/MATCH_VALIDATION.md).
 
 ## License
 
