@@ -438,3 +438,13 @@ Hard requirements (summary):
   navigate करता (कटा/अधूरा दिखता)। फ़िक्स: `target="_blank" rel="noopener"` (कुंडली/मिलान
   कार्ड जैसा)। + test assertions। Browser: click पर card अपनी जगह रहता है, नई tab खुलती है।
 - 393 tests ✓ (commit `2d0964c`)।
+
+### 2026-09-29 — Widget कार्ड: बराबर ऊँचाई + बड़ी सुंदर headings (`8388b06`)
+- User feedback: (1) तीनों कार्ड के निचले किनारे ऊपर-नीचे थे → अब सब `min-height:570px`
+  (flex से भरकर, button नीचे pin) — निचले किनारे एक लाइन में; flex से margins collapse
+  नहीं हो रहे थे (spacing बढ़ गया था) → `.kw-field` वग़ैरह सिर्फ़ bottom-margin पर — तीनों
+  कार्ड exact 570px, buttons भी एक लाइन पर।
+- (2) Card headings छोटी थीं → अब **Rozha One** (सेल्फ़-होस्टेड display font, +47KB;
+  `scripts/fetch-fonts.mjs` में जोड़ा; `fonts.css` regenerate) 1.3em में — बड़ी + बोल्ड-दिखने
+  वाली। Browser-verified: तीनों iframes 582px (बराबर), titles एक ही line में। 393 tests ✓।
+- dist अब 3.03 MiB (Rozha के +47KB से)।
