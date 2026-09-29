@@ -510,8 +510,7 @@ export const SAMVATSARA_NAMES = [
 ]
 
 // Muhurat window names (used by src/muhurat.js; UI strings follow in Phase 6).
-export const MUHURAT_NAMES = {
-  rahu: { hi: 'राहु काल', en: 'Rahu Kaal' },
+export const MUHURAT_NAMES = {  rahu: { hi: 'राहु काल', en: 'Rahu Kaal' },
   yamaganda: { hi: 'यमगंड', en: 'Yamaganda' },
   gulika: { hi: 'गुलिक काल', en: 'Gulika Kaal' },
   kulika: { hi: 'कुलिक', en: 'Kulika' },
@@ -521,3 +520,16 @@ export const MUHURAT_NAMES = {
   dushta: { hi: 'दुष्ट मुहूर्त', en: 'Dushta Muhurtas' },
   abhijit: { hi: 'अभिजीत', en: 'Abhijit' },
 }
+
+// 8 compass directions (Disha Shoola uses the 4 cardinals; corners included for
+// completeness / future use).
+export const DIRECTIONS = [
+  { key: 'east', hi: 'पूर्व', en: 'East' },
+  { key: 'west', hi: 'पश्चिम', en: 'West' },
+  { key: 'north', hi: 'उत्तर', en: 'North' },
+  { key: 'south', hi: 'दक्षिण', en: 'South' },
+  { key: 'ne', hi: 'ईशान', en: 'North-East' },
+  { key: 'se', hi: 'आग्नेय', en: 'South-East' },
+  { key: 'sw', hi: 'नैऋत्य', en: 'South-West' },
+  { key: 'nw', hi: 'वायव्य', en: 'North-West' },
+]

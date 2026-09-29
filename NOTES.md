@@ -214,3 +214,15 @@ Hard requirements (summary):
   incl. Monday's two Dushta windows & Abhijit centered on midday) → **260 passing**.
 - Next: **Phase 5** — `src/panchang-extras.js`: Disha Shoola, Tara Bala (reuse ashtakoot.js
   tables), Chandra Bala.
+
+### 2026-09-29 — Panchang Phase 5 done: Disha Shoola / Tara Bala / Chandra Bala (`src/panchang-extras.js`)
+- `src/panchang-extras.js`: fixed weekday→direction table; **Tara Bala** (9-group counting from
+  the janma star; excludes Vipat/Pratyari/Vadha; Janma kept) and **Chandra Bala** ({1,3,6,7,10,11}
+  distances) — full bilingual lists in zodiacal order; integrated into `computePanchang()` as
+  `.extras`. NOTE: Ashtakoot's tara display table uses its own index base (separately
+  calibrated) — commented in both modules.
+- i18n.js: +`DIRECTIONS` (8 compass names, hi+en).
+- Tests: +65 — Tara/Chandra lists asserted for **every** fixture date (~40 dates × both lists +
+  disha × all) → **325 passing**.
+- Next: **Phase 6** — i18n additions (30 tithi, 27 yoga, 11 karana, 7 vaar, amanta/purnimanta
+  months, ritus, muhurat & direction names done, UI strings for all sections).

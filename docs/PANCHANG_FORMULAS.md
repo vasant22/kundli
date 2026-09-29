@@ -250,6 +250,8 @@ Source: standard Muhūrta table, matches both reference sites.
   Sep 24 / Sep 27 / Sep 29, 2026 fixtures (100% list match; the site's transliterations like
   "Satabisha"/"Kritika" are cosmetic).
 - Output: full list of nakshatra names (bilingual), not a score.
+**Implemented (Phase 5):** `src/panchang-extras.js` `taraBala()` — verified against the reference
+list for every fixture date (~40 days).
 
 ## 14. Chandra Bala — CONFIRMED (3 days matched)
 
@@ -258,6 +260,7 @@ Source: standard Muhūrta table, matches both reference sites.
   → 6 signs per day. Fixtures: Sep 29 (Moon Mesha) → Mesha, Mithuna, Karka, Tula, Vrischika, Kumbha ✓;
   Sep 24 → Mesha, Vrishabha, Simha, Kanya, Dhanu, Kumbha ✓; Sep 27 → Vrishabha, Mithuna, Kanya, Tula,
   Makara, Meena ✓.
+**Implemented (Phase 5):** `src/panchang-extras.js` `chandraBala()` — verified on every fixture date.
 
 ## 15. East Indian (Bengali/Odia) chart layout — DECODED from the reference's own code
 

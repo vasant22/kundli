@@ -20,6 +20,7 @@ import { computeDayTimes, formatLocalTime, formatLocalTimeSlipped, nextRiseSet, 
 import { sunMoonLongitudes, sunSayanaLongitude } from './astro.js'
 import { SAMVATSARA_NAMES } from './i18n.js'
 import { computeMuhurats } from './muhurat.js'
+import { dishaShoola, taraBala, chandraBala } from './panchang-extras.js'
 
 const norm360 = (x) => ((x % 360) + 360) % 360
 function signedDeg(x) {
@@ -330,6 +331,12 @@ export function computePanchang(swe, opts) {
     date: dateParts,
   })
 
+  const extras = {
+    dishaShoola: dishaShoola(vaar),
+    taraBala: taraBala(nakList[0].index),
+    chandraBala: chandraBala(moonSign),
+  }
+
   return {
     date: { year, month, day },
     offsetMinutes,
@@ -360,6 +367,7 @@ export function computePanchang(swe, opts) {
     ritu, // 0=Vasanta, 1=Grishma, 2=Varsha, 3=Sharad, 4=Hemanta, 5=Shishira
     moonSign, // 0=Mesha … 11=Meena
     muhurats, // Phase 4: rahu/yamaganda/gulika/kulika/kantaka/kalavela/yamaghanta/dushta[]/abhijit
+    extras, // Phase 5: dishaShoola, taraBala[], chandraBala[]
     notes,
   }
 }
