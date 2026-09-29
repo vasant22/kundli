@@ -101,6 +101,8 @@ describe('the Kundli mini-widget card', () => {
     ])
     expect(root.querySelector('#kw-submit').textContent).toBe('कुंडली बनाएँ')
     expect(root.querySelectorAll('input[name="kw-gender"]').length).toBe(3)
+    // the Open-Meteo attribution stays as a tiny footnote at the card bottom
+    expect(root.querySelector('.kw-credit').textContent).toContain('Open-Meteo.com')
   })
 
   it('English render switches title, sub-heading and button', () => {
@@ -161,6 +163,7 @@ describe('the Kundli mini-widget card', () => {
     })
     expect(mock.mock.calls[0][0]).toContain('name=Varanasi')
     root.querySelector('#kw-results .kw-result').click()
+    expect(root.querySelector('#kw-results').hidden).toBe(true) // suggestions hide once picked
     expect(root.querySelector('#kw-place-confirm').hidden).toBe(false)
     expect(root.querySelector('#kw-place-confirm').textContent).toContain('Varanasi, Uttar Pradesh, India')
 

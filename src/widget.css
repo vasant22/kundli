@@ -16,6 +16,10 @@
 
 * { box-sizing: border-box; }
 
+/* The pages toggle `hidden` on elements with flex/grid display (e.g. the search
+   suggestions list) — keep that working even where a display rule would win. */
+[hidden] { display: none !important; }
+
 html, body { margin: 0; padding: 0; }
 
 body {
@@ -229,7 +233,7 @@ body.pw-transparent { background: transparent; }
 .kw-ok { color: #1e7e34; font-size: 0.85em; margin: 6px 0 0; }
 .kw-err { color: #c62828; font-size: 0.85em; margin: 4px 0 0; }
 .kw-err:empty { display: none; }
-.kw-credit { color: var(--pw-muted); font-size: 0.78em; margin: 6px 0 0; }
+.kw-credit { color: #ad9f91; font-size: 0.72em; margin: 8px 0 0; text-align: center; }
 .kw-credit a { color: inherit; }
 .kw-field.has-error .kw-input { border-color: #c62828; }
 
@@ -269,4 +273,3 @@ body.pw-transparent { background: transparent; }
 .mw-back:hover { text-decoration: underline; }
 
 .mw-next-note { text-align: center; margin-top: 8px; }
-.mw-credit { text-align: center; }

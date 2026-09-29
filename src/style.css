@@ -573,8 +573,15 @@ details.manual[open] summary {
   margin-bottom: 0.5rem;
 }
 
+/* Geocoding credit — a very light footnote (Open-Meteo asks for attribution
+   of the free search service; keep it visible but unobtrusive). */
+.note.credit {
+  font-size: 0.72rem;
+  color: #ad9f91;
+}
+
 .credit a {
-  color: var(--muted);
+  color: #ad9f91;
 }
 
 /* ---------- time conversion (Phase 4) ---------- */

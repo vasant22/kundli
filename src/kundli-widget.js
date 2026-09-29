@@ -158,11 +158,11 @@ export function renderKundliWidget(root, lang = 'hi') {
           <div id="kw-results" class="kw-results" hidden></div>
           <p class="kw-ok" id="kw-place-confirm" hidden></p>
           <p class="kw-err" id="kw-err-place" aria-live="polite"></p>
-          <p class="kw-credit">Geocoding by <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo.com</a></p>
         </div>
 
         <button class="pw-btn kw-submit" type="submit" id="kw-submit">${t('btn.get')}</button>
         <p class="kw-ok" id="kw-open-note" hidden></p>
+        <p class="kw-credit">Geocoding by <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo.com</a></p>
       </form>
     </div>`
 

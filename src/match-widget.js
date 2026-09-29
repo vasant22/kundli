@@ -158,8 +158,8 @@ export function renderMatchWidget(root, lang = 'hi') {
           <button class="pw-btn kw-submit" type="submit" id="mw-report">${t('match.getReport')}</button>
         </section>
 
-        <p class="kw-credit mw-credit">Geocoding by <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo.com</a></p>
         <p class="kw-ok" id="mw-open-note" hidden></p>
+        <p class="kw-credit">Geocoding by <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo.com</a></p>
       </form>
     </div>`
 

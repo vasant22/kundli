@@ -136,6 +136,7 @@ describe('the Matching mini-widget card', () => {
     // Step 1 — boy
     fill(root, 'b', BOY)
     await pick(root, 'b')
+    expect(root.querySelector('#mw-b-results').hidden).toBe(true) // suggestions hide once picked
     expect(root.querySelector('#mw-b-place-confirm').hidden).toBe(false)
     submit(root) // Continue
     expect(root.querySelector('#mw-step-b').hidden).toBe(true)
