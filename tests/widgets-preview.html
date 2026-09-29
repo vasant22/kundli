@@ -1,0 +1,31 @@
+<!doctype html>
+<!--
+  Dev-only preview of the three homepage widget cards, stacked in one column
+  (mobile view of the mybapuji.com homepage section). Open from the dev server:
+    http://localhost:5173/tests/widgets-preview.html
+  This is the local test bed for the Homepage Widgets project (Phase 4/5/6);
+  the WordPress block will use the same structure with absolute widget URLs.
+-->
+<html lang="hi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Widgets preview — तीन कार्ड</title>
+    <style>
+      /* Placeholder styling for local preview only — the real Phase-5 block
+         will mirror the mybapuji.com homepage theme. */
+      body { margin: 0; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; background: #fdf6ec; }
+      .wp-row { display: flex; flex-wrap: wrap; gap: 12px; max-width: 1160px; margin: 16px auto; padding: 0 12px; justify-content: center; align-items: flex-start; }
+      .wp-col { flex: 1 1 320px; max-width: 380px; min-width: 300px; }
+      .wp-col iframe { width: 100%; border: 0; display: block; }
+    </style>
+  </head>
+  <body>
+    <div class="wp-row">
+      <div class="wp-col"><iframe id="frame-kundli" src="/widgets/kundli/" height="620" title="कुंडली / Kundli"></iframe></div>
+      <div class="wp-col"><iframe id="frame-match" src="/widgets/match/" height="620" title="कुंडली मिलान / Kundli Matching"></iframe></div>
+      <div class="wp-col"><iframe id="frame-panchang" src="/panchang-widget/" height="520" title="आज का पंचांग / Today's Panchang"></iframe></div>
+    </div>
+  </body>
+</html>
