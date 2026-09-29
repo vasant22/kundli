@@ -140,6 +140,66 @@ body {
   font-size: 0.9rem;
 }
 
+/* ---------- match report (Phase 5) ---------- */
+.match-table td:first-child {
+  white-space: normal;
+}
+
+.match-table .total-row td {
+  font-weight: 700;
+  background: var(--saffron-soft);
+  color: var(--saffron-dark);
+}
+
+.verdict-band {
+  margin: 0.7rem 0 0.2rem;
+  padding: 0.55rem 0.8rem;
+  border-radius: 10px;
+  font-weight: 600;
+  text-align: center;
+  border: 1px solid var(--border);
+  background: #fffaf3;
+  color: var(--ink);
+}
+
+.verdict-band.low {
+  background: #fdecec;
+  color: #b3261e;
+  border-color: #f3c2c2;
+}
+
+.verdict-band.average {
+  background: #fff4e0;
+  color: #a94f05;
+}
+
+.verdict-band.good {
+  background: #eef7e9;
+  color: #2f6b1f;
+  border-color: #cfe3c3;
+}
+
+.verdict-band.excellent {
+  background: #e7f4e3;
+  color: #1d5b12;
+  border-color: #bcdcb0;
+}
+
+.match-mangal {
+  margin: 0.3rem 0 0.4rem;
+  padding-left: 1.1rem;
+}
+
+.match-mangal li {
+  margin: 0.15rem 0;
+}
+
+.match-disclaimer {
+  margin-top: 0.55rem;
+  border-top: 1px dashed var(--border);
+  padding-top: 0.5rem;
+}
+
 [hidden] {
   display: none !important;
 }
@@ -667,6 +727,8 @@ details.manual[open] summary {
 @media print {
   .site-header,
   #kundli-form,
+  #match-form,
+  .match-intro-card,
   .chart-toggle,
   .actions {
     display: none !important;

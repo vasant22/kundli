@@ -2,13 +2,17 @@
 // Phase 1: page shell + site navigation (reuses site chrome + modules).
 // Phase 2: two-step boy → girl form — the same validation, place search,
 // time-conversion and astrology modules as the main app, parameterised per
-// person. On "Get Match Report" BOTH charts are calculated with the existing
-// astro.js; the full Ashtakoot report arrives in Phase 5.
+// person.
+// Phase 5: full report — Ashtakoot Guna Milan (36 points, src/ashtakoot.js) +
+// Mangal Dosha check for both (src/mangaldosha.js), with PNG/Print/Copy.
 import './style.css'
 import { t, getLang, setLang, months, rashiLabel, nakshatraLabel } from './i18n.js'
 import { searchPlace } from './geocode.js'
 import { parseUtcOffset, isValidTimeZone, wallTimeToUtc } from './timeutil.js'
 import { computeKundli, initEphemeris } from './astro.js'
+import { computeAshtakoot } from './ashtakoot.js'
+import { checkMangalDosha, mangalPairNotes } from './mangaldosha.js'
+import { buildScorecardSvg } from './matchcard.js'
 
 // Where the public source code lives (same repo as the main page).
 const SOURCE_URL = 'https://github.com/vasant22/kundli'
@@ -291,7 +295,7 @@ function applyLanguage() {
     }
     if (Object.keys(lastErrors[p]).length > 0) showErrorsFor(p, lastErrors[p])
   }
-  if (lastCalc) showMatchCard(false)
+  if (lastCalc) showReport(false)
 }
 
 langToggle.addEventListener('click', () => {
@@ -547,67 +551,286 @@ function showFatal(text) {
   }
 }
 
-// Interim report (Phase 2): both people's details + Moon positions, so the
-// user can see the two charts were calculated. Phase 5 replaces this with the
-// full Ashtakoot + Mangal Dosha report.
-function showMatchCard(scroll) {
-  const { vb, vg, kB, kG } = lastCalc
+// ---------------------------------------------------------------------------
+// Full report (Phase 5): Ashtakoot table + total + verdict + Mangal Dosha.
+// ---------------------------------------------------------------------------
+function personCard(personKey, values, kundli) {
+  const box = document.createElement('div')
+  box.className = 'match-person'
+
+  const h3 = document.createElement('h3')
+  h3.textContent = values.name ? `${t('match.' + personKey)} — ${values.name}` : t('match.' + personKey)
+  box.append(h3)
+
+  const list = document.createElement('dl')
+  const addRow = (label, value) => {
+    const dt = document.createElement('dt')
+    dt.textContent = label
+    const dd = document.createElement('dd')
+    dd.textContent = value
+    list.append(dt, dd)
+  }
+  addRow(t('summary.date'), formatDate(values))
+  addRow(t('summary.time'), formatTime(values))
+  const place = values.selectedPlace
+  addRow(t('summary.place'), place ? displayName(place) : values.place || '—')
+
+  const moon = kundli.planets.find((pl) => pl.key === 'moon')
+  addRow(t('match.moonRashi'), rashiLabel(moon.rashi))
+  addRow(t('match.moonNak'), `${nakshatraLabel(moon.nakshatra)} · ${t('table.pada')} ${moon.pada}`)
+  addRow(t('summary.lagna'), rashiLabel(kundli.ascendant.rashi))
+  box.append(list)
+  return box
+}
+
+// One mangal line, in the active language.
+function mangalLine(res) {
+  if (!res || !res.present) return t('match.mangal.none')
+  const parts = []
+  if (res.fromLagna) parts.push(`${t('match.mangal.fromLagna')} ${res.lagnaHouse}`)
+  if (res.fromMoon) parts.push(`${t('match.mangal.fromMoon')} ${res.moonHouse}`)
+  const sev = t(res.severity === 'high' ? 'match.mangal.high' : 'match.mangal.low')
+  return `${t('match.mangal.present')} — ${parts.join(' · ')} (${sev})`
+}
+
+// The report card (re-rendered on language switch; PNG / Print / Copy actions).
+function showReport(scroll) {
+  const { vb, vg, kB, kG, ashtakoot, mangalBoy, mangalGirl, mangalNotes } = lastCalc
   output.hidden = false
   output.replaceChildren()
 
   const card = document.createElement('div')
   card.className = 'card summary match-summary'
 
+  // Print/PDF letter-head (mirrors the single-Kundli letter-head).
+  const printHead = document.createElement('div')
+  printHead.className = 'print-only print-head'
+  const printTitle = document.createElement('p')
+  printTitle.className = 'print-title'
+  printTitle.textContent = 'कुंडली मिलान / Kundli Matching'
+  const printLinks = document.createElement('p')
+  printLinks.className = 'print-links'
+  const siteLink = document.createElement('a')
+  siteLink.href = 'https://www.mybapuji.com'
+  siteLink.target = '_blank'
+  siteLink.rel = 'noopener'
+  siteLink.textContent = 'mybapuji.com'
+  const linksSep = document.createElement('span')
+  linksSep.className = 'print-links-sep'
+  linksSep.textContent = '·'
+  const kundliLink = document.createElement('a')
+  kundliLink.href = 'https://kundli.mybapuji.com'
+  kundliLink.target = '_blank'
+  kundliLink.rel = 'noopener'
+  kundliLink.textContent = 'kundli.mybapuji.com'
+  printLinks.append(siteLink, linksSep, kundliLink)
+  printHead.append(printTitle, printLinks)
+  card.append(printHead)
+
   const heading = document.createElement('h2')
   heading.className = 'summary-title'
-  heading.textContent = t('match.ready')
+  heading.textContent = t('match.report.title')
   card.append(heading)
 
   const grid = document.createElement('div')
   grid.className = 'match-pair'
-  for (const [person, values, kundli] of [
-    ['boy', vb, kB],
-    ['girl', vg, kG],
-  ]) {
-    const box = document.createElement('div')
-    box.className = 'match-person'
-
-    const h3 = document.createElement('h3')
-    h3.textContent = values.name ? `${t('match.' + person)} — ${values.name}` : t('match.' + person)
-    box.append(h3)
-
-    const list = document.createElement('dl')
-    const addRow = (label, value) => {
-      const dt = document.createElement('dt')
-      dt.textContent = label
-      const dd = document.createElement('dd')
-      dd.textContent = value
-      list.append(dt, dd)
-    }
-    addRow(t('summary.date'), formatDate(values))
-    addRow(t('summary.time'), formatTime(values))
-    const place = values.selectedPlace
-    addRow(t('summary.place'), place ? displayName(place) : values.place || '—')
-
-    const moon = kundli.planets.find((pl) => pl.key === 'moon')
-    addRow(t('match.moonRashi'), rashiLabel(moon.rashi))
-    addRow(t('match.moonNak'), `${nakshatraLabel(moon.nakshatra)} · ${t('table.pada')} ${moon.pada}`)
-    addRow(t('summary.lagna'), rashiLabel(kundli.ascendant.rashi))
-    box.append(list)
-    grid.append(box)
-  }
+  grid.append(personCard('boy', vb, kB), personCard('girl', vg, kG))
   card.append(grid)
 
-  // Temporary note until the full matching report (Phase 5) replaces this card.
-  const note = document.createElement('p')
-  note.className = 'note'
-  note.textContent = t('match.reportSoon')
-  card.append(note)
+  // Ashtakoot table: 8 koota rows + a total row.
+  const tableWrap = document.createElement('div')
+  tableWrap.className = 'table-wrap'
+  const table = document.createElement('table')
+  table.className = 'kundli-table match-table'
+  const thead = document.createElement('thead')
+  const headRow = document.createElement('tr')
+  for (const key of ['match.table.koota', 'match.table.points', 'match.table.reason']) {
+    const th = document.createElement('th')
+    th.textContent = t(key)
+    headRow.append(th)
+  }
+  thead.append(headRow)
+  table.append(thead)
+  const tbody = document.createElement('tbody')
+  for (const k of ashtakoot.kootas) {
+    const tr = document.createElement('tr')
+    const cells = [`${k.hi} / ${k.en}`, `${k.points} / ${k.max}`, getLang() === 'hi' ? k.reason.hi : k.reason.en]
+    for (const text of cells) {
+      const td = document.createElement('td')
+      td.textContent = text
+      tr.append(td)
+    }
+    tbody.append(tr)
+  }
+  const totalRow = document.createElement('tr')
+  totalRow.className = 'total-row'
+  for (const text of [t('match.totalRow'), `${ashtakoot.total} / ${ashtakoot.max}`, '']) {
+    const td = document.createElement('td')
+    td.textContent = text
+    totalRow.append(td)
+  }
+  tbody.append(totalRow)
+  table.append(tbody)
+  tableWrap.append(table)
+  card.append(tableWrap)
+
+  // Verdict band (classical thresholds: <18 / 18–24 / 24–32 / 32–36).
+  const verdict = document.createElement('div')
+  verdict.className = `verdict-band ${ashtakoot.verdict.key}`
+  verdict.textContent = getLang() === 'hi' ? ashtakoot.verdict.hi : ashtakoot.verdict.en
+  card.append(verdict)
+
+  // Mangal Dosha section for both persons + traditional notes.
+  const mangalTitle = document.createElement('p')
+  mangalTitle.className = 'kundli-table-title'
+  mangalTitle.textContent = t('match.mangal.title')
+  const mangalList = document.createElement('ul')
+  mangalList.className = 'match-mangal'
+  for (const [personKey, res] of [['boy', mangalBoy], ['girl', mangalGirl]]) {
+    const li = document.createElement('li')
+    li.textContent = `${t('match.' + personKey)}: ${mangalLine(res)}`
+    mangalList.append(li)
+  }
+  for (const note of mangalNotes) {
+    const li = document.createElement('li')
+    li.textContent = getLang() === 'hi' ? note.hi : note.en
+    mangalList.append(li)
+  }
+  card.append(mangalTitle, mangalList)
+
+  const disclaimer = document.createElement('p')
+  disclaimer.className = 'note match-disclaimer'
+  disclaimer.textContent = t('match.disclaimer')
+  card.append(disclaimer)
+
+  // Actions: PNG (scorecard) / PDF (print) / copy details.
+  const actions = document.createElement('div')
+  actions.className = 'actions'
+  const actionMsg = document.createElement('p')
+  actionMsg.className = 'note'
+  actionMsg.setAttribute('aria-live', 'polite')
+  actionMsg.hidden = true
+
+  const pngBtn = document.createElement('button')
+  pngBtn.type = 'button'
+  pngBtn.className = 'secondary'
+  pngBtn.dataset.action = 'png'
+  pngBtn.textContent = t('btn.downloadPng')
+  pngBtn.addEventListener('click', () =>
+    downloadScorecardPng(() => {
+      actionMsg.textContent = t('msg.pngFailed')
+      actionMsg.hidden = false
+    })
+  )
+
+  const printBtn = document.createElement('button')
+  printBtn.type = 'button'
+  printBtn.className = 'secondary'
+  printBtn.dataset.action = 'print'
+  printBtn.textContent = t('btn.print')
+  printBtn.addEventListener('click', () => window.print())
+
+  const copyBtn = document.createElement('button')
+  copyBtn.type = 'button'
+  copyBtn.className = 'secondary'
+  copyBtn.dataset.action = 'copy'
+  copyBtn.textContent = t('btn.copy')
+  copyBtn.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(buildMatchText())
+      actionMsg.textContent = t('msg.copied')
+    } catch (err) {
+      console.error('Copy failed:', err)
+      actionMsg.textContent = t('msg.copyFailed')
+    }
+    actionMsg.hidden = false
+  })
+
+  const pdfHint = document.createElement('p')
+  pdfHint.className = 'note pdf-hint'
+  pdfHint.textContent = t('actions.pdfHint')
+  actions.append(pngBtn, printBtn, copyBtn, actionMsg, pdfHint)
+  card.append(actions)
 
   output.append(card)
   if (scroll && typeof output.scrollIntoView === 'function') {
     output.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
+}
+
+// PNG export of the scorecard (SVG → canvas → PNG download).
+function downloadScorecardPng(onError) {
+  const { vb, vg, ashtakoot } = lastCalc
+  const shortPlace = (v) => (v.selectedPlace ? v.selectedPlace.name : v.place || '—')
+  const svgStr = buildScorecardSvg({
+    names: { boy: vb.name || '—', girl: vg.name || '—' },
+    lines: {
+      boy: `${formatDate(vb)} · ${formatTime(vb)} · ${shortPlace(vb)}`,
+      girl: `${formatDate(vg)} · ${formatTime(vg)} · ${shortPlace(vg)}`,
+    },
+    rows: ashtakoot.kootas.map((k) => ({ hi: k.hi, en: k.en, points: k.points, max: k.max })),
+    total: ashtakoot.total,
+    maxTotal: ashtakoot.max,
+    verdict: { hi: ashtakoot.verdict.hi, en: ashtakoot.verdict.en },
+    footer: 'kundli.mybapuji.com · mybapuji.com',
+  })
+  const url = URL.createObjectURL(new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' }))
+  const img = new Image()
+  img.onload = () => {
+    try {
+      const canvas = document.createElement('canvas')
+      canvas.width = 1200
+      canvas.height = 1010
+      const ctx = canvas.getContext('2d')
+      ctx.fillStyle = '#ffffff'
+      ctx.fillRect(0, 0, 1200, 1010)
+      ctx.drawImage(img, 0, 0, 1200, 1010)
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          if (onError) onError()
+          return
+        }
+        const a = document.createElement('a')
+        a.href = URL.createObjectURL(blob)
+        a.download = 'kundli-match.png'
+        a.click()
+        setTimeout(() => URL.revokeObjectURL(a.href), 5000)
+      }, 'image/png')
+    } finally {
+      URL.revokeObjectURL(url)
+    }
+  }
+  img.onerror = () => {
+    console.error('Scorecard PNG export failed')
+    URL.revokeObjectURL(url)
+    if (onError) onError()
+  }
+  img.src = url
+}
+
+// Plain-text version of the report (for the Copy button).
+function buildMatchText() {
+  const { vb, vg, ashtakoot, mangalBoy, mangalGirl, mangalNotes } = lastCalc
+  const lang = getLang()
+  const lines = ['कुंडली मिलान / Kundli Matching', '']
+  const personLine = (labelKey, v) => {
+    const place = v.selectedPlace ? displayName(v.selectedPlace) : v.place || '—'
+    return `${t(labelKey)}: ${[v.name, formatDate(v), formatTime(v), place].filter(Boolean).join(' · ')}`
+  }
+  lines.push(personLine('match.boy', vb), personLine('match.girl', vg), '')
+  for (const k of ashtakoot.kootas) {
+    lines.push(`${k.hi} / ${k.en} — ${k.points}/${k.max} — ${lang === 'hi' ? k.reason.hi : k.reason.en}`)
+  }
+  lines.push(`${t('match.totalRow')}: ${ashtakoot.total} / ${ashtakoot.max}`)
+  lines.push(lang === 'hi' ? ashtakoot.verdict.hi : ashtakoot.verdict.en)
+  lines.push('')
+  lines.push(t('match.mangal.title'))
+  lines.push(`${t('match.boy')}: ${mangalLine(mangalBoy)}`)
+  lines.push(`${t('match.girl')}: ${mangalLine(mangalGirl)}`)
+  for (const note of mangalNotes) lines.push(lang === 'hi' ? note.hi : note.en)
+  lines.push('')
+  lines.push(t('match.disclaimer'))
+  return lines.join('\n')
 }
 
 // "Get Match Report": re-validate both people (the boy's fields may have been
@@ -655,8 +878,21 @@ async function runReport() {
       showFatal(t('err.polar'))
       return
     }
-    lastCalc = { vb, vg, kB, kG }
-    showMatchCard(true)
+    const moonOf = (k) => k.planets.find((pl) => pl.key === 'moon')
+    const ashtakoot = computeAshtakoot(moonOf(kB), moonOf(kG))
+    const mangalBoy = checkMangalDosha(kB)
+    const mangalGirl = checkMangalDosha(kG)
+    lastCalc = {
+      vb,
+      vg,
+      kB,
+      kG,
+      ashtakoot,
+      mangalBoy,
+      mangalGirl,
+      mangalNotes: mangalPairNotes(mangalBoy, mangalGirl),
+    }
+    showReport(true)
   } catch (err) {
     console.error('Match calculation failed:', err)
     swePromise = null // allow a retry on the next attempt
@@ -684,4 +920,24 @@ buildMonthChips('b')
 buildMonthChips('g')
 setupSearch('b')
 setupSearch('g')
+
+// Dev-only helper: on the dev server, open /match/?demo=1 to prefill both
+// sides with the sample couple (Ram & Sita, Varanasi). Never included in the
+// production build (import.meta.env.DEV is false there).
+if (import.meta.env?.DEV && typeof location !== 'undefined' && new URLSearchParams(location.search).get('demo') === '1') {
+  const fill = (p, v) => {
+    document.getElementById(`${p}-name`).value = v.name
+    document.querySelector(`input[name="${p}-month"][value="${v.month}"]`).checked = true
+    document.getElementById(`${p}-day`).value = v.day
+    document.getElementById(`${p}-year`).value = v.year
+    document.getElementById(`${p}-hour`).value = v.hour
+    document.getElementById(`${p}-minute`).value = v.minute
+    document.getElementById(`${p}-lat`).value = v.lat
+    document.getElementById(`${p}-lon`).value = v.lon
+    document.getElementById(`${p}-tz`).value = v.tz
+  }
+  fill('b', { name: 'राम कुमार', month: 1, day: 11, year: 1995, hour: 1, minute: 30, lat: '25.31668', lon: '83.01041', tz: 'Asia/Kolkata' })
+  fill('g', { name: 'सीता देवी', month: 6, day: 2, year: 1995, hour: 16, minute: 0, lat: '25.31668', lon: '83.01041', tz: 'Asia/Kolkata' })
+}
+
 applyLanguage()

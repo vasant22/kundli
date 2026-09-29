@@ -184,9 +184,60 @@ describe('Phase 2 — two-step boy → girl form', () => {
     expect($('#report-btn').textContent).toBe('Get Match Report')
     expect($('#back-btn').textContent).toContain('Back')
     expect($('#step-g h2').textContent).toBe("Enter Girl's Details")
-    expect($('.match-summary').textContent).toContain('Both charts are ready')
+    expect($('.match-summary').textContent).toContain('Ashtakoot Guna Milan result')
     $('#lang-toggle').click()
     expect($('#report-btn').textContent).toBe('मिलान रिपोर्ट देखें')
     expect($('#step-g h2').textContent).toBe('लड़की का विवरण')
+  })
+})
+
+describe('Phase 5 — full match report', () => {
+  it('shows the Ashtakoot table (8 kootas + total) with reasons and the verdict band', () => {
+    const table = $('.match-table')
+    expect(table).toBeTruthy()
+    const rows = table.querySelectorAll('tbody tr')
+    expect(rows.length).toBe(9) // 8 kootas + total
+    const headers = Array.from(table.querySelectorAll('th')).map((th) => th.textContent)
+    expect(headers).toEqual(['कूट', 'अंक', 'कारण'])
+    const text = table.textContent
+    for (const name of [
+      'वर्ण / Varna',
+      'वश्य / Vashya',
+      'तारा / Tara',
+      'योनि / Yoni',
+      'ग्रह मैत्री / Graha Maitri',
+      'गण / Gana',
+      'भकूट / Bhakoot',
+      'नाड़ी / Nadi',
+    ]) {
+      expect(text).toContain(name)
+    }
+    // mock returns the same Moon for both people → 28/36, verdict 'good'
+    expect(table.querySelector('.total-row td').textContent).toBe('कुल योग')
+    expect(table.querySelector('.total-row').textContent).toContain('28 / 36')
+    const band = $('.verdict-band')
+    expect(band.classList.contains('good')).toBe(true)
+    expect(band.textContent).toContain('24–32')
+  })
+
+  it('shows the Mangal Dosha section, disclaimer and action buttons', () => {
+    const text = $('.match-summary').textContent
+    expect(text).toContain('मंगल दोष जाँच')
+    expect(text).toContain('मंगल दोष नहीं') // mock: Mars 6th from Lagna, 2nd from Moon → none
+    expect(text).toContain('परंपरागत अष्टकूट')
+    expect(document.querySelector('.actions [data-action="png"]')).toBeTruthy()
+    expect(document.querySelector('.actions [data-action="print"]')).toBeTruthy()
+    expect(document.querySelector('.actions [data-action="copy"]')).toBeTruthy()
+  })
+
+  it('copies the full report text', async () => {
+    const writeText = vi.fn(async () => {})
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true })
+    document.querySelector('.actions [data-action="copy"]').click()
+    await vi.waitFor(() => expect(writeText).toHaveBeenCalled())
+    const copied = writeText.mock.calls[0][0]
+    expect(copied).toContain('कुंडली मिलान / Kundli Matching')
+    expect(copied).toContain('वर्ण / Varna')
+    expect(copied).toContain('कुल योग: 28 / 36')
   })
 })
