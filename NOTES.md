@@ -334,3 +334,19 @@ Hard requirements (summary):
   server, असली engine): कुंडली (लग्न कन्या 7°02′ + चार्ट) और मिलान (कुल योग 29.5/36 + मंगल
   दोष जाँच) दोनों link से अपने-आप चले ✓. Build ✓ (2.94 MiB).
 - Next: **Phase 2** — Kundli mini-widget page (kundli.mybapuji.com/widgets/kundli/).
+
+### 2026-09-29 — Homepage Widgets Phase 2 done: Kundli mini-widget (`026149e`)
+- नया छोटा कार्ड पेज **widgets/kundli/** (kundli.mybapuji.com/widgets/kundli/): सिर्फ़ फ़ॉर्म —
+  नाम, लिंग (3 chips, मुख्य पेज जैसा; native dropdown नहीं — touch/browser-test friendly),
+  तिथि (दिन/महीना/साल), समय (घंटा/मिनट/सेकंड), जगह (geocode search + results + ✔ confirm),
+  “कुंडली बनाएँ”। कोई गणना नहीं — submit पर prefill-URL बनाकर पूरा tool **नई tab** में
+  (`../../` से site root; dev+prod दोनों में सही; `?lang=en`/`?transparent=1` भी चलते हैं)।
+- **validation अब साझा**: नया `src/birthvalidate.js` — main.js / match.js / widget तीनों वही
+  rules (rules में कोई बदलाव नहीं; duplicate code हटा; सारे पुराने tests पास)। i18n +`kw.*`
+  (hi+en); widget.css +`.kw-*` styles; vite multi-page entry जुड़ा।
+- Tests: +9 (`tests/kundli-widget.test.js`: URL format, render order, validation messages,
+  search+pick+open) → **381 passing** (TZ=UTC भी)। Build ✓ 2.95 MiB (dist/widgets/kundli/)।
+- Browser (379px): card render ✓, असली Open-Meteo खोज + चयन + ✔ confirm ✓, submit →
+  “✅ कुंडली नई tab में खुल रही है…” ✓। jsdom नोट: document में same id दो बार हो तो scoped
+  `#id` query fail हो सकती है — tests में body साफ़ करके हल किया।
+- Commit: `026149e` + notes commit। Next: **Phase 3** — Matching mini-widget (widgets/match/)।
