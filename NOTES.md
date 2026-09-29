@@ -403,3 +403,14 @@ Hard requirements (summary):
   (kundli.mybapuji.com से, 566px) → message arrive + applied। (तीनों widgets एक ही mechanism।)
 - Panel की 379px चौड़ाई में desktop 3-column का visual सिर्फ़ user के browser पर दिखेगा;
   mobile = single column; दोनों एक ही grid से।
+
+### 2026-09-29 — होमपेज widgets: यूज़र-feedback fixes (suggestions + credit) (`057a955`)
+- 🐛 समस्या 1: जगह चुनने के बाद भी suggestions नहीं हटती थीं — कारण: `widget.css` में
+  `[hidden]` नियम नहीं था और `.kw-results{display:flex}` hidden attribute को override कर
+  देता था (पूरे tools में style.css में यह नियम पहले से था — इसलिए वहाँ ठीक चलता था)।
+  फ़िक्स: widget.css में `[hidden]{display:none !important}`; + kw/mw tests में assertions।
+- समस्या 2: "Geocoding by Open-Meteo.com" भद्दा लग रहा था — यह मुफ़्त सेवा की शर्त
+  (attribution) है, इसलिए पूरा हटाया नहीं; अब बहुत छोटा/हल्का और कार्ड के सबसे नीचे
+  (button के नीचे)। पूरे tools में भी same softening।
+- Browser-verified (kw): 'amla' search → pick → सूची तुरंत हटी ✓, confirm ✓, credit नीचे ✓।
+- Commit: `057a955` (+ notes commit)। Next: **Phase 6** — testing checklist अब भी बाक़ी।
