@@ -18,10 +18,22 @@ export function installHeightReporter(win, doc) {
   if (!win.parent || win.parent === win) return // not embedded — nothing to do
 
   let last = 0
-  const measure = () => Math.ceil(Math.max(
-    doc.documentElement ? doc.documentElement.scrollHeight || 0 : 0,
-    doc.body ? doc.body.scrollHeight || 0 : 0,
-  ))
+  // The card's true content height: prefer the #widget element itself
+  // (scrollHeight can never go BELOW the iframe's current height, so it
+  // would report the iframe size instead of the content size).
+  const measure = () => {
+    if (typeof doc.getElementById === 'function') {
+      const el = doc.getElementById('widget')
+      if (el && typeof el.getBoundingClientRect === 'function') {
+        const h = el.getBoundingClientRect().height
+        if (h > 0) return Math.ceil(h)
+      }
+    }
+    return Math.ceil(Math.max(
+      doc.documentElement ? doc.documentElement.scrollHeight || 0 : 0,
+      doc.body ? doc.body.scrollHeight || 0 : 0,
+    ))
+  }
 
   const post = () => {
     const height = measure()
