@@ -577,9 +577,42 @@ details.manual[open] summary {
   }
 
   .print-head {
+    text-align: center;
+    margin: 0 0 10px;
+  }
+
+  .print-title {
+    font-weight: 700;
+    font-size: 15px;
+    margin: 0 0 6px;
+  }
+
+  /* Both site links in a neat box (PDF letter-head). */
+  .print-links {
+    display: inline-block;
+    border: 1.5px solid #4a4a4a;
+    border-radius: 4px;
+    padding: 5px 16px;
+    margin: 0;
+    font-size: 11.5px;
     font-weight: 600;
-    font-size: 13px;
-    margin: 0 0 8px;
+  }
+
+  .print-links a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .print-links-sep {
+    margin: 0 8px;
+    color: #777;
+  }
+
+  /* Keep the PDF clean — these lines are only for the screen. */
+  .summary-title,
+  .summary-note-ok,
+  .footer-credit-line {
+    display: none !important;
   }
 
   .chart-grid {

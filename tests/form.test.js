@@ -546,6 +546,17 @@ describe('Phase 14 — corrections & additions (D9, Chalit, Dasha, PDF)', () => 
     expect(document.querySelector('.dasha-table tr.current')).toBeTruthy()
     expect(document.querySelector('.dasha-now').textContent).toContain('अभी चल रही')
     expect(document.querySelector('.pdf-hint').textContent).toContain('Save as PDF')
-    expect(document.querySelector('.print-head')).toBeTruthy()
+
+    // Print/PDF letter-head: title + both site links inside a neat box.
+    const printHead = document.querySelector('.print-head')
+    expect(printHead.querySelector('.print-title').textContent).toBe('कुंडली / Kundli')
+    const printLinks = Array.from(printHead.querySelectorAll('.print-links a'))
+    expect(printLinks.map((a) => a.textContent)).toEqual(['mybapuji.com', 'kundli.mybapuji.com'])
+    expect(printLinks[0].getAttribute('href')).toBe('https://www.mybapuji.com')
+    expect(printLinks[1].getAttribute('href')).toBe('https://kundli.mybapuji.com')
+    // App-only lines are marked so the print stylesheet can hide them.
+    expect(document.querySelector('h2.summary-title')).toBeTruthy()
+    expect(document.querySelector('.summary-note.summary-note-ok')).toBeTruthy()
+    expect(document.querySelector('.footer-credit-line')).toBeTruthy()
   })
 })

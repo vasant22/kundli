@@ -523,13 +523,34 @@ function showSummary(values, scroll) {
   const card = document.createElement('div')
   card.className = 'card summary'
   if (values.kundli && !values.kundli.error) {
-    const printHead = document.createElement('p')
+    // Print/PDF letter-head: title + both site links inside a neat box.
+    const printHead = document.createElement('div')
     printHead.className = 'print-only print-head'
-    printHead.textContent = 'कुंडली / Kundli — kundli.mybapuji.com'
+    const printTitle = document.createElement('p')
+    printTitle.className = 'print-title'
+    printTitle.textContent = 'कुंडली / Kundli'
+    const printLinks = document.createElement('p')
+    printLinks.className = 'print-links'
+    const siteLink = document.createElement('a')
+    siteLink.href = 'https://www.mybapuji.com'
+    siteLink.target = '_blank'
+    siteLink.rel = 'noopener'
+    siteLink.textContent = 'mybapuji.com'
+    const linksSep = document.createElement('span')
+    linksSep.className = 'print-links-sep'
+    linksSep.textContent = '·'
+    const kundliLink = document.createElement('a')
+    kundliLink.href = 'https://kundli.mybapuji.com'
+    kundliLink.target = '_blank'
+    kundliLink.rel = 'noopener'
+    kundliLink.textContent = 'kundli.mybapuji.com'
+    printLinks.append(siteLink, linksSep, kundliLink)
+    printHead.append(printTitle, printLinks)
     card.append(printHead)
   }
 
   const heading = document.createElement('h2')
+  heading.className = 'summary-title'
   heading.textContent = t('summary.title')
   card.append(heading)
 
@@ -783,6 +804,7 @@ function showSummary(values, scroll) {
     note.textContent = t('summary.calculating')
   } else {
     note.textContent = t('summary.note')
+    note.classList.add('summary-note-ok') // print/PDF में यह लाइन छिपती है
   }
   card.append(note)
 
