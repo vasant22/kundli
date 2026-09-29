@@ -376,3 +376,20 @@ Hard requirements (summary):
   हल Phase 5 में (iframe auto-resize postMessage, prefer (b))।
 - Commit: `643e935` + notes commit। Next: **Phase 5** — homepage 3-column HTML/CSS block
   (WordPress deliverable) + iframe auto-resize mechanism।
+
+### 2026-09-29 — Homepage Widgets Phase 5: mybapuji.com होमपेज पर तीनों कार्ड (LIVE) + auto-height
+- नया `src/widget-resize.js` — तीनों widget pages अपनी असली card-height parent को
+  postMessage से भेजते हैं (`{type:'acw-height'}`; load / resize / content-change पर,
+  ResizeObserver आधारित)। parent (होमपेज) iframe की ऊँचाई उसी हिसाब से set करता है।
+  commits `96528c3` (reporter + harness) · `f327375` (measure-fix)।
+- 🐛 browser-जाँच में बग पकड़ा: `scrollHeight` कभी iframe की current ऊँचाई से नीचे नहीं
+  जाता — reporter 600 (iframe size) भेज रहा था, content (566) नहीं। फ़िक्स: `#widget`
+  element की `getBoundingClientRect().height`; +1 test → **393 passing**। (debug page से
+  verify: height=566 applied; harness में तीनों कार्ड auto-fit ✓)
+- **mybapuji.com deploy**: `mu-plugins/autoclaw-templates/autoclaw-home.php` में `.band`
+  के नीचे नया `.acw-tools` section — 3 कॉलम (कुंडली · मिलान · पंचांग; ≤860px पर 1 कॉलम),
+  तीनों iframes `?transparent=1`। Backup: `autoclaw-home.php.bak-20260929` (= rollback
+  वापस कॉपी)। कैश साफ़ (supercache + nginx); CF HTML-cache नहीं करता (DYNAMIC)।
+- Dev tools: `tests/widgets-preview.html` = WordPress block का हूबहू mirror (auto-height
+  सहित, browser-verified)। `tests/resize-debug.html` सिर्फ़ debugging के लिए (commit नहीं)।
+- Next: **Phase 6** — testing (breakpoints, दोनों round-trips, `tests/HOMEPAGE_WIDGETS_CHECKLIST.md`)।
