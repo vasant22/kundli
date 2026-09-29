@@ -533,3 +533,191 @@ export const DIRECTIONS = [
   { key: 'sw', hi: 'नैऋत्य', en: 'South-West' },
   { key: 'nw', hi: 'वायव्य', en: 'North-West' },
 ]
+
+// ---------------------------------------------------------------------------
+// Panchang lists (Phase 6) — 30 tithis, 27 yogas, 11 karanas, 7 vaaras,
+// 12 lunar months (amanta & purnimanta share these names), 6 ritus.
+// (Samvatsara 60, muhurat names and directions live above; added early.)
+// ---------------------------------------------------------------------------
+
+const zipLists = (hi, en) => hi.map((h, i) => ({ hi: h, en: en[i] }))
+
+// 30 tithis; index 0-14 = Shukla Pratipada…Purnima, 15-29 = Krishna Pratipada…Amavasya.
+export const TITHIS = zipLists(
+  ['प्रतिपदा', 'द्वितीया', 'तृतीया', 'चतुर्थी', 'पंचमी', 'षष्ठी', 'सप्तमी', 'अष्टमी', 'नवमी', 'दशमी',
+    'एकादशी', 'द्वादशी', 'त्रयोदशी', 'चतुर्दशी', 'पूर्णिमा',
+    'प्रतिपदा', 'द्वितीया', 'तृतीया', 'चतुर्थी', 'पंचमी', 'षष्ठी', 'सप्तमी', 'अष्टमी', 'नवमी', 'दशमी',
+    'एकादशी', 'द्वादशी', 'त्रयोदशी', 'चतुर्दशी', 'अमावस्या'],
+  ['Pratipada', 'Dwitiya', 'Tritiya', 'Chaturthi', 'Panchami', 'Shashthi', 'Saptami', 'Ashtami', 'Navami', 'Dashami',
+    'Ekadashi', 'Dwadashi', 'Trayodashi', 'Chaturdashi', 'Purnima',
+    'Pratipada', 'Dwitiya', 'Tritiya', 'Chaturthi', 'Panchami', 'Shashthi', 'Saptami', 'Ashtami', 'Navami', 'Dashami',
+    'Ekadashi', 'Dwadashi', 'Trayodashi', 'Chaturdashi', 'Amavasya'],
+)
+
+// 27 yogas (Vishkambha → Vaidhriti).
+export const YOGAS = zipLists(
+  ['विष्कुम्भ', 'प्रीति', 'आयुष्मान', 'सौभाग्य', 'शोभन', 'अतिगण्ड', 'सुकर्मा', 'धृति', 'शूल',
+    'गण्ड', 'वृद्धि', 'ध्रुव', 'व्याघात', 'हर्षण', 'वज्र', 'सिद्धि', 'व्यतिपात', 'वरीयान', 'परिघ',
+    'शिव', 'सिद्ध', 'साध्य', 'शुभ', 'शुक्ल', 'ब्रह्म', 'इन्द्र', 'वैधृति'],
+  ['Vishkambha', 'Priti', 'Ayushman', 'Saubhagya', 'Shobhana', 'Atiganda', 'Sukarman', 'Dhriti', 'Shula',
+    'Ganda', 'Vriddhi', 'Dhruva', 'Vyaghata', 'Harshana', 'Vajra', 'Siddhi', 'Vyatipata', 'Variyana', 'Parigha',
+    'Shiva', 'Siddha', 'Sadhya', 'Shubha', 'Shukla', 'Brahma', 'Indra', 'Vaidhriti'],
+)
+
+// 11 karanas, in the module's index order (7 movable + 4 fixed).
+export const KARANAS = zipLists(
+  ['बव', 'बालव', 'कौलव', 'तैतिल', 'गर', 'वणिज', 'विष्टि', 'शकुनि', 'चतुष्पद', 'नाग', 'किंस्तुघ्न'],
+  ['Bava', 'Balava', 'Kaulava', 'Taitila', 'Gara', 'Vanija', 'Vishti', 'Shakuni', 'Chatushpada', 'Naga', 'Kimstughna'],
+)
+
+// 7 vaaras (weekdays; 0 = Sunday).
+export const VAARAS = zipLists(
+  ['रविवार', 'सोमवार', 'मंगलवार', 'बुधवार', 'गुरुवार', 'शुक्रवार', 'शनिवार'],
+  ['Ravivara', 'Somavara', 'Mangalavara', 'Budhavara', 'Guruvara', 'Shukravara', 'Shanivara'],
+)
+
+// 12 lunar months; used for BOTH amanta and purnimanta (names are the same).
+export const LUNAR_MONTHS = zipLists(
+  ['चैत्र', 'वैशाख', 'ज्येष्ठ', 'आषाढ़', 'श्रावण', 'भाद्रपद', 'आश्विन', 'कार्तिक', 'मार्गशीर्ष', 'पौष', 'माघ', 'फाल्गुन'],
+  ['Chaitra', 'Vaishakha', 'Jyeshtha', 'Ashadha', 'Shravana', 'Bhadrapada', 'Ashwin', 'Kartika', 'Margashirsha', 'Pausha', 'Magha', 'Phalguna'],
+)
+
+// 6 ritus (Vasanta → Shishira).
+export const RITUS = zipLists(
+  ['वसंत', 'ग्रीष्म', 'वर्षा', 'शरद', 'हेमंत', 'शिशिर'],
+  ['Vasanta', 'Grishma', 'Varsha', 'Sharad', 'Hemanta', 'Shishir'],
+)
+
+// Label helpers ("हिंदी / English" — the site-wide display format).
+export function tithiLabel(n) {
+  return sideBySide(TITHIS[n - 1])
+}
+export function yogaLabel(n) {
+  return sideBySide(YOGAS[n - 1])
+}
+export function karanaLabel(index) {
+  return sideBySide(KARANAS[index])
+}
+export function vaaraLabel(index) {
+  return sideBySide(VAARAS[index])
+}
+export function lunarMonthLabel(index, adhika = false) {
+  const m = LUNAR_MONTHS[index]
+  if (!m) return ''
+  return adhika ? `${m.hi} (अधिक) / ${m.en} (Adhik)` : sideBySide(m)
+}
+export function rituLabel(index) {
+  return sideBySide(RITUS[index])
+}
+export function samvatsaraLabel(index) {
+  return sideBySide(SAMVATSARA_NAMES[index - 1])
+}
+
+// ---------------------------------------------------------------------------
+// Panchang UI strings (Phase 6) — merged into STRINGS via Object.assign so the
+// existing t('key') lookup works unchanged.
+// ---------------------------------------------------------------------------
+Object.assign(STRINGS.hi, {
+  'panchang.docTitle': 'पंचांग — आज का पंचांग',
+  'panchang.title': 'पंचांग',
+  'panchang.subtitle': 'दैनिक वैदिक पंचांग — सूर्योदय से आधारित',
+  'panchang.dateLabel': 'दिनांक',
+  'panchang.placeLabel': 'स्थान',
+  'panchang.searchPlace': 'स्थान खोजें…',
+  'panchang.getPanchang': 'पंचांग देखें',
+  'panchang.calculating': 'गणना हो रही है…',
+  'panchang.engineError': 'गणना इंजन लोड नहीं हो सका — थोड़ी देर बाद दोबारा कोशिश करें।',
+  'panchang.section.today': 'आज का पंचांग',
+  'panchang.section.sunMoon': 'सूर्य और चंद्र गणना',
+  'panchang.section.monthYear': 'हिंदू मास और वर्ष',
+  'panchang.section.ashubha': 'अशुभ समय (अशुभ मुहूर्त)',
+  'panchang.section.shubha': 'शुभ समय (शुभ मुहूर्त)',
+  'panchang.section.disha': 'दिशा शूल',
+  'panchang.section.bala': 'चंद्रबल और ताराबल',
+  'panchang.section.lagna': 'सूर्योदय पर लग्न चार्ट',
+  'panchang.section.planets': 'सूर्योदय पर ग्रह स्थिति',
+  'panchang.f.tithi': 'तिथि',
+  'panchang.f.nakshatra': 'नक्षत्र',
+  'panchang.f.karana': 'करण',
+  'panchang.f.paksha': 'पक्ष',
+  'panchang.f.yoga': 'योग',
+  'panchang.f.vaar': 'वार',
+  'panchang.f.sunrise': 'सूर्योदय',
+  'panchang.f.sunset': 'सूर्यास्त',
+  'panchang.f.moonSign': 'चन्द्र राशि',
+  'panchang.f.moonrise': 'चन्द्रोदय',
+  'panchang.f.moonset': 'चन्द्रास्त',
+  'panchang.f.ritu': 'ऋतु',
+  'panchang.f.shaka': 'शक सम्वत',
+  'panchang.f.vikram': 'विक्रम सम्वत',
+  'panchang.f.kali': 'काली सम्वत',
+  'panchang.f.pravishte': 'प्रविष्टे / गत्ते',
+  'panchang.f.monthPurnimanta': 'मास पूर्णिमांत',
+  'panchang.f.monthAmanta': 'मास अमांत',
+  'panchang.f.dayDuration': 'दिन काल',
+  'panchang.upto': 'तक',
+  'panchang.from': 'से',
+  'panchang.to': 'तक',
+  'panchang.fullNight': 'पूरी रात',
+  'panchang.adhik': 'अधिक',
+  'panchang.na': 'उपलब्ध नहीं',
+  'panchang.chart.north': 'उत्तर भारतीय',
+  'panchang.chart.south': 'दक्षिण भारतीय',
+  'panchang.chart.east': 'पूर्व भारतीय (बंगाली)',
+  'panchang.planets.modernNote': 'आधुनिक ग्रह (परंपरागत वैदिक ज्योतिष में प्रयुक्त नहीं)',
+  'panchang.widget.title': 'आज का पंचांग',
+  'panchang.widget.button': 'आज का पंचांग',
+  'panchang.errPlace': 'स्थान खोजने में दिक़्क़त — दोबारा कोशिश करें।',
+})
+Object.assign(STRINGS.en, {
+  'panchang.docTitle': "Panchang — Today's Panchang",
+  'panchang.title': 'Panchang',
+  'panchang.subtitle': 'Daily Vedic almanac — anchored to sunrise',
+  'panchang.dateLabel': 'Date',
+  'panchang.placeLabel': 'Place',
+  'panchang.searchPlace': 'Search place…',
+  'panchang.getPanchang': 'Get Panchang',
+  'panchang.calculating': 'Calculating…',
+  'panchang.engineError': 'Engine could not load — please retry in a moment.',
+  'panchang.section.today': 'Panchang For Today',
+  'panchang.section.sunMoon': 'Sun And Moon Calculations',
+  'panchang.section.monthYear': 'Hindu Month And Year',
+  'panchang.section.ashubha': 'Inauspicious Timings (Ashubha Muhurat)',
+  'panchang.section.shubha': 'Auspicious Timings (Shubha Muhurat)',
+  'panchang.section.disha': 'Disha Shoola',
+  'panchang.section.bala': 'Chandrabalam And Tarabalam',
+  'panchang.section.lagna': 'Lagna Chart at Sunrise',
+  'panchang.section.planets': 'Planetary Position at Sunrise',
+  'panchang.f.tithi': 'Tithi',
+  'panchang.f.nakshatra': 'Nakshatra',
+  'panchang.f.karana': 'Karana',
+  'panchang.f.paksha': 'Paksha',
+  'panchang.f.yoga': 'Yoga',
+  'panchang.f.vaar': 'Day',
+  'panchang.f.sunrise': 'Sun Rise',
+  'panchang.f.sunset': 'Sun Set',
+  'panchang.f.moonSign': 'Moon Sign',
+  'panchang.f.moonrise': 'Moon Rise',
+  'panchang.f.moonset': 'Moon Set',
+  'panchang.f.ritu': 'Ritu',
+  'panchang.f.shaka': 'Shaka Samvat',
+  'panchang.f.vikram': 'Vikram Samvat',
+  'panchang.f.kali': 'Kali Samvat',
+  'panchang.f.pravishte': 'Pravishte / Gate',
+  'panchang.f.monthPurnimanta': 'Month Purnimanta',
+  'panchang.f.monthAmanta': 'Month Amanta',
+  'panchang.f.dayDuration': 'Day Duration',
+  'panchang.upto': 'upto',
+  'panchang.from': 'From',
+  'panchang.to': 'To',
+  'panchang.fullNight': 'Full Night',
+  'panchang.adhik': 'Adhik',
+  'panchang.na': 'N/A',
+  'panchang.chart.north': 'North Indian',
+  'panchang.chart.south': 'South Indian',
+  'panchang.chart.east': 'East Indian (Bengali)',
+  'panchang.planets.modernNote': 'Modern planets (not used in traditional Vedic astrology)',
+  'panchang.widget.title': "Today's Panchang",
+  'panchang.widget.button': 'Today Panchang',
+  'panchang.errPlace': 'Place search failed — please try again.',
+})

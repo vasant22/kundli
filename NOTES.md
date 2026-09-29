@@ -226,3 +226,15 @@ Hard requirements (summary):
   disha × all) → **325 passing**.
 - Next: **Phase 6** — i18n additions (30 tithi, 27 yoga, 11 karana, 7 vaar, amanta/purnimanta
   months, ritus, muhurat & direction names done, UI strings for all sections).
+
+### 2026-09-29 — Panchang Phase 6 done: bilingual lists + UI strings (i18n.js)
+- +`TITHIS` (30), +`YOGAS` (27), +`KARANAS` (11), +`VAARAS` (7), +`LUNAR_MONTHS` (12 — shared by
+  amanta & purnimanta), +`RITUS` (6) with label helpers (`tithiLabel`, `yogaLabel`, `karanaLabel`,
+  `vaaraLabel`, `lunarMonthLabel(+adhika)`, `rituLabel`, `samvatsaraLabel`). Samvatsara(60),
+  MUHURAT_NAMES, DIRECTIONS were added in Phases 3–5 as the compute modules required them.
+- +~50 `panchang.*` UI strings (all section headers, field labels, upto/from/to, Full Night,
+  Adhik, N/A, chart tab labels, widget labels, errors) merged via Object.assign → `t()` unchanged.
+- Tests: +5 (`tests/panchang-i18n.test.js`: lengths, non-empty entries, spot checks, key parity
+  in both languages, language switching) → **330 passing**.
+- Next: **Phase 7** — homepage widget (`panchang-widget/` page for the mybapuji.com iframe,
+  fixed ashram location, auto-refresh daily, card fields + “Today Panchang” button).
