@@ -1,7 +1,7 @@
 # Kundli / जन्मपत्री App — Project Notes (handoff)
 
-Created: 2026-09-28. Status: **Phase 12 (almost done, 2026-09-29) — site LIVE on http://kundli.mybapuji.com ✓ (DNS record ✓, custom domain ✓, HTTP 200). HTTPS certificate provisioning in progress — auto-check cron scheduled; remaining: enforce HTTPS + verify + Phase 13 final report (next active run).**
-First thing to do in a fresh chat: read this file + `docs/kundli-guide.txt`, then finish Phase 12 → Phase 13 (see “Phase 12 (part 3)” log entry).
+Created: 2026-09-28. Status: **Project COMPLETE (Phases 1–13, 2026-09-29) — live at http://kundli.mybapuji.com (HTTPS certificate auto-provisioning; cron checks watching). Final report: `docs/final-report.html`. User-side remainders: 10-chart AstroSage validation (tests/VALIDATION.md), mybapuji.com link, device checks.**
+First thing to do in a fresh chat: read this file + `docs/kundli-guide.txt`. If the HTTPS cert needs attention: see “Phase 12 (part 3)” + “Phase 13” log entries.
 
 ## What to build
 Static, browser-only Vedic "Kundli / Birth Chart" web app for mybapuji.com.
@@ -137,3 +137,8 @@ Hard requirements (summary):
 - GitHub Pages: custom domain `kundli.mybapuji.com` set via API; **http://kundli.mybapuji.com serves the app — 200 OK ✓** (github.io URL now 301-redirects to the custom domain).
 - HTTPS cert still provisioning (`https_certificate: null`). Cron checks scheduled: `30aa09c5…` at 04:53:55Z (checks cert, enforces HTTPS if ready, notifies this chat via sessions_send; else sends a short note) + backup `a22175c8…` at 05:40Z (deleteAfterRun).
 - If checks miss: next active run → `gh api repos/vasant22/kundli/pages` (see https_certificate), `gh api -X PUT repos/vasant22/kundli/pages -F https_enforced=true`, verify https (use `curl --resolve kundli.mybapuji.com:443:185.199.108.153` if local DNS caches stall), then **Phase 13 final report**.
+
+### 2026-09-29 — Phase 13 done: final report delivered
+- Final report (Hindi, warm-paper editorial layout, single self-contained HTML) at **`docs/final-report.html`**: क्या बना · live links · 13-step journey · commands · file map · verification (62 tests) · limitations · future ideas (Vimshottari, D9/divisional charts, PDF export) · user’s remaining tasks. Rendered & checked in the browser.
+- Project status: **COMPLETE.** Live: http://kundli.mybapuji.com · Repo: github.com/vasant22/kundli.
+- Pending (auto/user): HTTPS cert (cron checks: f8b14e1d@05:55Z · 155a0455@08:00Z · backup a22175c8@05:40Z — all deleteAfterRun); user: AstroSage validation + mybapuji.com link + device checks.

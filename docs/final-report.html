@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>कुंडली — अंतिम रिपोर्ट</title>
+<style>
+  :root{
+    --paper:#f8f3e9; --ink:#2a1c0d; --muted:#6b5a43; --rule:#e0d3bc; --rule-soft:#ece3d2;
+    --accent:#96490a; --code-bg:#f2ead9;
+    --serif:'Iowan Old Style','Palatino Linotype',Palatino,Georgia,'Devanagari Sangam MN',serif;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Noto Sans Devanagari','Kohinoor Devanagari',sans-serif;
+    --mono:'SF Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --nav-width:clamp(200px,18vw,260px);
+    --canvas:clamp(960px,92vw,1300px);
+    --gutter:clamp(16px,3vw,40px);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.6;font-size:16.5px}
+  .layout{display:grid;grid-template-columns:var(--nav-width) minmax(0,1fr);min-height:100vh}
+  .sidebar{position:sticky;top:0;align-self:start;height:100vh;overflow-y:auto;border-right:1px solid var(--rule-soft);padding:30px 20px 24px}
+  .sidebar .brand{font-family:var(--serif);font-weight:600;font-size:19px;margin:0 0 2px;letter-spacing:-.01em}
+  .sidebar .dated{color:var(--muted);font-size:12.5px;letter-spacing:.05em;margin:0 0 26px}
+  .sidebar nav a{display:flex;gap:9px;padding:6.5px 0;color:var(--ink);text-decoration:none;font-size:14px;border-bottom:1px solid var(--rule-soft)}
+  .sidebar nav a .no{font-family:var(--mono);font-size:11.5px;color:var(--muted);min-width:2.2em;padding-top:2px}
+  @media (max-width:980px){ .layout{grid-template-columns:1fr} .sidebar{display:none} }
+  .canvas{max-width:var(--canvas);margin-inline:auto;padding:clamp(28px,5vw,64px) var(--gutter) 90px}
+  .cover{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:28px;align-items:start;margin-bottom:44px}
+  .kicker{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 18px}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(42px,6vw,58px);line-height:1.04;letter-spacing:-.02em;margin:0 0 10px}
+  .subtitle{font-family:var(--serif);font-size:clamp(19px,2.6vw,24px);color:var(--muted);margin:0 0 24px;line-height:1.35}
+  .lede{font-size:17.5px;max-width:62ch;margin:0}
+  .meta{display:flex;flex-wrap:wrap;gap:8px 36px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:12px 0;margin:30px 0 0;font-size:13.5px;color:var(--muted)}
+  .meta b{color:var(--ink);font-weight:550}
+  .motif{width:118px;height:118px;flex:none;margin-top:6px}
+  section.sec{padding-top:32px;border-top:1px solid var(--rule);margin-top:42px}
+  h2{font-family:var(--serif);font-size:clamp(24px,3vw,30px);font-weight:600;letter-spacing:-.01em;margin:0 0 16px;line-height:1.25}
+  h2 .no{font-family:var(--mono);font-size:13px;color:var(--muted);letter-spacing:.06em;margin-right:10px;font-weight:550}
+  .prose{max-width:65ch}
+  .prose p{margin:0 0 14px}
+  .prose p:last-child{margin-bottom:0}
+  ul.clean{max-width:78ch;padding:0;list-style:none;margin:4px 0 0}
+  ul.clean li{padding:7.5px 0 7.5px 24px;position:relative;border-bottom:1px solid var(--rule-soft)}
+  ul.clean li::before{content:"—";position:absolute;left:2px;color:var(--muted)}
+  h3{font-family:var(--serif);font-size:17.5px;font-weight:600;margin:22px 0 8px}
+  figure.wide{margin:18px 0 6px}
+  figure.wide figcaption{font-size:12.5px;color:var(--muted);margin-top:8px}
+  pre{background:var(--code-bg);border:1px solid var(--rule);border-radius:4px;padding:15px 18px;font-family:var(--mono);font-size:13.5px;line-height:1.6;overflow-x:auto;margin:0}
+  pre .c{color:var(--muted)}
+  .journey{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 40px;list-style:none;padding:0;margin:16px 0 0;border-top:1px solid var(--rule)}
+  .journey li{display:flex;gap:13px;padding:9px 0;border-bottom:1px solid var(--rule-soft);font-size:14.5px;line-height:1.5}
+  .journey .n{font-family:var(--mono);font-size:12px;color:var(--muted);min-width:2.4em;padding-top:2.5px}
+  @media (max-width:720px){ .journey{grid-template-columns:1fr} }
+  .flow{margin:22px 0 4px}
+  .flow svg{width:100%;height:auto;display:block}
+  a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
+  a:hover{text-decoration:none}
+  strong{font-weight:600}
+  .colophon{margin-top:60px;padding-top:18px;border-top:1px solid var(--rule);font-size:12.5px;color:var(--muted);line-height:1.8}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <p class="brand">कुंडली — रिपोर्ट</p>
+    <p class="dated">२९ सितम्बर २०२६</p>
+    <nav>
+      <a href="#s1"><span class="no">०१</span>क्या बना</a>
+      <a href="#s2"><span class="no">०२</span>लाइव लिंक</a>
+      <a href="#s3"><span class="no">०३</span>१३ चरणों की यात्रा</a>
+      <a href="#s4"><span class="no">०४</span>चलाने के कमांड</a>
+      <a href="#s5"><span class="no">०५</span>फ़ाइल-नक़्शा</a>
+      <a href="#s6"><span class="no">०६</span>जाँच</a>
+      <a href="#s7"><span class="no">०७</span>सीमाएँ</a>
+      <a href="#s8"><span class="no">०८</span>आगे के विचार</a>
+      <a href="#s9"><span class="no">०९</span>आपके बाक़ी काम</a>
+    </nav>
+  </aside>
+
+  <main>
+    <div class="canvas">
+      <header class="cover">
+        <div>
+          <p class="kicker">परियोजना रिपोर्ट · mybapuji.com</p>
+          <h1>कुंडली</h1>
+          <p class="subtitle">एक वैदिक जन्मपत्री ऐप — शुरू से live तक की पूरी कहानी</p>
+          <p class="lede">जन्म विवरण भरने से लेकर चार्ट, ग्रह-तालिका और PNG तक — सब कुछ, पूरी तरह visitor के ब्राउज़र में। कोई सर्वर नहीं, कोई डेटाबेस नहीं, कोई ख़र्च नहीं। अब <strong>kundli.mybapuji.com</strong> पर live, और <strong>github.com/vasant22/kundli</strong> पर खुला कोड (AGPL-3.0)।</p>
+          <div class="meta">
+            <span><b>दायरा</b> फ़ॉर्म से नतीजा तक</span>
+            <span><b>चरण</b> १३ (सब पूरे)</span>
+            <span><b>कुल ख़र्च</b> ≈ ६,९०० अंक</span>
+            <span><b>जाँचें</b> ६२ स्वचालित — सब पास</span>
+          </div>
+        </div>
+        <svg class="motif" viewBox="0 0 120 120" aria-hidden="true">
+          <g fill="none" stroke="#96490a" stroke-width="1.6">
+            <rect x="3" y="3" width="114" height="114"/>
+            <line x1="3" y1="3" x2="117" y2="117"/>
+            <line x1="117" y1="3" x2="3" y2="117"/>
+            <polygon points="60,3 117,60 60,117 3,60"/>
+          </g>
+          <circle cx="60" cy="60" r="1.8" fill="#96490a"/>
+        </svg>
+      </header>
+
+      <article>
+        <section class="sec" id="s1">
+          <h2><span class="no">०१</span>क्या बना</h2>
+          <div class="prose">
+            <p>एक पूरी वेब-ऐप, जो किसी भी फ़ोन या कंप्यूटर के ब्राउज़र में चलती है — और सारी गणना वहीं करती है, न कि किसी सर्वर पर।</p>
+          </div>
+          <ul class="clean">
+            <li>जन्म-विवरण फ़ॉर्म — नाम, लिंग, तारीख़, समय (24-घंटे), और जगह — पूरी जाँच के साथ; महीना चुनने के लिए बड़े-आरामदायक chips।</li>
+            <li>स्थान-खोज (Open-Meteo) — गाँव/शहर का नाम डालकर नतीजों में से चुनें; न मिले तो हाथ से latitude/longitude/समय-क्षेत्र भरने का विकल्प।</li>
+            <li>समय का रूपांतरण — ऐतिहासिक नियमों के साथ UTC (जैसे 1943 के भारत का +6:30), और चाहें तो हाथ से offset; आगे Julian Day।</li>
+            <li>गणना — Swiss Ephemeris से लाहिरी (Lahiri) निरयन: लग्न, 9 ग्रह (राहु-केतु सहित), 12 भाव, नक्षत्र-पद व वक्री-स्थिति।</li>
+            <li>दो चार्ट — उत्तर भारतीय (हीरा) और दक्षिण भारतीय (4×4) — एक बटन से तुरंत बदलाव, बिना दोबारा गणना।</li>
+            <li>नतीजा-पन्ना — द्विभाषी तालिका (हिंदी / English), और PNG सेव / प्रिंट / विवरण कॉपी के बटन।</li>
+            <li>भाषा — पूरा interface हिंदी ⇄ English एक क्लिक में; फ़ॉन्ट app के साथ (कोई बाहरी निर्भरता नहीं)।</li>
+            <li>निजता — न कोई tracker, न कुकी; बाहर सिर्फ़ जगह-खोज जाती है, वह भी सिर्फ़ "खोजें" दबाने पर।</li>
+          </ul>
+          <figure class="wide flow">
+            <svg viewBox="0 0 1000 96" aria-label="app कैसे चलता है — फ़ॉर्म → गणना → नतीजे → सेव" role="img">
+              <g fill="none" stroke="#c9b795" stroke-width="1.4">
+                <rect x="10" y="24" width="200" height="52"/>
+                <rect x="270" y="24" width="220" height="52"/>
+                <rect x="550" y="24" width="200" height="52"/>
+                <rect x="810" y="24" width="180" height="52"/>
+                <line x1="210" y1="50" x2="262" y2="50"/>
+                <line x1="490" y1="50" x2="542" y2="50"/>
+                <line x1="750" y1="50" x2="802" y2="50"/>
+                <path d="M254 46 L262 50 L254 54 Z" fill="#c9b795" stroke="none"/>
+                <path d="M534 46 L542 50 L534 54 Z" fill="#c9b795" stroke="none"/>
+                <path d="M794 46 L802 50 L794 54 Z" fill="#c9b795" stroke="none"/>
+              </g>
+              <g fill="#2a1c0d" font-size="14.5" text-anchor="middle" font-family="system-ui, sans-serif">
+                <text x="110" y="55">फ़ॉर्म भरें</text>
+                <text x="380" y="48">गणना</text>
+                <text x="380" y="66" font-size="12" fill="#6b5a43">Swiss Ephemeris · लाहिरी</text>
+                <text x="650" y="55">चार्ट + ग्रह-तालिका</text>
+                <text x="900" y="55">PNG / प्रिंट / कॉपी</text>
+              </g>
+            </svg>
+            <figcaption>सारा सफ़र — फ़ॉर्म से नतीजे तक — visitor के ब्राउज़र में ही।</figcaption>
+          </figure>
+        </section>
+
+        <section class="sec" id="s2">
+          <h2><span class="no">०२</span>लाइव लिंक</h2>
+          <div class="prose">
+            <p>अभी (रिपोर्ट के समय) साइट बिना-ताले वाले पते पर चल रही है — GitHub कुछ ही देर में HTTPS (ताला) भी जोड़ देगा।</p>
+            <p>साइट: <a href="http://kundli.mybapuji.com/" target="_blank" rel="noopener">kundli.mybapuji.com</a> · पूरा कोड (public): <a href="https://github.com/vasant22/kundli" target="_blank" rel="noopener">github.com/vasant22/kundli</a></p>
+          </div>
+        </section>
+
+        <section class="sec" id="s3">
+          <h2><span class="no">०३</span>१३ चरणों की यात्रा</h2>
+          <div class="prose">
+            <p>नियोजित योजना के मुताबिक़, एक-एक चरण करके, हर चरण पर जाँच के साथ।  </p>
+          </div>
+          <ul class="journey">
+            <li><span class="n">०१</span>नींव — Vite ढाँचा + Swiss Ephemeris ब्राउज़र में चली</li>
+            <li><span class="n">०२</span>फ़ॉर्म — जन्म विवरण, जाँच, month chips, भाषा बटन</li>
+            <li><span class="n">०३</span>स्थान-खोज — Open-Meteo + हाथ से भरने का विकल्प</li>
+            <li><span class="n">०४</span>समय — ऐतिहासिक timezone के साथ UTC + offset override</li>
+            <li><span class="n">०५</span>गणना — लग्न, ग्रह, भाव, नक्षत्र-पद (लाहिरी)</li>
+            <li><span class="n">०६</span>भाषा-डेटा — राशि/ग्रह/नक्षत्र + app का अपना फ़ॉन्ट</li>
+            <li><span class="n">०७</span>चार्ट — उत्तर/दक्षिण भारतीय SVG + toggle</li>
+            <li><span class="n">०८</span>नतीजा-पन्ना — तालिका + PNG/प्रिंट/कॉपी</li>
+            <li><span class="n">०९</span>मिलान-जाँच — ६ चार्ट fixtures + आपकी १०-कुंडली सूची</li>
+            <li><span class="n">१०</span>मज़बूती व निजता — मीठे errors, aria, 2.9 MB</li>
+            <li><span class="n">११</span>AGPL — credit + सोर्स-लिंक + README</li>
+            <li><span class="n">१२</span>Live — GitHub repo + Pages + domain + DNS</li>
+            <li><span class="n">१३</span>यह रिपोर्ट</li>
+          </ul>
+        </section>
+
+        <section class="sec" id="s4">
+          <h2><span class="no">०४</span>अपने कंप्यूटर पर चलाने के कमांड</h2>
+          <figure class="wide">
+<pre>
+npm install      <span class="c"># एक बार — ज़रूरी चीज़ें लाएँ (Node.js 18+)</span>
+npm run dev      <span class="c"># local चलाएँ → http://localhost:5173</span>
+npm run build    <span class="c"># production build (dist/ फ़ोल्डर में)</span>
+npm test         <span class="c"># ६२ स्वचालित जाँचें चलाएँ</span>
+npm run preview  <span class="c"># बने हुए build को देखें</span>
+</pre>
+            <figcaption>बदलाव GitHub पर push होते ही website अपने-आप update हो जाती है।</figcaption>
+          </figure>
+        </section>
+
+        <section class="sec" id="s5">
+          <h2><span class="no">०५</span>फ़ाइल-नक़्शा</h2>
+          <figure class="wide">
+<pre>
+kundli/
+├── index.html            <span class="c">— app का दरवाज़ा</span>
+├── src/
+│   ├── main.js           <span class="c">— फ़ॉर्म, नतीजे, बटन (सब जोड़ने वाला हिस्सा)</span>
+│   ├── i18n.js           <span class="c">— हिंदी/English; 12 राशि, 9 ग्रह, 27 नक्षत्र</span>
+│   ├── geocode.js        <span class="c">— जगह की खोज (Open-Meteo)</span>
+│   ├── timeutil.js       <span class="c">— समय → UTC (ऐतिहासिक नियम) + Julian Day</span>
+│   ├── astro.js          <span class="c">— असली गणना (Swiss Ephemeris WASM)</span>
+│   └── charts.js         <span class="c">— दोनों चार्ट बनाना (SVG)</span>
+├── public/fonts/         <span class="c">— Noto Sans Devanagari (app के साथ)</span>
+├── scripts/              <span class="c">— फ़ॉन्ट/wasm उठाने और test-values बनाने के छोटे स्क्रिप्ट</span>
+├── tests/                <span class="c">— ६२ स्वचालित जाँचें + VALIDATION.md (आपकी सूची)</span>
+├── .github/workflows/    <span class="c">— deploy.yml (हर push पर live करने वाला)</span>
+├── docs/                 <span class="c">— यह रिपोर्ट + guide</span>
+└── README.md · DEPLOY.md · NOTES.md · LICENSE  <span class="c">(AGPL-3.0)</span>
+</pre>
+          </figure>
+        </section>
+
+        <section class="sec" id="s6">
+          <h2><span class="no">०६</span>जाँच — क्या-क्या पक्का है</h2>
+          <ul class="clean">
+            <li><strong>६२ स्वचालित जाँचें</strong> (हर बदलाव पर अपने-आप चलती हैं): फ़ॉर्म 23 · गणना 11 · समय 9 · चार्ट 6 · accuracy 6 · जगह-खोज 4 · भाषा 3।</li>
+            <li><strong>सटीकता fixtures</strong> — 6 अलग कुंडलियाँ (1943 युद्धकाल, आधी रात, दक्षिणी गोलार्ध, US-DST...) जो Pyswisseph (Swiss Ephemeris) के मानों से अंश-स्तर तक मिलती हैं।</li>
+            <li><strong>असली ब्राउज़र की जाँच</strong> — पूरा सफ़र (फ़ॉर्म भरना → खोज → चार्ट → PNG फ़ाइल बनना) चलाकर देखा गया।</li>
+            <li><strong>आपके हाथ की सूची</strong> — tests/VALIDATION.md में 10 जन्म (हमारा परिणाम पहले से भरा) — इन्हें एक भरोसेमंद साइट (AstroSage) से मिलाकर ✔/✘ लगाना है।</li>
+          </ul>
+        </section>
+
+        <section class="sec" id="s7">
+          <h2><span class="no">०७</span>स्वीकार्य अंतर व सीमाएँ</h2>
+          <ul class="clean">
+            <li><strong>राहु</strong> — हम Mean राहु दिखाते हैं (True विकल्प मौजूद); कुछ साइटें True दिखाती हैं — ~1° तक अंतर संभव।</li>
+            <li><strong>लाहिरी के सूक्ष्म रूप</strong> — साइटें कुछ arc-second–arc-minute अलग हो सकती हैं; हम Swiss Ephemeris के लाहिरी पर हैं।</li>
+            <li><strong>भाव</strong> — पूर्ण-राशि (whole-sign) प्रणाली; कुछ साइटों के cusp-based भाव से अंक अलग लग सकते हैं, राशियाँ नहीं।</li>
+            <li><strong>तारीख़ों की सीमा</strong> — 1800 से 2400 ईस्वी।</li>
+            <li><strong>पहली load</strong> — ~2.9 MB (गणना-इंजन सहित) और पहली बार के लिए इंटरनेट ज़रूरी; जगह-खोज के लिए हर बार।</li>
+            <li><strong>HTTPS</strong> — रिपोर्ट के समय सर्टिफ़िकेट बन रहा था; कुछ देर में ताला लग जाएगा।</li>
+            <li><strong>Device जाँच</strong> — Chromium-आधारित ब्राउज़र पर पूरी जाँच ✓; Firefox/Safari/Android की सूची VALIDATION.md में है।</li>
+          </ul>
+        </section>
+
+        <section class="sec" id="s8">
+          <h2><span class="no">०८</span>आगे क्या हो सकता है</h2>
+          <ul class="clean">
+            <li><strong>विंशोत्तरी दशा</strong> — महादशा/अंतर्दशा की समय-रेखा।</li>
+            <li><strong>नवांश (D9) और अन्य विभाजन चक्र</strong> — D10, D7 आदि।</li>
+            <li><strong>PDF निर्यात</strong> — PNG के अलावा पूरा फल एक PDF में।</li>
+            <li><strong>True राहु का UI विकल्प</strong> — setting में Mean ⇄ True।</li>
+            <li><strong>और भाषाएँ/शैलियाँ</strong> — जैसे गुजराती, या chart रंग-विकल्प।</li>
+          </ul>
+        </section>
+
+        <section class="sec" id="s9">
+          <h2><span class="no">०९</span>आपके बाक़ी काम</h2>
+          <div class="prose">
+            <p>तकनीकी तौर पर सब हो चुका। तीन छोटे काम आपके अनुभव और आपकी site के हैं:</p>
+          </div>
+          <ul class="clean">
+            <li><strong>10 कुंडलियों की मिलान-जाँच</strong> — tests/VALIDATION.md लेकर AstroSage से मिलाएँ (सबसे ज़रूरी — यही असली स्टाम्प है)।</li>
+            <li><strong>mybapuji.com पर link</strong> — कहीं menu/पेज पर kundli.mybapuji.com का लिंक लगा दें।</li>
+            <li><strong>फ़ोन/ब्राउज़र चेक</strong> — एक बार iPhone Safari और Android Chrome पर खोलकर देख लें (सूची VALIDATION.md में)।</li>
+          </ul>
+        </section>
+      </article>
+
+      <footer class="colophon">
+        <p>कुंडली — अंतिम रिपोर्ट · २९ सितम्बर २०२६ · लाइसेंस AGPL-3.0 ·
+        गणना: Swiss Ephemeris (Astrodienst AG) · जगह-खोज: Open-Meteo.com · स्रोत: github.com/vasant22/kundli</p>
+      </footer>
+    </div>
+  </main>
+</div>
+</body>
+</html>

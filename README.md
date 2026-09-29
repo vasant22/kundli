@@ -14,8 +14,8 @@ All calculations run in the visitor's browser — **no backend, no database, no 
 
 ## Status
 
-**Phases 1–10 complete** — full static Kundli app: birth-details form + validation, place search (Open-Meteo), historical timezone conversion, Lahiri sidereal calculations, bilingual data, North/South Indian SVG charts, results page with PNG/Print/Copy — everything runs in the visitor's browser. Accuracy verified (6 reference charts + 10-chart manual checklist); privacy, performance & accessibility pass done. (62 tests, `npm test`)
-Deployment (GitHub Pages) and the final report follow next.
+**Project complete (Phases 1–13)** — a full browser-only Vedic Kundli app, live at **kundli.mybapuji.com** (custom domain; HTTPS auto-provisions). Source: <https://github.com/vasant22/kundli>. Final report: [`docs/final-report.html`](./docs/final-report.html).
+User-side remainders: the 10-chart reference validation ([`tests/VALIDATION.md`](./tests/VALIDATION.md)), linking the app from mybapuji.com, and cross-device checks.
 
 ## Development
 
