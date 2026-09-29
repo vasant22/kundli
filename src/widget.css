@@ -1,6 +1,7 @@
-/* widget.css — compact card styles for the homepage Panchang widget.
+/* widget.css — compact card styles for the homepage widgets
+   (Panchang card + Kundli / Kundli-Matching mini-widgets).
    Mirrors the site's saffron/orange theme (same palette as style.css).
-   The page works inside an iframe sized ~340–420 px wide. */
+   The pages work inside an iframe sized ~340–420 px wide. */
 
 :root {
   --pw-saffron: #e8730c;
@@ -100,3 +101,142 @@ body.pw-transparent { background: transparent; }
 .pw-btn:hover { background: var(--pw-saffron-dark); }
 
 .pw-err { color: #c62828; text-align: center; margin: 8px 0; }
+
+/* ---------------------------------------------------------------------------
+   Kundli / Kundli-Matching mini-widget forms (widgets/kundli/, widgets/match/)
+   Same palette and radii as the Panchang card above.
+   --------------------------------------------------------------------------- */
+
+.pw-sub {
+  color: var(--pw-muted);
+  font-size: 0.92em;
+  margin-top: 2px;
+}
+
+.kw-form { margin-top: 6px; text-align: left; }
+
+.kw-field { margin: 10px 0; }
+.kw-fieldset { border: 0; padding: 0; margin: 10px 0; }
+
+.kw-label {
+  display: block;
+  font-size: 0.88em;
+  font-weight: 600;
+  color: var(--pw-saffron-dark);
+  margin-bottom: 4px;
+}
+
+.kw-note-inline {
+  font-weight: 400;
+  color: var(--pw-muted);
+  font-size: 0.85em;
+}
+
+.kw-input {
+  width: 100%;
+  padding: 7px 9px;
+  border: 1px solid var(--pw-border);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.95em;
+  background: #fff;
+  color: var(--pw-ink);
+}
+
+.kw-input:focus {
+  outline: 2px solid var(--pw-saffron);
+  outline-offset: 1px;
+  border-color: var(--pw-saffron);
+}
+
+.kw-row3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6px;
+}
+
+.kw-mini { display: flex; flex-direction: column; }
+
+.kw-mini-label {
+  font-size: 0.78em;
+  color: var(--pw-muted);
+  margin-bottom: 2px;
+}
+
+.kw-gender { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.kw-gender label {
+  flex: 1 1 30%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 1px solid var(--pw-border);
+  border-radius: 999px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 0.92em;
+  background: #fff;
+}
+
+.kw-gender label:has(input:checked) {
+  background: var(--pw-soft);
+  border-color: var(--pw-saffron);
+  font-weight: 600;
+}
+
+.kw-gender input { accent-color: var(--pw-saffron); margin: 0; }
+
+.kw-search { display: flex; gap: 6px; }
+.kw-search .kw-input { flex: 1; min-width: 0; }
+
+.kw-search-btn {
+  border: 1px solid var(--pw-saffron);
+  background: #fff;
+  color: var(--pw-saffron-dark);
+  border-radius: 8px;
+  padding: 0 12px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.kw-search-btn:hover { background: var(--pw-soft); }
+.kw-search-btn:disabled { opacity: 0.6; cursor: default; }
+
+.kw-results {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.kw-result {
+  text-align: left;
+  border: 1px solid var(--pw-border);
+  background: #fff;
+  border-radius: 8px;
+  padding: 6px 9px;
+  font: inherit;
+  font-size: 0.92em;
+  cursor: pointer;
+  color: var(--pw-ink);
+}
+.kw-result:hover { background: var(--pw-soft); }
+.kw-result.selected { border-color: var(--pw-saffron); background: var(--pw-soft); }
+
+.kw-note { color: var(--pw-muted); font-size: 0.85em; margin: 6px 0 0; }
+.kw-ok { color: #1e7e34; font-size: 0.85em; margin: 6px 0 0; }
+.kw-err { color: #c62828; font-size: 0.85em; margin: 4px 0 0; }
+.kw-err:empty { display: none; }
+.kw-credit { color: var(--pw-muted); font-size: 0.78em; margin: 6px 0 0; }
+.kw-credit a { color: inherit; }
+.kw-field.has-error .kw-input { border-color: #c62828; }
+
+.kw-submit {
+  width: 100%;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  font-size: 1em;
+}

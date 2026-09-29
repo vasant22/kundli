@@ -10,14 +10,16 @@ export default defineConfig({
   base: './',
 
   build: {
-    // Multi-page build: the main Kundli page + the Kundli Matching page
-    // (served at /match/). Both reuse the same modules and assets.
+    // Multi-page build: the main Kundli page, the Kundli Matching page
+    // (served at /match/), the full Panchang page, the homepage widgets
+    // (Panchang card + Kundli mini-widget) — all reusing the same modules.
     rollupOptions: {
       input: {
         main: page('index.html'),
         match: page('match/index.html'),
         widget: page('panchang-widget/index.html'),
         panchang: page('panchang/index.html'),
+        'kundli-widget': page('widgets/kundli/index.html'),
       },
     },
   },

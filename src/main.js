@@ -4,7 +4,8 @@ import './style.css'
 import { t, getLang, setLang, months, rashiLabel, grahaLabel, nakshatraLabel, monthEn } from './i18n.js'
 import { searchPlace } from './geocode.js'
 import { parseBirthParams } from './prefill.js'
-import { formatUtcOffset, isValidTimeZone, parseUtcOffset, wallTimeToUtc } from './timeutil.js'
+import { validateBirth } from './birthvalidate.js'
+import { formatUtcOffset, parseUtcOffset, wallTimeToUtc } from './timeutil.js'
 import { computeKundli, initEphemeris, navamsaKundli, computeVimshottari } from './astro.js'
 import { buildNorthChart, buildSouthChart } from './charts.js'
 
@@ -193,10 +194,6 @@ function formatDegMinSec(deg) {
     d += 1
   }
   return `${d}°${String(m).padStart(2, '0')}'${String(s).padStart(2, '0')}"`
-}
-
-function daysInMonth(year, month) {
-  return new Date(year, month, 0).getDate()
 }
 
 // Where will the birth time be converted from? (override > picked place > manual tz)
@@ -419,7 +416,8 @@ function applyLanguage() {
 }
 
 // ---------------------------------------------------------------------------
-// Read + validate the form
+// Read the form (the shared validation rules live in src/birthvalidate.js —
+// one copy used by this page, /match/ and the homepage Kundli mini-widget)
 // ---------------------------------------------------------------------------
 function readForm() {
   const raw = (id) => document.getElementById(id).value.trim()
@@ -438,66 +436,6 @@ function readForm() {
     selectedPlace,
     manual: { lat: raw('f-lat'), lon: raw('f-lon'), tz: raw('f-tz') },
   }
-}
-
-function validate(v) {
-  const errors = {}
-
-  if (!v.gender) errors.gender = t('err.gender')
-
-  // Date: full date required, year 1800–2400, real calendar day.
-  const d = toInt(v.day)
-  const m = toInt(v.month)
-  const y = toInt(v.year)
-  if (v.day === '' || v.month === '' || v.year === '') {
-    errors.date = t('err.dateRequired')
-  } else if (!Number.isInteger(d) || !Number.isInteger(m) || !Number.isInteger(y)) {
-    errors.date = t('err.dateInvalid')
-  } else if (y < 1800 || y > 2400) {
-    errors.date = t('err.yearRange')
-  } else if (m < 1 || m > 12 || d < 1 || d > daysInMonth(y, m)) {
-    errors.date = t('err.dateInvalid')
-  }
-
-  // Time: 24-hour clock, hour 0–23, minute 0–59; empty seconds are taken as 0.
-  const h = toInt(v.hour)
-  const mi = toInt(v.minute)
-  const s = v.second === '' ? 0 : toInt(v.second)
-  if (v.hour === '' || v.minute === '') {
-    errors.time = t('err.timeRequired')
-  } else if (!Number.isInteger(h) || h < 0 || h > 23) {
-    errors.time = t('err.hour')
-  } else if (!Number.isInteger(mi) || mi < 0 || mi > 59) {
-    errors.time = t('err.minute')
-  } else if (!Number.isInteger(s) || s < 0 || s > 59) {
-    errors.time = t('err.second')
-  }
-
-  // Optional manual UTC offset override (e.g. +05:30).
-  if (v.offset !== '' && parseUtcOffset(v.offset) === null) {
-    errors.offset = t('err.offsetInvalid')
-  }
-
-  // Place: either picked from the search results, or filled in manually.
-  // (If any manual field is filled, the manual values win — user was explicit.)
-  const manualAny = v.manual.lat !== '' || v.manual.lon !== '' || v.manual.tz !== ''
-  if (manualAny) {
-    const lat = Number(v.manual.lat)
-    const lon = Number(v.manual.lon)
-    if (v.manual.lat === '' || v.manual.lon === '' || v.manual.tz === '') {
-      errors.manual = t('err.latlonRequired')
-    } else if (!Number.isFinite(lat) || lat < -90 || lat > 90) {
-      errors.manual = t('err.latRange')
-    } else if (!Number.isFinite(lon) || lon < -180 || lon > 180) {
-      errors.manual = t('err.lonRange')
-    } else if (parseUtcOffset(v.manual.tz) === null && !isValidTimeZone(v.manual.tz)) {
-      errors.manual = t('err.tzInvalid')
-    }
-  } else if (!v.selectedPlace) {
-    errors.place = v.place === '' ? t('err.place') : t('place.errSelect')
-  }
-
-  return errors
 }
 
 function showErrors(errors) {
@@ -922,7 +860,7 @@ placeInput.addEventListener('input', () => {
 // link from the homepage widget takes exactly the same path as a manual submit.
 async function submitForm() {
   const values = readForm()
-  const errors = validate(values)
+  const errors = validateBirth(values)
   lastErrors = errors
   showErrors(errors)
 
@@ -1019,5 +957,5 @@ applyLanguage()
 if (prefill.any) {
   applyBirthPrefill(prefill)
   // Auto-run only when every required value arrived — nothing left to type.
-  if (Object.keys(validate(readForm())).length === 0) submitForm()
+  if (Object.keys(validateBirth(readForm())).length === 0) submitForm()
 }

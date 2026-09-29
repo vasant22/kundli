@@ -9,7 +9,8 @@ import './style.css'
 import { t, getLang, setLang, months, rashiLabel, nakshatraLabel } from './i18n.js'
 import { searchPlace } from './geocode.js'
 import { parseMatchParams } from './prefill.js'
-import { parseUtcOffset, isValidTimeZone, wallTimeToUtc } from './timeutil.js'
+import { validateBirth } from './birthvalidate.js'
+import { wallTimeToUtc } from './timeutil.js'
 import { computeKundli, initEphemeris } from './astro.js'
 import { computeAshtakoot } from './ashtakoot.js'
 import { checkMangalDosha, mangalPairNotes } from './mangaldosha.js'
@@ -24,10 +25,6 @@ const app = document.querySelector('#app')
 // Helpers used to build the page
 // ---------------------------------------------------------------------------
 const toInt = (s) => (s === '' ? NaN : Number(s))
-
-function daysInMonth(year, month) {
-  return new Date(year, month, 0).getDate()
-}
 
 // The per-person birth-details fields — identical to the main app's form
 // (name, date, time, place with search + manual fallback), IDs prefixed with
@@ -326,60 +323,9 @@ function readPerson(p) {
 }
 
 function validatePerson(v) {
-  const errors = {}
-
-  // Date: full date required, year 1800–2400, real calendar day.
-  const d = toInt(v.day)
-  const m = toInt(v.month)
-  const y = toInt(v.year)
-  if (v.day === '' || v.month === '' || v.year === '') {
-    errors.date = t('err.dateRequired')
-  } else if (!Number.isInteger(d) || !Number.isInteger(m) || !Number.isInteger(y)) {
-    errors.date = t('err.dateInvalid')
-  } else if (y < 1800 || y > 2400) {
-    errors.date = t('err.yearRange')
-  } else if (m < 1 || m > 12 || d < 1 || d > daysInMonth(y, m)) {
-    errors.date = t('err.dateInvalid')
-  }
-
-  // Time: 24-hour clock; empty seconds are taken as 0.
-  const h = toInt(v.hour)
-  const mi = toInt(v.minute)
-  const s = v.second === '' ? 0 : toInt(v.second)
-  if (v.hour === '' || v.minute === '') {
-    errors.time = t('err.timeRequired')
-  } else if (!Number.isInteger(h) || h < 0 || h > 23) {
-    errors.time = t('err.hour')
-  } else if (!Number.isInteger(mi) || mi < 0 || mi > 59) {
-    errors.time = t('err.minute')
-  } else if (!Number.isInteger(s) || s < 0 || s > 59) {
-    errors.time = t('err.second')
-  }
-
-  // Optional manual UTC offset override (e.g. +05:30).
-  if (v.offset !== '' && parseUtcOffset(v.offset) === null) {
-    errors.offset = t('err.offsetInvalid')
-  }
-
-  // Place: either picked from the search results, or filled in manually.
-  const manualAny = v.manual.lat !== '' || v.manual.lon !== '' || v.manual.tz !== ''
-  if (manualAny) {
-    const lat = Number(v.manual.lat)
-    const lon = Number(v.manual.lon)
-    if (v.manual.lat === '' || v.manual.lon === '' || v.manual.tz === '') {
-      errors.manual = t('err.latlonRequired')
-    } else if (!Number.isFinite(lat) || lat < -90 || lat > 90) {
-      errors.manual = t('err.latRange')
-    } else if (!Number.isFinite(lon) || lon < -180 || lon > 180) {
-      errors.manual = t('err.lonRange')
-    } else if (parseUtcOffset(v.manual.tz) === null && !isValidTimeZone(v.manual.tz)) {
-      errors.manual = t('err.tzInvalid')
-    }
-  } else if (!v.selectedPlace) {
-    errors.place = v.place === '' ? t('err.place') : t('place.errSelect')
-  }
-
-  return errors
+  // The shared rules (src/birthvalidate.js) minus the gender check — the
+  // matching form doesn't ask for gender.
+  return validateBirth(v, { requireGender: false })
 }
 
 function showErrorsFor(p, errors) {
