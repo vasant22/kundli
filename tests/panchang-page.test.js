@@ -9,7 +9,10 @@ import { setLang } from '../src/i18n.js'
 let swe
 let p
 let kundli
-const PLACE = { name: 'New Delhi, India', latitude: 28.6139, longitude: 77.209, timezone: 'Asia/Kolkata' }
+// NOTE: timeZone (capital Z) is required by computePanchang — a lowercase
+// `timezone` key would silently fall back to the SYSTEM zone (passes locally
+// in IST, fails on UTC CI runners).
+const PLACE = { name: 'New Delhi, India', latitude: 28.6139, longitude: 77.209, timeZone: 'Asia/Kolkata' }
 
 beforeAll(async () => {
   swe = await initEphemeris()

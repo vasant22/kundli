@@ -120,6 +120,10 @@ export function nextRiseSet(swe, jdStartUT, planet, rise, geopos, pressure = 101
  */
 export function computeDayTimes(swe, opts) {
   const { year, month, day, latitude, longitude, altitude = 0 } = opts
+  if (!Number.isFinite(opts.offsetMinutes) && !opts.timeZone) {
+    // Guard against silent UTC fallback (e.g. a misspelled `timezone` key).
+    throw new Error('computeDayTimes: provide a timeZone (IANA name) or offsetMinutes')
+  }
   const offsetMinutes = Number.isFinite(opts.offsetMinutes)
     ? opts.offsetMinutes
     : zoneOffsetMinutesAtNoon(year, month, day, opts.timeZone)
