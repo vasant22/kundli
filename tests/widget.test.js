@@ -75,6 +75,9 @@ describe('renderWidget', () => {
     expect(html).toContain('href="https://kundli.mybapuji.com/panchang/"')
     expect(root.querySelectorAll('.pw-row').length).toBe(7)
     expect(root.querySelector('.pw-btn').textContent).toBe('आज का पंचांग')
+    // होमपेज पर embed होने पर button नई tab में पूरा पंचांग पेज खोले (iframe के अंदर नहीं)
+    expect(root.querySelector('.pw-btn').getAttribute('target')).toBe('_blank')
+    expect(root.querySelector('.pw-btn').getAttribute('rel')).toBe('noopener')
   })
 
   it('English render switches labels and button', () => {

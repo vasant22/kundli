@@ -104,7 +104,7 @@ export function renderWidget(root, p, lang = 'hi') {
       <dl class="pw-rows">
         ${rows.map((r) => `<div class="pw-row"><dt>${esc(r.label)}</dt><dd>${esc(r.value)}</dd></div>`).join('')}
       </dl>
-      <a class="pw-btn" href="${FULL_PAGE_URL}">${esc(t('panchang.widget.button'))}</a>
+      <a class="pw-btn" href="${FULL_PAGE_URL}" target="_blank" rel="noopener">${esc(t('panchang.widget.button'))}</a>
     </div>`
 }
 
