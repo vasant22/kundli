@@ -364,3 +364,15 @@ Hard requirements (summary):
   लड़की खोज+चयन → “मिलान रिपोर्ट देखें” → “✅ मिलान रिपोर्ट नई tab में…” ✓।
 - Commit: `24cac61` + notes commit। Next: **Phase 4** — पंचांग विजेट का बाहरी size/card-style
   मिलान (सिर्फ़ packaging; गणना में कोई बदलाव नहीं)।
+
+### 2026-09-29 — Homepage Widgets Phase 4 done: पंचांग कार्ड style-milan (`643e935`)
+- जाँच: तीनों कार्ड अब भी वही साझा stylesheet (widget.css `.pw-card` / `.pw-btn`) इस्तेमाल
+  करते हैं — padding, border-radius, shadow, fonts, button size सब एक जैसे। Browser (364px):
+  पंचांग कार्ड सही (title/मुंबई/तारीख़ + 7 rows + बटन 337×39 — नए widgets के बटन जितना ही)।
+  ⇒ **कोई CSS बदलाव ज़रूरी नहीं** (spec: “adjust ONLY if needed”)।
+- नया dev-टूल: `tests/widgets-preview.html` — तीनों widgets stacked preview (मोबाइल view);
+  Phase 5/6 का local test bed।
+- कार्ड ऊँचाइयाँ natural अलग हैं (कुंडली ~554 · मिलान ~521+ · पंचांग ~472) — height का
+  हल Phase 5 में (iframe auto-resize postMessage, prefer (b))।
+- Commit: `643e935` + notes commit। Next: **Phase 5** — homepage 3-column HTML/CSS block
+  (WordPress deliverable) + iframe auto-resize mechanism।
