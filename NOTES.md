@@ -350,3 +350,17 @@ Hard requirements (summary):
   “✅ कुंडली नई tab में खुल रही है…” ✓। jsdom नोट: document में same id दो बार हो तो scoped
   `#id` query fail हो सकती है — tests में body साफ़ करके हल किया।
 - Commit: `026149e` + notes commit। Next: **Phase 3** — Matching mini-widget (widgets/match/)।
+
+### 2026-09-29 — Homepage Widgets Phase 3 done: Matching mini-widget (`24cac61`)
+- नया छोटा कार्ड पेज **widgets/match/** (kundli.mybapuji.com/widgets/match/): दो-चरणीय फ़ॉर्म
+  कार्ड के अंदर ही — चरण 1 लड़का → “आगे बढ़ें” → चरण 2 लड़की → “मिलान रिपोर्ट देखें”; नोट
+  “लड़की का विवरण अगले पन्ने पर डालें।” (spec के मुताबिक़) + पीछे-बटन। कोई गणना नहीं —
+  final submit पर **/match/** का prefill-URL (b_/g_) बनाकर **नई tab** में खोलता है।
+- वही shared pieces: `birthvalidate.js`, `geocode.js`, `.kw-*` styles; i18n +`mw.title` /
+  `mw.opening`; vite entry `match-widget`।
+- Tests: +9 (`tests/match-widget.test.js`: b_/g_ URL, render, दोनों चरण, ख़ाली-जाँच, पूरी
+  यात्रा search×2 → open, Back) → **390 passing** (TZ=UTC भी)। Build ✓ 2.96 MiB।
+- Browser (379px): कार्ड render ✓; लड़के की असली खोज+चयन → “आगे बढ़ें” → लड़की चरण ✓;
+  लड़की खोज+चयन → “मिलान रिपोर्ट देखें” → “✅ मिलान रिपोर्ट नई tab में…” ✓।
+- Commit: `24cac61` + notes commit। Next: **Phase 4** — पंचांग विजेट का बाहरी size/card-style
+  मिलान (सिर्फ़ packaging; गणना में कोई बदलाव नहीं)।
