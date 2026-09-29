@@ -448,3 +448,12 @@ Hard requirements (summary):
   `scripts/fetch-fonts.mjs` में जोड़ा; `fonts.css` regenerate) 1.3em में — बड़ी + बोल्ड-दिखने
   वाली। Browser-verified: तीनों iframes 582px (बराबर), titles एक ही line में। 393 tests ✓।
 - dist अब 3.03 MiB (Rozha के +47KB से)।
+
+### 2026-09-29 — Headings वापस साफ़-बोल्ड + section heading हटाई (`ed77fc6`)
+- User: designed font (Rozha) नहीं चाहिए — **bold + स्पष्ट readable** चाहिए; size ठीक है।
+  → `.pw-title` अब **Noto Sans Devanagari 700** (1.3em वही)। Noto अब 400–800 range
+  (same variable file, extra 0 KB); Rozha files हटा दीं — dist वापस **2.99 MiB**।
+- mybapuji section से “मुफ़्त ज्योतिष साधन / कुंडली · मिलान · पंचांग” header हटाया (cards के
+  अपने titles काफ़ी हैं)। Server: backup `autoclaw-home.php.bak-20260929b`; swap + कैश साफ़ +
+  nginx restart (पिछली सीख लागू — कोई 520 नहीं); homepage 200, 3/3 stable; heading गायब ✓।
+- तीनों कार्ड अब भी बराबर (582/582 harness; कोई title wrap नहीं)।
