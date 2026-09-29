@@ -9,15 +9,15 @@ const KUNDLI = {
   ayanamsa: 23.72255,
   ascendant: { key: 'asc', short: 'Asc', rashi: 5, degInSign: 7.02 },
   planets: [
-    { key: 'sun', short: 'Su', rashi: 1, house: 9, retro: false },
-    { key: 'moon', short: 'Mo', rashi: 9, house: 5, retro: false },
-    { key: 'mars', short: 'Ma', rashi: 10, house: 6, retro: false },
-    { key: 'mercury', short: 'Me', rashi: 0, house: 8, retro: true },
-    { key: 'jupiter', short: 'Ju', rashi: 2, house: 10, retro: false },
-    { key: 'venus', short: 'Ve', rashi: 11, house: 7, retro: false },
-    { key: 'saturn', short: 'Sa', rashi: 9, house: 5, retro: true },
-    { key: 'rahu', short: 'Ra', rashi: 9, house: 5, retro: true },
-    { key: 'ketu', short: 'Ke', rashi: 3, house: 11, retro: true },
+    { key: 'sun', short: 'Su', rashi: 1, degInSign: 0.5498, house: 9, retro: false },
+    { key: 'moon', short: 'Mo', rashi: 9, degInSign: 1.8937, house: 5, retro: false },
+    { key: 'mars', short: 'Ma', rashi: 10, degInSign: 24.515, house: 6, retro: false },
+    { key: 'mercury', short: 'Me', rashi: 0, degInSign: 14.302, house: 8, retro: true },
+    { key: 'jupiter', short: 'Ju', rashi: 2, degInSign: 15.792, house: 10, retro: false },
+    { key: 'venus', short: 'Ve', rashi: 11, degInSign: 18.95, house: 7, retro: false },
+    { key: 'saturn', short: 'Sa', rashi: 9, degInSign: 1.526, house: 5, retro: true },
+    { key: 'rahu', short: 'Ra', rashi: 9, degInSign: 17.62, house: 5, retro: true },
+    { key: 'ketu', short: 'Ke', rashi: 3, degInSign: 17.62, house: 11, retro: true },
   ],
 }
 
@@ -34,6 +34,7 @@ describe('North Indian chart (SVG)', () => {
   it('builds a responsive svg with 12 houses', () => {
     expect(svg.getAttribute('viewBox')).toBe('0 0 360 360')
     expect(svg.getAttribute('data-chart')).toBe('north')
+    expect(svg.getAttribute('data-varga')).toBe('D1')
     expect(svg.querySelectorAll('[data-house]')).toHaveLength(12)
   })
 
@@ -43,6 +44,7 @@ describe('North Indian chart (SVG)', () => {
     expect(house(1)).toContain('6') // lagna Kanya = rashi 6
     expect(house(9)).toContain('Su')
     expect(house(9)).toContain('2') // house 9 → Vrishabha (rashi 2)
+    expect(house(9)).toContain("0°33'") // degree shown with the planet
     expect(house(5)).toContain('Mo')
     expect(house(5)).toContain('Sa(R)')
     expect(house(5)).toContain('Ra(R)')

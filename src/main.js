@@ -4,7 +4,7 @@ import './style.css'
 import { t, getLang, setLang, months, rashiLabel, grahaLabel, nakshatraLabel, monthEn } from './i18n.js'
 import { searchPlace } from './geocode.js'
 import { formatUtcOffset, isValidTimeZone, parseUtcOffset, wallTimeToUtc } from './timeutil.js'
-import { computeKundli, initEphemeris } from './astro.js'
+import { computeKundli, initEphemeris, navamsaKundli, computeVimshottari } from './astro.js'
 import { buildNorthChart, buildSouthChart } from './charts.js'
 
 // Where the public source code lives — confirmed/adjusted when the GitHub
@@ -77,7 +77,7 @@ app.innerHTML = `
             </div>
             <div class="mini">
               <label for="f-second" data-i18n="time.second"></label>
-              <input id="f-second" type="number" inputmode="numeric" min="0" max="59" placeholder="0–59" />
+              <input id="f-second" type="number" inputmode="numeric" min="0" max="59" placeholder="0–59" value="0" />
             </div>
           </div>
           <p class="err" id="err-time" aria-live="polite"></p>
@@ -212,7 +212,7 @@ function computeConversion(values) {
       day: Number(values.day),
       hour: Number(values.hour),
       minute: Number(values.minute),
-      second: Number(values.second),
+      second: values.second === '' ? 0 : Number(values.second),
     }
     return { zone, ...wallTimeToUtc(birth, zone) }
   } catch (err) {
@@ -247,9 +247,53 @@ function chartMeta(values) {
   return {
     name: values.name,
     dateText: `${Number(values.day)} ${monthEn(Number(values.month))} ${Number(values.year)}`,
-    timeText: `${pad(Number(values.hour))}:${pad(Number(values.minute))}:${pad(Number(values.second))}`,
+    timeText: `${pad(Number(values.hour))}:${pad(Number(values.minute))}:${pad(values.second === '' ? 0 : Number(values.second))}`,
     placeText: values.selectedPlace ? values.selectedPlace.name : values.place,
   }
+}
+
+// The Bhava Chalit chart frame — planets placed in cusp-based (Placidus) houses.
+function chalitChartFrame(kundli) {
+  if (!kundli.chalit) return null
+  return {
+    ascendant: kundli.ascendant,
+    planets: kundli.planets.map((p) => ({ ...p, house: kundli.chalit.houses[p.key] || p.house })),
+  }
+}
+
+// Date (UTC parts) in the active language, e.g. "12 मई 2027".
+function fmtDate(ms) {
+  const d = new Date(ms)
+  return `${d.getUTCDate()} ${t('month.' + (d.getUTCMonth() + 1))} ${d.getUTCFullYear()}`
+}
+
+// A small dasha table: [Lord, From, To, now-marker].
+function dashaTable(rows, currentIdx, firstHeader) {
+  const table = document.createElement('table')
+  table.className = 'kundli-table dasha-table'
+  const thead = document.createElement('thead')
+  const headerRow = document.createElement('tr')
+  for (const text of [firstHeader, t('dasha.from'), t('dasha.to'), '']) {
+    const th = document.createElement('th')
+    th.textContent = text
+    headerRow.append(th)
+  }
+  thead.append(headerRow)
+  table.append(thead)
+  const tbody = document.createElement('tbody')
+  rows.forEach((row, i) => {
+    const tr = document.createElement('tr')
+    if (i === currentIdx) tr.className = 'current'
+    const cells = [grahaLabel(row.key), fmtDate(row.fromMs), fmtDate(row.toMs), i === currentIdx ? t('dasha.now') : '']
+    for (const text of cells) {
+      const td = document.createElement('td')
+      td.textContent = text
+      tr.append(td)
+    }
+    tbody.append(tr)
+  })
+  table.append(tbody)
+  return table
 }
 
 // Save the current chart as a PNG (SVG → canvas → PNG download, Phase 8).
@@ -409,11 +453,11 @@ function validate(v) {
     errors.date = t('err.dateInvalid')
   }
 
-  // Time: 24-hour clock, hour 0–23, minute/second 0–59.
+  // Time: 24-hour clock, hour 0–23, minute 0–59; empty seconds are taken as 0.
   const h = toInt(v.hour)
   const mi = toInt(v.minute)
-  const s = toInt(v.second)
-  if (v.hour === '' || v.minute === '' || v.second === '') {
+  const s = v.second === '' ? 0 : toInt(v.second)
+  if (v.hour === '' || v.minute === '') {
     errors.time = t('err.timeRequired')
   } else if (!Number.isInteger(h) || h < 0 || h > 23) {
     errors.time = t('err.hour')
@@ -471,13 +515,19 @@ function showErrors(errors) {
 function showSummary(values, scroll) {
   const pad = (n) => String(n).padStart(2, '0')
   const dateText = `${toInt(values.day)} ${t('month.' + toInt(values.month))} ${toInt(values.year)}`
-  const timeText = `${pad(toInt(values.hour))}:${pad(toInt(values.minute))}:${pad(toInt(values.second))}`
+  const timeText = `${pad(toInt(values.hour))}:${pad(toInt(values.minute))}:${pad(values.second === '' ? 0 : toInt(values.second))}`
 
   output.hidden = false
   output.replaceChildren()
 
   const card = document.createElement('div')
   card.className = 'card summary'
+  if (values.kundli && !values.kundli.error) {
+    const printHead = document.createElement('p')
+    printHead.className = 'print-only print-head'
+    printHead.textContent = 'कुंडली / Kundli — kundli.mybapuji.com'
+    card.append(printHead)
+  }
 
   const heading = document.createElement('h2')
   heading.textContent = t('summary.title')
@@ -538,7 +588,7 @@ function showSummary(values, scroll) {
     addRow(t('summary.lagna'), `${rashiLabel(asc.rashi)} · ${formatDegMin(asc.degInSign)}`)
     addRow(t('summary.ayanamsa'), formatDegMin(kundli.ayanamsa))
 
-    // Charts (Phase 7): North/South toggle drawn from the same data object.
+    // Charts: D1 + Navamsa (D9) side by side, plus Bhava Chalit.
     const chartWrap = document.createElement('div')
     chartWrap.className = 'chart-wrap'
     const toggleBar = document.createElement('div')
@@ -551,19 +601,48 @@ function showSummary(values, scroll) {
     southBtn.type = 'button'
     southBtn.dataset.style = 'south'
     southBtn.textContent = t('chart.south')
-    const chartBox = document.createElement('div')
-    chartBox.className = 'chart-box'
+    const chartGrid = document.createElement('div')
+    chartGrid.className = 'chart-grid'
+    const d9 = navamsaKundli(kundli)
+    const chalitFrame = chalitChartFrame(kundli)
+    const makeCell = (captionKey, build) => {
+      const cell = document.createElement('div')
+      cell.className = 'chart-cell'
+      const caption = document.createElement('p')
+      caption.className = 'chart-caption'
+      caption.textContent = t(captionKey)
+      const box = document.createElement('div')
+      box.className = 'chart-box'
+      box.append(build())
+      cell.append(caption, box)
+      return cell
+    }
     const paintChart = () => {
-      chartBox.replaceChildren()
-      chartBox.append(
-        values.chartStyle === 'south'
-          ? buildSouthChart(kundli, chartMeta(values))
-          : buildNorthChart(kundli)
+      const south = values.chartStyle === 'south'
+      chartGrid.replaceChildren()
+      chartGrid.append(
+        makeCell('chart.d1', () =>
+          south ? buildSouthChart(kundli, chartMeta(values), { varga: 'D1' }) : buildNorthChart(kundli, { varga: 'D1' })
+        ),
+        makeCell('chart.d9', () =>
+          south ? buildSouthChart(d9, chartMeta(values), { varga: 'D9' }) : buildNorthChart(d9, { varga: 'D9' })
+        )
       )
-      northBtn.classList.toggle('active', values.chartStyle !== 'south')
-      southBtn.classList.toggle('active', values.chartStyle === 'south')
-      northBtn.setAttribute('aria-pressed', String(values.chartStyle !== 'south'))
-      southBtn.setAttribute('aria-pressed', String(values.chartStyle === 'south'))
+      if (chalitFrame) {
+        chartGrid.append(
+          makeCell('chart.chalit', () =>
+            buildNorthChart(chalitFrame, {
+              houseRashis: kundli.chalit.houseSigns,
+              ascMarker: false,
+              varga: 'CHALIT',
+            })
+          )
+        )
+      }
+      northBtn.classList.toggle('active', !south)
+      southBtn.classList.toggle('active', south)
+      northBtn.setAttribute('aria-pressed', String(!south))
+      southBtn.setAttribute('aria-pressed', String(south))
     }
     northBtn.addEventListener('click', () => {
       values.chartStyle = 'north'
@@ -574,7 +653,7 @@ function showSummary(values, scroll) {
       paintChart()
     })
     toggleBar.append(northBtn, southBtn)
-    chartWrap.append(toggleBar, chartBox)
+    chartWrap.append(toggleBar, chartGrid)
     card.append(chartWrap)
     paintChart()
 
@@ -585,7 +664,7 @@ function showSummary(values, scroll) {
     const tableWrap = document.createElement('div')
     tableWrap.className = 'table-wrap'
     const table = document.createElement('table')
-    table.className = 'kundli-table'
+    table.className = 'kundli-table planet-table'
     const thead = document.createElement('thead')
     const headerRow = document.createElement('tr')
     for (const key of ['table.planet', 'table.rashi', 'table.degree', 'table.nakshatra', 'table.house', 'table.retro']) {
@@ -618,6 +697,35 @@ function showSummary(values, scroll) {
     table.append(tbody)
     tableWrap.append(table)
     card.append(tableTitle, tableWrap)
+
+    // Vimshottari Dasha (from the Moon's nakshatra).
+    const moon = kundli.planets.find((p) => p.key === 'moon')
+    if (moon && values.converted) {
+      const u = values.converted.utc
+      const birthMs = Date.UTC(u.year, u.month - 1, u.day, u.hour, u.minute, u.second)
+      const dasha = computeVimshottari(moon.longitude, birthMs)
+      const dashaTitle = document.createElement('p')
+      dashaTitle.className = 'kundli-table-title'
+      dashaTitle.textContent = t('summary.dasha')
+      const dashaWrap = document.createElement('div')
+      dashaWrap.className = 'table-wrap'
+      dashaWrap.append(dashaTable(dasha.mahadashas, dasha.currentIdx, t('dasha.md')))
+      const md = dasha.mahadashas[dasha.currentIdx]
+      const ad = dasha.antardashas[dasha.currentAdIdx]
+      const nowLine = document.createElement('p')
+      nowLine.className = 'note dasha-now'
+      nowLine.textContent = `${t('dasha.nowLine')}${grahaLabel(md.key)} ${t('dasha.md')} / ${grahaLabel(ad.key)} ${t('dasha.ad')} (${fmtDate(ad.toMs)} ${t('dasha.till')})`
+      const adTitle = document.createElement('p')
+      adTitle.className = 'kundli-table-title'
+      adTitle.textContent = `${t('dasha.ad')} — ${grahaLabel(md.key)} ${t('dasha.md')}`
+      const adWrap = document.createElement('div')
+      adWrap.className = 'table-wrap'
+      adWrap.append(dashaTable(dasha.antardashas, dasha.currentAdIdx, t('dasha.ad')))
+      const dashaBasis = document.createElement('p')
+      dashaBasis.className = 'note'
+      dashaBasis.textContent = t('dasha.basis')
+      card.append(dashaTitle, dashaWrap, nowLine, adTitle, adWrap, dashaBasis)
+    }
 
     // Actions: PNG / Print / Copy details (Phase 8).
     const actions = document.createElement('div')
@@ -658,7 +766,10 @@ function showSummary(values, scroll) {
       }
       actionMsg.hidden = false
     })
-    actions.append(pngBtn, printBtn, copyBtn, actionMsg)
+    const pdfHint = document.createElement('p')
+    pdfHint.className = 'note pdf-hint'
+    pdfHint.textContent = t('actions.pdfHint')
+    actions.append(pngBtn, printBtn, copyBtn, actionMsg, pdfHint)
     card.append(actions)
   }
 
@@ -713,6 +824,7 @@ function renderResults() {
       setNote(null)
       renderConfirm()
       renderResults()
+      resultsBox.hidden = true // hide the suggestion list once picked
     })
     resultsBox.append(item)
   })

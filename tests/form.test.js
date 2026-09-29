@@ -24,7 +24,38 @@ vi.mock('../src/astro.js', () => ({
       { key: 'rahu', name: 'Rahu', short: 'Ra', longitude: 287.62, rashi: 9, degInSign: 17.62, nakshatra: 22, pada: 1, speed: -0.053, retro: true, rashiLord: 'saturn', house: 5 },
       { key: 'ketu', name: 'Ketu', short: 'Ke', longitude: 107.62, rashi: 3, degInSign: 17.62, nakshatra: 9, pada: 1, speed: -0.053, retro: true, rashiLord: 'moon', house: 11 },
     ],
+    chalit: {
+      houseSigns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+      houses: { sun: 9, moon: 5, rahu: 5, ketu: 11 },
+    },
   })),
+  navamsaKundli: vi.fn((k) => ({
+    ascendant: { ...k.ascendant, rashi: 11, degInSign: 17.04, house: 1 },
+    planets: k.planets.map((p) => ({
+      ...p,
+      rashi: (p.rashi + 1) % 12,
+      degInSign: (p.degInSign * 9) % 30,
+      house: ((p.rashi + 1 - 11 + 12) % 12) + 1,
+    })),
+  })),
+  computeVimshottari: vi.fn(() => {
+    const Y = 365.25 * 86400000
+    const seq = ['sun', 'moon', 'mars', 'rahu', 'jupiter', 'saturn', 'mercury', 'ketu', 'venus']
+    let t = Date.UTC(1990, 4, 15, 9, 0, 0)
+    const mahadashas = []
+    for (let n = 0; n < 10; n++) {
+      const key = seq[n % 9]
+      const next = t + (n === 0 ? 3.65 : 10) * Y
+      mahadashas.push({ key, fromMs: t, toMs: next, fullStartMs: t })
+      t = next
+    }
+    const antardashas = seq.map((key, i) => ({
+      key,
+      fromMs: Date.UTC(2000 + i, 0, 1),
+      toMs: Date.UTC(2001 + i, 0, 1),
+    }))
+    return { mahadashas, currentIdx: 1, antardashas, currentAdIdx: 0 }
+  }),
 }))
 
 beforeAll(async () => {
@@ -88,7 +119,7 @@ describe('Phase 2 — input form', () => {
     submitForm()
     expect($('#err-gender').textContent).toBe('कृपया लिंग चुनें।')
     expect($('#err-date').textContent).toContain('जन्म तिथि पूरी भरें')
-    expect($('#err-time').textContent).toContain('जन्म समय पूरा भरें')
+    expect($('#err-time').textContent).toContain('जन्म समय भरें')
     expect($('#err-place').textContent).toContain('जन्म स्थान भरें')
     expect($('#output').hidden).toBe(true)
   })
@@ -177,13 +208,14 @@ describe('Phase 3 — place search & manual fallback', () => {
     expect(mock.mock.calls[0][0]).toContain('name=Varanasi')
   })
 
-  it('selecting a result shows the confirmation line', () => {
+  it('selecting a result shows the confirmation line and hides the list', () => {
     document.querySelector('.result-item').click()
     expect($('#place-confirm').hidden).toBe(false)
     expect($('#place-confirm').textContent).toContain('चुना गया')
     expect($('#place-confirm').textContent).toContain('Varanasi, Uttar Pradesh, India')
     expect($('#place-confirm').textContent).toContain('Asia/Kolkata')
     expect(document.querySelector('.result-item').classList.contains('selected')).toBe(true)
+    expect($('#results').hidden).toBe(true) // suggestion list hides after picking
   })
 
   it('submit uses the selected place (with coordinates) in the summary', () => {
@@ -328,19 +360,23 @@ describe('Phase 7 — charts in the summary', () => {
     submitForm()
 
     await vi.waitFor(() => {
-      expect(document.querySelector('.chart-box svg')).toBeTruthy()
+      expect(document.querySelector('[data-varga="D1"]')).toBeTruthy()
     })
 
-    let svg = document.querySelector('.chart-box svg')
+    let svg = document.querySelector('[data-varga="D1"]')
     expect(svg.getAttribute('data-chart')).toBe('north')
+    expect(svg.getAttribute('data-varga')).toBe('D1')
     expect(svg.querySelectorAll('[data-house]')).toHaveLength(12)
     expect(svg.querySelector('[data-house="1"]').textContent).toContain('Asc')
+    // D9 + Bhava Chalit drawn beside the main chart:
+    expect(document.querySelector('[data-varga="D9"]')).toBeTruthy()
+    expect(document.querySelector('[data-varga="CHALIT"]')).toBeTruthy()
 
     const { computeKundli } = await import('../src/astro.js')
     const callsBefore = computeKundli.mock.calls.length
 
     document.querySelector('.chart-toggle button[data-style="south"]').click()
-    svg = document.querySelector('.chart-box svg')
+    svg = document.querySelector('[data-varga="D1"]')
     expect(svg.getAttribute('data-chart')).toBe('south')
     expect(svg.querySelector('.lagna-mark')).toBeTruthy()
     expect(computeKundli.mock.calls.length).toBe(callsBefore) // no recalculation
@@ -358,10 +394,10 @@ describe('Phase 8 — results table, actions & instant language switching', () =
       expect(document.querySelector('.kundli-table')).toBeTruthy()
     })
 
-    const headers = Array.from(document.querySelectorAll('.kundli-table th')).map((th) => th.textContent)
+    const headers = Array.from(document.querySelectorAll('.planet-table th')).map((th) => th.textContent)
     expect(headers).toEqual(['ग्रह', 'राशि', 'अंश', 'नक्षत्र', 'भाव', 'वक्री'])
 
-    const text = document.querySelector('.kundli-table').textContent
+    const text = document.querySelector('.planet-table').textContent
     expect(text).toContain('लग्न / Ascendant')
     expect(text).toContain(`7°02'13"`) // lagna degree
     expect(text).toContain('सूर्य / Sun')
@@ -376,10 +412,10 @@ describe('Phase 8 — results table, actions & instant language switching', () =
 
   it('switches the table headers instantly with the language toggle', () => {
     $('#lang-toggle').click()
-    const headers = Array.from(document.querySelectorAll('.kundli-table th')).map((th) => th.textContent)
+    const headers = Array.from(document.querySelectorAll('.planet-table th')).map((th) => th.textContent)
     expect(headers).toEqual(['Planet', 'Rashi', 'Degree', 'Nakshatra', 'House', 'Retro'])
     // Values stay bilingual in both languages:
-    expect(document.querySelector('.kundli-table').textContent).toContain('सूर्य / Sun')
+    expect(document.querySelector('.planet-table').textContent).toContain('सूर्य / Sun')
     $('#lang-toggle').click() // back to Hindi
   })
 
@@ -424,7 +460,7 @@ describe('Phase 10 — robustness, privacy note & accessibility', () => {
     // Retry: after a failure the engine promise is reset, so a second attempt works.
     submitForm()
     await vi.waitFor(() => {
-      expect(document.querySelector('.chart-box svg')).toBeTruthy()
+      expect(document.querySelector('[data-varga="D1"]')).toBeTruthy()
     })
 
     errSpy.mockRestore()
@@ -456,10 +492,10 @@ describe('Phase 10 — robustness, privacy note & accessibility', () => {
     submitForm()
 
     await vi.waitFor(() => {
-      expect(document.querySelector('.chart-box svg')).toBeTruthy()
+      expect(document.querySelector('[data-varga="D1"]')).toBeTruthy()
     })
 
-    const svg = document.querySelector('.chart-box svg')
+    const svg = document.querySelector('[data-varga="D1"]')
     expect(svg.getAttribute('role')).toBe('img')
     expect(svg.getAttribute('aria-label')).toContain('chart')
 
@@ -470,5 +506,46 @@ describe('Phase 10 — robustness, privacy note & accessibility', () => {
     expect(south.getAttribute('aria-pressed')).toBe('true')
     expect(north.getAttribute('aria-pressed')).toBe('false')
     north.click()
+  })
+})
+
+describe('Phase 14 — corrections & additions (D9, Chalit, Dasha, PDF)', () => {
+  it('accepts an empty seconds field (taken as 00)', async () => {
+    setValue('#f-offset', '')
+    setValue('#f-year', '1990')
+    setValue('#f-tz', 'Asia/Kolkata')
+    setValue('#f-second', '')
+    submitForm()
+    await vi.waitFor(() => {
+      expect(document.querySelector('[data-varga="D1"]')).toBeTruthy()
+    })
+    expect(ddTexts()).toContain('14:30:00')
+    setValue('#f-second', '0')
+  })
+
+  it('shows D1, D9 and Bhava Chalit charts with captions and degrees', async () => {
+    submitForm()
+    await vi.waitFor(() => {
+      expect(document.querySelector('[data-varga="D9"]')).toBeTruthy()
+    })
+    const captions = Array.from(document.querySelectorAll('.chart-caption')).map((el) => el.textContent)
+    expect(captions).toContain('जन्म कुंडली (D1)')
+    expect(captions).toContain('नवमांश (D9)')
+    expect(captions).toContain('भाव चलित')
+    // degrees are shown inside the charts (mock sun: 0°33')
+    expect(document.querySelector('[data-varga="D1"]').textContent).toContain("0°33'")
+  })
+
+  it('shows the Vimshottari dasha tables and the PDF hint', async () => {
+    await vi.waitFor(() => {
+      expect(document.querySelectorAll('.dasha-table').length).toBe(2)
+    })
+    const dashaText = document.querySelector('.dasha-table').textContent
+    expect(dashaText).toContain('महादशा')
+    expect(dashaText).toContain('सूर्य / Sun') // first mahadasha is Sun for this chart
+    expect(document.querySelector('.dasha-table tr.current')).toBeTruthy()
+    expect(document.querySelector('.dasha-now').textContent).toContain('अभी चल रही')
+    expect(document.querySelector('.pdf-hint').textContent).toContain('Save as PDF')
+    expect(document.querySelector('.print-head')).toBeTruthy()
   })
 })

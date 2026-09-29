@@ -39,9 +39,14 @@ body {
 }
 
 .wrap {
-  max-width: 640px;
+  max-width: 1080px;
   margin: 0 auto;
   padding: 0 1rem 2.5rem;
+}
+
+#kundli-form {
+  max-width: 760px;
+  margin-inline: auto;
 }
 
 [hidden] {
@@ -171,8 +176,14 @@ select:focus {
 
 .chips {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.4rem;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.3rem;
+}
+
+@media (min-width: 600px) {
+  .chips {
+    grid-template-columns: repeat(12, 1fr);
+  }
 }
 
 .chips label {
@@ -182,8 +193,9 @@ select:focus {
   text-align: center;
   border: 1px solid var(--input-border);
   border-radius: 999px;
-  padding: 0.38rem 0.25rem;
-  font-size: 0.88rem;
+  padding: 0.28rem 0.15rem;
+  font-size: 0.78rem;
+  white-space: nowrap;
 }
 
 .chips label:has(input:checked) {
@@ -464,10 +476,34 @@ details.manual[open] summary {
   color: #fff;
 }
 
+.chart-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+@media (max-width: 640px) {
+  .chart-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.chart-cell {
+  min-width: 0;
+}
+
+.chart-caption {
+  margin: 0 0 0.3rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--saffron-dark);
+  text-align: center;
+}
+
 .chart-box svg {
   display: block;
   width: 100%;
-  max-width: 380px;
+  max-width: 100%;
   height: auto;
   margin: 0 auto;
   background: #fff;
@@ -496,7 +532,22 @@ details.manual[open] summary {
   margin-top: 0.25rem;
 }
 
-/* ---------- print (Phase 8) ---------- */
+/* ---------- dasha (Phase 14) ---------- */
+.dasha-table tr.current td {
+  background: var(--saffron-soft);
+  font-weight: 600;
+}
+
+.dasha-now {
+  color: var(--saffron-dark);
+  font-weight: 550;
+}
+
+/* ---------- print (Phase 8; PDF view) ---------- */
+.print-only {
+  display: none;
+}
+
 @media print {
   .site-header,
   #kundli-form,
@@ -507,6 +558,7 @@ details.manual[open] summary {
 
   body {
     background: #fff;
+    font-size: 12px;
   }
 
   .wrap {
@@ -517,9 +569,46 @@ details.manual[open] summary {
   .card {
     border: none;
     box-shadow: none;
+    padding: 0;
+  }
+
+  .print-only {
+    display: block;
+  }
+
+  .print-head {
+    font-weight: 600;
+    font-size: 13px;
+    margin: 0 0 8px;
+  }
+
+  .chart-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
   }
 
   .chart-box svg {
-    max-width: 320px;
+    max-width: 100%;
+    padding: 2px;
+    border-radius: 0;
+  }
+
+  .chart-caption {
+    font-size: 11px;
+  }
+
+  .table-wrap {
+    overflow: visible;
+  }
+
+  .kundli-table {
+    font-size: 9.5px;
+  }
+
+  .chart-cell,
+  tr,
+  .summary h2,
+  .kundli-table-title {
+    break-inside: avoid;
   }
 }

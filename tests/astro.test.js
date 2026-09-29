@@ -1,7 +1,7 @@
 // tests/astro.test.js — Phase 5 verification of the Vedic calculations.
 // Uses the REAL Swiss Ephemeris WASM in Node. Run with: npm test
 import { beforeAll, describe, expect, it } from 'vitest'
-import { describeLongitude, initEphemeris, computeKundli } from '../src/astro.js'
+import { computeKundli, computeVimshottari, describeLongitude, initEphemeris, navamsaOf } from '../src/astro.js'
 
 // Sample chart: 15 May 1990, 14:30 IST (09:00 UT), Varanasi.
 const SAMPLE = {
@@ -133,5 +133,55 @@ describe('computeKundli (sample chart, Lahiri sidereal)', () => {
     } else {
       expect(polar.error).toBe('polar')
     }
+  })
+})
+
+describe('Phase 14 — Navamsa (D9), Bhava Chalit & Vimshottari Dasha', () => {
+  let kundli
+  beforeAll(() => {
+    kundli = computeKundli(swe, SAMPLE)
+  })
+
+  it('navamsaOf maps longitudes to the D9 signs', () => {
+    expect(navamsaOf(0).rashi).toBe(0)
+    expect(navamsaOf(10).rashi).toBe(3) // 4th navamsa of Aries → Cancer
+    expect(navamsaOf(30).rashi).toBe(9) // Taurus starts from Capricorn
+    const sun = navamsaOf(30.5498)
+    expect(sun.rashi).toBe(9) // Sun 0°33′ Vrishabha → D9 Makara
+    expect(sun.degInSign).toBeCloseTo(4.95, 1)
+    const moon = navamsaOf(271.8937)
+    expect(moon.rashi).toBe(9) // Makara
+    expect(moon.degInSign).toBeCloseTo(17.04, 1)
+  })
+
+  it('adds navamsa fields to the computed chart', () => {
+    expect(kundli.ascendant.navamsaRashi).toBe(11) // Kanya 7°02′ → D9 Meena
+    expect(kundli.planets.find((p) => p.key === 'sun').navamsaRashi).toBe(9)
+    expect(kundli.planets.find((p) => p.key === 'moon').navamsaRashi).toBe(9)
+  })
+
+  it('computes the Bhava Chalit (Placidus) frame', () => {
+    expect(kundli.chalit).toBeTruthy()
+    expect(kundli.chalit.houseSigns).toHaveLength(12)
+    const houses = Object.values(kundli.chalit.houses)
+    expect(houses).toHaveLength(9)
+    for (const h of houses) {
+      expect(h).toBeGreaterThanOrEqual(1)
+      expect(h).toBeLessThanOrEqual(12)
+    }
+  })
+
+  it('computes the Vimshottari dasha from the Moon nakshatra', () => {
+    const moon = kundli.planets.find((p) => p.key === 'moon')
+    const birthMs = Date.UTC(1990, 4, 15, 9, 0, 0)
+    const d = computeVimshottari(moon.longitude, birthMs, birthMs + 10 * 365.25 * 86400000)
+    expect(d.mahadashas[0].key).toBe('sun') // Uttara Ashadha → Sun
+    expect(d.mahadashas).toHaveLength(10)
+    const firstYears = (d.mahadashas[0].toMs - d.mahadashas[0].fromMs) / (365.25 * 86400000)
+    expect(firstYears).toBeCloseTo(3.65, 1)
+    expect(d.mahadashas.slice(0, 4).map((m) => m.key)).toEqual(['sun', 'moon', 'mars', 'rahu'])
+    expect(d.mahadashas[d.currentIdx].key).toBe('moon') // at birth + 10 years
+    expect(d.antardashas).toHaveLength(9)
+    expect(d.antardashas[d.currentAdIdx].key).toBe('mercury')
   })
 })

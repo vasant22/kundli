@@ -69,24 +69,42 @@ function layoutLines(parent, cx, cy, lines) {
   })
 }
 
-// Planet labels for one body: short code + (R) when retrograde.
-function labelOf(planet) {
-  return planet.short + (planet.retro ? '(R)' : '')
+// Short degree within the sign, e.g. 7.04 → "7°02'".
+function degShort(deg) {
+  let d = Math.floor(deg)
+  let m = Math.floor((deg - d) * 60 + 0.5)
+  if (m === 60) {
+    d += 1
+    m = 0
+  }
+  return `${d}°${String(m).padStart(2, '0')}'`
 }
 
-const gray = (count) => (count >= 6 ? 9.5 : count >= 4 ? 11 : 13)
+// Planet label for one body: short code + (R) when retrograde + degree.
+function labelOf(planet, showDegrees) {
+  let text = planet.short + (planet.retro ? '(R)' : '')
+  if (showDegrees && Number.isFinite(planet.degInSign)) text += ` ${degShort(planet.degInSign)}`
+  return text
+}
+
+const gray = (count) => (count >= 5 ? 8.5 : count >= 3 ? 10 : 11.5)
 
 // ---------------------------------------------------------------------------
 // NORTH INDIAN (diamond) chart
+// opts: { showDegrees=true, houseRashis (0-11 per house, optional),
+//         ascMarker=true, varga='D1' }
 // ---------------------------------------------------------------------------
-export function buildNorthChart(kundli) {
+export function buildNorthChart(kundli, opts = {}) {
   const S = SIZE
+  const showDegrees = opts.showDegrees !== false
+  const varga = opts.varga || 'D1'
   const svg = el('svg', {
     viewBox: `0 0 ${S} ${S}`,
     class: 'chart chart-north',
     'data-chart': 'north',
+    'data-varga': varga,
     role: 'img',
-    'aria-label': 'North Indian birth chart',
+    'aria-label': opts.ariaLabel || 'North Indian birth chart',
   })
 
   const lines = el('g', { stroke: '#5a3410', 'stroke-width': 1.4, fill: 'none' })
@@ -102,17 +120,16 @@ export function buildNorthChart(kundli) {
     const cx = fx * S
     const cy = fy * S
 
-    const rashiNumber = ((ascRashi + house - 1) % 12) + 1
-    const occupants = kundli.planets.filter((p) => p.house === house).map(labelOf)
+    const rashiNumber = opts.houseRashis
+      ? opts.houseRashis[house - 1] + 1
+      : ((ascRashi + house - 1) % 12) + 1
+    const occupants = kundli.planets.filter((p) => p.house === house).map((p) => labelOf(p, showDegrees))
 
     const group = el('g', { class: 'house', 'data-house': String(house) })
     const block = [{ text: String(rashiNumber), size: 12, weight: 600 }]
-    if (house === 1) block.push({ text: 'Asc', size: 10.5, weight: 600, fill: '#a94f05' })
+    if (house === 1 && opts.ascMarker !== false) block.push({ text: 'Asc', size: 10.5, weight: 600, fill: '#a94f05' })
     const size = gray(occupants.length)
-    const perLine = occupants.length <= 2 ? 2 : 3
-    for (let i = 0; i < occupants.length; i += perLine) {
-      block.push({ text: occupants.slice(i, i + perLine).join(' '), size })
-    }
+    for (const occ of occupants) block.push({ text: occ, size })
     layoutLines(group, cx, cy, block)
     svg.append(group)
   }
@@ -121,16 +138,20 @@ export function buildNorthChart(kundli) {
 
 // ---------------------------------------------------------------------------
 // SOUTH INDIAN (fixed rashi grid) chart
+// opts: { showDegrees=true, varga='D1' }
 // ---------------------------------------------------------------------------
-export function buildSouthChart(kundli, meta = {}) {
+export function buildSouthChart(kundli, meta = {}, opts = {}) {
   const S = SIZE
   const C = S / 4
+  const showDegrees = opts.showDegrees !== false
+  const varga = opts.varga || 'D1'
   const svg = el('svg', {
     viewBox: `0 0 ${S} ${S}`,
     class: 'chart chart-south',
     'data-chart': 'south',
+    'data-varga': varga,
     role: 'img',
-    'aria-label': 'South Indian birth chart',
+    'aria-label': opts.ariaLabel || 'South Indian birth chart',
   })
 
   const grid = el('g', { stroke: '#5a3410', 'stroke-width': 1.4, fill: 'none' })
@@ -170,11 +191,9 @@ export function buildSouthChart(kundli, meta = {}) {
       block.push({ text: 'Asc', size: 11, weight: 600, fill: '#a94f05' })
     }
 
-    const occupants = kundli.planets.filter((p) => p.rashi === rashi).map(labelOf)
+    const occupants = kundli.planets.filter((p) => p.rashi === rashi).map((p) => labelOf(p, showDegrees))
     const size = gray(occupants.length)
-    for (let i = 0; i < occupants.length; i += 2) {
-      block.push({ text: occupants.slice(i, i + 2).join(' '), size })
-    }
+    for (const occ of occupants) block.push({ text: occ, size })
     layoutLines(group, C / 2, C / 2, block)
     svg.append(group)
   }
