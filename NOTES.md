@@ -1,7 +1,7 @@
 # Kundli / जन्मपत्री App — Project Notes (handoff)
 
-Created: 2026-09-28. Status: **Phase 12 IN PROGRESS — repo `vasant22/kundli` created, Pages enabled, code PUSHED; deploy workflow running. TOMORROW (tokens refill): verify deploy; Cloudflare DNS `kundli` → `vasant22.github.io` (DNS-only); custom domain + Enforce HTTPS; then Phase 13 report.**
-First thing to do in a fresh chat: read this file + `docs/kundli-guide.txt`, then finish Phase 12 (see “Phase 12 (part 1)” log entry).
+Created: 2026-09-28. Status: **Phase 12 (almost done, 2026-09-29) — site LIVE on http://kundli.mybapuji.com ✓ (DNS record ✓, custom domain ✓, HTTP 200). HTTPS certificate provisioning in progress — auto-check cron scheduled; remaining: enforce HTTPS + verify + Phase 13 final report (next active run).**
+First thing to do in a fresh chat: read this file + `docs/kundli-guide.txt`, then finish Phase 12 → Phase 13 (see “Phase 12 (part 3)” log entry).
 
 ## What to build
 Static, browser-only Vedic "Kundli / Birth Chart" web app for mybapuji.com.
@@ -131,3 +131,9 @@ Hard requirements (summary):
 - GitHub login completed as **vasant22** (token scopes: gist, read:org, repo, **workflow**). ⚠️ NOTE: the “Authorize github” button on the device-consent page did NOT respond to automation; the user's own code entry + click made it work — ask the user for that step if auth is ever needed again.
 - `git push -u origin main` ✓ → **https://github.com/vasant22/kundli** (public). Deploy workflow started automatically (run 36443887632). Pages: enabled, build_type=workflow, site URL https://vasant22.github.io/kundli/.
 - Tokens ran low (~1.6k) → remaining work TOMORROW when tokens refill: (1) verify the workflow run + https://vasant22.github.io/kundli/ loads; (2) Cloudflare DNS: CNAME `kundli` → `vasant22.github.io`, **DNS-only (grey)**; (3) custom domain `kundli.mybapuji.com` + Enforce HTTPS; (4) verify https; (5) Phase 13 final report. (Cloudflare API token not in .secrets — only CF_ACCOUNT/CF_EMAIL; either user adds the record via dashboard or provides a token.)
+
+### 2026-09-29 — Phase 12 (part 3): DNS + custom domain done; HTTPS pending
+- Cloudflare: added CNAME `kundli` → `vasant22.github.io`, **DNS-only (grey)** — user logged into CF in the side panel, agent drove the dashboard. DNS resolves on public resolvers ✓ (local Mac/panel cache lagged a few minutes — normal).
+- GitHub Pages: custom domain `kundli.mybapuji.com` set via API; **http://kundli.mybapuji.com serves the app — 200 OK ✓** (github.io URL now 301-redirects to the custom domain).
+- HTTPS cert still provisioning (`https_certificate: null`). Cron checks scheduled: `30aa09c5…` at 04:53:55Z (checks cert, enforces HTTPS if ready, notifies this chat via sessions_send; else sends a short note) + backup `a22175c8…` at 05:40Z (deleteAfterRun).
+- If checks miss: next active run → `gh api repos/vasant22/kundli/pages` (see https_certificate), `gh api -X PUT repos/vasant22/kundli/pages -F https_enforced=true`, verify https (use `curl --resolve kundli.mybapuji.com:443:185.199.108.153` if local DNS caches stall), then **Phase 13 final report**.
