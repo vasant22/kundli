@@ -1,6 +1,6 @@
 # Kundli / जन्मपत्री App — Project Notes (handoff)
 
-Created: 2026-09-28. Status: **Main app COMPLETE; “Kundli Matching” (Ashtakoot Guna Milan) COMPLETE — Phases 1–8 done 2026-09-29, live at https://kundli.mybapuji.com/match/** (same repo; nav link added on the main page). **Third project “Panchang” — Phases 1–3 done 2026-09-29** (research + sunrise.js + panchang.js core; 195 tests passing). User-side remainders: 10-chart AstroSage validation (tests/VALIDATION.md) + matching hand-checks (tests/MATCH_VALIDATION.md), mybapuji.com link, device checks.
+Created: 2026-09-28. Status: **Main app COMPLETE; “Kundli Matching” (Ashtakoot Guna Milan) COMPLETE — Phases 1–8 done 2026-09-29, live at https://kundli.mybapuji.com/match/** (same repo; nav link added on the main page). **Third project “Panchang” — COMPLETE (Phases 1–11, 2026-09-29) — live at https://kundli.mybapuji.com/panchang/ and /panchang-widget/; 362 tests.** User-side remainders: Panchang hand-checks (tests/PANCHANG_VALIDATION.md), WordPress embed, plus the older 10-chart AstroSage validation (tests/VALIDATION.md), matching hand-checks (tests/MATCH_VALIDATION.md), mybapuji.com link, device checks.
 First thing to do in a fresh chat: read this file + `docs/kundli-matching-guide.txt` (current task spec; `docs/kundli-guide.txt` = spec of the completed main app, reference only). Old HTTPS-cert notes below are resolved — no action needed.
 
 ## What to build
@@ -306,3 +306,12 @@ Hard requirements (summary):
 - Midnight auto-refresh check: one-shot cron `9465d2db…` fires 00:10 IST (30 Sep) and reports
   in the chat.
 - Remaining: user's PANCHANG_VALIDATION.md hand-check + Phase 11 final report.
+
+### 2026-09-29 — Panchang Phase 11 done: FINAL REPORT — project COMPLETE
+- `docs/panchang-final-report.html` — Hindi editorial single-file report (क्या बना / live links /
+  11-phase journey / commands / file map / verification / flagged uncertainties / WordPress embed /
+  future ideas / user tasks). Rendered & checked in the browser.
+- All 11 phases complete; 362 tests; both pages deployed and verified live; CI green.
+- Handoff (user-side): PANCHANG_VALIDATION.md hand-check (10 dates, Mumbai, prefilled),
+  WordPress homepage embed (code in DEPLOY.md + the report), midnight-check result arriving via
+  cron `9465d2db…` (00:10 IST, reports in chat).
