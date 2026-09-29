@@ -457,3 +457,9 @@ Hard requirements (summary):
   अपने titles काफ़ी हैं)। Server: backup `autoclaw-home.php.bak-20260929b`; swap + कैश साफ़ +
   nginx restart (पिछली सीख लागू — कोई 520 नहीं); homepage 200, 3/3 stable; heading गायब ✓।
 - तीनों कार्ड अब भी बराबर (582/582 harness; कोई title wrap नहीं)।
+
+### 2026-09-30 — ऊपर का menu अब साफ़ दिखने वाला (user request)
+- User: "https://kundli.mybapuji.com/ के top पर menu नज़र नहीं आ रहा" — तीनों pages के
+  `.site-nav` links अब **chips**: सामान्य = हल्का saffron bg + border + बोल्ड text;
+  active = गहरा saffron bg + सफ़ेद text (hover भी)। सिर्फ़ `src/style.css` (सभी pages
+  पर लागू)। 393 tests ✓; dist वही **2.99 MiB**।
