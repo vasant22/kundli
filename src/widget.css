@@ -58,9 +58,9 @@ body.pw-transparent { background: transparent; }
 }
 
 .pw-title {
-  /* डिस्प्ले फ़ॉन्ट — widget कार्ड की heading (Rozha One अपने-आप बोल्ड दिखती है) */
-  font-family: 'Rozha One', 'Noto Sans Devanagari', system-ui, sans-serif;
-  font-weight: 400;
+  /* साफ़-बोल्ड readable फ़ॉन्ट (body जैसा ही, weight 700) */
+  font-family: 'Noto Sans Devanagari', system-ui, sans-serif;
+  font-weight: 700;
   color: var(--pw-saffron-dark);
   font-size: 1.3em;
   line-height: 1.35;
