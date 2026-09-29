@@ -12,7 +12,8 @@ export default defineConfig({
   build: {
     // Multi-page build: the main Kundli page, the Kundli Matching page
     // (served at /match/), the full Panchang page, the homepage widgets
-    // (Panchang card + Kundli mini-widget) — all reusing the same modules.
+    // (Panchang card + Kundli & Matching mini-widgets) — all reusing the
+    // same modules.
     rollupOptions: {
       input: {
         main: page('index.html'),
@@ -20,6 +21,7 @@ export default defineConfig({
         widget: page('panchang-widget/index.html'),
         panchang: page('panchang/index.html'),
         'kundli-widget': page('widgets/kundli/index.html'),
+        'match-widget': page('widgets/match/index.html'),
       },
     },
   },

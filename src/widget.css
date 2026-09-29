@@ -240,3 +240,33 @@ body.pw-transparent { background: transparent; }
   font: inherit;
   font-size: 1em;
 }
+
+/* ---------------------------------------------------------------------------
+   Kundli-Matching mini-widget (widgets/match/) — two-step card
+   --------------------------------------------------------------------------- */
+
+.mw-step-heading {
+  text-align: center;
+  font-weight: 600;
+  color: var(--pw-ink);
+  font-size: 0.95em;
+  margin: 6px 0 8px;
+}
+
+.mw-back {
+  display: block;
+  background: none;
+  border: 0;
+  padding: 0 0 6px;
+  margin: 0;
+  color: var(--pw-saffron-dark);
+  font: inherit;
+  font-size: 0.86em;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+}
+.mw-back:hover { text-decoration: underline; }
+
+.mw-next-note { text-align: center; margin-top: 8px; }
+.mw-credit { text-align: center; }

@@ -693,6 +693,10 @@ Object.assign(STRINGS.hi, {
   'kw.title': 'कुंडली / Birth Chart',
   'kw.errPlacePick': 'खोजें दबाकर सूची में से सही जगह चुनें।',
   'kw.opening': '✅ कुंडली नई tab में खुल रही है…',
+
+  // होमपेज कुंडली-मिलान मिनी-विजेट (widgets/match/)
+  'mw.title': 'कुंडली मिलान / Kundli Matching',
+  'mw.opening': '✅ मिलान रिपोर्ट नई tab में खुल रही है…',
 })
 Object.assign(STRINGS.en, {
   'panchang.docTitle': "Panchang — Today's Panchang",
@@ -759,4 +763,8 @@ Object.assign(STRINGS.en, {
   'kw.title': 'Kundli / Birth Chart',
   'kw.errPlacePick': 'Press Search and pick the right place from the results.',
   'kw.opening': '✅ Opening the full Kundli in a new tab…',
+
+  // Homepage Kundli-Matching mini-widget (widgets/match/)
+  'mw.title': 'Kundli Matching',
+  'mw.opening': '✅ Opening the match report in a new tab…',
 })
