@@ -3,6 +3,7 @@
 import './style.css'
 import { t, getLang, setLang, months, rashiLabel, grahaLabel, nakshatraLabel, monthEn } from './i18n.js'
 import { searchPlace } from './geocode.js'
+import { parseBirthParams } from './prefill.js'
 import { formatUtcOffset, isValidTimeZone, parseUtcOffset, wallTimeToUtc } from './timeutil.js'
 import { computeKundli, initEphemeris, navamsaKundli, computeVimshottari } from './astro.js'
 import { buildNorthChart, buildSouthChart } from './charts.js'
@@ -916,9 +917,10 @@ placeInput.addEventListener('input', () => {
   }
 })
 
-form.addEventListener('submit', async (event) => {
-  event.preventDefault()
-
+// The full submit journey (validate → convert → show → calculate). Shared by
+// the form's own submit button and by the URL pre-fill auto-run below, so a
+// link from the homepage widget takes exactly the same path as a manual submit.
+async function submitForm() {
   const values = readForm()
   const errors = validate(values)
   lastErrors = errors
@@ -958,10 +960,64 @@ form.addEventListener('submit', async (event) => {
     values.kundliPending = false
     if (lastValues === values) showSummary(values, false)
   }
+}
+
+form.addEventListener('submit', (event) => {
+  event.preventDefault()
+  submitForm()
 })
+
+// ---------------------------------------------------------------------------
+// URL pre-fill — one-click links from the homepage Kundli widget, e.g.
+//   /?name=…&gender=…&day=…&month=…&year=…&hour=…&min=…&sec=…
+//    &place=…&lat=…&lng=…&tz=…   (full list in src/prefill.js)
+// Fills whatever arrived; the caller (Start, below) then auto-runs the
+// calculation when all required values are present and valid. A plain visit
+// without parameters changes nothing at all.
+// ---------------------------------------------------------------------------
+function applyBirthPrefill(parsed) {
+  const setVal = (id, value) => {
+    if (value !== '') document.getElementById(id).value = value
+  }
+  setVal('f-name', parsed.name)
+  if (parsed.gender) {
+    const el = document.querySelector(`input[name="gender"][value="${parsed.gender}"]`)
+    if (el) el.checked = true
+  }
+  if (parsed.month) {
+    const el = document.querySelector(`input[name="month"][value="${parsed.month}"]`)
+    if (el) el.checked = true
+  }
+  setVal('f-day', parsed.day)
+  setVal('f-year', parsed.year)
+  setVal('f-hour', parsed.hour)
+  setVal('f-minute', parsed.minute)
+  setVal('f-second', parsed.second)
+
+  // A place arrived as a picked search result: name + coordinates + timezone.
+  const lat = Number(parsed.lat)
+  const lng = Number(parsed.lng)
+  if (parsed.place && parsed.lat !== '' && parsed.lng !== '' && parsed.tz && Number.isFinite(lat) && Number.isFinite(lng)) {
+    setVal('f-place', parsed.place)
+    selectedPlace = { name: parsed.place, latitude: lat, longitude: lng, timezone: parsed.tz }
+    renderConfirm()
+  } else if (parsed.place) {
+    setVal('f-place', parsed.place)
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Start
 // ---------------------------------------------------------------------------
+// URL pre-fill first (an English link should render English from the start).
+const prefill = parseBirthParams(window.location.search)
+if (prefill.lang) setLang(prefill.lang)
+
 buildMonthChips()
 applyLanguage()
+
+if (prefill.any) {
+  applyBirthPrefill(prefill)
+  // Auto-run only when every required value arrived — nothing left to type.
+  if (Object.keys(validate(readForm())).length === 0) submitForm()
+}

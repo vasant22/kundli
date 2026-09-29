@@ -8,6 +8,7 @@
 import './style.css'
 import { t, getLang, setLang, months, rashiLabel, nakshatraLabel } from './i18n.js'
 import { searchPlace } from './geocode.js'
+import { parseMatchParams } from './prefill.js'
 import { parseUtcOffset, isValidTimeZone, wallTimeToUtc } from './timeutil.js'
 import { computeKundli, initEphemeris } from './astro.js'
 import { computeAshtakoot } from './ashtakoot.js'
@@ -915,8 +916,46 @@ document.querySelector('#match-form').addEventListener('submit', (event) => {
 })
 
 // ---------------------------------------------------------------------------
+// URL pre-fill — links from the homepage Kundli-Matching widget, e.g.
+//   /match/?b_name=…&b_day=…&b_month=…&b_year=…&b_hour=…&b_min=…&b_sec=…
+//          &b_place=…&b_lat=…&b_lng=…&b_tz=…   (the same with g_ for the girl)
+// Fills whatever arrived; the caller (Start, below) then auto-runs the report
+// when BOTH sides are complete. A plain visit without parameters is untouched.
+// ---------------------------------------------------------------------------
+function applyPersonPrefill(p, parsed) {
+  const setVal = (id, value) => {
+    if (value !== '') document.getElementById(id).value = value
+  }
+  setVal(`${p}-name`, parsed.name)
+  if (parsed.month) {
+    const el = document.querySelector(`input[name="${p}-month"][value="${parsed.month}"]`)
+    if (el) el.checked = true
+  }
+  setVal(`${p}-day`, parsed.day)
+  setVal(`${p}-year`, parsed.year)
+  setVal(`${p}-hour`, parsed.hour)
+  setVal(`${p}-minute`, parsed.minute)
+  setVal(`${p}-second`, parsed.second)
+
+  // A place arrived as a picked search result: name + coordinates + timezone.
+  const lat = Number(parsed.lat)
+  const lng = Number(parsed.lng)
+  if (parsed.place && parsed.lat !== '' && parsed.lng !== '' && parsed.tz && Number.isFinite(lat) && Number.isFinite(lng)) {
+    setVal(`${p}-place`, parsed.place)
+    persons[p].selectedPlace = { name: parsed.place, latitude: lat, longitude: lng, timezone: parsed.tz }
+    persons[p].renderConfirm()
+  } else if (parsed.place) {
+    setVal(`${p}-place`, parsed.place)
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Start
 // ---------------------------------------------------------------------------
+// URL pre-fill first (an English link should render English from the start).
+const prefill = parseMatchParams(window.location.search)
+if (prefill.lang) setLang(prefill.lang)
+
 buildMonthChips('b')
 buildMonthChips('g')
 setupSearch('b')
@@ -942,3 +981,12 @@ if (import.meta.env?.DEV && typeof location !== 'undefined' && new URLSearchPara
 }
 
 applyLanguage()
+
+if (prefill.any) {
+  applyPersonPrefill('b', prefill.b)
+  applyPersonPrefill('g', prefill.g)
+  // Auto-run only when BOTH sides arrived complete — nothing left to type.
+  const boyOk = Object.keys(validatePerson(readPerson('b'))).length === 0
+  const girlOk = Object.keys(validatePerson(readPerson('g'))).length === 0
+  if (boyOk && girlOk) runReport()
+}
