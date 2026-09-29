@@ -1,40 +1,21 @@
-// fetch-fonts.mjs — one-time helper: download the "Noto Sans Devanagari"
-// woff2 subsets (weights 400 + 600, devanagari + latin) from Google Fonts
-// and write src/fonts.css with local @font-face rules.
+// fetch-fonts.mjs — one-time helper: download the woff2 subsets used by the
+// app from Google Fonts and write src/fonts.css with local @font-face rules.
+//
+// Families:
+//   - Noto Sans Devanagari  (body text, weights 400–600)
+//   - Rozha One             (display font for the widget card headings)
 //
 // The app then loads fonts from its own site only — no Google Fonts
-// dependency at runtime. Noto fonts are under the SIL Open Font License 1.1.
-//
-// Noto Sans Devanagari is a variable font: Google serves the SAME file for
-// every weight, so identical files are collapsed into one @font-face with a
-// weight range. Run once (node scripts/fetch-fonts.mjs) and commit results.
+// dependency at runtime. Both fonts are under the SIL Open Font License 1.1.
+// Run once (node scripts/fetch-fonts.mjs) and commit results.
 import { createHash } from 'node:crypto'
 import { mkdir, writeFile } from 'node:fs/promises'
 
 const UA =
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
-const CSS_URL =
-  'https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600&display=swap'
 
 const OUT_DIR = new URL('../public/fonts/', import.meta.url)
 const CSS_OUT = new URL('../src/fonts.css', import.meta.url)
-
-const css = await (await fetch(CSS_URL, { headers: { 'User-Agent': UA } })).text()
-
-// Google's CSS comes as: /* subset */ @font-face { ... }
-const blockRe = /\/\* ([\w-]+) \*\/\s*@font-face \{([^}]+)\}/g
-const perSubset = new Map()
-for (const m of css.matchAll(blockRe)) {
-  const subset = m[1]
-  if (subset !== 'devanagari' && subset !== 'latin') continue
-  const body = m[2]
-  const weight = /font-weight:\s*(\d+)/.exec(body)?.[1]
-  const url = /url\((https:[^)]+\.woff2)\)/.exec(body)?.[1]
-  if (!weight || !url) throw new Error(`Incomplete block for ${subset}`)
-  if (!perSubset.has(subset)) perSubset.set(subset, [])
-  perSubset.get(subset).push({ weight, url, body })
-}
-if (perSubset.size === 0) throw new Error('No font blocks found — did the CSS API change?')
 
 await mkdir(OUT_DIR, { recursive: true })
 
@@ -45,44 +26,77 @@ const cleanBody = (text) =>
     .filter(Boolean)
     .join('\n  ')
 
-const outBlocks = []
-for (const [subset, entries] of perSubset) {
-  const downloads = []
-  for (const entry of entries) {
-    const bytes = Buffer.from(await (await fetch(entry.url)).arrayBuffer())
-    downloads.push({ ...entry, bytes })
-  }
+// Download one family and return its @font-face blocks (files saved to public/fonts).
+async function fetchFamily({ cssUrl, filePrefix }) {
+  const css = await (await fetch(cssUrl, { headers: { 'User-Agent': UA } })).text()
 
-  const byHash = new Map()
-  for (const d of downloads) {
-    const hash = createHash('md5').update(d.bytes).digest('hex')
-    if (!byHash.has(hash)) byHash.set(hash, d)
+  // Google's CSS comes as: /* subset */ @font-face { ... }
+  const blockRe = /\/\* ([\w-]+) \*\/\s*@font-face \{([^}]+)\}/g
+  const perSubset = new Map()
+  for (const m of css.matchAll(blockRe)) {
+    const subset = m[1]
+    if (subset !== 'devanagari' && subset !== 'latin') continue
+    const body = m[2]
+    const weight = /font-weight:\s*(\d+)/.exec(body)?.[1]
+    const url = /url\((https:[^)]+\.woff2)\)/.exec(body)?.[1]
+    if (!weight || !url) throw new Error(`Incomplete block for ${subset}`)
+    if (!perSubset.has(subset)) perSubset.set(subset, [])
+    perSubset.get(subset).push({ weight, url, body })
   }
+  if (perSubset.size === 0) throw new Error(`No font blocks found for ${cssUrl} — did the CSS API change?`)
 
-  if (byHash.size === 1) {
-    // Variable font: same file for all weights → one file, weight range.
-    const only = [...byHash.values()][0]
-    const weights = entries.map((e) => Number(e.weight)).sort((a, b) => a - b)
-    const fileName = `noto-sans-devanagari-${subset}.woff2`
-    await writeFile(new URL(fileName, OUT_DIR), only.bytes)
-    console.log(`✓ ${fileName} (${(only.bytes.length / 1024).toFixed(1)} KB)`)
-    const body = cleanBody(only.body)
-      .replace(only.url, `/fonts/${fileName}`)
-      .replace(/font-weight:\s*\d+;/, `font-weight: ${weights[0]} ${weights[weights.length - 1]};`)
-    outBlocks.push(`@font-face {\n  ${body}\n}`)
-  } else {
-    // Static fonts: keep one file per weight.
+  const outBlocks = []
+  for (const [subset, entries] of perSubset) {
+    const downloads = []
+    for (const entry of entries) {
+      const bytes = Buffer.from(await (await fetch(entry.url)).arrayBuffer())
+      downloads.push({ ...entry, bytes })
+    }
+
+    const byHash = new Map()
     for (const d of downloads) {
-      const fileName = `noto-sans-devanagari-${subset}-${d.weight}.woff2`
-      await writeFile(new URL(fileName, OUT_DIR), d.bytes)
-      console.log(`✓ ${fileName} (${(d.bytes.length / 1024).toFixed(1)} KB)`)
-      outBlocks.push(`@font-face {\n  ${cleanBody(d.body).replace(d.url, `/fonts/${fileName}`)}\n}`)
+      const hash = createHash('md5').update(d.bytes).digest('hex')
+      if (!byHash.has(hash)) byHash.set(hash, d)
+    }
+
+    if (byHash.size === 1 && entries.length > 1) {
+      // Variable font: same file for all weights → one file, weight range.
+      const only = [...byHash.values()][0]
+      const weights = entries.map((e) => Number(e.weight)).sort((a, b) => a - b)
+      const fileName = `${filePrefix}-${subset}.woff2`
+      await writeFile(new URL(fileName, OUT_DIR), only.bytes)
+      console.log(`✓ ${fileName} (${(only.bytes.length / 1024).toFixed(1)} KB)`)
+      const body = cleanBody(only.body)
+        .replace(only.url, `/fonts/${fileName}`)
+        .replace(/font-weight:\s*\d+;/, `font-weight: ${weights[0]} ${weights[weights.length - 1]};`)
+      outBlocks.push(`@font-face {\n  ${body}\n}`)
+    } else {
+      // Static font(s): keep one file per weight.
+      for (const d of downloads) {
+        const fileName = entries.length > 1 ? `${filePrefix}-${subset}-${d.weight}.woff2` : `${filePrefix}-${subset}.woff2`
+        await writeFile(new URL(fileName, OUT_DIR), d.bytes)
+        console.log(`✓ ${fileName} (${(d.bytes.length / 1024).toFixed(1)} KB)`)
+        outBlocks.push(`@font-face {\n  ${cleanBody(d.body).replace(d.url, `/fonts/${fileName}`)}\n}`)
+      }
     }
   }
+  return outBlocks
 }
 
+const notoBlocks = await fetchFamily({
+  cssUrl: 'https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600&display=swap',
+  filePrefix: 'noto-sans-devanagari',
+})
+
+const rozhaBlocks = await fetchFamily({
+  cssUrl: 'https://fonts.googleapis.com/css2?family=Rozha+One&display=swap',
+  filePrefix: 'rozha-one',
+})
+
 const header =
-  '/* Noto Sans Devanagari — self-hosted subsets (SIL Open Font License 1.1).\n' +
-  '   Generated by scripts/fetch-fonts.mjs; the .woff2 files live in public/fonts/. */\n\n'
-await writeFile(CSS_OUT, header + outBlocks.join('\n\n') + '\n')
-console.log(`✓ wrote src/fonts.css (${outBlocks.length} @font-face blocks)`)
+  '/* Self-hosted font subsets (SIL Open Font License 1.1).\n' +
+  '   Generated by scripts/fetch-fonts.mjs; the .woff2 files live in public/fonts/.\n' +
+  '   — Noto Sans Devanagari: body text (weights 400–600)\n' +
+  '   — Rozha One: display font for the widget card headings */\n\n'
+await writeFile(CSS_OUT, header + [...notoBlocks, ...rozhaBlocks].join('\n\n') + '\n')
+console.log(`✓ wrote src/fonts.css (${notoBlocks.length + rozhaBlocks.length} @font-face blocks)`)

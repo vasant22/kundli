@@ -44,6 +44,10 @@ body.pw-transparent { background: transparent; }
   border-radius: 12px;
   padding: 12px 14px 14px;
   box-shadow: 0 1px 3px rgba(122, 74, 24, 0.08);
+  /* तीनों कार्ड की ऊँचाई एक जैसी — निचले किनारे बराबर रहें */
+  display: flex;
+  flex-direction: column;
+  min-height: 570px;
 }
 
 .pw-head {
@@ -54,9 +58,12 @@ body.pw-transparent { background: transparent; }
 }
 
 .pw-title {
-  font-weight: 600;
+  /* डिस्प्ले फ़ॉन्ट — widget कार्ड की heading (Rozha One अपने-आप बोल्ड दिखती है) */
+  font-family: 'Rozha One', 'Noto Sans Devanagari', system-ui, sans-serif;
+  font-weight: 400;
   color: var(--pw-saffron-dark);
-  font-size: 1.02em;
+  font-size: 1.3em;
+  line-height: 1.35;
 }
 
 .pw-loc {
@@ -117,10 +124,12 @@ body.pw-transparent { background: transparent; }
   margin-top: 2px;
 }
 
-.kw-form { margin-top: 6px; text-align: left; }
+.kw-form { margin-top: 6px; padding-top: 10px; text-align: left; flex: 1; display: flex; flex-direction: column; }
+/* फ़ॉर्म के steps भी लचीले रहें ताकि बटन नीचे टिक सके */
+.kw-form > section { display: flex; flex-direction: column; flex: 1; }
 
-.kw-field { margin: 10px 0; }
-.kw-fieldset { border: 0; padding: 0; margin: 10px 0; }
+.kw-field { margin: 0 0 10px; }
+.kw-fieldset { border: 0; padding: 0; margin: 0 0 10px; }
 
 .kw-label {
   display: block;
@@ -243,6 +252,7 @@ body.pw-transparent { background: transparent; }
   cursor: pointer;
   font: inherit;
   font-size: 1em;
+  margin-top: auto; /* बटन कार्ड के नीचे टिका रहे */
 }
 
 /* ---------------------------------------------------------------------------
@@ -273,3 +283,10 @@ body.pw-transparent { background: transparent; }
 .mw-back:hover { text-decoration: underline; }
 
 .mw-next-note { text-align: center; margin-top: 8px; }
+
+/* चरण 1 में “नोट + आगे बढ़ें” नीचे टिके रहें (कार्ड की ऊँचाई समान रखने के लिए) */
+#mw-step-b .mw-next-note { margin-top: auto; }
+#mw-step-b .kw-submit { margin-top: 8px; }
+
+/* पंचांग कार्ड का बटन भी नीचे टिके — और बाक़ी दो कार्डों के बटन के बराबर नीचे */
+.pw-card > .pw-btn { margin-top: auto; margin-bottom: 24px; }
