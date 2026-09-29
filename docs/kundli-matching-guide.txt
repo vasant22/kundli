@@ -1,0 +1,102 @@
+Kundli Matching (कुंडली मिलान) — दूसरा Project
+kundli.mybapuji.com में जोड़ने वाला Ashtakoot Guna Milan feature: शुरू से अंत तक क्रमवार मार्गदर्शिका
+भाग 1: इस project के फ़ायदे
+	•	कोई नया infrastructure नहीं: वही repo, वही Swiss Ephemeris setup, वही hosting। सिर्फ़ एक नया page/route जोड़ना है।
+	•	गणना दोगुनी बार दोहरानी नहीं पड़ेगी: दोनों (लड़का-लड़की) के लिए वही astro.js module काम करेगा जो पहले से बना है।
+	•	Ashtakoot Guna Milan (36-गुण मिलान) — AstroSage जैसी पद्धति, industry-standard।
+	•	मंगल दोष (Kuja Dosha) दोनों के लिए जाँच और निवारण (cancellation) के नियम भी साथ जुड़ेंगे।
+	•	Hindi + English, वही theme, वही site के अंदर।
+भाग 2: हमारी requirements
+बात
+तय
+Input
+दो चरण: पहले लड़के का विवरण, फिर "next page" पर लड़की का (आपके screenshot जैसा)
+Matching पद्धति
+Ashtakoot Guna Milan — 8 कूट, कुल 36 अंक
+अतिरिक्त जाँच
+मंगल दोष (Kuja Dosha) दोनों के लिए + निवारण नियम
+गणना
+पहले project के astro.js से दोनों की कुंडली (Rashi, Nakshatra आदि) — दोबारा नहीं लिखना
+Output
+कूट-वार तालिका (अंक/कुल अंक), कुल score, व्याख्या (उत्तम/मध्यम/अशुभ), Hindi+English
+Hosting
+वही repo, नया page — जैसे /match या subdomain पर नया route
+License
+वही AGPL-3.0 (Swiss Ephemeris की शर्त जारी रहती है)
+भाग 3: AI tool को देने वाला Prompt
+यह prompt पहले project के reference के साथ लिखा गया है, ताकि AI tool आपके मौजूदा kundli.mybapuji.com project पर ही आगे काम करे, अलग से नया setup न बनाए।
+नीचे के box का पूरा text एक साथ copy करके उसी project के folder में अपने AI coding tool में paste करें।
+कैसे copy करें: box की पहली पंक्ति ("You are continuing work...") पर click करें, Shift दबाकर आख़िरी पंक्ति ("...results before moving to the next phase.") पर click करें, फिर Ctrl+C।
+You are continuing work on an existing project: a Vedic Kundli calculator (Swiss Ephemeris WASM, sidereal Lahiri, Hindi/English bilingual, North/South Indian charts, hosted on GitHub Pages at kundli.mybapuji.com). This existing project was built from a previous prompt covering Phases 1-13 (setup, form, geocoding, time conversion, astrology calculations, Hindi/English data, SVG charts, results page, testing, performance/privacy, AGPL compliance, GitHub Pages deployment). REUSE the existing calculation module (astro.js, geocode.js, timeutil.js, i18n.js) — do NOT rewrite or duplicate them. This new feature is "Kundli Matching" (Ashtakoot Guna Milan) added as a new page/route in the SAME project.
+ 
+Work in the phases below, IN ORDER. After each phase, run/test it, tell me what you did, then move to the next phase. Do not skip any phase. Verify every lookup table (nakshatra lists, sign lords, friendship tables) against a published classical source before using it — do not guess values.
+ 
+## PROJECT GOAL
+A new page (e.g. /match/ or match.html) where a visitor enters Boy's birth details, then Girl's birth details (two-step form, one person per screen, like the existing single-kundli form), and gets a bilingual Ashtakoot Guna Milan (36-point) compatibility report plus a Mangal Dosha (Kuja Dosha) check for both. All calculation stays in the browser — no backend, no new dependency beyond what already exists.
+ 
+## PHASE 1: Reuse existing setup
+- Add a new route/page in the existing Vite project: src/match.js (or equivalent), match.html entry, linked from the main page's navigation.
+- Import and reuse the existing astro.js calculation function so that from a birth date/time/place you get the same planet+ascendant data object already used for the single Kundli (rashi, nakshatra, pada, house, retrograde for all 9 grahas, and the Ascendant).
+- Reuse geocode.js (Open-Meteo place search), timeutil.js (UTC/Julian Day conversion), and i18n.js string patterns — extend i18n.js with new matching-specific bilingual strings rather than creating a parallel file.
+ 
+## PHASE 2: Two-step input form (matches existing screenshot style)
+- Step 1: "Kundli Matching" heading, sub-heading "Enter Boy's Details" (Hindi: लड़के का विवरण), same fields as the single-Kundli form (Name, Birth date day/month/year, Birth time hour/minute/second, Birth place with search), a note "Enter girl's detail on next page" (लड़की का विवरण अगले पन्ने पर डालें), and a "Continue" (आगे बढ़ें) button.
+- Step 2: same fields under "Enter Girl's Details" (लड़की का विवरण), and a "Get Match Report" (मिलान रिपोर्ट देखें) button.
+- Keep both people's raw inputs in memory (no storage) until the final button is pressed; then run both through the existing astro.js function to get two planet-data objects (boyData, girlData).
+- Add a "Back" link on step 2 to edit boy's details without re-entering everything.
+- Bilingual language toggle carries over from the main site.
+ 
+## PHASE 3: Ashtakoot Guna Milan calculation (src/ashtakoot.js)
+Implement all 8 kootas using boyData.moon (rashi + nakshatra + pada) and girlData.moon. For each koota, verify the lookup table against a classical/published reference before coding it in; do not invent values.
+1. Varna (1 point max): Classify each Moon-rashi into Varna (Brahmin/Kshatriya/Vaishya/Shudra) using the standard classical mapping. Score 1 if boy's Varna >= girl's Varna in the traditional hierarchy, else 0.
+2. Vashya (2 points max): Classify each Moon-rashi into one of the 5 Vashya groups (Chatushpada, Manava, Jalachara, Vanachara, Keeta). Score per the standard Vashya compatibility table (full 2, half 1, or 0 depending on the pair).
+3. Tara / Dina (3 points max): Count nakshatras from boy's to girl's Moon nakshatra and girl's to boy's (mod 27, using the standard 1-9 Tara groups: Janma, Sampat, Vipat, Kshema, Pratyak, Sadhaka, Vadha, Mitra, Parama-Mitra). Score per the standard table (0, 1.5, or 3) using both directions and averaging per the classical method.
+4. Yoni (4 points max): Map each nakshatra to its Yoni animal (14 yonis) and use the standard Yoni compatibility matrix to score 0 to 4.
+5. Graha Maitri (5 points max): Determine the ruling planet (lord) of each Moon-rashi, use the classical planetary friendship table (friend/neutral/enemy) to score 0, 1, 3, 4, or 5 per the standard rules (including same-lord and mutual-friend special cases).
+6. Gana (6 points max): Classify each nakshatra into Deva/Manushya/Rakshasa Gana, score via the standard Gana compatibility table (0, 1, 4.5, 5, or 6 depending on which combination).
+7. Bhakoot / Rashi (7 points max): Compute the rashi distance (1-12) both ways between boy's and girl's Moon-rashi. Score 0 for the classical dosha distances (6-8 and 2-12 pairs), else 7 — but implement the standard exceptions where Bhakoot dosha is cancelled if the rashi lords are the same or mutual friends (do not just apply a flat rule; check the classical exception list).
+8. Nadi (8 points max): Classify each nakshatra into Aadi/Madhya/Antya Nadi. Score 0 if same Nadi (Nadi dosha), else 8. Note the classical exception cases where same-Nadi is not considered a dosha (e.g. same nakshatra but different pada in certain cases) — implement only if you can verify from a classical source, otherwise apply the straightforward same-Nadi=0 rule and note the simplification in comments.
+ 
+Sum all 8 for a total out of 36. Return a structured object with each koota's name (Hindi+English), points scored, max points, and a one-line reason/explanation for why that score was given (e.g. "Same Nadi (Antya-Antya)" / "समान नाड़ी (अंत्य-अंत्य)").
+ 
+## PHASE 4: Mangal Dosha (Kuja Dosha) check (src/mangaldosha.js)
+- For EACH person independently: check whether Mars falls in house 1, 2, 4, 7, 8, or 12 counted from the Ascendant (standard rule) — note some traditions also check from the Moon; implement the Ascendant-based version as primary and label it clearly.
+- If Mars is in one of those houses, flag Mangal Dosha = true for that person, and note the house number.
+- Implement standard cancellation (Dosha-nivaran) rules — e.g. Mars in own sign or exaltation, Mars aspected/conjunct certain grahas, both partners having Mangal Dosha (mutual cancellation) — verify each cancellation rule against a classical source before including it; if uncertain about a specific rule, omit it and note in comments rather than guessing.
+- If BOTH have Mangal Dosha, show a note that mutual presence is a classical cancellation factor.
+- Output bilingual: dosha present/absent for each person, which house, and any applicable cancellation note.
+ 
+## PHASE 5: Result / report page
+- Header: both names, birth details, both Moon-rashi and Moon-nakshatra (Hindi/English).
+- A table: 8 rows (one per koota), columns = Koota name (Hindi/English), Points scored / Max points, one-line reason. Bottom row = Total (X / 36).
+- An interpretation band below the total, using the standard classical thresholds (e.g. below 18 = not recommended, 18-24 = average, 24-32 = good, 32-36 = excellent) — verify these threshold numbers against a published reference before using them.
+- A separate Mangal Dosha section (from Phase 4) below the Ashtakoot table.
+- A short bilingual disclaimer: this is a traditional Ashtakoot score, not a complete astrological judgement, and other factors (full chart, dashas, dosha severity) should be considered by a knowledgeable astrologer for a final decision.
+- Buttons: "Download as PNG/PDF", "Print", same style as the existing single-Kundli results page.
+- Reuse the existing site's header/footer/theme/fonts so it feels like one site, not a bolted-on page.
+ 
+## PHASE 6: Testing and validation
+- Add automated tests with at least 5 known boy/girl nakshatra-pairs (published examples) asserting the correct point value for EACH of the 8 kootas individually, plus the total.
+- Write tests/MATCH_VALIDATION.md: a manual checklist of 6-8 test couples (different nakshatra/rashi combinations, at least one same-Nadi pair, at least one Mangal Dosha case, one mutual-cancellation case) with columns "Reference site result", "Our result", "Match?" for me to verify by hand against AstroSage or a similar reference.
+- Document in the README any place where you simplified a classical rule (e.g. Tara/Nadi exceptions) so I know what to double check with my own knowledge.
+ 
+## PHASE 7: Deploy (reusing existing pipeline)
+- No new hosting setup needed. Just make sure the new page is included in the existing Vite build and existing GitHub Actions workflow (no changes needed if it already builds the whole dist/ folder).
+- Add a link to "Kundli Matching / कुंडली मिलान" in the main site's navigation/homepage.
+- Confirm the new page works at the existing domain (e.g. kundli.mybapuji.com/match/) after deploy.
+ 
+## PHASE 8: Final report
+Give me: what was built, exact local commands to test, list of new/changed files, which classical rules you simplified or were unsure about (so I can verify with my own astrological knowledge), and optional future additions (Rajju dosha, more detailed dosha-bhanga rules, D9/Navamsa-based matching, compatibility percentage summary).
+ 
+## GENERAL RULES
+- This is a well-defined classical system (Ashtakoot) — do not deviate from standard published rules without flagging it to me.
+- Ask me a question ONLY if truly blocked on a rule you cannot verify; otherwise implement the most widely-published version and clearly comment where you made a judgement call.
+- Keep code commented and simple.
+- Never skip verification: run tests and show results before moving to the next phase.
+
+भाग 4: आपके अपने काम
+	•	Phase 6 की जाँच आप ही करें — यहाँ आपका BNN/ज्योतिष का अनुभव सबसे ज़्यादा काम आएगा, ख़ासकर Nadi और Bhakoot के exception-cases में, जहाँ AI tool ग़लती कर सकता है।
+	•	जो rules AI "simplify" या "unsure" बताए (Phase 8 में), उन्हें अपनी परंपरा के अनुसार जाँच लें, ज़रूरत हो तो सुधार करवा दें।
+	•	Deploy के बाद नया link नाव (navigation) में जोड़ना — यह prompt में AI को कहा गया है, पर एक बार खुद जाँच लें।
+समय का अनुमान
+Setup और infra दोबारा नहीं बनना, इसलिए यह पहले project से काफ़ी छोटा रहेगा — coding में लगभग 1 से 2 घंटे, और आपकी अपनी जाँच (Phase 6) में 1 से 1.5 घंटे। कुल मिलाकर एक ही बैठक में हो सकता है।

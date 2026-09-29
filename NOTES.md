@@ -1,7 +1,7 @@
 # Kundli / जन्मपत्री App — Project Notes (handoff)
 
-Created: 2026-09-28. Status: **Project COMPLETE (Phases 1–13, 2026-09-29) — live at http://kundli.mybapuji.com (HTTPS certificate auto-provisioning; cron checks watching). Final report: `docs/final-report.html`. User-side remainders: 10-chart AstroSage validation (tests/VALIDATION.md), mybapuji.com link, device checks.**
-First thing to do in a fresh chat: read this file + `docs/kundli-guide.txt`. If the HTTPS cert needs attention: see “Phase 12 (part 3)” + “Phase 13” log entries.
+Created: 2026-09-28. Status: **Main app COMPLETE & live at https://kundli.mybapuji.com (HTTPS approved + enforced; PDF print corrections shipped 2026-09-29). NEXT TASK — not started: “Kundli Matching” (Ashtakoot Guna Milan), Phases 1–8; spec: `docs/kundli-matching-guide.txt` — adds a `/match/` page to THIS same repo.** User-side remainders: 10-chart AstroSage validation (tests/VALIDATION.md), mybapuji.com link, device checks.
+First thing to do in a fresh chat: read this file + `docs/kundli-matching-guide.txt` (current task spec; `docs/kundli-guide.txt` = spec of the completed main app, reference only). Old HTTPS-cert notes below are resolved — no action needed.
 
 ## What to build
 Static, browser-only Vedic "Kundli / Birth Chart" web app for mybapuji.com.
@@ -146,3 +146,9 @@ Hard requirements (summary):
 ### 2026-09-29 — PDF export corrections (user feedback)
 - User feedback on the Phase-14 PDF export → three fixes: (1) the “✅ जानकारी सही है” heading is hidden in print (still shows on screen); (2) the print/PDF letter-head is now “कुंडली / Kundli” + a bordered box with both site links (mybapuji.com · kundli.mybapuji.com, clickable in the saved PDF); (3) the footer credit line (गणना इंजन + सोर्स कोड) and the “…तैयार हैं…” note are hidden in print — the website footer keeps the credits (AGPL source offer stays on the site; the PDF itself doesn’t need them).
 - Verified: 69/69 tests; real Chrome print-to-PDF sample — computed print styles (box border, hidden lines), print-flow screenshots, and raw PDF text via pdfjs (page 1 starts with title + links box; no “जानकारी सही है”; last page ends with the privacy line; no credit lines, no page-number footers). Sample: `.openclaw/tmp/pdfcheck/kundli-test.pdf` (scratch, not committed).
+
+### 2026-09-29 — Next task received: “Kundli Matching” (Ashtakoot Guna Milan, Phases 1–8)
+- User supplied the spec (`docs/kundli-matching-guide.txt` + original docx alongside): add a `/match/` page to THIS repo — two-step form (boy → girl, one person per screen), Ashtakoot 36-point Guna Milan + Mangal Dosha checks for both, bilingual, same theme + same deploy pipeline.
+- Reuse existing modules (astro.js, geocode.js, timeutil.js, i18n.js — extend i18n; don’t duplicate). New modules: `src/ashtakoot.js`, `src/mangaldosha.js`. Tests + `tests/MATCH_VALIDATION.md` (the user will hand-verify Nadi/Bhakoot exceptions; comment any simplifications).
+- Rules: verify every classical lookup table against published sources before coding; ask only if truly blocked; never skip per-phase verification. Guide estimate: ~1–2 h coding + the user’s ~1–1.5 h validation — possibly one sitting.
+- Next action: **Phase 1** (reuse setup; add the match page/route) — do this in a fresh chat (token-friendly continuation), starting from this file.
