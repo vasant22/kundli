@@ -19,6 +19,7 @@ import { initEphemeris } from './astro.js'
 import { computePanchang } from './panchang.js'
 import { WIDGET_LOCATION } from './widget-location.js'
 import { todayInZone } from './timeutil.js'
+import { installHeightReporter } from './widget-resize.js'
 import {
   t, setLang, tithiLabel, nakshatraLabel, yogaLabel, karanaLabel, vaaraLabel,
   lunarMonthLabel, pakshaLabel, getLang,
@@ -148,6 +149,7 @@ if (typeof document !== 'undefined') {
   if (root) {
     const params = new URLSearchParams(window.location.search)
     if (params.get('transparent') === '1') document.body.classList.add('pw-transparent')
+    installHeightReporter() // keep the parent's <iframe> the right height
     startWidget(root, { lang: params.get('lang') === 'en' ? 'en' : 'hi' })
   }
 }

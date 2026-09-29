@@ -1,10 +1,11 @@
 <!doctype html>
 <!--
-  Dev-only preview of the three homepage widget cards, stacked in one column
-  (mobile view of the mybapuji.com homepage section). Open from the dev server:
+  Dev-only preview of the three homepage widget cards (Kundli / Matching /
+  Panchang) — the same section that goes into the mybapuji.com homepage
+  (mu-plugins/autoclaw-templates/autoclaw-home.php). Open from the dev server:
     http://localhost:5173/tests/widgets-preview.html
-  This is the local test bed for the Homepage Widgets project (Phase 4/5/6);
-  the WordPress block will use the same structure with absolute widget URLs.
+  The iframes size themselves automatically via postMessage from each widget
+  page (src/widget-resize.js); this page listens and adjusts each height.
 -->
 <html lang="hi">
   <head>
@@ -13,19 +14,49 @@
     <meta name="robots" content="noindex" />
     <title>Widgets preview — तीन कार्ड</title>
     <style>
-      /* Placeholder styling for local preview only — the real Phase-5 block
-         will mirror the mybapuji.com homepage theme. */
-      body { margin: 0; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; background: #fdf6ec; }
-      .wp-row { display: flex; flex-wrap: wrap; gap: 12px; max-width: 1160px; margin: 16px auto; padding: 0 12px; justify-content: center; align-items: flex-start; }
-      .wp-col { flex: 1 1 320px; max-width: 380px; min-width: 300px; }
-      .wp-col iframe { width: 100%; border: 0; display: block; }
+      /* Mirrors the mybapuji.com homepage section styles (acw-*). */
+      body { margin: 0; background: #fbf8f3; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
+      .preview-wrap { max-width: 1180px; margin: 0 auto; padding: 18px; }
+      .kick { font-size: 12.5px; font-weight: 800; letter-spacing: 1.3px; color: #d97706; text-transform: uppercase; margin-bottom: 6px; }
+      .acw-tools { background: radial-gradient(820px 320px at 12% -30%, rgba(245,158,11,.10), transparent 62%), radial-gradient(820px 320px at 88% -30%, rgba(15,81,50,.06), transparent 62%), linear-gradient(180deg, #fffdf6, #fbf3e3); border: 1px solid #f0e2c8; border-radius: 22px; padding: 24px 20px 26px; margin: 6px 0 8px; }
+      .acw-head { text-align: center; margin: 0 0 18px; }
+      .acw-head .kick { margin-bottom: 4px; }
+      .acw-head h2 { font-size: 23px; font-weight: 800; margin: 0; color: #1f2937; }
+      .acw-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: start; }
+      .acw-col { min-width: 0; }
+      .acw-col iframe { width: 100%; display: block; border: 0; background: transparent; }
+      @media (max-width: 860px) { .acw-grid { grid-template-columns: 1fr; max-width: 430px; margin: 0 auto; } }
+      @media (max-width: 760px) { .acw-tools { padding: 18px 12px 20px; border-radius: 16px; } .acw-head h2 { font-size: 19px; } }
     </style>
   </head>
   <body>
-    <div class="wp-row">
-      <div class="wp-col"><iframe id="frame-kundli" src="/widgets/kundli/" height="620" title="कुंडली / Kundli"></iframe></div>
-      <div class="wp-col"><iframe id="frame-match" src="/widgets/match/" height="620" title="कुंडली मिलान / Kundli Matching"></iframe></div>
-      <div class="wp-col"><iframe id="frame-panchang" src="/panchang-widget/" height="520" title="आज का पंचांग / Today's Panchang"></iframe></div>
+    <div class="preview-wrap">
+      <div class="acw-tools">
+        <div class="acw-head">
+          <div class="kick">मुफ़्त ज्योतिष साधन</div>
+          <h2>कुंडली · मिलान · पंचांग</h2>
+        </div>
+        <div class="acw-grid">
+          <div class="acw-col"><iframe id="acw-kundli" src="/widgets/kundli/?transparent=1" title="कुंडली / Kundli — जन्म विवरण भरें" height="600" scrolling="no"></iframe></div>
+          <div class="acw-col"><iframe id="acw-match" src="/widgets/match/?transparent=1" title="कुंडली मिलान / Kundli Matching" height="600" scrolling="no"></iframe></div>
+          <div class="acw-col"><iframe id="acw-panchang" src="/panchang-widget/?transparent=1" title="आज का पंचांग / Today's Panchang" height="500" scrolling="no"></iframe></div>
+        </div>
+        <script>
+          /* कार्ड की ऊँचाई अपने-आप — same listener as the WordPress block. */
+          (function () {
+            var frames = document.querySelectorAll('.acw-grid iframe')
+            function allowed(o) { return o === 'https://kundli.mybapuji.com' || /^http:\/\/localhost(:\d+)?$/.test(o || '') }
+            window.addEventListener('message', function (ev) {
+              if (!allowed(ev.origin) || !ev.data || ev.data.type !== 'acw-height') return
+              var h = parseInt(ev.data.height, 10)
+              if (!(h > 200 && h < 2200)) return
+              for (var i = 0; i < frames.length; i++) {
+                if (ev.source === frames[i].contentWindow) { frames[i].style.height = h + 'px'; break }
+              }
+            })
+          })()
+        </script>
+      </div>
     </div>
   </body>
 </html>

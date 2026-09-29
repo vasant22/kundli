@@ -16,6 +16,7 @@
 import { t, setLang, getLang } from './i18n.js'
 import { searchPlace } from './geocode.js'
 import { validateBirth } from './birthvalidate.js'
+import { installHeightReporter } from './widget-resize.js'
 import './fonts.css'
 import './widget.css'
 
@@ -307,6 +308,7 @@ if (typeof document !== 'undefined') {
   if (root) {
     const params = new URLSearchParams(window.location.search)
     if (params.get('transparent') === '1') document.body.classList.add('pw-transparent')
+    installHeightReporter() // keep the parent's <iframe> the right height
     renderKundliWidget(root, params.get('lang') === 'en' ? 'en' : 'hi')
   }
 }
