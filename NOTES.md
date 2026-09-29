@@ -292,3 +292,17 @@ Hard requirements (summary):
 - Test count: **362 passing**.
 - Next: **Phase 10** — deploy (push → GitHub Actions → live; widget iframe embed instructions
   for the mybapuji.com WordPress homepage; midnight-refresh check).
+
+### 2026-09-29 — Panchang Phase 10 done: DEPLOYED (live) + WordPress instructions
+- `git push` → GitHub Actions: first run **failed on a CI-only test** — the page test passed a
+  lowercase `timezone` key → silent UTC fallback in offset resolution (invisible on an IST dev
+  machine, caught on UTC runners). Fixed (`timeZone` + a guard in `computeDayTimes` against silent
+  fallback); full suite re-verified under `TZ=UTC` (362/362). Second run: **success → deployed**.
+- **LIVE (verified)**: https://kundli.mybapuji.com/panchang/ ·
+  https://kundli.mybapuji.com/panchang-widget/ (both 200; live pages render correctly — Mumbai
+  default, all sections; widget verified in a real browser).
+- `DEPLOY.md`: new “पंचांग पेज व होमपेज विजेट” section — WordPress embed step-by-step +
+  exact iframe code (Custom HTML block, height 640, `?lang=hi/en`, `&transparent=1`).
+- Midnight auto-refresh check: one-shot cron `9465d2db…` fires 00:10 IST (30 Sep) and reports
+  in the chat.
+- Remaining: user's PANCHANG_VALIDATION.md hand-check + Phase 11 final report.
