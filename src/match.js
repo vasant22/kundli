@@ -130,6 +130,7 @@ app.innerHTML = `
         <nav class="site-nav">
           <a href="../" data-i18n="nav.home"></a>
           <a href="./" class="active" data-i18n="nav.match"></a>
+          <a href="../panchang/" data-i18n="nav.panchang"></a>
         </nav>
       </div>
       <button id="lang-toggle" class="lang-toggle" type="button"></button>

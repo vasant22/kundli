@@ -69,6 +69,84 @@ function layoutLines(parent, cx, cy, lines) {
   })
 }
 
+// ---------------------------------------------------------------------------
+// EAST INDIAN (Bengali/Odia) chart — fixed-sign ring, counter-clockwise from
+// Mesha at top-centre; the four corner cells are split by diagonals into two
+// triangles each (12 sign regions around an unused centre). Layout decoded
+// from the reference site's own chart code (see docs/PANCHANG_FORMULAS.md §15).
+// opts: { showDegrees=true, varga='D1', ascMarker=true }
+// ---------------------------------------------------------------------------
+const E_CELLS = [
+  [0, 0.5, 0.1667], // Mesha — top centre
+  [1, 0.2222, 0.1111], // Vrishabha — top-left, upper (top-edge) triangle
+  [2, 0.1111, 0.2222], // Mithuna — top-left, left-edge triangle
+  [3, 0.1667, 0.5], // Karka — left centre
+  [4, 0.1111, 0.7778], // Simha — bottom-left, left-edge triangle
+  [5, 0.2222, 0.8889], // Kanya — bottom-left, bottom-edge triangle
+  [6, 0.5, 0.8333], // Tula — bottom centre
+  [7, 0.7778, 0.8889], // Vrischika — bottom-right, bottom-edge triangle
+  [8, 0.8889, 0.7778], // Dhanu — bottom-right, right-edge triangle
+  [9, 0.8333, 0.5], // Makara — right centre
+  [10, 0.8889, 0.2222], // Kumbha — top-right, right-edge triangle
+  [11, 0.7778, 0.1111], // Meena — top-right, top-edge triangle
+]
+
+export function buildEastChart(kundli, meta = {}, opts = {}) {
+  const S = SIZE
+  const T = S / 3
+  const showDegrees = opts.showDegrees !== false
+  const varga = opts.varga || 'D1'
+  const svg = el('svg', {
+    viewBox: `0 0 ${S} ${S}`,
+    class: 'chart chart-east',
+    'data-chart': 'east',
+    'data-varga': varga,
+    role: 'img',
+    'aria-label': opts.ariaLabel || 'East Indian chart',
+  })
+
+  const grid = el('g', { stroke: '#5a3410', 'stroke-width': 1.4, fill: 'none' })
+  grid.append(el('rect', { x: 0, y: 0, width: S, height: S }))
+  grid.append(el('line', { x1: T, y1: 0, x2: T, y2: S }))
+  grid.append(el('line', { x1: 2 * T, y1: 0, x2: 2 * T, y2: S }))
+  grid.append(el('line', { x1: 0, y1: T, x2: S, y2: T }))
+  grid.append(el('line', { x1: 0, y1: 2 * T, x2: S, y2: 2 * T }))
+  grid.append(el('line', { x1: 0, y1: 0, x2: T, y2: T }))
+  grid.append(el('line', { x1: S, y1: 0, x2: 2 * T, y2: T }))
+  grid.append(el('line', { x1: 0, y1: S, x2: T, y2: 2 * T }))
+  grid.append(el('line', { x1: S, y1: S, x2: 2 * T, y2: 2 * T }))
+  svg.append(grid)
+
+  const ascRashi = kundli.ascendant.rashi
+  for (const [rashi, fx, fy] of E_CELLS) {
+    const group = el('g', { class: 'cell', 'data-rashi': String(rashi) })
+    const block = [{ text: String(rashi + 1), size: 12, weight: 600 }]
+    if (rashi === ascRashi && opts.ascMarker !== false) {
+      block.push({ text: 'Asc', size: 11, weight: 600, fill: '#a94f05' })
+    }
+    const occupants = kundli.planets.filter((p) => p.rashi === rashi).map((p) => labelOf(p, showDegrees))
+    const size = gray(occupants.length)
+    for (const occ of occupants) block.push({ text: occ, size })
+    layoutLines(group, fx * S, fy * S, block)
+    svg.append(group)
+  }
+
+  // Centre cell (unused by the sign ring): carry the same info block as South.
+  const info = [meta.name, meta.dateText, meta.timeText, meta.placeText].filter(Boolean)
+  if (info.length > 0) {
+    const group = el('g', { class: 'center-info' })
+    layoutLines(
+      group,
+      S / 2,
+      S / 2,
+      info.map((line, i) => ({ text: line, size: i === 0 && meta.name ? 12 : 11 }))
+    )
+    svg.append(group)
+  }
+
+  return svg
+}
+
 // Short degree within the sign, e.g. 7.04 → "7°02'".
 function degShort(deg) {
   let d = Math.floor(deg)

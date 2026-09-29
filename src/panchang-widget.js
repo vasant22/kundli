@@ -18,6 +18,7 @@
 import { initEphemeris } from './astro.js'
 import { computePanchang } from './panchang.js'
 import { WIDGET_LOCATION } from './widget-location.js'
+import { todayInZone } from './timeutil.js'
 import {
   t, setLang, tithiLabel, nakshatraLabel, yogaLabel, karanaLabel, vaaraLabel,
   lunarMonthLabel, pakshaLabel, getLang,
@@ -27,12 +28,8 @@ import './widget.css'
 
 const FULL_PAGE_URL = 'https://kundli.mybapuji.com/panchang/'
 
-// 'YYYY-MM-DD' for "now" in a timezone (en-CA gives the ISO-style order).
-export function todayInZone(timeZone, now = new Date()) {
-  return new Intl.DateTimeFormat('en-CA', {
-    timeZone, year: 'numeric', month: '2-digit', day: '2-digit',
-  }).format(now)
-}
+// Re-export for tests / callers that used to import it from here.
+export { todayInZone }
 
 function formatDateLong(isoDate, lang) {
   // format at 12:00 UTC so the calendar date cannot shift when rendered in the

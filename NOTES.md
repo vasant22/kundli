@@ -257,3 +257,21 @@ Hard requirements (summary):
   ~3 MB budget).
 - Next: **Phase 8** — full `/panchang/` page (all sections incl. Lagna chart at sunrise with
   North/South/East tabs + planets table).
+
+### 2026-09-29 — Panchang Phase 8 done: full `/panchang/` page
+- **Page**: `panchang/index.html` + `src/panchang-page.js` + `src/panchang.css` (multi-page
+  build entry). Default place = MUMBAI (user's instruction; `src/widget-location.js`); place
+  search reuses geocode.js; date picker defaults to today; “पंचांग देखें” computes; URL params
+  for tests/deep-links (`?lang=en&date=…&lat=…&lon=…&tz=…&place=…`).
+- **All nine sections** rendered (bilingual): आज का पंचांग, सूर्य-चंद्र गणना, हिंदू मास-वर्ष,
+  अशुभ/शुभ मुहूर्त (bilingual window labels), दिशा शूल, चंद्रबल-ताराबल, सूर्योदय का लग्न चार्ट
+  (उत्तर/दक्षिण/पूर्व tabs — **new `buildEastChart`** in charts.js, decoded layout), सूर्योदय की
+  9-ग्रह तालिका (राशि/अंश/नक्षत्र/पद, “(R)” retro) + modern-planets note.
+- **Nav**: “पंचांग” link added to main + match pages (and this page's own nav).
+- Verified in a real browser: Hindi & English renders; Mumbai values (सूर्योदय 06:28:43, राहु
+  15:28:45–16:58:45, ताराबल/चंद्रबल lists, charts, planets table) all correct.
+- Tests: +13 (page 10 + East chart 3; match-nav test updated) → **350 passing**. Build ✓
+  (`dist/panchang/`, total ≈ 2.93 MiB).
+- Noted as future (per guide): “next 7 days” date-range table.
+- Next: **Phase 9** — validation: more known-date asserts + `tests/PANCHANG_VALIDATION.md`
+  manual checklist (10 dates incl. two-tithi day, Samvat boundary, chart spot-check).

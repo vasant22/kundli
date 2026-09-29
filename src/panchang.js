@@ -340,6 +340,10 @@ export function computePanchang(swe, opts) {
   return {
     date: { year, month, day },
     offsetMinutes,
+    sunriseJd: sunriseJD,
+    sunsetJd: sunsetJD,
+    moonrise: times.moonrise,
+    moonset: times.moonset,
     vaar, // 0=Sunday … 6=Saturday
     sunrise: times.sunrise,
     sunset: times.sunset,

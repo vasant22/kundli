@@ -17,6 +17,7 @@ export default defineConfig({
         main: page('index.html'),
         match: page('match/index.html'),
         widget: page('panchang-widget/index.html'),
+        panchang: page('panchang/index.html'),
       },
     },
   },

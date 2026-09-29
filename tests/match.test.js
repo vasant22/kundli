@@ -58,13 +58,15 @@ describe('Phase 1 — Kundli Matching page shell', () => {
     expect(document.documentElement.lang).toBe('hi')
   })
 
-  it('has the site navigation (कुंडली ⇄ कुंडली मिलान)', () => {
+  it('has the site navigation (कुंडली / कुंडली मिलान / पंचांग)', () => {
     const links = document.querySelectorAll('.site-nav a')
-    expect(links.length).toBe(2)
+    expect(links.length).toBe(3)
     expect(links[0].textContent).toBe('कुंडली')
     expect(links[0].getAttribute('href')).toBe('../')
     expect(links[1].textContent).toBe('कुंडली मिलान')
     expect(links[1].classList.contains('active')).toBe(true)
+    expect(links[2].textContent).toBe('पंचांग')
+    expect(links[2].getAttribute('href')).toBe('../panchang/')
   })
 
   it('switches to English with the language toggle and back', () => {

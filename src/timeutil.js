@@ -108,3 +108,11 @@ export function toJulianDay(utc, julday) {
   const hourDecimal = utc.hour + utc.minute / 60 + utc.second / 3600
   return julday(utc.year, utc.month, utc.day, hourDecimal)
 }
+
+// Today's date ('YYYY-MM-DD') in a timezone — used by the Panchang widget &
+// page for the "current date at the fixed place" (rolls over at local midnight).
+export function todayInZone(timeZone, now = new Date()) {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone, year: 'numeric', month: '2-digit', day: '2-digit',
+  }).format(now)
+}

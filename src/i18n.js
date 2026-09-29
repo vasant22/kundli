@@ -11,6 +11,7 @@ const STRINGS = {
 
     'nav.home': 'कुंडली',
     'nav.match': 'कुंडली मिलान',
+    'nav.panchang': 'पंचांग',
 
     // कुंडली मिलान (Kundli Matching) — नया पेज /match/
     'match.docTitle': 'कुंडली मिलान — अष्टकूट गुण मिलान',
@@ -174,6 +175,7 @@ const STRINGS = {
 
     'nav.home': 'Kundli',
     'nav.match': 'Kundli Matching',
+    'nav.panchang': 'Panchang',
 
     // Kundli Matching — the new /match/ page
     'match.docTitle': 'Kundli Matching — Ashtakoot Guna Milan',
@@ -677,6 +679,14 @@ Object.assign(STRINGS.hi, {
   'panchang.widget.title': 'आज का पंचांग',
   'panchang.widget.button': 'आज का पंचांग',
   'panchang.widget.daySamvat': 'दिन और संवत्',
+  'panchang.f.taraBala': 'ताराबल',
+  'panchang.f.chandraBala': 'चन्द्रबल',
+  'panchang.f.graha': 'ग्रह',
+  'panchang.f.rashi': 'राशि',
+  'panchang.f.degree': 'अंश',
+  'panchang.f.pada': 'पद',
+  'panchang.errNeedPlace': 'पहले जगह खोजकर चुनें।',
+  'panchang.errDate': 'सही दिनांक चुनें।',
   'panchang.errPlace': 'स्थान खोजने में दिक़्क़त — दोबारा कोशिश करें।',
 })
 Object.assign(STRINGS.en, {
@@ -730,5 +740,13 @@ Object.assign(STRINGS.en, {
   'panchang.widget.title': "Today's Panchang",
   'panchang.widget.button': 'Today Panchang',
   'panchang.widget.daySamvat': 'Day & Samvat',
+  'panchang.f.taraBala': 'Tarabalam',
+  'panchang.f.chandraBala': 'Chandrabalam',
+  'panchang.f.graha': 'Planet',
+  'panchang.f.rashi': 'Rashi',
+  'panchang.f.degree': 'Degree',
+  'panchang.f.pada': 'Pada',
+  'panchang.errNeedPlace': 'Please search and pick a place first.',
+  'panchang.errDate': 'Please pick a valid date.',
   'panchang.errPlace': 'Place search failed — please try again.',
 })

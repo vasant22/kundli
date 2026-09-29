@@ -1,0 +1,82 @@
+/* panchang.css — styles for the full /panchang/ page (pp-* classes).
+   Complements style.css; same saffron theme variables. */
+
+.pp-card { margin-top: 14px; }
+
+.pp-h2 {
+  margin: 0 0 8px;
+  color: var(--saffron-dark, #a94f05);
+  font-size: 1.06rem;
+}
+
+.pp-row {
+  display: flex;
+  gap: 10px;
+  padding: 5px 0;
+  border-bottom: 1px dashed var(--saffron-soft, #fff1e2);
+}
+.pp-row:last-child { border-bottom: 0; }
+
+.pp-label {
+  flex: 0 0 36%;
+  color: var(--saffron-dark, #a94f05);
+  font-weight: 600;
+  font-size: 0.93em;
+}
+
+.pp-value { flex: 1; word-break: break-word; }
+
+.pp-chart-tabs {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin: 4px 0 10px;
+  flex-wrap: wrap;
+}
+
+.pp-tab {
+  padding: 6px 12px;
+  border: 1px solid var(--input-border, #dcc7ae);
+  background: #fff;
+  border-radius: 999px;
+  cursor: pointer;
+  font: inherit;
+  color: var(--ink, #2b1a0e);
+}
+.pp-tab.active {
+  background: var(--saffron, #e8730c);
+  border-color: var(--saffron, #e8730c);
+  color: #fff;
+}
+
+.pp-chart-host {
+  display: flex;
+  justify-content: center;
+}
+.pp-chart-host svg {
+  width: min(100%, 380px);
+  height: auto;
+}
+
+.pp-table-wrap { overflow-x: auto; }
+
+.pp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92em;
+}
+.pp-table th,
+.pp-table td {
+  border-bottom: 1px solid var(--saffron-soft, #fff1e2);
+  padding: 6px 8px;
+  text-align: left;
+  white-space: nowrap;
+}
+.pp-table th {
+  color: var(--saffron-dark, #a94f05);
+  font-weight: 600;
+}
+
+@media (max-width: 420px) {
+  .pp-label { flex-basis: 42%; }
+}

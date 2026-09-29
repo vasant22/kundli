@@ -2,7 +2,7 @@
 // tests/charts.test.js — Phase 7 verification of the SVG chart builders.
 // Run with: npm test
 import { describe, expect, it } from 'vitest'
-import { buildNorthChart, buildSouthChart } from '../src/charts.js'
+import { buildEastChart, buildNorthChart, buildSouthChart } from '../src/charts.js'
 
 // Sample-chart fixture (same values as tests/astro.test.js).
 const KUNDLI = {
@@ -84,5 +84,30 @@ describe('South Indian chart (SVG)', () => {
     expect(center).toContain('15 May 1990')
     expect(center).toContain('14:30:00')
     expect(center).toContain('Varanasi')
+  })
+})
+
+describe('East Indian chart (SVG)', () => {
+  const svg = buildEastChart(KUNDLI, META)
+
+  it('builds the fixed 12-region ring (counter-clockwise from Mesha)', () => {
+    expect(svg.getAttribute('data-chart')).toBe('east')
+    expect(svg.querySelectorAll('[data-rashi]')).toHaveLength(12)
+    // Region order sanity: all 12 rashi indices present exactly once.
+    const idx = [...svg.querySelectorAll('[data-rashi]')].map((n) => Number(n.getAttribute('data-rashi'))).sort((a, b) => a - b)
+    expect(idx).toEqual([...Array(12).keys()])
+  })
+
+  it('places planets in their rashi regions and marks the lagna', () => {
+    expect(svg.querySelector('[data-rashi="1"]').textContent).toContain('Su')
+    expect(svg.querySelector('[data-rashi="9"]').textContent).toContain('Sa(R)')
+    expect(svg.querySelector('[data-rashi="9"]').textContent).toContain('Mo')
+    const lagna = svg.querySelector('[data-rashi="5"]')
+    expect(lagna.textContent).toContain('Asc')
+    expect(lagna.textContent).toContain('6') // lagna Kanya rashi number
+  })
+
+  it('shows the chart metadata in the centre', () => {
+    expect(svg.querySelector('.center-info').textContent).toContain('Varanasi')
   })
 })
