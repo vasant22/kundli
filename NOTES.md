@@ -238,3 +238,22 @@ Hard requirements (summary):
   in both languages, language switching) → **330 passing**.
 - Next: **Phase 7** — homepage widget (`panchang-widget/` page for the mybapuji.com iframe,
   fixed ashram location, auto-refresh daily, card fields + “Today Panchang” button).
+
+### 2026-09-29 — Panchang Phase 7 done: homepage widget (`panchang-widget/`)
+- New page `panchang-widget/index.html` + `src/panchang-widget.js` + `src/widget.css` +
+  `src/widget-location.js`.
+- ⚠️ **Location is a PLACEHOLDER (Vrindavan)** — the guide says the user will provide the
+  ashram's exact location. Change the 4 values in `src/widget-location.js` when provided;
+  geocoding is never called on load. **Ask the user in the Phase-7 report.**
+- Card: title + location + full date; rows: Tithi (with paksha + end time), Month Amanta,
+  Month Purnimanta, Day & Samvat (Vikram), Nakshatra, Yoga (1–2), Karana (1–2);
+  “आज का पंचांग” button → full page (kundli.mybapuji.com/panchang/). `?lang=en` for English
+  labels; `?transparent=1` to blend into the WordPress theme.
+- Auto-refresh: date check every 30 s + on tab visibility; `window.__panchangWidget` debug
+  handle ({getDate, refresh}) for the Phase-10 midnight check.
+- Verified in a real browser: Hindi & English renders both correct (dev server).
+- Tests: +7 (todayInZone across midnights, rows order/values, renderWidget hi/en) →
+  **337 passing**. Build adds `dist/panchang-widget/` (~13 KB; total ≈ 2.92 MiB — within the
+  ~3 MB budget).
+- Next: **Phase 8** — full `/panchang/` page (all sections incl. Lagna chart at sunrise with
+  North/South/East tabs + planets table).

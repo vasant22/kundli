@@ -16,6 +16,7 @@ export default defineConfig({
       input: {
         main: page('index.html'),
         match: page('match/index.html'),
+        widget: page('panchang-widget/index.html'),
       },
     },
   },

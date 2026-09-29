@@ -588,6 +588,15 @@ export const RITUS = zipLists(
   ['Vasanta', 'Grishma', 'Varsha', 'Sharad', 'Hemanta', 'Shishir'],
 )
 
+// Paksha labels (Tithi row companion / widget).
+export const PAKSHA = {
+  shukla: { hi: 'शुक्ल', en: 'Shukla' },
+  krishna: { hi: 'कृष्ण', en: 'Krishna' },
+}
+export function pakshaLabel(key) {
+  return sideBySide(PAKSHA[key])
+}
+
 // Label helpers ("हिंदी / English" — the site-wide display format).
 export function tithiLabel(n) {
   return sideBySide(TITHIS[n - 1])
@@ -667,6 +676,7 @@ Object.assign(STRINGS.hi, {
   'panchang.planets.modernNote': 'आधुनिक ग्रह (परंपरागत वैदिक ज्योतिष में प्रयुक्त नहीं)',
   'panchang.widget.title': 'आज का पंचांग',
   'panchang.widget.button': 'आज का पंचांग',
+  'panchang.widget.daySamvat': 'दिन और संवत्',
   'panchang.errPlace': 'स्थान खोजने में दिक़्क़त — दोबारा कोशिश करें।',
 })
 Object.assign(STRINGS.en, {
@@ -719,5 +729,6 @@ Object.assign(STRINGS.en, {
   'panchang.planets.modernNote': 'Modern planets (not used in traditional Vedic astrology)',
   'panchang.widget.title': "Today's Panchang",
   'panchang.widget.button': 'Today Panchang',
+  'panchang.widget.daySamvat': 'Day & Samvat',
   'panchang.errPlace': 'Place search failed — please try again.',
 })

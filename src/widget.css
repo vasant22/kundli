@@ -1,0 +1,102 @@
+/* widget.css — compact card styles for the homepage Panchang widget.
+   Mirrors the site's saffron/orange theme (same palette as style.css).
+   The page works inside an iframe sized ~340–420 px wide. */
+
+:root {
+  --pw-saffron: #e8730c;
+  --pw-saffron-dark: #a94f05;
+  --pw-soft: #fff1e2;
+  --pw-border: #f0dcc4;
+  --pw-bg: #fffdf8;
+  --pw-card: #ffffff;
+  --pw-ink: #2b1a0e;
+  --pw-muted: #7a6a5c;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Sans Devanagari', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--pw-bg);
+  color: var(--pw-ink);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+body.pw-transparent { background: transparent; }
+
+#widget {
+  max-width: 460px;
+  margin: 0 auto;
+  padding: 6px;
+}
+
+.pw-card {
+  background: var(--pw-card);
+  border: 1px solid var(--pw-border);
+  border-radius: 12px;
+  padding: 12px 14px 14px;
+  box-shadow: 0 1px 3px rgba(122, 74, 24, 0.08);
+}
+
+.pw-head {
+  text-align: center;
+  border-bottom: 2px solid var(--pw-soft);
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+}
+
+.pw-title {
+  font-weight: 600;
+  color: var(--pw-saffron-dark);
+  font-size: 1.02em;
+}
+
+.pw-loc {
+  color: var(--pw-ink);
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.pw-date { color: var(--pw-muted); font-size: 0.92em; }
+
+.pw-rows { margin: 0; }
+
+.pw-row {
+  display: flex;
+  gap: 8px;
+  padding: 4px 0;
+  border-bottom: 1px dashed var(--pw-soft);
+}
+.pw-row:last-child { border-bottom: 0; }
+
+.pw-row dt {
+  flex: 0 0 34%;
+  color: var(--pw-saffron-dark);
+  font-size: 0.9em;
+  font-weight: 600;
+  padding-top: 1px;
+}
+
+.pw-row dd {
+  flex: 1;
+  margin: 0;
+  word-break: break-word;
+}
+
+.pw-btn {
+  display: block;
+  text-align: center;
+  margin-top: 10px;
+  padding: 8px 10px;
+  background: var(--pw-saffron);
+  color: #fff !important;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+}
+.pw-btn:hover { background: var(--pw-saffron-dark); }
+
+.pw-err { color: #c62828; text-align: center; margin: 8px 0; }
