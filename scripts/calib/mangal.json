@@ -1,0 +1,196 @@
+{
+ "nak01": {
+  "notManglik": false,
+  "lagnaHouse": null,
+  "moonHouse": null,
+  "raw": "Mangal Dosha &#xe315; Shani Sade Sati (beta) &#xe315; Kalsarp Dosh/ Yog &#xe315; Kalsarp Dosh/ Yog - PDF &#xe315; Dasha Predictions &#xe315; Baby Names Suggestion (Beta) &#xe315; Planets Consideration &#xe315; Planets Consideration - PDF &#xe315; Current Transit Predictions &#xe315; Your Nakshatra &#xe315; Your Ascendant &#xe315; Your Ascendant - PDF &#xe315; Your Moon Sign &#xe315; Your Moon Sign (Classical) &#xe315"
+ },
+ "nak02": {
+  "notManglik": true,
+  "lagnaHouse": "Eleventh",
+  "moonHouse": "Fifth"
+ },
+ "nak03": {
+  "notManglik": true,
+  "lagnaHouse": "Sixth",
+  "moonHouse": "Third"
+ },
+ "nak04": {
+  "notManglik": false,
+  "lagnaHouse": "Third",
+  "moonHouse": "Fourth"
+ },
+ "nak05": {
+  "notManglik": true,
+  "lagnaHouse": "Sixth",
+  "moonHouse": "Third"
+ },
+ "nak06": {
+  "notManglik": false,
+  "lagnaHouse": "First",
+  "moonHouse": "Second"
+ },
+ "nak07": {
+  "notManglik": false,
+  "lagnaHouse": "Eighth",
+  "moonHouse": "Second"
+ },
+ "nak08": {
+  "notManglik": false,
+  "lagnaHouse": "Twelfth",
+  "moonHouse": "Sixth"
+ },
+ "nak09": {
+  "notManglik": false,
+  "lagnaHouse": "First",
+  "moonHouse": "Second"
+ },
+ "nak10": {
+  "notManglik": false,
+  "lagnaHouse": "First",
+  "moonHouse": "Fourth"
+ },
+ "nak11": {
+  "notManglik": false,
+  "lagnaHouse": "Fifth",
+  "moonHouse": "Fourth"
+ },
+ "nak12": {
+  "notManglik": true,
+  "lagnaHouse": "Ninth",
+  "moonHouse": "Eleventh"
+ },
+ "nak13": {
+  "notManglik": false,
+  "lagnaHouse": "Twelfth",
+  "moonHouse": "Third"
+ },
+ "nak14": {
+  "notManglik": false,
+  "lagnaHouse": "Twelfth",
+  "moonHouse": "Eleventh"
+ },
+ "nak15": {
+  "notManglik": false,
+  "lagnaHouse": "Fifth",
+  "moonHouse": "Twelfth"
+ },
+ "nak16": {
+  "notManglik": false,
+  "lagnaHouse": "Eighth",
+  "moonHouse": "Tenth"
+ },
+ "nak17": {
+  "notManglik": true,
+  "lagnaHouse": "Third",
+  "moonHouse": "Ninth"
+ },
+ "nak18": {
+  "notManglik": false,
+  "lagnaHouse": "Ninth",
+  "moonHouse": "First"
+ },
+ "nak19": {
+  "notManglik": false,
+  "lagnaHouse": "Eleventh",
+  "moonHouse": "Twelfth"
+ },
+ "nak20": {
+  "notManglik": false,
+  "lagnaHouse": "Sixth",
+  "moonHouse": "Eighth"
+ },
+ "nak21": {
+  "notManglik": true,
+  "lagnaHouse": "Sixth",
+  "moonHouse": "Tenth"
+ },
+ "nak22": {
+  "notManglik": false,
+  "lagnaHouse": "Eleventh",
+  "moonHouse": "Eighth"
+ },
+ "nak23": {
+  "notManglik": false,
+  "lagnaHouse": "Third",
+  "moonHouse": "Seventh"
+ },
+ "nak24": {
+  "notManglik": false,
+  "lagnaHouse": "Fourth",
+  "moonHouse": "Ninth"
+ },
+ "nak25": {
+  "notManglik": true,
+  "lagnaHouse": "Sixth",
+  "moonHouse": "Eleventh"
+ },
+ "nak26": {
+  "notManglik": true,
+  "lagnaHouse": "Sixth",
+  "moonHouse": "Tenth"
+ },
+ "nak27": {
+  "notManglik": false,
+  "lagnaHouse": "Fourth",
+  "moonHouse": "Eighth"
+ },
+ "nak03_mesha": {
+  "notManglik": false,
+  "lagnaHouse": "Sixth",
+  "moonHouse": "Seventh"
+ },
+ "nak03_vrishabha": {
+  "notManglik": false,
+  "lagnaHouse": "Twelfth",
+  "moonHouse": "Fifth"
+ },
+ "nak07_mithuna": {
+  "notManglik": true,
+  "lagnaHouse": "Sixth",
+  "moonHouse": "Sixth"
+ },
+ "nak07_karka": {
+  "notManglik": true,
+  "lagnaHouse": "Eleventh",
+  "moonHouse": "Second"
+ },
+ "nak21_dhanu": {
+  "notManglik": false,
+  "lagnaHouse": "Twelfth",
+  "moonHouse": "Ninth"
+ },
+ "nak21_makar": {
+  "notManglik": false,
+  "lagnaHouse": "Seventh",
+  "moonHouse": "Eighth"
+ },
+ "nak23_makar": {
+  "notManglik": false,
+  "lagnaHouse": "Eighth",
+  "moonHouse": "Twelfth"
+ },
+ "nak23_kumbha": {
+  "notManglik": false,
+  "lagnaHouse": "Fifth",
+  "moonHouse": "Seventh"
+ },
+ "probe_lagna2": {
+  "notManglik": true,
+  "lagnaHouse": "Second",
+  "moonHouse": "Ninth",
+  "note": "2nd house NOT counted (verified)"
+ },
+ "probe_lagna10": {
+  "notManglik": true,
+  "lagnaHouse": "Tenth",
+  "moonHouse": "Ninth",
+  "note": "10th not counted"
+ },
+ "probe_high": {
+  "notManglik": false,
+  "lagnaHouse": "Fourth",
+  "moonHouse": "Fourth",
+  "note": "Manglik(High) when both charts"
+ }
+}

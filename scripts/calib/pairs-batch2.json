@@ -1,0 +1,1032 @@
+[
+ {
+  "tag": "yoni_Horse_Cow",
+  "a": "nak01",
+  "b": "nak12"
+ },
+ {
+  "tag": "yoni_Horse_Buffalo",
+  "a": "nak01",
+  "b": "nak13"
+ },
+ {
+  "tag": "yoni_Horse_Tiger",
+  "a": "nak01",
+  "b": "nak14"
+ },
+ {
+  "tag": "yoni_Horse_Monkey",
+  "a": "nak01",
+  "b": "nak20"
+ },
+ {
+  "tag": "yoni_Horse_Mongoose",
+  "a": "nak01",
+  "b": "nak21"
+ },
+ {
+  "tag": "yoni_Horse_Lion",
+  "a": "nak01",
+  "b": "nak23"
+ },
+ {
+  "tag": "yoni_Elephant_Serpent",
+  "a": "nak02",
+  "b": "nak04"
+ },
+ {
+  "tag": "yoni_Elephant_Dog",
+  "a": "nak02",
+  "b": "nak06"
+ },
+ {
+  "tag": "yoni_Elephant_Cat",
+  "a": "nak02",
+  "b": "nak09"
+ },
+ {
+  "tag": "yoni_Elephant_Rat",
+  "a": "nak02",
+  "b": "nak10"
+ },
+ {
+  "tag": "yoni_Elephant_Cow",
+  "a": "nak02",
+  "b": "nak12"
+ },
+ {
+  "tag": "yoni_Elephant_Tiger",
+  "a": "nak02",
+  "b": "nak14"
+ },
+ {
+  "tag": "yoni_Elephant_Deer",
+  "a": "nak02",
+  "b": "nak17"
+ },
+ {
+  "tag": "yoni_Elephant_Monkey",
+  "a": "nak02",
+  "b": "nak20"
+ },
+ {
+  "tag": "yoni_Elephant_Mongoose",
+  "a": "nak02",
+  "b": "nak21"
+ },
+ {
+  "tag": "yoni_Elephant_Lion",
+  "a": "nak02",
+  "b": "nak23"
+ },
+ {
+  "tag": "yoni_Sheep_Dog",
+  "a": "nak03",
+  "b": "nak06"
+ },
+ {
+  "tag": "yoni_Sheep_Cat",
+  "a": "nak03",
+  "b": "nak09"
+ },
+ {
+  "tag": "yoni_Sheep_Rat",
+  "a": "nak03",
+  "b": "nak10"
+ },
+ {
+  "tag": "yoni_Sheep_Cow",
+  "a": "nak03",
+  "b": "nak12"
+ },
+ {
+  "tag": "yoni_Sheep_Buffalo",
+  "a": "nak03",
+  "b": "nak13"
+ },
+ {
+  "tag": "yoni_Sheep_Tiger",
+  "a": "nak03",
+  "b": "nak14"
+ },
+ {
+  "tag": "yoni_Sheep_Deer",
+  "a": "nak03",
+  "b": "nak17"
+ },
+ {
+  "tag": "yoni_Sheep_Monkey",
+  "a": "nak03",
+  "b": "nak20"
+ },
+ {
+  "tag": "yoni_Sheep_Mongoose",
+  "a": "nak03",
+  "b": "nak21"
+ },
+ {
+  "tag": "yoni_Sheep_Lion",
+  "a": "nak03",
+  "b": "nak23"
+ },
+ {
+  "tag": "yoni_Serpent_Horse",
+  "a": "nak04",
+  "b": "nak01"
+ },
+ {
+  "tag": "yoni_Serpent_Elephant",
+  "a": "nak04",
+  "b": "nak02"
+ },
+ {
+  "tag": "yoni_Serpent_Sheep",
+  "a": "nak04",
+  "b": "nak03"
+ },
+ {
+  "tag": "yoni_Serpent_Serpent",
+  "a": "nak04",
+  "b": "nak04"
+ },
+ {
+  "tag": "yoni_Serpent_Dog",
+  "a": "nak04",
+  "b": "nak06"
+ },
+ {
+  "tag": "yoni_Serpent_Cat",
+  "a": "nak04",
+  "b": "nak09"
+ },
+ {
+  "tag": "yoni_Serpent_Rat",
+  "a": "nak04",
+  "b": "nak10"
+ },
+ {
+  "tag": "yoni_Serpent_Cow",
+  "a": "nak04",
+  "b": "nak12"
+ },
+ {
+  "tag": "yoni_Serpent_Buffalo",
+  "a": "nak04",
+  "b": "nak13"
+ },
+ {
+  "tag": "yoni_Serpent_Tiger",
+  "a": "nak04",
+  "b": "nak14"
+ },
+ {
+  "tag": "yoni_Serpent_Deer",
+  "a": "nak04",
+  "b": "nak17"
+ },
+ {
+  "tag": "yoni_Serpent_Monkey",
+  "a": "nak04",
+  "b": "nak20"
+ },
+ {
+  "tag": "yoni_Serpent_Mongoose",
+  "a": "nak04",
+  "b": "nak21"
+ },
+ {
+  "tag": "yoni_Serpent_Lion",
+  "a": "nak04",
+  "b": "nak23"
+ },
+ {
+  "tag": "yoni_Dog_Elephant",
+  "a": "nak06",
+  "b": "nak02"
+ },
+ {
+  "tag": "yoni_Dog_Sheep",
+  "a": "nak06",
+  "b": "nak03"
+ },
+ {
+  "tag": "yoni_Dog_Cat",
+  "a": "nak06",
+  "b": "nak09"
+ },
+ {
+  "tag": "yoni_Dog_Rat",
+  "a": "nak06",
+  "b": "nak10"
+ },
+ {
+  "tag": "yoni_Dog_Cow",
+  "a": "nak06",
+  "b": "nak12"
+ },
+ {
+  "tag": "yoni_Dog_Buffalo",
+  "a": "nak06",
+  "b": "nak13"
+ },
+ {
+  "tag": "yoni_Dog_Tiger",
+  "a": "nak06",
+  "b": "nak14"
+ },
+ {
+  "tag": "yoni_Dog_Monkey",
+  "a": "nak06",
+  "b": "nak20"
+ },
+ {
+  "tag": "yoni_Dog_Mongoose",
+  "a": "nak06",
+  "b": "nak21"
+ },
+ {
+  "tag": "yoni_Dog_Lion",
+  "a": "nak06",
+  "b": "nak23"
+ },
+ {
+  "tag": "yoni_Cat_Horse",
+  "a": "nak09",
+  "b": "nak01"
+ },
+ {
+  "tag": "yoni_Cat_Elephant",
+  "a": "nak09",
+  "b": "nak02"
+ },
+ {
+  "tag": "yoni_Cat_Sheep",
+  "a": "nak09",
+  "b": "nak03"
+ },
+ {
+  "tag": "yoni_Cat_Serpent",
+  "a": "nak09",
+  "b": "nak04"
+ },
+ {
+  "tag": "yoni_Cat_Dog",
+  "a": "nak09",
+  "b": "nak06"
+ },
+ {
+  "tag": "yoni_Cat_Cat",
+  "a": "nak09",
+  "b": "nak09"
+ },
+ {
+  "tag": "yoni_Cat_Rat",
+  "a": "nak09",
+  "b": "nak10"
+ },
+ {
+  "tag": "yoni_Cat_Cow",
+  "a": "nak09",
+  "b": "nak12"
+ },
+ {
+  "tag": "yoni_Cat_Buffalo",
+  "a": "nak09",
+  "b": "nak13"
+ },
+ {
+  "tag": "yoni_Cat_Tiger",
+  "a": "nak09",
+  "b": "nak14"
+ },
+ {
+  "tag": "yoni_Cat_Deer",
+  "a": "nak09",
+  "b": "nak17"
+ },
+ {
+  "tag": "yoni_Cat_Monkey",
+  "a": "nak09",
+  "b": "nak20"
+ },
+ {
+  "tag": "yoni_Cat_Mongoose",
+  "a": "nak09",
+  "b": "nak21"
+ },
+ {
+  "tag": "yoni_Cat_Lion",
+  "a": "nak09",
+  "b": "nak23"
+ },
+ {
+  "tag": "yoni_Rat_Horse",
+  "a": "nak10",
+  "b": "nak01"
+ },
+ {
+  "tag": "yoni_Rat_Elephant",
+  "a": "nak10",
+  "b": "nak02"
+ },
+ {
+  "tag": "yoni_Rat_Sheep",
+  "a": "nak10",
+  "b": "nak03"
+ },
+ {
+  "tag": "yoni_Rat_Serpent",
+  "a": "nak10",
+  "b": "nak04"
+ },
+ {
+  "tag": "yoni_Rat_Dog",
+  "a": "nak10",
+  "b": "nak06"
+ },
+ {
+  "tag": "yoni_Rat_Cat",
+  "a": "nak10",
+  "b": "nak09"
+ },
+ {
+  "tag": "yoni_Rat_Rat",
+  "a": "nak10",
+  "b": "nak10"
+ },
+ {
+  "tag": "yoni_Rat_Cow",
+  "a": "nak10",
+  "b": "nak12"
+ },
+ {
+  "tag": "yoni_Rat_Buffalo",
+  "a": "nak10",
+  "b": "nak13"
+ },
+ {
+  "tag": "yoni_Rat_Tiger",
+  "a": "nak10",
+  "b": "nak14"
+ },
+ {
+  "tag": "yoni_Rat_Deer",
+  "a": "nak10",
+  "b": "nak17"
+ },
+ {
+  "tag": "yoni_Rat_Monkey",
+  "a": "nak10",
+  "b": "nak20"
+ },
+ {
+  "tag": "yoni_Rat_Mongoose",
+  "a": "nak10",
+  "b": "nak21"
+ },
+ {
+  "tag": "yoni_Rat_Lion",
+  "a": "nak10",
+  "b": "nak23"
+ },
+ {
+  "tag": "yoni_Cow_Horse",
+  "a": "nak12",
+  "b": "nak01"
+ },
+ {
+  "tag": "yoni_Cow_Elephant",
+  "a": "nak12",
+  "b": "nak02"
+ },
+ {
+  "tag": "yoni_Cow_Sheep",
+  "a": "nak12",
+  "b": "nak03"
+ },
+ {
+  "tag": "yoni_Cow_Serpent",
+  "a": "nak12",
+  "b": "nak04"
+ },
+ {
+  "tag": "yoni_Cow_Dog",
+  "a": "nak12",
+  "b": "nak06"
+ },
+ {
+  "tag": "yoni_Cow_Cat",
+  "a": "nak12",
+  "b": "nak09"
+ },
+ {
+  "tag": "yoni_Cow_Rat",
+  "a": "nak12",
+  "b": "nak10"
+ },
+ {
+  "tag": "yoni_Cow_Cow",
+  "a": "nak12",
+  "b": "nak12"
+ },
+ {
+  "tag": "yoni_Cow_Buffalo",
+  "a": "nak12",
+  "b": "nak13"
+ },
+ {
+  "tag": "yoni_Cow_Tiger",
+  "a": "nak12",
+  "b": "nak14"
+ },
+ {
+  "tag": "yoni_Cow_Deer",
+  "a": "nak12",
+  "b": "nak17"
+ },
+ {
+  "tag": "yoni_Cow_Monkey",
+  "a": "nak12",
+  "b": "nak20"
+ },
+ {
+  "tag": "yoni_Cow_Mongoose",
+  "a": "nak12",
+  "b": "nak21"
+ },
+ {
+  "tag": "yoni_Cow_Lion",
+  "a": "nak12",
+  "b": "nak23"
+ },
+ {
+  "tag": "yoni_Buffalo_Horse",
+  "a": "nak13",
+  "b": "nak01"
+ },
+ {
+  "tag": "yoni_Buffalo_Sheep",
+  "a": "nak13",
+  "b": "nak03"
+ },
+ {
+  "tag": "yoni_Buffalo_Serpent",
+  "a": "nak13",
+  "b": "nak04"
+ },
+ {
+  "tag": "yoni_Buffalo_Dog",
+  "a": "nak13",
+  "b": "nak06"
+ },
+ {
+  "tag": "yoni_Buffalo_Cat",
+  "a": "nak13",
+  "b": "nak09"
+ },
+ {
+  "tag": "yoni_Buffalo_Rat",
+  "a": "nak13",
+  "b": "nak10"
+ },
+ {
+  "tag": "yoni_Buffalo_Cow",
+  "a": "nak13",
+  "b": "nak12"
+ },
+ {
+  "tag": "yoni_Buffalo_Buffalo",
+  "a": "nak13",
+  "b": "nak13"
+ },
+ {
+  "tag": "yoni_Buffalo_Tiger",
+  "a": "nak13",
+  "b": "nak14"
+ },
+ {
+  "tag": "yoni_Buffalo_Deer",
+  "a": "nak13",
+  "b": "nak17"
+ },
+ {
+  "tag": "yoni_Buffalo_Monkey",
+  "a": "nak13",
+  "b": "nak20"
+ },
+ {
+  "tag": "yoni_Buffalo_Mongoose",
+  "a": "nak13",
+  "b": "nak21"
+ },
+ {
+  "tag": "yoni_Buffalo_Lion",
+  "a": "nak13",
+  "b": "nak23"
+ },
+ {
+  "tag": "yoni_Tiger_Horse",
+  "a": "nak14",
+  "b": "nak01"
+ },
+ {
+  "tag": "yoni_Tiger_Elephant",
+  "a": "nak14",
+  "b": "nak02"
+ },
+ {
+  "tag": "yoni_Tiger_Sheep",
+  "a": "nak14",
+  "b": "nak03"
+ },
+ {
+  "tag": "yoni_Tiger_Serpent",
+  "a": "nak14",
+  "b": "nak04"
+ },
+ {
+  "tag": "yoni_Tiger_Dog",
+  "a": "nak14",
+  "b": "nak06"
+ },
+ {
+  "tag": "yoni_Tiger_Cat",
+  "a": "nak14",
+  "b": "nak09"
+ },
+ {
+  "tag": "yoni_Tiger_Rat",
+  "a": "nak14",
+  "b": "nak10"
+ },
+ {
+  "tag": "yoni_Tiger_Cow",
+  "a": "nak14",
+  "b": "nak12"
+ },
+ {
+  "tag": "yoni_Tiger_Buffalo",
+  "a": "nak14",
+  "b": "nak13"
+ },
+ {
+  "tag": "yoni_Tiger_Tiger",
+  "a": "nak14",
+  "b": "nak14"
+ },
+ {
+  "tag": "yoni_Tiger_Deer",
+  "a": "nak14",
+  "b": "nak17"
+ },
+ {
+  "tag": "yoni_Tiger_Monkey",
+  "a": "nak14",
+  "b": "nak20"
+ },
+ {
+  "tag": "yoni_Tiger_Mongoose",
+  "a": "nak14",
+  "b": "nak21"
+ },
+ {
+  "tag": "yoni_Tiger_Lion",
+  "a": "nak14",
+  "b": "nak23"
+ },
+ {
+  "tag": "yoni_Deer_Elephant",
+  "a": "nak17",
+  "b": "nak02"
+ },
+ {
+  "tag": "yoni_Deer_Sheep",
+  "a": "nak17",
+  "b": "nak03"
+ },
+ {
+  "tag": "yoni_Deer_Serpent",
+  "a": "nak17",
+  "b": "nak04"
+ },
+ {
+  "tag": "yoni_Deer_Cat",
+  "a": "nak17",
+  "b": "nak09"
+ },
+ {
+  "tag": "yoni_Deer_Rat",
+  "a": "nak17",
+  "b": "nak10"
+ },
+ {
+  "tag": "yoni_Deer_Cow",
+  "a": "nak17",
+  "b": "nak12"
+ },
+ {
+  "tag": "yoni_Deer_Buffalo",
+  "a": "nak17",
+  "b": "nak13"
+ },
+ {
+  "tag": "yoni_Deer_Tiger",
+  "a": "nak17",
+  "b": "nak14"
+ },
+ {
+  "tag": "yoni_Deer_Monkey",
+  "a": "nak17",
+  "b": "nak20"
+ },
+ {
+  "tag": "yoni_Deer_Mongoose",
+  "a": "nak17",
+  "b": "nak21"
+ },
+ {
+  "tag": "yoni_Deer_Lion",
+  "a": "nak17",
+  "b": "nak23"
+ },
+ {
+  "tag": "yoni_Monkey_Horse",
+  "a": "nak20",
+  "b": "nak01"
+ },
+ {
+  "tag": "yoni_Monkey_Elephant",
+  "a": "nak20",
+  "b": "nak02"
+ },
+ {
+  "tag": "yoni_Monkey_Sheep",
+  "a": "nak20",
+  "b": "nak03"
+ },
+ {
+  "tag": "yoni_Monkey_Serpent",
+  "a": "nak20",
+  "b": "nak04"
+ },
+ {
+  "tag": "yoni_Monkey_Dog",
+  "a": "nak20",
+  "b": "nak06"
+ },
+ {
+  "tag": "yoni_Monkey_Cat",
+  "a": "nak20",
+  "b": "nak09"
+ },
+ {
+  "tag": "yoni_Monkey_Rat",
+  "a": "nak20",
+  "b": "nak10"
+ },
+ {
+  "tag": "yoni_Monkey_Cow",
+  "a": "nak20",
+  "b": "nak12"
+ },
+ {
+  "tag": "yoni_Monkey_Buffalo",
+  "a": "nak20",
+  "b": "nak13"
+ },
+ {
+  "tag": "yoni_Monkey_Tiger",
+  "a": "nak20",
+  "b": "nak14"
+ },
+ {
+  "tag": "yoni_Monkey_Deer",
+  "a": "nak20",
+  "b": "nak17"
+ },
+ {
+  "tag": "yoni_Monkey_Monkey",
+  "a": "nak20",
+  "b": "nak20"
+ },
+ {
+  "tag": "yoni_Monkey_Mongoose",
+  "a": "nak20",
+  "b": "nak21"
+ },
+ {
+  "tag": "yoni_Monkey_Lion",
+  "a": "nak20",
+  "b": "nak23"
+ },
+ {
+  "tag": "yoni_Mongoose_Horse",
+  "a": "nak21",
+  "b": "nak01"
+ },
+ {
+  "tag": "yoni_Mongoose_Elephant",
+  "a": "nak21",
+  "b": "nak02"
+ },
+ {
+  "tag": "yoni_Mongoose_Sheep",
+  "a": "nak21",
+  "b": "nak03"
+ },
+ {
+  "tag": "yoni_Mongoose_Serpent",
+  "a": "nak21",
+  "b": "nak04"
+ },
+ {
+  "tag": "yoni_Mongoose_Dog",
+  "a": "nak21",
+  "b": "nak06"
+ },
+ {
+  "tag": "yoni_Mongoose_Cat",
+  "a": "nak21",
+  "b": "nak09"
+ },
+ {
+  "tag": "yoni_Mongoose_Rat",
+  "a": "nak21",
+  "b": "nak10"
+ },
+ {
+  "tag": "yoni_Mongoose_Cow",
+  "a": "nak21",
+  "b": "nak12"
+ },
+ {
+  "tag": "yoni_Mongoose_Buffalo",
+  "a": "nak21",
+  "b": "nak13"
+ },
+ {
+  "tag": "yoni_Mongoose_Tiger",
+  "a": "nak21",
+  "b": "nak14"
+ },
+ {
+  "tag": "yoni_Mongoose_Deer",
+  "a": "nak21",
+  "b": "nak17"
+ },
+ {
+  "tag": "yoni_Mongoose_Monkey",
+  "a": "nak21",
+  "b": "nak20"
+ },
+ {
+  "tag": "yoni_Mongoose_Mongoose",
+  "a": "nak21",
+  "b": "nak21"
+ },
+ {
+  "tag": "yoni_Mongoose_Lion",
+  "a": "nak21",
+  "b": "nak23"
+ },
+ {
+  "tag": "yoni_Lion_Horse",
+  "a": "nak23",
+  "b": "nak01"
+ },
+ {
+  "tag": "yoni_Lion_Elephant",
+  "a": "nak23",
+  "b": "nak02"
+ },
+ {
+  "tag": "yoni_Lion_Sheep",
+  "a": "nak23",
+  "b": "nak03"
+ },
+ {
+  "tag": "yoni_Lion_Serpent",
+  "a": "nak23",
+  "b": "nak04"
+ },
+ {
+  "tag": "yoni_Lion_Dog",
+  "a": "nak23",
+  "b": "nak06"
+ },
+ {
+  "tag": "yoni_Lion_Cat",
+  "a": "nak23",
+  "b": "nak09"
+ },
+ {
+  "tag": "yoni_Lion_Rat",
+  "a": "nak23",
+  "b": "nak10"
+ },
+ {
+  "tag": "yoni_Lion_Cow",
+  "a": "nak23",
+  "b": "nak12"
+ },
+ {
+  "tag": "yoni_Lion_Buffalo",
+  "a": "nak23",
+  "b": "nak13"
+ },
+ {
+  "tag": "yoni_Lion_Tiger",
+  "a": "nak23",
+  "b": "nak14"
+ },
+ {
+  "tag": "yoni_Lion_Deer",
+  "a": "nak23",
+  "b": "nak17"
+ },
+ {
+  "tag": "yoni_Lion_Monkey",
+  "a": "nak23",
+  "b": "nak20"
+ },
+ {
+  "tag": "yoni_Lion_Mongoose",
+  "a": "nak23",
+  "b": "nak21"
+ },
+ {
+  "tag": "yoni_Lion_Lion",
+  "a": "nak23",
+  "b": "nak23"
+ },
+ {
+  "tag": "maitri_Sun_Jupiter",
+  "a": "nak11",
+  "b": "nak19"
+ },
+ {
+  "tag": "maitri_Sun_Venus",
+  "a": "nak11",
+  "b": "nak15"
+ },
+ {
+  "tag": "maitri_Moon_Jupiter",
+  "a": "nak08",
+  "b": "nak19"
+ },
+ {
+  "tag": "maitri_Moon_Venus",
+  "a": "nak08",
+  "b": "nak15"
+ },
+ {
+  "tag": "maitri_Moon_Saturn",
+  "a": "nak08",
+  "b": "nak21"
+ },
+ {
+  "tag": "maitri_Mars_Jupiter",
+  "a": "nak01",
+  "b": "nak19"
+ },
+ {
+  "tag": "maitri_Mars_Venus",
+  "a": "nak01",
+  "b": "nak15"
+ },
+ {
+  "tag": "maitri_Mercury_Jupiter",
+  "a": "nak06",
+  "b": "nak19"
+ },
+ {
+  "tag": "maitri_Mercury_Venus",
+  "a": "nak06",
+  "b": "nak15"
+ },
+ {
+  "tag": "maitri_Jupiter_Sun",
+  "a": "nak19",
+  "b": "nak11"
+ },
+ {
+  "tag": "maitri_Jupiter_Moon",
+  "a": "nak19",
+  "b": "nak08"
+ },
+ {
+  "tag": "maitri_Jupiter_Mars",
+  "a": "nak19",
+  "b": "nak01"
+ },
+ {
+  "tag": "maitri_Jupiter_Mercury",
+  "a": "nak19",
+  "b": "nak06"
+ },
+ {
+  "tag": "maitri_Jupiter_Jupiter",
+  "a": "nak19",
+  "b": "nak19"
+ },
+ {
+  "tag": "maitri_Jupiter_Venus",
+  "a": "nak19",
+  "b": "nak15"
+ },
+ {
+  "tag": "maitri_Jupiter_Saturn",
+  "a": "nak19",
+  "b": "nak21"
+ },
+ {
+  "tag": "maitri_Venus_Sun",
+  "a": "nak15",
+  "b": "nak11"
+ },
+ {
+  "tag": "maitri_Venus_Moon",
+  "a": "nak15",
+  "b": "nak08"
+ },
+ {
+  "tag": "maitri_Venus_Mars",
+  "a": "nak15",
+  "b": "nak01"
+ },
+ {
+  "tag": "maitri_Venus_Mercury",
+  "a": "nak15",
+  "b": "nak06"
+ },
+ {
+  "tag": "maitri_Venus_Jupiter",
+  "a": "nak15",
+  "b": "nak19"
+ },
+ {
+  "tag": "maitri_Venus_Venus",
+  "a": "nak15",
+  "b": "nak15"
+ },
+ {
+  "tag": "maitri_Venus_Saturn",
+  "a": "nak15",
+  "b": "nak21"
+ },
+ {
+  "tag": "maitri_Saturn_Sun",
+  "a": "nak21",
+  "b": "nak11"
+ },
+ {
+  "tag": "maitri_Saturn_Moon",
+  "a": "nak21",
+  "b": "nak08"
+ },
+ {
+  "tag": "maitri_Saturn_Jupiter",
+  "a": "nak21",
+  "b": "nak19"
+ },
+ {
+  "tag": "maitri_Saturn_Venus",
+  "a": "nak21",
+  "b": "nak15"
+ },
+ {
+  "tag": "varna_aquarius_boy",
+  "a": "nak23_kumbha",
+  "b": "nak01"
+ },
+ {
+  "tag": "varna_aquarius_girl",
+  "a": "nak01",
+  "b": "nak23_kumbha"
+ },
+ {
+  "tag": "varna_pisces_boy",
+  "a": "nak26",
+  "b": "nak01"
+ },
+ {
+  "tag": "varna_pisces_girl",
+  "a": "nak01",
+  "b": "nak26"
+ },
+ {
+  "tag": "bhakoot_venus_saturn",
+  "a": "nak15",
+  "b": "nak23_kumbha"
+ },
+ {
+  "tag": "bhakoot_mars_jupiter",
+  "a": "nak17",
+  "b": "nak27"
+ },
+ {
+  "tag": "bhakoot_sun_venus",
+  "a": "nak10",
+  "b": "nak15"
+ }
+]

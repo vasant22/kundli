@@ -1,0 +1,587 @@
+{
+  "nak01": {
+    "local": {
+      "day": 10,
+      "month": 10,
+      "year": 1995,
+      "hrs": 2,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 6.685,
+    "rashi": 0,
+    "nak": 1,
+    "pada": 3,
+    "dist": 0.018
+  },
+  "nak02": {
+    "local": {
+      "day": 11,
+      "month": 1,
+      "year": 1995,
+      "hrs": 1,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 20.036,
+    "rashi": 0,
+    "nak": 2,
+    "pada": 3,
+    "dist": 0.036
+  },
+  "nak03": {
+    "local": {
+      "day": 4,
+      "month": 4,
+      "year": 1995,
+      "hrs": 4,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 33.328,
+    "rashi": 1,
+    "nak": 3,
+    "pada": 2,
+    "dist": 0.006
+  },
+  "nak04": {
+    "local": {
+      "day": 9,
+      "month": 2,
+      "year": 1995,
+      "hrs": 15,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 46.673,
+    "rashi": 1,
+    "nak": 4,
+    "pada": 3,
+    "dist": 0.007
+  },
+  "nak05": {
+    "local": {
+      "day": 14,
+      "month": 1,
+      "year": 1995,
+      "hrs": 10,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 60.008,
+    "rashi": 2,
+    "nak": 5,
+    "pada": 3,
+    "dist": 0.008
+  },
+  "nak06": {
+    "local": {
+      "day": 7,
+      "month": 4,
+      "year": 1995,
+      "hrs": 13,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 73.321,
+    "rashi": 2,
+    "nak": 6,
+    "pada": 2,
+    "dist": 0.012
+  },
+  "nak07": {
+    "local": {
+      "day": 5,
+      "month": 5,
+      "year": 1995,
+      "hrs": 23,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 86.68,
+    "rashi": 2,
+    "nak": 7,
+    "pada": 3,
+    "dist": 0.014
+  },
+  "nak08": {
+    "local": {
+      "day": 11,
+      "month": 12,
+      "year": 1995,
+      "hrs": 10,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 99.961,
+    "rashi": 3,
+    "nak": 8,
+    "pada": 2,
+    "dist": 0.039
+  },
+  "nak09": {
+    "local": {
+      "day": 4,
+      "month": 6,
+      "year": 1995,
+      "hrs": 10,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 113.343,
+    "rashi": 3,
+    "nak": 9,
+    "pada": 3,
+    "dist": 0.009
+  },
+  "nak10": {
+    "local": {
+      "day": 16,
+      "month": 11,
+      "year": 1995,
+      "hrs": 8,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 126.698,
+    "rashi": 4,
+    "nak": 10,
+    "pada": 3,
+    "dist": 0.031
+  },
+  "nak11": {
+    "local": {
+      "day": 21,
+      "month": 10,
+      "year": 1995,
+      "hrs": 0,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 140.022,
+    "rashi": 4,
+    "nak": 11,
+    "pada": 3,
+    "dist": 0.022
+  },
+  "nak12": {
+    "local": {
+      "day": 18,
+      "month": 2,
+      "year": 1995,
+      "hrs": 0,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 153.345,
+    "rashi": 5,
+    "nak": 12,
+    "pada": 3,
+    "dist": 0.012
+  },
+  "nak13": {
+    "local": {
+      "day": 19,
+      "month": 11,
+      "year": 1995,
+      "hrs": 10,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 166.667,
+    "rashi": 5,
+    "nak": 13,
+    "pada": 2,
+    "dist": 0
+  },
+  "nak14": {
+    "local": {
+      "day": 15,
+      "month": 4,
+      "year": 1995,
+      "hrs": 15,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 179.968,
+    "rashi": 5,
+    "nak": 14,
+    "pada": 2,
+    "dist": 0.032
+  },
+  "nak15": {
+    "local": {
+      "day": 4,
+      "month": 8,
+      "year": 1995,
+      "hrs": 1,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 193.331,
+    "rashi": 6,
+    "nak": 15,
+    "pada": 2,
+    "dist": 0.002
+  },
+  "nak16": {
+    "local": {
+      "day": 21,
+      "month": 3,
+      "year": 1995,
+      "hrs": 2,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 206.659,
+    "rashi": 6,
+    "nak": 16,
+    "pada": 2,
+    "dist": 0.008
+  },
+  "nak17": {
+    "local": {
+      "day": 18,
+      "month": 4,
+      "year": 1995,
+      "hrs": 8,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 219.997,
+    "rashi": 7,
+    "nak": 17,
+    "pada": 2,
+    "dist": 0.003
+  },
+  "nak18": {
+    "local": {
+      "day": 27,
+      "month": 10,
+      "year": 1995,
+      "hrs": 15,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 233.294,
+    "rashi": 7,
+    "nak": 18,
+    "pada": 2,
+    "dist": 0.039
+  },
+  "nak19": {
+    "local": {
+      "day": 28,
+      "month": 10,
+      "year": 1995,
+      "hrs": 13,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 246.658,
+    "rashi": 8,
+    "nak": 19,
+    "pada": 2,
+    "dist": 0.008
+  },
+  "nak20": {
+    "local": {
+      "day": 21,
+      "month": 4,
+      "year": 1995,
+      "hrs": 2,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 260.03,
+    "rashi": 8,
+    "nak": 20,
+    "pada": 3,
+    "dist": 0.03
+  },
+  "nak21": {
+    "local": {
+      "day": 5,
+      "month": 9,
+      "year": 1995,
+      "hrs": 22,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 273.328,
+    "rashi": 9,
+    "nak": 21,
+    "pada": 2,
+    "dist": 0.005
+  },
+  "nak22": {
+    "local": {
+      "day": 16,
+      "month": 6,
+      "year": 1995,
+      "hrs": 15,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 286.641,
+    "rashi": 9,
+    "nak": 22,
+    "pada": 2,
+    "dist": 0.025
+  },
+  "nak23": {
+    "local": {
+      "day": 4,
+      "month": 1,
+      "year": 1995,
+      "hrs": 16,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 300.039,
+    "rashi": 10,
+    "nak": 23,
+    "pada": 3,
+    "dist": 0.039
+  },
+  "nak24": {
+    "local": {
+      "day": 6,
+      "month": 10,
+      "year": 1995,
+      "hrs": 1,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 313.308,
+    "rashi": 10,
+    "nak": 24,
+    "pada": 2,
+    "dist": 0.025
+  },
+  "nak25": {
+    "local": {
+      "day": 27,
+      "month": 12,
+      "year": 1995,
+      "hrs": 19,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 326.648,
+    "rashi": 10,
+    "nak": 25,
+    "pada": 2,
+    "dist": 0.019
+  },
+  "nak26": {
+    "local": {
+      "day": 28,
+      "month": 12,
+      "year": 1995,
+      "hrs": 19,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 339.988,
+    "rashi": 11,
+    "nak": 26,
+    "pada": 2,
+    "dist": 0.012
+  },
+  "nak27": {
+    "local": {
+      "day": 9,
+      "month": 10,
+      "year": 1995,
+      "hrs": 1,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 353.331,
+    "rashi": 11,
+    "nak": 27,
+    "pada": 2,
+    "dist": 0.003
+  },
+  "nak03_mesha": {
+    "local": {
+      "day": 11,
+      "month": 10,
+      "year": 1995,
+      "hrs": 20,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 28.497,
+    "rashi": 0,
+    "nak": 3,
+    "pada": 1,
+    "dist": 0.003
+  },
+  "nak03_vrishabha": {
+    "local": {
+      "day": 22,
+      "month": 7,
+      "year": 1995,
+      "hrs": 13,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 36.998,
+    "rashi": 1,
+    "nak": 3,
+    "pada": 4,
+    "dist": 0.002
+  },
+  "nak07_mithuna": {
+    "local": {
+      "day": 12,
+      "month": 11,
+      "year": 1995,
+      "hrs": 21,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 85,
+    "rashi": 2,
+    "nak": 7,
+    "pada": 2,
+    "dist": 0
+  },
+  "nak07_karka": {
+    "local": {
+      "day": 17,
+      "month": 1,
+      "year": 1995,
+      "hrs": 0,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 91.701,
+    "rashi": 3,
+    "nak": 7,
+    "pada": 4,
+    "dist": 0.001
+  },
+  "nak21_dhanu": {
+    "local": {
+      "day": 29,
+      "month": 1,
+      "year": 1995,
+      "hrs": 21,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 268.357,
+    "rashi": 8,
+    "nak": 21,
+    "pada": 1,
+    "dist": 0.043
+  },
+  "nak21_makar": {
+    "local": {
+      "day": 30,
+      "month": 1,
+      "year": 1995,
+      "hrs": 8,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 274.979,
+    "rashi": 9,
+    "nak": 21,
+    "pada": 3,
+    "dist": 0.021
+  },
+  "nak23_makar": {
+    "local": {
+      "day": 25,
+      "month": 12,
+      "year": 1995,
+      "hrs": 16,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 296.727,
+    "rashi": 9,
+    "nak": 23,
+    "pada": 2,
+    "dist": 0.027
+  },
+  "nak23_kumbha": {
+    "local": {
+      "day": 1,
+      "month": 2,
+      "year": 1995,
+      "hrs": 11,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 305.013,
+    "rashi": 10,
+    "nak": 23,
+    "pada": 4,
+    "dist": 0.013
+  },
+  "half_dhanu1": {
+    "local": {
+      "day": 7,
+      "month": 8,
+      "year": 1995,
+      "hrs": 20,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 247.514,
+    "rashi": 8,
+    "nak": 19,
+    "pada": 3,
+    "dist": 0.014
+  },
+  "half_dhanu2": {
+    "local": {
+      "day": 5,
+      "month": 9,
+      "year": 1995,
+      "hrs": 4,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 262.518,
+    "rashi": 8,
+    "nak": 20,
+    "pada": 3,
+    "dist": 0.018
+  },
+  "half_makar1": {
+    "local": {
+      "day": 16,
+      "month": 6,
+      "year": 1995,
+      "hrs": 0,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 277.516,
+    "rashi": 9,
+    "nak": 21,
+    "pada": 4,
+    "dist": 0.016
+  },
+  "half_makar2": {
+    "local": {
+      "day": 4,
+      "month": 1,
+      "year": 1995,
+      "hrs": 3,
+      "min": 30,
+      "sec": 0
+    },
+    "moonLon": 292.496,
+    "rashi": 9,
+    "nak": 22,
+    "pada": 4,
+    "dist": 0.004
+  }
+}

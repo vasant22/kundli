@@ -1,0 +1,6996 @@
+[
+ {
+  "tag": "bhakoot_mars_jupiter",
+  "boy": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 11,
+   "degInSign": 23.331,
+   "nakshatra": 27,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 3,
+   "yoni": 3,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 27
+  }
+ },
+ {
+  "tag": "bhakoot_mars_same",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 24.5
+  }
+ },
+ {
+  "tag": "bhakoot_merc_venus",
+  "boy": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 1,
+   "degInSign": 16.673,
+   "nakshatra": 4,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 23.5
+  }
+ },
+ {
+  "tag": "bhakoot_merc_venus2",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 16.667,
+   "nakshatra": 13,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 6,
+   "degInSign": 13.331,
+   "nakshatra": 15,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 1.5,
+   "yoni": 4,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 27.5
+  }
+ },
+ {
+  "tag": "bhakoot_moon_mars",
+  "boy": {
+   "rashi": 3,
+   "degInSign": 9.961,
+   "nakshatra": 8,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 3,
+   "yoni": 3,
+   "maitri": 4,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 0,
+   "total": 18
+  }
+ },
+ {
+  "tag": "bhakoot_sun_sat",
+  "boy": {
+   "rashi": 4,
+   "degInSign": 20.022,
+   "nakshatra": 11,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 0.5,
+   "tara": 3,
+   "yoni": 1,
+   "maitri": 0,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 19.5
+  }
+ },
+ {
+  "tag": "bhakoot_sun_venus",
+  "boy": {
+   "rashi": 4,
+   "degInSign": 6.698,
+   "nakshatra": 10,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 6,
+   "degInSign": 13.331,
+   "nakshatra": 15,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 0,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 0,
+   "gana": 1,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 13.5
+  }
+ },
+ {
+  "tag": "bhakoot_venus_mars",
+  "boy": {
+   "rashi": 6,
+   "degInSign": 26.659,
+   "nakshatra": 16,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 7,
+   "degInSign": 23.294,
+   "nakshatra": 18,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 0,
+   "tara": 1.5,
+   "yoni": 1,
+   "maitri": 3,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 19.5
+  }
+ },
+ {
+  "tag": "bhakoot_venus_saturn",
+  "boy": {
+   "rashi": 6,
+   "degInSign": 13.331,
+   "nakshatra": 15,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 10,
+   "degInSign": 5.013,
+   "nakshatra": 23,
+   "pada": 4
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 1,
+   "maitri": 5,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 20
+  }
+ },
+ {
+  "tag": "gana_DD",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 4,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 28
+  }
+ },
+ {
+  "tag": "gana_DM",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 20.036,
+   "nakshatra": 2,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 34
+  }
+ },
+ {
+  "tag": "gana_DR",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 1,
+   "degInSign": 3.328,
+   "nakshatra": 3,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 3,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 18.5
+  }
+ },
+ {
+  "tag": "gana_MD",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 20.036,
+   "nakshatra": 2,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 5,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 33
+  }
+ },
+ {
+  "tag": "gana_MM",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 20.036,
+   "nakshatra": 2,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 20.036,
+   "nakshatra": 2,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 4,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 28
+  }
+ },
+ {
+  "tag": "gana_MR",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 20.036,
+   "nakshatra": 2,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 1,
+   "degInSign": 3.328,
+   "nakshatra": 3,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 3,
+   "maitri": 3,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 20
+  }
+ },
+ {
+  "tag": "gana_RD",
+  "boy": {
+   "rashi": 1,
+   "degInSign": 3.328,
+   "nakshatra": 3,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 2,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 3,
+   "gana": 1,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 18.5
+  }
+ },
+ {
+  "tag": "gana_RM",
+  "boy": {
+   "rashi": 1,
+   "degInSign": 3.328,
+   "nakshatra": 3,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 20.036,
+   "nakshatra": 2,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 3,
+   "maitri": 3,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 19
+  }
+ },
+ {
+  "tag": "gana_RR",
+  "boy": {
+   "rashi": 1,
+   "degInSign": 3.328,
+   "nakshatra": 3,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 1,
+   "degInSign": 3.328,
+   "nakshatra": 3,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 4,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 28
+  }
+ },
+ {
+  "tag": "maitri_Jupiter_Jupiter",
+  "boy": {
+   "rashi": 8,
+   "degInSign": 6.658,
+   "nakshatra": 19,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 8,
+   "degInSign": 6.658,
+   "nakshatra": 19,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 4,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 28
+  }
+ },
+ {
+  "tag": "maitri_Jupiter_Mars",
+  "boy": {
+   "rashi": 8,
+   "degInSign": 6.658,
+   "nakshatra": 19,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 1,
+   "bhakoot": 0,
+   "nadi": 0,
+   "total": 13
+  }
+ },
+ {
+  "tag": "maitri_Jupiter_Mercury",
+  "boy": {
+   "rashi": 8,
+   "degInSign": 6.658,
+   "nakshatra": 19,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 1.5,
+   "yoni": 4,
+   "maitri": 0.5,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 16
+  }
+ },
+ {
+  "tag": "maitri_Jupiter_Moon",
+  "boy": {
+   "rashi": 8,
+   "degInSign": 6.658,
+   "nakshatra": 19,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 3,
+   "degInSign": 9.961,
+   "nakshatra": 8,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 0.5,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 4,
+   "gana": 1,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 17
+  }
+ },
+ {
+  "tag": "maitri_Jupiter_Saturn",
+  "boy": {
+   "rashi": 8,
+   "degInSign": 6.658,
+   "nakshatra": 19,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 3,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 16.5
+  }
+ },
+ {
+  "tag": "maitri_Jupiter_Sun",
+  "boy": {
+   "rashi": 8,
+   "degInSign": 6.658,
+   "nakshatra": 19,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 4,
+   "degInSign": 20.022,
+   "nakshatra": 11,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 0,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 19
+  }
+ },
+ {
+  "tag": "maitri_Jupiter_Venus",
+  "boy": {
+   "rashi": 8,
+   "degInSign": 6.658,
+   "nakshatra": 19,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 6,
+   "degInSign": 13.331,
+   "nakshatra": 15,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 0.5,
+   "gana": 1,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 23
+  }
+ },
+ {
+  "tag": "maitri_Mars_Jupiter",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 8,
+   "degInSign": 6.658,
+   "nakshatra": 19,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 0,
+   "total": 12
+  }
+ },
+ {
+  "tag": "maitri_Mars_Venus",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 6,
+   "degInSign": 13.331,
+   "nakshatra": 15,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 0,
+   "maitri": 3,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 27.5
+  }
+ },
+ {
+  "tag": "maitri_Mercury_Jupiter",
+  "boy": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 8,
+   "degInSign": 6.658,
+   "nakshatra": 19,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 2,
+   "tara": 1.5,
+   "yoni": 4,
+   "maitri": 0.5,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 15
+  }
+ },
+ {
+  "tag": "maitri_Mercury_Venus",
+  "boy": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 6,
+   "degInSign": 13.331,
+   "nakshatra": 15,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 5,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 26
+  }
+ },
+ {
+  "tag": "maitri_Moon_Jupiter",
+  "boy": {
+   "rashi": 3,
+   "degInSign": 9.961,
+   "nakshatra": 8,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 8,
+   "degInSign": 6.658,
+   "nakshatra": 19,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 0.5,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 4,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 17
+  }
+ },
+ {
+  "tag": "maitri_Moon_Saturn",
+  "boy": {
+   "rashi": 3,
+   "degInSign": 9.961,
+   "nakshatra": 8,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 27
+  }
+ },
+ {
+  "tag": "maitri_Moon_Venus",
+  "boy": {
+   "rashi": 3,
+   "degInSign": 9.961,
+   "nakshatra": 8,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 6,
+   "degInSign": 13.331,
+   "nakshatra": 15,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 0.5,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 27.5
+  }
+ },
+ {
+  "tag": "maitri_Saturn_Jupiter",
+  "boy": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 8,
+   "degInSign": 6.658,
+   "nakshatra": 19,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 3,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 15.5
+  }
+ },
+ {
+  "tag": "maitri_Saturn_Moon",
+  "boy": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 3,
+   "degInSign": 9.961,
+   "nakshatra": 8,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 0.5,
+   "gana": 5,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 25
+  }
+ },
+ {
+  "tag": "maitri_Saturn_Sun",
+  "boy": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 4,
+   "degInSign": 20.022,
+   "nakshatra": 11,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 0,
+   "tara": 3,
+   "yoni": 1,
+   "maitri": 0,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 18
+  }
+ },
+ {
+  "tag": "maitri_Saturn_Venus",
+  "boy": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 6,
+   "degInSign": 13.331,
+   "nakshatra": 15,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 5,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 22.5
+  }
+ },
+ {
+  "tag": "maitri_Sun_Jupiter",
+  "boy": {
+   "rashi": 4,
+   "degInSign": 20.022,
+   "nakshatra": 11,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 8,
+   "degInSign": 6.658,
+   "nakshatra": 19,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 0,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 19
+  }
+ },
+ {
+  "tag": "maitri_Sun_Venus",
+  "boy": {
+   "rashi": 4,
+   "degInSign": 20.022,
+   "nakshatra": 11,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 6,
+   "degInSign": 13.331,
+   "nakshatra": 15,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 0,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 0,
+   "gana": 5,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 25.5
+  }
+ },
+ {
+  "tag": "maitri_Venus_Jupiter",
+  "boy": {
+   "rashi": 6,
+   "degInSign": 13.331,
+   "nakshatra": 15,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 8,
+   "degInSign": 6.658,
+   "nakshatra": 19,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 2,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 0.5,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 21
+  }
+ },
+ {
+  "tag": "maitri_Venus_Mars",
+  "boy": {
+   "rashi": 6,
+   "degInSign": 13.331,
+   "nakshatra": 15,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 0,
+   "maitri": 3,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 26.5
+  }
+ },
+ {
+  "tag": "maitri_Venus_Mercury",
+  "boy": {
+   "rashi": 6,
+   "degInSign": 13.331,
+   "nakshatra": 15,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 27
+  }
+ },
+ {
+  "tag": "maitri_Venus_Moon",
+  "boy": {
+   "rashi": 6,
+   "degInSign": 13.331,
+   "nakshatra": 15,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 3,
+   "degInSign": 9.961,
+   "nakshatra": 8,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 0.5,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 26.5
+  }
+ },
+ {
+  "tag": "maitri_Venus_Saturn",
+  "boy": {
+   "rashi": 6,
+   "degInSign": 13.331,
+   "nakshatra": 15,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 22.5
+  }
+ },
+ {
+  "tag": "maitri_Venus_Sun",
+  "boy": {
+   "rashi": 6,
+   "degInSign": 13.331,
+   "nakshatra": 15,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 4,
+   "degInSign": 20.022,
+   "nakshatra": 11,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 0,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 0,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 25.5
+  }
+ },
+ {
+  "tag": "maitri_Venus_Venus",
+  "boy": {
+   "rashi": 6,
+   "degInSign": 13.331,
+   "nakshatra": 15,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 6,
+   "degInSign": 13.331,
+   "nakshatra": 15,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 4,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 28
+  }
+ },
+ {
+  "tag": "nadi_same_adi",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 19
+  }
+ },
+ {
+  "tag": "nadi_same_antya",
+  "boy": {
+   "rashi": 1,
+   "degInSign": 3.328,
+   "nakshatra": 3,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 1,
+   "degInSign": 16.673,
+   "nakshatra": 4,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 20
+  }
+ },
+ {
+  "tag": "tara_1to02",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 20.036,
+   "nakshatra": 2,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 34
+  }
+ },
+ {
+  "tag": "tara_1to03",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 1,
+   "degInSign": 3.328,
+   "nakshatra": 3,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 3,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 18.5
+  }
+ },
+ {
+  "tag": "tara_1to04",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 1,
+   "degInSign": 16.673,
+   "nakshatra": 4,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 3,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 23.5
+  }
+ },
+ {
+  "tag": "tara_1to05",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 2,
+   "degInSign": 0.008,
+   "nakshatra": 5,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 27
+  }
+ },
+ {
+  "tag": "tara_1to06",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 19
+  }
+ },
+ {
+  "tag": "tara_1to07",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 2,
+   "degInSign": 26.68,
+   "nakshatra": 7,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 20
+  }
+ },
+ {
+  "tag": "tara_1to08",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 3,
+   "degInSign": 9.961,
+   "nakshatra": 8,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 4,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 30.5
+  }
+ },
+ {
+  "tag": "tara_1to09",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 3,
+   "degInSign": 23.343,
+   "nakshatra": 9,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 3,
+   "yoni": 3,
+   "maitri": 4,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 26
+  }
+ },
+ {
+  "tag": "tara_1to10",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 4,
+   "degInSign": 6.698,
+   "nakshatra": 10,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 0,
+   "tara": 3,
+   "yoni": 3,
+   "maitri": 5,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 20
+  }
+ },
+ {
+  "tag": "tara_1to11",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 4,
+   "degInSign": 20.022,
+   "nakshatra": 11,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 0,
+   "tara": 3,
+   "yoni": 3,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 26
+  }
+ },
+ {
+  "tag": "test_DD",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 4,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 28
+  }
+ },
+ {
+  "tag": "test_DM",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 20.036,
+   "nakshatra": 2,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 34
+  }
+ },
+ {
+  "tag": "varna_aquarius_boy",
+  "boy": {
+   "rashi": 10,
+   "degInSign": 5.013,
+   "nakshatra": 23,
+   "pada": 4
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 1,
+   "maitri": 0.5,
+   "gana": 1,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 20
+  }
+ },
+ {
+  "tag": "varna_aquarius_girl",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 10,
+   "degInSign": 5.013,
+   "nakshatra": 23,
+   "pada": 4
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 1,
+   "maitri": 0.5,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 20
+  }
+ },
+ {
+  "tag": "varna_down",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 16.667,
+   "nakshatra": 13,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 20.036,
+   "nakshatra": 2,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 20
+  }
+ },
+ {
+  "tag": "varna_down2",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 16.667,
+   "nakshatra": 13,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 7,
+   "degInSign": 23.294,
+   "nakshatra": 18,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 0,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 0.5,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 12
+  }
+ },
+ {
+  "tag": "varna_pisces_boy",
+  "boy": {
+   "rashi": 11,
+   "degInSign": 9.988,
+   "nakshatra": 26,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 5,
+   "gana": 5,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 24.5
+  }
+ },
+ {
+  "tag": "varna_pisces_girl",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 11,
+   "degInSign": 9.988,
+   "nakshatra": 26,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 24.5
+  }
+ },
+ {
+  "tag": "varna_same",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 20.036,
+   "nakshatra": 2,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 34
+  }
+ },
+ {
+  "tag": "varna_up",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 20.036,
+   "nakshatra": 2,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 16.667,
+   "nakshatra": 13,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 0.5,
+   "gana": 5,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 20
+  }
+ },
+ {
+  "tag": "varna_up2",
+  "boy": {
+   "rashi": 7,
+   "degInSign": 23.294,
+   "nakshatra": 18,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 16.667,
+   "nakshatra": 13,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 1,
+   "maitri": 0.5,
+   "gana": 1,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 13
+  }
+ },
+ {
+  "tag": "vashya_CC",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 4,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 28
+  }
+ },
+ {
+  "tag": "vashya_CJ",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 3,
+   "degInSign": 9.961,
+   "nakshatra": 8,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 4,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 30.5
+  }
+ },
+ {
+  "tag": "vashya_CK",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 24.5
+  }
+ },
+ {
+  "tag": "vashya_CM",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 19
+  }
+ },
+ {
+  "tag": "vashya_CV",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 4,
+   "degInSign": 20.022,
+   "nakshatra": 11,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 0,
+   "tara": 3,
+   "yoni": 3,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 26
+  }
+ },
+ {
+  "tag": "vashya_Dh1_Mk1",
+  "boy": {
+   "rashi": 8,
+   "degInSign": 7.514,
+   "nakshatra": 19,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 9,
+   "degInSign": 7.516,
+   "nakshatra": 21,
+   "pada": 4
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 3,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 16.5
+  }
+ },
+ {
+  "tag": "vashya_Dh2_Mk1",
+  "boy": {
+   "rashi": 8,
+   "degInSign": 22.518,
+   "nakshatra": 20,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 9,
+   "degInSign": 7.516,
+   "nakshatra": 21,
+   "pada": 4
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 3,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 25
+  }
+ },
+ {
+  "tag": "vashya_Dh2_Mk2",
+  "boy": {
+   "rashi": 8,
+   "degInSign": 22.518,
+   "nakshatra": 20,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 9,
+   "degInSign": 22.496,
+   "nakshatra": 22,
+   "pada": 4
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 4,
+   "maitri": 3,
+   "gana": 5,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 23.5
+  }
+ },
+ {
+  "tag": "vashya_JC",
+  "boy": {
+   "rashi": 3,
+   "degInSign": 9.961,
+   "nakshatra": 8,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 4,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 31.5
+  }
+ },
+ {
+  "tag": "vashya_JJ",
+  "boy": {
+   "rashi": 3,
+   "degInSign": 9.961,
+   "nakshatra": 8,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 3,
+   "degInSign": 9.961,
+   "nakshatra": 8,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 4,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 28
+  }
+ },
+ {
+  "tag": "vashya_JK",
+  "boy": {
+   "rashi": 3,
+   "degInSign": 9.961,
+   "nakshatra": 8,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 3,
+   "yoni": 3,
+   "maitri": 4,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 0,
+   "total": 18
+  }
+ },
+ {
+  "tag": "vashya_JM",
+  "boy": {
+   "rashi": 3,
+   "degInSign": 9.961,
+   "nakshatra": 8,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 0.5,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 1,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 20
+  }
+ },
+ {
+  "tag": "vashya_JV",
+  "boy": {
+   "rashi": 3,
+   "degInSign": 9.961,
+   "nakshatra": 8,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 4,
+   "degInSign": 20.022,
+   "nakshatra": 11,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 0,
+   "total": 17.5
+  }
+ },
+ {
+  "tag": "vashya_KC",
+  "boy": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 25.5
+  }
+ },
+ {
+  "tag": "vashya_KJ",
+  "boy": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 3,
+   "degInSign": 9.961,
+   "nakshatra": 8,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 3,
+   "yoni": 3,
+   "maitri": 4,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 0,
+   "total": 18
+  }
+ },
+ {
+  "tag": "vashya_KK",
+  "boy": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 4,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 28
+  }
+ },
+ {
+  "tag": "vashya_KM",
+  "boy": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 0,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 18
+  }
+ },
+ {
+  "tag": "vashya_KV",
+  "boy": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 4,
+   "degInSign": 20.022,
+   "nakshatra": 11,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 0,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 23.5
+  }
+ },
+ {
+  "tag": "vashya_MC",
+  "boy": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 0.5,
+   "gana": 5,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 17
+  }
+ },
+ {
+  "tag": "vashya_MJ",
+  "boy": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 3,
+   "degInSign": 9.961,
+   "nakshatra": 8,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 0.5,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 1,
+   "gana": 5,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 18
+  }
+ },
+ {
+  "tag": "vashya_MK",
+  "boy": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 0,
+   "tara": 1.5,
+   "yoni": 0,
+   "maitri": 0.5,
+   "gana": 5,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 15
+  }
+ },
+ {
+  "tag": "vashya_Mk2_Dh1",
+  "boy": {
+   "rashi": 9,
+   "degInSign": 22.496,
+   "nakshatra": 22,
+   "pada": 4
+  },
+  "girl": {
+   "rashi": 8,
+   "degInSign": 7.514,
+   "nakshatra": 19,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 0.5,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 3,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 15
+  }
+ },
+ {
+  "tag": "vashya_MM",
+  "boy": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 4,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 28
+  }
+ },
+ {
+  "tag": "vashya_MV",
+  "boy": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 4,
+   "degInSign": 20.022,
+   "nakshatra": 11,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 0,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 4,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 28.5
+  }
+ },
+ {
+  "tag": "vashya_VC",
+  "boy": {
+   "rashi": 4,
+   "degInSign": 20.022,
+   "nakshatra": 11,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 0.5,
+   "tara": 3,
+   "yoni": 3,
+   "maitri": 5,
+   "gana": 5,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 25.5
+  }
+ },
+ {
+  "tag": "vashya_VJ",
+  "boy": {
+   "rashi": 4,
+   "degInSign": 20.022,
+   "nakshatra": 11,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 3,
+   "degInSign": 9.961,
+   "nakshatra": 8,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 5,
+   "gana": 5,
+   "bhakoot": 0,
+   "nadi": 0,
+   "total": 15.5
+  }
+ },
+ {
+  "tag": "vashya_VK",
+  "boy": {
+   "rashi": 4,
+   "degInSign": 20.022,
+   "nakshatra": 11,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 0,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 5,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 20.5
+  }
+ },
+ {
+  "tag": "vashya_VM",
+  "boy": {
+   "rashi": 4,
+   "degInSign": 20.022,
+   "nakshatra": 11,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 0,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 4,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 29.5
+  }
+ },
+ {
+  "tag": "vashya_VV",
+  "boy": {
+   "rashi": 4,
+   "degInSign": 20.022,
+   "nakshatra": 11,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 4,
+   "degInSign": 20.022,
+   "nakshatra": 11,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 4,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 28
+  }
+ },
+ {
+  "tag": "yoni_Buffalo_Buffalo",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 16.667,
+   "nakshatra": 13,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 16.667,
+   "nakshatra": 13,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 4,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 28
+  }
+ },
+ {
+  "tag": "yoni_Buffalo_Cat",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 16.667,
+   "nakshatra": 13,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 3,
+   "degInSign": 23.343,
+   "nakshatra": 9,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 0.5,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 1,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 21
+  }
+ },
+ {
+  "tag": "yoni_Buffalo_Cow",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 16.667,
+   "nakshatra": 13,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 3.345,
+   "nakshatra": 12,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 3,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 27
+  }
+ },
+ {
+  "tag": "yoni_Buffalo_Deer",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 16.667,
+   "nakshatra": 13,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 0,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 26
+  }
+ },
+ {
+  "tag": "yoni_Buffalo_Dog",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 16.667,
+   "nakshatra": 13,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 24.5
+  }
+ },
+ {
+  "tag": "yoni_Buffalo_Horse",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 16.667,
+   "nakshatra": 13,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 0,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 0,
+   "total": 9
+  }
+ },
+ {
+  "tag": "yoni_Buffalo_Lion",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 16.667,
+   "nakshatra": 13,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 10,
+   "degInSign": 0.039,
+   "nakshatra": 23,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 1,
+   "maitri": 4,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 19
+  }
+ },
+ {
+  "tag": "yoni_Buffalo_Mongoose",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 16.667,
+   "nakshatra": 13,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 4,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 25
+  }
+ },
+ {
+  "tag": "yoni_Buffalo_Monkey",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 16.667,
+   "nakshatra": 13,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 8,
+   "degInSign": 20.03,
+   "nakshatra": 20,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 26
+  }
+ },
+ {
+  "tag": "yoni_Buffalo_Rat",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 16.667,
+   "nakshatra": 13,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 4,
+   "degInSign": 6.698,
+   "nakshatra": 10,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 0,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 4,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 16.5
+  }
+ },
+ {
+  "tag": "yoni_Buffalo_Serpent",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 16.667,
+   "nakshatra": 13,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 1,
+   "degInSign": 16.673,
+   "nakshatra": 4,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 26
+  }
+ },
+ {
+  "tag": "yoni_Buffalo_Sheep",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 16.667,
+   "nakshatra": 13,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 1,
+   "degInSign": 3.328,
+   "nakshatra": 3,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 3,
+   "yoni": 3,
+   "maitri": 5,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 21
+  }
+ },
+ {
+  "tag": "yoni_Buffalo_Tiger",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 16.667,
+   "nakshatra": 13,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 29.968,
+   "nakshatra": 14,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 1,
+   "maitri": 5,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 27
+  }
+ },
+ {
+  "tag": "yoni_Cat_Buffalo",
+  "boy": {
+   "rashi": 3,
+   "degInSign": 23.343,
+   "nakshatra": 9,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 16.667,
+   "nakshatra": 13,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 0.5,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 1,
+   "gana": 1,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 23
+  }
+ },
+ {
+  "tag": "yoni_Cat_Cat",
+  "boy": {
+   "rashi": 3,
+   "degInSign": 23.343,
+   "nakshatra": 9,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 3,
+   "degInSign": 23.343,
+   "nakshatra": 9,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 4,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 28
+  }
+ },
+ {
+  "tag": "yoni_Cat_Cow",
+  "boy": {
+   "rashi": 3,
+   "degInSign": 23.343,
+   "nakshatra": 9,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 3.345,
+   "nakshatra": 12,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 0.5,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 1,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 22
+  }
+ },
+ {
+  "tag": "yoni_Cat_Deer",
+  "boy": {
+   "rashi": 3,
+   "degInSign": 23.343,
+   "nakshatra": 9,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 3,
+   "yoni": 3,
+   "maitri": 4,
+   "gana": 1,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 21
+  }
+ },
+ {
+  "tag": "yoni_Cat_Dog",
+  "boy": {
+   "rashi": 3,
+   "degInSign": 23.343,
+   "nakshatra": 9,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 0.5,
+   "tara": 1.5,
+   "yoni": 1,
+   "maitri": 1,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 13
+  }
+ },
+ {
+  "tag": "yoni_Cat_Elephant",
+  "boy": {
+   "rashi": 3,
+   "degInSign": 23.343,
+   "nakshatra": 9,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 20.036,
+   "nakshatra": 2,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 4,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 25.5
+  }
+ },
+ {
+  "tag": "yoni_Cat_Horse",
+  "boy": {
+   "rashi": 3,
+   "degInSign": 23.343,
+   "nakshatra": 9,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 3,
+   "yoni": 3,
+   "maitri": 4,
+   "gana": 1,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 28
+  }
+ },
+ {
+  "tag": "yoni_Cat_Lion",
+  "boy": {
+   "rashi": 3,
+   "degInSign": 23.343,
+   "nakshatra": 9,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 10,
+   "degInSign": 0.039,
+   "nakshatra": 23,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 0.5,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 19.5
+  }
+ },
+ {
+  "tag": "yoni_Cat_Mongoose",
+  "boy": {
+   "rashi": 3,
+   "degInSign": 23.343,
+   "nakshatra": 9,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 0.5,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 13
+  }
+ },
+ {
+  "tag": "yoni_Cat_Monkey",
+  "boy": {
+   "rashi": 3,
+   "degInSign": 23.343,
+   "nakshatra": 9,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 8,
+   "degInSign": 20.03,
+   "nakshatra": 20,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 4,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 17.5
+  }
+ },
+ {
+  "tag": "yoni_Cat_Rat",
+  "boy": {
+   "rashi": 3,
+   "degInSign": 23.343,
+   "nakshatra": 9,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 4,
+   "degInSign": 6.698,
+   "nakshatra": 10,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 3,
+   "yoni": 0,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 0,
+   "total": 16
+  }
+ },
+ {
+  "tag": "yoni_Cat_Serpent",
+  "boy": {
+   "rashi": 3,
+   "degInSign": 23.343,
+   "nakshatra": 9,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 1,
+   "degInSign": 16.673,
+   "nakshatra": 4,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 1,
+   "maitri": 0.5,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 12
+  }
+ },
+ {
+  "tag": "yoni_Cat_Sheep",
+  "boy": {
+   "rashi": 3,
+   "degInSign": 23.343,
+   "nakshatra": 9,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 1,
+   "degInSign": 3.328,
+   "nakshatra": 3,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 20
+  }
+ },
+ {
+  "tag": "yoni_Cat_Tiger",
+  "boy": {
+   "rashi": 3,
+   "degInSign": 23.343,
+   "nakshatra": 9,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 29.968,
+   "nakshatra": 14,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 0.5,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 1,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 27
+  }
+ },
+ {
+  "tag": "yoni_Cow_Buffalo",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 3.345,
+   "nakshatra": 12,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 16.667,
+   "nakshatra": 13,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 3,
+   "maitri": 5,
+   "gana": 5,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 26
+  }
+ },
+ {
+  "tag": "yoni_Cow_Cat",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 3.345,
+   "nakshatra": 12,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 3,
+   "degInSign": 23.343,
+   "nakshatra": 9,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 0.5,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 1,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 21
+  }
+ },
+ {
+  "tag": "yoni_Cow_Cow",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 3.345,
+   "nakshatra": 12,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 3.345,
+   "nakshatra": 12,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 4,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 28
+  }
+ },
+ {
+  "tag": "yoni_Cow_Deer",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 3.345,
+   "nakshatra": 12,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 0,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 0.5,
+   "gana": 5,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 25
+  }
+ },
+ {
+  "tag": "yoni_Cow_Dog",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 3.345,
+   "nakshatra": 12,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 24.5
+  }
+ },
+ {
+  "tag": "yoni_Cow_Elephant",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 3.345,
+   "nakshatra": 12,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 20.036,
+   "nakshatra": 2,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 3,
+   "yoni": 3,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 21.5
+  }
+ },
+ {
+  "tag": "yoni_Cow_Horse",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 3.345,
+   "nakshatra": 12,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 0.5,
+   "gana": 5,
+   "bhakoot": 0,
+   "nadi": 0,
+   "total": 11
+  }
+ },
+ {
+  "tag": "yoni_Cow_Lion",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 3.345,
+   "nakshatra": 12,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 10,
+   "degInSign": 0.039,
+   "nakshatra": 23,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 1.5,
+   "yoni": 1,
+   "maitri": 4,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 17.5
+  }
+ },
+ {
+  "tag": "yoni_Cow_Mongoose",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 3.345,
+   "nakshatra": 12,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 4,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 25
+  }
+ },
+ {
+  "tag": "yoni_Cow_Monkey",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 3.345,
+   "nakshatra": 12,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 8,
+   "degInSign": 20.03,
+   "nakshatra": 20,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 27.5
+  }
+ },
+ {
+  "tag": "yoni_Cow_Rat",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 3.345,
+   "nakshatra": 12,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 4,
+   "degInSign": 6.698,
+   "nakshatra": 10,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 0,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 4,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 16.5
+  }
+ },
+ {
+  "tag": "yoni_Cow_Serpent",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 3.345,
+   "nakshatra": 12,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 1,
+   "degInSign": 16.673,
+   "nakshatra": 4,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 26
+  }
+ },
+ {
+  "tag": "yoni_Cow_Sheep",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 3.345,
+   "nakshatra": 12,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 1,
+   "degInSign": 3.328,
+   "nakshatra": 3,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 3,
+   "yoni": 3,
+   "maitri": 5,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 21
+  }
+ },
+ {
+  "tag": "yoni_Cow_Tiger",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 3.345,
+   "nakshatra": 12,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 29.968,
+   "nakshatra": 14,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 1.5,
+   "yoni": 1,
+   "maitri": 5,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 25.5
+  }
+ },
+ {
+  "tag": "yoni_Deer_Buffalo",
+  "boy": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 16.667,
+   "nakshatra": 13,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 1,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 26
+  }
+ },
+ {
+  "tag": "yoni_Deer_Cat",
+  "boy": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 3,
+   "degInSign": 23.343,
+   "nakshatra": 9,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 3,
+   "yoni": 3,
+   "maitri": 4,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 20
+  }
+ },
+ {
+  "tag": "yoni_Deer_Cow",
+  "boy": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 3.345,
+   "nakshatra": 12,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 28
+  }
+ },
+ {
+  "tag": "yoni_Deer_Elephant",
+  "boy": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 20.036,
+   "nakshatra": 2,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 0,
+   "total": 17.5
+  }
+ },
+ {
+  "tag": "yoni_Deer_Lion",
+  "boy": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 10,
+   "degInSign": 0.039,
+   "nakshatra": 23,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 1,
+   "maitri": 0.5,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 12
+  }
+ },
+ {
+  "tag": "yoni_Deer_Mongoose",
+  "boy": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 27
+  }
+ },
+ {
+  "tag": "yoni_Deer_Monkey",
+  "boy": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 8,
+   "degInSign": 20.03,
+   "nakshatra": 20,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 0,
+   "total": 16.5
+  }
+ },
+ {
+  "tag": "yoni_Deer_Rat",
+  "boy": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 4,
+   "degInSign": 6.698,
+   "nakshatra": 10,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 0,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 5,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 25.5
+  }
+ },
+ {
+  "tag": "yoni_Deer_Serpent",
+  "boy": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 1,
+   "degInSign": 16.673,
+   "nakshatra": 4,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 3,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 29.5
+  }
+ },
+ {
+  "tag": "yoni_Deer_Sheep",
+  "boy": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 1,
+   "degInSign": 3.328,
+   "nakshatra": 3,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 3,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 24.5
+  }
+ },
+ {
+  "tag": "yoni_Deer_Tiger",
+  "boy": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 29.968,
+   "nakshatra": 14,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 1,
+   "maitri": 0.5,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 12
+  }
+ },
+ {
+  "tag": "yoni_Dog_Buffalo",
+  "boy": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 16.667,
+   "nakshatra": 13,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 2,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 5,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 22.5
+  }
+ },
+ {
+  "tag": "yoni_Dog_Cat",
+  "boy": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 3,
+   "degInSign": 23.343,
+   "nakshatra": 9,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 0.5,
+   "tara": 1.5,
+   "yoni": 1,
+   "maitri": 1,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 12
+  }
+ },
+ {
+  "tag": "yoni_Dog_Cow",
+  "boy": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 3.345,
+   "nakshatra": 12,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 2,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 23.5
+  }
+ },
+ {
+  "tag": "yoni_Dog_Elephant",
+  "boy": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 20.036,
+   "nakshatra": 2,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 26
+  }
+ },
+ {
+  "tag": "yoni_Dog_Lion",
+  "boy": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 10,
+   "degInSign": 0.039,
+   "nakshatra": 23,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 4,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 20
+  }
+ },
+ {
+  "tag": "yoni_Dog_Mongoose",
+  "boy": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 4,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 22.5
+  }
+ },
+ {
+  "tag": "yoni_Dog_Monkey",
+  "boy": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 8,
+   "degInSign": 20.03,
+   "nakshatra": 20,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 26
+  }
+ },
+ {
+  "tag": "yoni_Dog_Rat",
+  "boy": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 4,
+   "degInSign": 6.698,
+   "nakshatra": 10,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 0,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 4,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 22.5
+  }
+ },
+ {
+  "tag": "yoni_Dog_Sheep",
+  "boy": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 1,
+   "degInSign": 3.328,
+   "nakshatra": 3,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 17.5
+  }
+ },
+ {
+  "tag": "yoni_Dog_Tiger",
+  "boy": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 29.968,
+   "nakshatra": 14,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 27
+  }
+ },
+ {
+  "tag": "yoni_Elephant_Cat",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 20.036,
+   "nakshatra": 2,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 3,
+   "degInSign": 23.343,
+   "nakshatra": 9,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 4,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 24.5
+  }
+ },
+ {
+  "tag": "yoni_Elephant_Cow",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 20.036,
+   "nakshatra": 2,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 3.345,
+   "nakshatra": 12,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 3,
+   "yoni": 3,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 22.5
+  }
+ },
+ {
+  "tag": "yoni_Elephant_Deer",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 20.036,
+   "nakshatra": 2,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 5,
+   "gana": 5,
+   "bhakoot": 0,
+   "nadi": 0,
+   "total": 15.5
+  }
+ },
+ {
+  "tag": "yoni_Elephant_Dog",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 20.036,
+   "nakshatra": 2,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 27
+  }
+ },
+ {
+  "tag": "yoni_Elephant_Lion",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 20.036,
+   "nakshatra": 2,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 10,
+   "degInSign": 0.039,
+   "nakshatra": 23,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 0,
+   "maitri": 0.5,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 11
+  }
+ },
+ {
+  "tag": "yoni_Elephant_Mongoose",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 20.036,
+   "nakshatra": 2,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 29.5
+  }
+ },
+ {
+  "tag": "yoni_Elephant_Monkey",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 20.036,
+   "nakshatra": 2,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 8,
+   "degInSign": 20.03,
+   "nakshatra": 20,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 0,
+   "total": 19
+  }
+ },
+ {
+  "tag": "yoni_Elephant_Rat",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 20.036,
+   "nakshatra": 2,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 4,
+   "degInSign": 6.698,
+   "nakshatra": 10,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 0,
+   "tara": 3,
+   "yoni": 3,
+   "maitri": 5,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 20
+  }
+ },
+ {
+  "tag": "yoni_Elephant_Serpent",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 20.036,
+   "nakshatra": 2,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 1,
+   "degInSign": 16.673,
+   "nakshatra": 4,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 3,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 23.5
+  }
+ },
+ {
+  "tag": "yoni_Elephant_Tiger",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 20.036,
+   "nakshatra": 2,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 29.968,
+   "nakshatra": 14,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 1,
+   "maitri": 0.5,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 0,
+   "total": 5
+  }
+ },
+ {
+  "tag": "yoni_Horse_Buffalo",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 16.667,
+   "nakshatra": 13,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 0,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 0,
+   "total": 10
+  }
+ },
+ {
+  "tag": "yoni_Horse_Cow",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 3.345,
+   "nakshatra": 12,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 0,
+   "total": 13
+  }
+ },
+ {
+  "tag": "yoni_Horse_Lion",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 10,
+   "degInSign": 0.039,
+   "nakshatra": 23,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 1,
+   "maitri": 0.5,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 20
+  }
+ },
+ {
+  "tag": "yoni_Horse_Mongoose",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 28
+  }
+ },
+ {
+  "tag": "yoni_Horse_Monkey",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 8,
+   "degInSign": 20.03,
+   "nakshatra": 20,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 27
+  }
+ },
+ {
+  "tag": "yoni_Horse_Tiger",
+  "boy": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 29.968,
+   "nakshatra": 14,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 1,
+   "maitri": 0.5,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 13
+  }
+ },
+ {
+  "tag": "yoni_Lion_Buffalo",
+  "boy": {
+   "rashi": 10,
+   "degInSign": 0.039,
+   "nakshatra": 23,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 16.667,
+   "nakshatra": 13,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 1,
+   "maitri": 4,
+   "gana": 1,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 19
+  }
+ },
+ {
+  "tag": "yoni_Lion_Cat",
+  "boy": {
+   "rashi": 10,
+   "degInSign": 0.039,
+   "nakshatra": 23,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 3,
+   "degInSign": 23.343,
+   "nakshatra": 9,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 0.5,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 18.5
+  }
+ },
+ {
+  "tag": "yoni_Lion_Cow",
+  "boy": {
+   "rashi": 10,
+   "degInSign": 0.039,
+   "nakshatra": 23,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 3.345,
+   "nakshatra": 12,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 2,
+   "tara": 1.5,
+   "yoni": 1,
+   "maitri": 4,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 16.5
+  }
+ },
+ {
+  "tag": "yoni_Lion_Deer",
+  "boy": {
+   "rashi": 10,
+   "degInSign": 0.039,
+   "nakshatra": 23,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 0,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 0.5,
+   "gana": 1,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 13
+  }
+ },
+ {
+  "tag": "yoni_Lion_Dog",
+  "boy": {
+   "rashi": 10,
+   "degInSign": 0.039,
+   "nakshatra": 23,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 4,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 20
+  }
+ },
+ {
+  "tag": "yoni_Lion_Elephant",
+  "boy": {
+   "rashi": 10,
+   "degInSign": 0.039,
+   "nakshatra": 23,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 20.036,
+   "nakshatra": 2,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 0,
+   "maitri": 0.5,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 10
+  }
+ },
+ {
+  "tag": "yoni_Lion_Horse",
+  "boy": {
+   "rashi": 10,
+   "degInSign": 0.039,
+   "nakshatra": 23,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 1,
+   "maitri": 0.5,
+   "gana": 1,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 20
+  }
+ },
+ {
+  "tag": "yoni_Lion_Lion",
+  "boy": {
+   "rashi": 10,
+   "degInSign": 0.039,
+   "nakshatra": 23,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 10,
+   "degInSign": 0.039,
+   "nakshatra": 23,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 4,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 28
+  }
+ },
+ {
+  "tag": "yoni_Lion_Mongoose",
+  "boy": {
+   "rashi": 10,
+   "degInSign": 0.039,
+   "nakshatra": 23,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 17.5
+  }
+ },
+ {
+  "tag": "yoni_Lion_Monkey",
+  "boy": {
+   "rashi": 10,
+   "degInSign": 0.039,
+   "nakshatra": 23,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 8,
+   "degInSign": 20.03,
+   "nakshatra": 20,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 3,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 14.5
+  }
+ },
+ {
+  "tag": "yoni_Lion_Rat",
+  "boy": {
+   "rashi": 10,
+   "degInSign": 0.039,
+   "nakshatra": 23,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 4,
+   "degInSign": 6.698,
+   "nakshatra": 10,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 0,
+   "tara": 1.5,
+   "yoni": 1,
+   "maitri": 0,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 23.5
+  }
+ },
+ {
+  "tag": "yoni_Lion_Serpent",
+  "boy": {
+   "rashi": 10,
+   "degInSign": 0.039,
+   "nakshatra": 23,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 1,
+   "degInSign": 16.673,
+   "nakshatra": 4,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 26
+  }
+ },
+ {
+  "tag": "yoni_Lion_Sheep",
+  "boy": {
+   "rashi": 10,
+   "degInSign": 0.039,
+   "nakshatra": 23,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 1,
+   "degInSign": 3.328,
+   "nakshatra": 3,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 1,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 29.5
+  }
+ },
+ {
+  "tag": "yoni_Lion_Tiger",
+  "boy": {
+   "rashi": 10,
+   "degInSign": 0.039,
+   "nakshatra": 23,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 29.968,
+   "nakshatra": 14,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 1,
+   "maitri": 4,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 0,
+   "total": 16
+  }
+ },
+ {
+  "tag": "yoni_Mongoose_Buffalo",
+  "boy": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 16.667,
+   "nakshatra": 13,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 4,
+   "gana": 5,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 24
+  }
+ },
+ {
+  "tag": "yoni_Mongoose_Cat",
+  "boy": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 3,
+   "degInSign": 23.343,
+   "nakshatra": 9,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 0.5,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 12
+  }
+ },
+ {
+  "tag": "yoni_Mongoose_Cow",
+  "boy": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 3.345,
+   "nakshatra": 12,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 4,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 25
+  }
+ },
+ {
+  "tag": "yoni_Mongoose_Deer",
+  "boy": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 0.5,
+   "gana": 5,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 25
+  }
+ },
+ {
+  "tag": "yoni_Mongoose_Dog",
+  "boy": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 4,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 23.5
+  }
+ },
+ {
+  "tag": "yoni_Mongoose_Elephant",
+  "boy": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 20.036,
+   "nakshatra": 2,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 28.5
+  }
+ },
+ {
+  "tag": "yoni_Mongoose_Horse",
+  "boy": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 2,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 0.5,
+   "gana": 5,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 26
+  }
+ },
+ {
+  "tag": "yoni_Mongoose_Lion",
+  "boy": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 10,
+   "degInSign": 0.039,
+   "nakshatra": 23,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 18.5
+  }
+ },
+ {
+  "tag": "yoni_Mongoose_Mongoose",
+  "boy": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 4,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 28
+  }
+ },
+ {
+  "tag": "yoni_Mongoose_Monkey",
+  "boy": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 8,
+   "degInSign": 20.03,
+   "nakshatra": 20,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 3,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 24
+  }
+ },
+ {
+  "tag": "yoni_Mongoose_Rat",
+  "boy": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 4,
+   "degInSign": 6.698,
+   "nakshatra": 10,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 0,
+   "tara": 1.5,
+   "yoni": 1,
+   "maitri": 0,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 0,
+   "total": 2.5
+  }
+ },
+ {
+  "tag": "yoni_Mongoose_Serpent",
+  "boy": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 1,
+   "degInSign": 16.673,
+   "nakshatra": 4,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 0,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 0,
+   "total": 17
+  }
+ },
+ {
+  "tag": "yoni_Mongoose_Sheep",
+  "boy": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 1,
+   "degInSign": 3.328,
+   "nakshatra": 3,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 0,
+   "total": 13
+  }
+ },
+ {
+  "tag": "yoni_Mongoose_Tiger",
+  "boy": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 29.968,
+   "nakshatra": 14,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 4,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 17.5
+  }
+ },
+ {
+  "tag": "yoni_Monkey_Buffalo",
+  "boy": {
+   "rashi": 8,
+   "degInSign": 20.03,
+   "nakshatra": 20,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 16.667,
+   "nakshatra": 13,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 0.5,
+   "gana": 5,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 26
+  }
+ },
+ {
+  "tag": "yoni_Monkey_Cat",
+  "boy": {
+   "rashi": 8,
+   "degInSign": 20.03,
+   "nakshatra": 20,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 3,
+   "degInSign": 23.343,
+   "nakshatra": 9,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 4,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 16.5
+  }
+ },
+ {
+  "tag": "yoni_Monkey_Cow",
+  "boy": {
+   "rashi": 8,
+   "degInSign": 20.03,
+   "nakshatra": 20,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 3.345,
+   "nakshatra": 12,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 28.5
+  }
+ },
+ {
+  "tag": "yoni_Monkey_Deer",
+  "boy": {
+   "rashi": 8,
+   "degInSign": 20.03,
+   "nakshatra": 20,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 5,
+   "bhakoot": 0,
+   "nadi": 0,
+   "total": 14.5
+  }
+ },
+ {
+  "tag": "yoni_Monkey_Dog",
+  "boy": {
+   "rashi": 8,
+   "degInSign": 20.03,
+   "nakshatra": 20,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 27
+  }
+ },
+ {
+  "tag": "yoni_Monkey_Elephant",
+  "boy": {
+   "rashi": 8,
+   "degInSign": 20.03,
+   "nakshatra": 20,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 20.036,
+   "nakshatra": 2,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 0,
+   "total": 19
+  }
+ },
+ {
+  "tag": "yoni_Monkey_Horse",
+  "boy": {
+   "rashi": 8,
+   "degInSign": 20.03,
+   "nakshatra": 20,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 5,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 26
+  }
+ },
+ {
+  "tag": "yoni_Monkey_Lion",
+  "boy": {
+   "rashi": 8,
+   "degInSign": 20.03,
+   "nakshatra": 20,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 10,
+   "degInSign": 0.039,
+   "nakshatra": 23,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 3,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 15.5
+  }
+ },
+ {
+  "tag": "yoni_Monkey_Mongoose",
+  "boy": {
+   "rashi": 8,
+   "degInSign": 20.03,
+   "nakshatra": 20,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 3,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 25
+  }
+ },
+ {
+  "tag": "yoni_Monkey_Monkey",
+  "boy": {
+   "rashi": 8,
+   "degInSign": 20.03,
+   "nakshatra": 20,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 8,
+   "degInSign": 20.03,
+   "nakshatra": 20,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 4,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 28
+  }
+ },
+ {
+  "tag": "yoni_Monkey_Rat",
+  "boy": {
+   "rashi": 8,
+   "degInSign": 20.03,
+   "nakshatra": 20,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 4,
+   "degInSign": 6.698,
+   "nakshatra": 10,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 0,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 19
+  }
+ },
+ {
+  "tag": "yoni_Monkey_Serpent",
+  "boy": {
+   "rashi": 8,
+   "degInSign": 20.03,
+   "nakshatra": 20,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 1,
+   "degInSign": 16.673,
+   "nakshatra": 4,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 1.5,
+   "yoni": 1,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 20
+  }
+ },
+ {
+  "tag": "yoni_Monkey_Sheep",
+  "boy": {
+   "rashi": 8,
+   "degInSign": 20.03,
+   "nakshatra": 20,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 1,
+   "degInSign": 3.328,
+   "nakshatra": 3,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 0,
+   "maitri": 0.5,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 14.5
+  }
+ },
+ {
+  "tag": "yoni_Monkey_Tiger",
+  "boy": {
+   "rashi": 8,
+   "degInSign": 20.03,
+   "nakshatra": 20,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 29.968,
+   "nakshatra": 14,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 0.5,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 13
+  }
+ },
+ {
+  "tag": "yoni_Rat_Buffalo",
+  "boy": {
+   "rashi": 4,
+   "degInSign": 6.698,
+   "nakshatra": 10,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 16.667,
+   "nakshatra": 13,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 0,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 4,
+   "gana": 1,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 18.5
+  }
+ },
+ {
+  "tag": "yoni_Rat_Cat",
+  "boy": {
+   "rashi": 4,
+   "degInSign": 6.698,
+   "nakshatra": 10,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 3,
+   "degInSign": 23.343,
+   "nakshatra": 9,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 3,
+   "yoni": 0,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 0,
+   "total": 15
+  }
+ },
+ {
+  "tag": "yoni_Rat_Cow",
+  "boy": {
+   "rashi": 4,
+   "degInSign": 6.698,
+   "nakshatra": 10,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 3.345,
+   "nakshatra": 12,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 0,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 4,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 17.5
+  }
+ },
+ {
+  "tag": "yoni_Rat_Deer",
+  "boy": {
+   "rashi": 4,
+   "degInSign": 6.698,
+   "nakshatra": 10,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 0,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 1,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 24.5
+  }
+ },
+ {
+  "tag": "yoni_Rat_Dog",
+  "boy": {
+   "rashi": 4,
+   "degInSign": 6.698,
+   "nakshatra": 10,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 0,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 4,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 23.5
+  }
+ },
+ {
+  "tag": "yoni_Rat_Elephant",
+  "boy": {
+   "rashi": 4,
+   "degInSign": 6.698,
+   "nakshatra": 10,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 20.036,
+   "nakshatra": 2,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 0.5,
+   "tara": 3,
+   "yoni": 3,
+   "maitri": 5,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 20.5
+  }
+ },
+ {
+  "tag": "yoni_Rat_Horse",
+  "boy": {
+   "rashi": 4,
+   "degInSign": 6.698,
+   "nakshatra": 10,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 0.5,
+   "tara": 3,
+   "yoni": 3,
+   "maitri": 5,
+   "gana": 1,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 21.5
+  }
+ },
+ {
+  "tag": "yoni_Rat_Lion",
+  "boy": {
+   "rashi": 4,
+   "degInSign": 6.698,
+   "nakshatra": 10,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 10,
+   "degInSign": 0.039,
+   "nakshatra": 23,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 0,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 0,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 25.5
+  }
+ },
+ {
+  "tag": "yoni_Rat_Mongoose",
+  "boy": {
+   "rashi": 4,
+   "degInSign": 6.698,
+   "nakshatra": 10,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 0.5,
+   "tara": 1.5,
+   "yoni": 1,
+   "maitri": 0,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 0,
+   "total": 4
+  }
+ },
+ {
+  "tag": "yoni_Rat_Monkey",
+  "boy": {
+   "rashi": 4,
+   "degInSign": 6.698,
+   "nakshatra": 10,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 8,
+   "degInSign": 20.03,
+   "nakshatra": 20,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 0.5,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 19.5
+  }
+ },
+ {
+  "tag": "yoni_Rat_Rat",
+  "boy": {
+   "rashi": 4,
+   "degInSign": 6.698,
+   "nakshatra": 10,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 4,
+   "degInSign": 6.698,
+   "nakshatra": 10,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 4,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 28
+  }
+ },
+ {
+  "tag": "yoni_Rat_Serpent",
+  "boy": {
+   "rashi": 4,
+   "degInSign": 6.698,
+   "nakshatra": 10,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 1,
+   "degInSign": 16.673,
+   "nakshatra": 4,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 0.5,
+   "tara": 1.5,
+   "yoni": 1,
+   "maitri": 0,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 11
+  }
+ },
+ {
+  "tag": "yoni_Rat_Sheep",
+  "boy": {
+   "rashi": 4,
+   "degInSign": 6.698,
+   "nakshatra": 10,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 1,
+   "degInSign": 3.328,
+   "nakshatra": 3,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 0.5,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 0,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 19
+  }
+ },
+ {
+  "tag": "yoni_Rat_Tiger",
+  "boy": {
+   "rashi": 4,
+   "degInSign": 6.698,
+   "nakshatra": 10,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 29.968,
+   "nakshatra": 14,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 0,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 4,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 22.5
+  }
+ },
+ {
+  "tag": "yoni_Serpent_Buffalo",
+  "boy": {
+   "rashi": 1,
+   "degInSign": 16.673,
+   "nakshatra": 4,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 16.667,
+   "nakshatra": 13,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 5,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 25
+  }
+ },
+ {
+  "tag": "yoni_Serpent_Cat",
+  "boy": {
+   "rashi": 1,
+   "degInSign": 16.673,
+   "nakshatra": 4,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 3,
+   "degInSign": 23.343,
+   "nakshatra": 9,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 1,
+   "maitri": 0.5,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 11
+  }
+ },
+ {
+  "tag": "yoni_Serpent_Cow",
+  "boy": {
+   "rashi": 1,
+   "degInSign": 16.673,
+   "nakshatra": 4,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 3.345,
+   "nakshatra": 12,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 26
+  }
+ },
+ {
+  "tag": "yoni_Serpent_Deer",
+  "boy": {
+   "rashi": 1,
+   "degInSign": 16.673,
+   "nakshatra": 4,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 3,
+   "gana": 5,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 27.5
+  }
+ },
+ {
+  "tag": "yoni_Serpent_Dog",
+  "boy": {
+   "rashi": 1,
+   "degInSign": 16.673,
+   "nakshatra": 4,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 24.5
+  }
+ },
+ {
+  "tag": "yoni_Serpent_Elephant",
+  "boy": {
+   "rashi": 1,
+   "degInSign": 16.673,
+   "nakshatra": 4,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 20.036,
+   "nakshatra": 2,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 2,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 3,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 22.5
+  }
+ },
+ {
+  "tag": "yoni_Serpent_Horse",
+  "boy": {
+   "rashi": 1,
+   "degInSign": 16.673,
+   "nakshatra": 4,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 2,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 3,
+   "gana": 5,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 21.5
+  }
+ },
+ {
+  "tag": "yoni_Serpent_Lion",
+  "boy": {
+   "rashi": 1,
+   "degInSign": 16.673,
+   "nakshatra": 4,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 10,
+   "degInSign": 0.039,
+   "nakshatra": 23,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 27
+  }
+ },
+ {
+  "tag": "yoni_Serpent_Mongoose",
+  "boy": {
+   "rashi": 1,
+   "degInSign": 16.673,
+   "nakshatra": 4,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 0,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 0,
+   "total": 17
+  }
+ },
+ {
+  "tag": "yoni_Serpent_Monkey",
+  "boy": {
+   "rashi": 1,
+   "degInSign": 16.673,
+   "nakshatra": 4,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 8,
+   "degInSign": 20.03,
+   "nakshatra": 20,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 2,
+   "tara": 1.5,
+   "yoni": 1,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 19
+  }
+ },
+ {
+  "tag": "yoni_Serpent_Rat",
+  "boy": {
+   "rashi": 1,
+   "degInSign": 16.673,
+   "nakshatra": 4,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 4,
+   "degInSign": 6.698,
+   "nakshatra": 10,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 0,
+   "tara": 1.5,
+   "yoni": 1,
+   "maitri": 0,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 9.5
+  }
+ },
+ {
+  "tag": "yoni_Serpent_Serpent",
+  "boy": {
+   "rashi": 1,
+   "degInSign": 16.673,
+   "nakshatra": 4,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 1,
+   "degInSign": 16.673,
+   "nakshatra": 4,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 4,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 28
+  }
+ },
+ {
+  "tag": "yoni_Serpent_Sheep",
+  "boy": {
+   "rashi": 1,
+   "degInSign": 16.673,
+   "nakshatra": 4,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 1,
+   "degInSign": 3.328,
+   "nakshatra": 3,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 20
+  }
+ },
+ {
+  "tag": "yoni_Serpent_Tiger",
+  "boy": {
+   "rashi": 1,
+   "degInSign": 16.673,
+   "nakshatra": 4,
+   "pada": 3
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 29.968,
+   "nakshatra": 14,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 20
+  }
+ },
+ {
+  "tag": "yoni_Sheep_Buffalo",
+  "boy": {
+   "rashi": 1,
+   "degInSign": 3.328,
+   "nakshatra": 3,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 16.667,
+   "nakshatra": 13,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 3,
+   "yoni": 3,
+   "maitri": 5,
+   "gana": 1,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 22
+  }
+ },
+ {
+  "tag": "yoni_Sheep_Cat",
+  "boy": {
+   "rashi": 1,
+   "degInSign": 3.328,
+   "nakshatra": 3,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 3,
+   "degInSign": 23.343,
+   "nakshatra": 9,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 0.5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 19
+  }
+ },
+ {
+  "tag": "yoni_Sheep_Cow",
+  "boy": {
+   "rashi": 1,
+   "degInSign": 3.328,
+   "nakshatra": 3,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 3.345,
+   "nakshatra": 12,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 3,
+   "yoni": 3,
+   "maitri": 5,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 21
+  }
+ },
+ {
+  "tag": "yoni_Sheep_Deer",
+  "boy": {
+   "rashi": 1,
+   "degInSign": 3.328,
+   "nakshatra": 3,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 3,
+   "gana": 1,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 24.5
+  }
+ },
+ {
+  "tag": "yoni_Sheep_Dog",
+  "boy": {
+   "rashi": 1,
+   "degInSign": 3.328,
+   "nakshatra": 3,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 18.5
+  }
+ },
+ {
+  "tag": "yoni_Sheep_Lion",
+  "boy": {
+   "rashi": 1,
+   "degInSign": 3.328,
+   "nakshatra": 3,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 10,
+   "degInSign": 0.039,
+   "nakshatra": 23,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 1,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 30.5
+  }
+ },
+ {
+  "tag": "yoni_Sheep_Mongoose",
+  "boy": {
+   "rashi": 1,
+   "degInSign": 3.328,
+   "nakshatra": 3,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 0,
+   "total": 13
+  }
+ },
+ {
+  "tag": "yoni_Sheep_Monkey",
+  "boy": {
+   "rashi": 1,
+   "degInSign": 3.328,
+   "nakshatra": 3,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 8,
+   "degInSign": 20.03,
+   "nakshatra": 20,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 0,
+   "maitri": 0.5,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 13.5
+  }
+ },
+ {
+  "tag": "yoni_Sheep_Rat",
+  "boy": {
+   "rashi": 1,
+   "degInSign": 3.328,
+   "nakshatra": 3,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 4,
+   "degInSign": 6.698,
+   "nakshatra": 10,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 0,
+   "tara": 1.5,
+   "yoni": 3,
+   "maitri": 0,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 17.5
+  }
+ },
+ {
+  "tag": "yoni_Sheep_Tiger",
+  "boy": {
+   "rashi": 1,
+   "degInSign": 3.328,
+   "nakshatra": 3,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 29.968,
+   "nakshatra": 14,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 1,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 23.5
+  }
+ },
+ {
+  "tag": "yoni_Tiger_Buffalo",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 29.968,
+   "nakshatra": 14,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 16.667,
+   "nakshatra": 13,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 1,
+   "maitri": 5,
+   "gana": 1,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 28
+  }
+ },
+ {
+  "tag": "yoni_Tiger_Cat",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 29.968,
+   "nakshatra": 14,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 3,
+   "degInSign": 23.343,
+   "nakshatra": 9,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 0.5,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 1,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 26
+  }
+ },
+ {
+  "tag": "yoni_Tiger_Cow",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 29.968,
+   "nakshatra": 14,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 3.345,
+   "nakshatra": 12,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 1.5,
+   "yoni": 0,
+   "maitri": 5,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 24.5
+  }
+ },
+ {
+  "tag": "yoni_Tiger_Deer",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 29.968,
+   "nakshatra": 14,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 7,
+   "degInSign": 9.997,
+   "nakshatra": 17,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 0,
+   "tara": 1.5,
+   "yoni": 1,
+   "maitri": 0.5,
+   "gana": 1,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 11
+  }
+ },
+ {
+  "tag": "yoni_Tiger_Dog",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 29.968,
+   "nakshatra": 14,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 2,
+   "degInSign": 13.321,
+   "nakshatra": 6,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 8,
+   "total": 28
+  }
+ },
+ {
+  "tag": "yoni_Tiger_Elephant",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 29.968,
+   "nakshatra": 14,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 20.036,
+   "nakshatra": 2,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 1,
+   "maitri": 0.5,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 0,
+   "total": 4
+  }
+ },
+ {
+  "tag": "yoni_Tiger_Horse",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 29.968,
+   "nakshatra": 14,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 0,
+   "degInSign": 6.685,
+   "nakshatra": 1,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 1,
+   "maitri": 0.5,
+   "gana": 1,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 13
+  }
+ },
+ {
+  "tag": "yoni_Tiger_Lion",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 29.968,
+   "nakshatra": 14,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 10,
+   "degInSign": 0.039,
+   "nakshatra": 23,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 4,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 0,
+   "total": 18
+  }
+ },
+ {
+  "tag": "yoni_Tiger_Mongoose",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 29.968,
+   "nakshatra": 14,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 9,
+   "degInSign": 3.328,
+   "nakshatra": 21,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 4,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 17.5
+  }
+ },
+ {
+  "tag": "yoni_Tiger_Monkey",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 29.968,
+   "nakshatra": 14,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 8,
+   "degInSign": 20.03,
+   "nakshatra": 20,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 0.5,
+   "gana": 0,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 12
+  }
+ },
+ {
+  "tag": "yoni_Tiger_Rat",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 29.968,
+   "nakshatra": 14,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 4,
+   "degInSign": 6.698,
+   "nakshatra": 10,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 0,
+   "vashya": 0,
+   "tara": 1.5,
+   "yoni": 2,
+   "maitri": 4,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 21.5
+  }
+ },
+ {
+  "tag": "yoni_Tiger_Serpent",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 29.968,
+   "nakshatra": 14,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 1,
+   "degInSign": 16.673,
+   "nakshatra": 4,
+   "pada": 3
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 3,
+   "yoni": 2,
+   "maitri": 5,
+   "gana": 0,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 20
+  }
+ },
+ {
+  "tag": "yoni_Tiger_Sheep",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 29.968,
+   "nakshatra": 14,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 1,
+   "degInSign": 3.328,
+   "nakshatra": 3,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 1,
+   "tara": 1.5,
+   "yoni": 1,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 0,
+   "nadi": 8,
+   "total": 23.5
+  }
+ },
+ {
+  "tag": "yoni_Tiger_Tiger",
+  "boy": {
+   "rashi": 5,
+   "degInSign": 29.968,
+   "nakshatra": 14,
+   "pada": 2
+  },
+  "girl": {
+   "rashi": 5,
+   "degInSign": 29.968,
+   "nakshatra": 14,
+   "pada": 2
+  },
+  "expected": {
+   "varna": 1,
+   "vashya": 2,
+   "tara": 3,
+   "yoni": 4,
+   "maitri": 5,
+   "gana": 6,
+   "bhakoot": 7,
+   "nadi": 0,
+   "total": 28
+  }
+ }
+]
