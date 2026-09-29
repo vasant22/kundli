@@ -1,6 +1,6 @@
 # Kundli / जन्मपत्री App — Project Notes (handoff)
 
-Created: 2026-09-28. Status: **Main app COMPLETE & live at https://kundli.mybapuji.com (HTTPS approved + enforced; PDF print corrections shipped 2026-09-29). NEXT TASK — not started: “Kundli Matching” (Ashtakoot Guna Milan), Phases 1–8; spec: `docs/kundli-matching-guide.txt` — adds a `/match/` page to THIS same repo.** User-side remainders: 10-chart AstroSage validation (tests/VALIDATION.md), mybapuji.com link, device checks.
+Created: 2026-09-28. Status: **Main app COMPLETE; “Kundli Matching” (Ashtakoot Guna Milan) COMPLETE — Phases 1–8 done 2026-09-29, live at https://kundli.mybapuji.com/match/** (same repo; nav link added on the main page). User-side remainders: 10-chart AstroSage validation (tests/VALIDATION.md) + matching hand-checks (tests/MATCH_VALIDATION.md), mybapuji.com link, device checks.
 First thing to do in a fresh chat: read this file + `docs/kundli-matching-guide.txt` (current task spec; `docs/kundli-guide.txt` = spec of the completed main app, reference only). Old HTTPS-cert notes below are resolved — no action needed.
 
 ## What to build
@@ -152,3 +152,16 @@ Hard requirements (summary):
 - Reuse existing modules (astro.js, geocode.js, timeutil.js, i18n.js — extend i18n; don’t duplicate). New modules: `src/ashtakoot.js`, `src/mangaldosha.js`. Tests + `tests/MATCH_VALIDATION.md` (the user will hand-verify Nadi/Bhakoot exceptions; comment any simplifications).
 - Rules: verify every classical lookup table against published sources before coding; ask only if truly blocked; never skip per-phase verification. Guide estimate: ~1–2 h coding + the user’s ~1–1.5 h validation — possibly one sitting.
 - Next action: **Phase 1** (reuse setup; add the match page/route) — do this in a fresh chat (token-friendly continuation), starting from this file.
+
+### 2026-09-29 — Kundli Matching Phases 1–8 done (live same day)
+- **Phase 1** (`4911339`): multi-page Vite build (`match/index.html` + `src/match.js`), site nav कुंडली ⇄ कुंडली मिलान, i18n match strings. Tests 73→.
+- **Phase 2** (`aaea7e4`): two-step boy→girl form — same validation/place-search/time-conversion/astro modules parameterised per person; Back; live language toggle; both charts computed on “मिलान रिपोर्ट देखें”. Real-engine e2e test added. Tests 80.
+- **Phase 3** (`1898643`): `src/ashtakoot.js` — all 8 kootas. Tables verified against published sources (Saravali.de “Maitreya”, PyJHora, DrikPanchang) **and calibrated cell-by-cell against the industry-standard reference calculator (AstroSage)**: 269 pairs → **2152/2152 koota values + 269/269 totals match**. Fixtures: `tests/fixtures/ashtakoot-calibration.json`; one-time scripts + data in `scripts/calib/` (+ its README).
+- **Phase 4** (same commit): `src/mangaldosha.js` — houses {1,4,7,8,12} from Lagna **and** Moon; 2nd house **not** counted (probe-verified); severity Low=one chart / High=both; nivaran notes (mutual, own-sign, exaltation) informational only — matches reference behaviour.
+- **Phase 5** (`2a4ff0d`): full report (match.js + `src/matchcard.js`): bilingual koota table with reasons, total, verdict band, Mangal Dosha section, disclaimer; **PNG scorecard export** (1200×1010, Devanagari fine), PDF/print letter-head, copy details. Browser + PNG verified.
+- **Phase 6** (`ad8dfa1`): `tests/MATCH_VALIDATION.md` (8 hand-check couples, our results prefilled), README “Kundli Matching — rules/calibration/variations” section. Full suite: **101 tests**.
+- **Phase 7**: pushed → GitHub Actions deploy ✓ → **https://kundli.mybapuji.com/match/ live** (200; wasm + assets OK; nav link verified on the live main page).
+- **Phase 8**: summary to user (this log + chat report).
+- ⚠️ For the user’s review (also in README/MATCH_VALIDATION): Bhakoot nivaran = note only; Nadi strict (no exceptions); Gana orientation = reference’s; Vashya/Maitri/Varna variants where classical books differ.
+- Dev helper: `/match/?demo=1` prefills the sample couple (dev build only, not in production).
+- Handoff: all next steps are user-side (MATCH_VALIDATION hand checks, mybapuji.com link, device checks).
