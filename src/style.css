@@ -56,6 +56,90 @@ body {
   margin-inline: auto;
 }
 
+#match-form {
+  margin-top: 1rem;
+}
+
+#match-output {
+  margin-top: 1rem;
+}
+
+/* Two-step form (boy → girl) */
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: 1.05rem;
+}
+
+.step-badge {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+
+#match-form button.primary {
+  width: 100%;
+}
+
+.back-btn {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--saffron-dark);
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.back-btn:hover {
+  color: var(--saffron);
+}
+
+/* Both people side by side in the interim/report card */
+.match-pair {
+  display: grid;
+  gap: 0.8rem;
+}
+
+@media (min-width: 640px) {
+  .match-pair {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.match-person {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.75rem 0.85rem;
+  background: #fffdf9;
+}
+
+.match-person h3 {
+  margin: 0 0 0.45rem;
+  font-size: 0.98rem;
+  color: var(--saffron-dark);
+}
+
+.match-person dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.15rem 0.7rem;
+}
+
+.match-person dt {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.match-person dd {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
 [hidden] {
   display: none !important;
 }
