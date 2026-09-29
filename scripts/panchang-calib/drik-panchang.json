@@ -1,0 +1,194 @@
+[
+ {
+  "city": "Varanasi",
+  "geoname": "1253405",
+  "date": "20-03-2026",
+  "rows": {
+   "Tithi": "Dwitiya upto 02:30 AM , Mar 21",
+   "Nakshatra": "Revati upto 02:27 AM , Mar 21",
+   "Yoga": "Brahma upto 10:15 PM",
+   "Karana": "Balava upto 03:43 PM",
+   "Rahu Kalam": "10:35 AM to 12:06 PM",
+   "Yamaganda": "03:07 PM to 04:38 PM",
+   "Gulikai Kalam": "07:33 AM to 09:04 AM",
+   "Dur Muhurtam": "08:28 AM to 09:16 AM",
+   "Abhijit": "11:41 AM to 12:30 PM"
+  }
+ },
+ {
+  "city": "Varanasi",
+  "geoname": "1253405",
+  "date": "21-06-2026",
+  "rows": {
+   "Tithi": "Saptami upto 03:20 PM",
+   "Nakshatra": "Purva Phalguni upto 09:31 AM",
+   "Yoga": "Siddhi upto 11:21 AM",
+   "Karana": "Vanija upto 03:20 PM",
+   "Rahu Kalam": "05:08 PM to 06:51 PM",
+   "Yamaganda": "12:00 PM to 01:43 PM",
+   "Gulikai Kalam": "03:26 PM to 05:08 PM",
+   "Dur Muhurtam": "05:02 PM to 05:56 PM",
+   "Abhijit": "11:32 AM to 12:27 PM"
+  }
+ },
+ {
+  "city": "Varanasi",
+  "geoname": "1253405",
+  "date": "21-12-2026",
+  "rows": {
+   "Tithi": "Dwadashi upto 05:36 PM",
+   "Nakshatra": "Bharani upto 01:08 PM",
+   "Yoga": "Siddha upto 01:32 AM , Dec 22",
+   "Karana": "Bava upto 07:00 AM",
+   "Rahu Kalam": "07:58 AM to 09:18 AM",
+   "Yamaganda": "10:37 AM to 11:56 AM",
+   "Gulikai Kalam": "01:15 PM to 02:34 PM",
+   "Dur Muhurtam": "12:17 PM to 12:59 PM",
+   "Abhijit": "11:35 AM to 12:17 PM"
+  }
+ },
+ {
+  "city": "Mumbai",
+  "geoname": "1275339",
+  "date": "20-03-2026",
+  "rows": {
+   "Tithi": "Dwitiya upto 02:30 AM , Mar 21",
+   "Nakshatra": "Revati upto 02:27 AM , Mar 21",
+   "Yoga": "Brahma upto 10:15 PM",
+   "Karana": "Balava upto 03:43 PM",
+   "Rahu Kalam": "11:15 AM to 12:46 PM",
+   "Yamaganda": "03:48 PM to 05:19 PM",
+   "Gulikai Kalam": "08:14 AM to 09:44 AM",
+   "Dur Muhurtam": "09:08 AM to 09:57 AM",
+   "Abhijit": "12:22 PM to 01:10 PM"
+  }
+ },
+ {
+  "city": "Mumbai",
+  "geoname": "1275339",
+  "date": "21-06-2026",
+  "rows": {
+   "Tithi": "Saptami upto 03:20 PM",
+   "Nakshatra": "Purva Phalguni upto 09:31 AM",
+   "Yoga": "Siddhi upto 11:21 AM",
+   "Karana": "Vanija upto 03:20 PM",
+   "Rahu Kalam": "05:39 PM to 07:19 PM",
+   "Yamaganda": "12:40 PM to 02:20 PM",
+   "Gulikai Kalam": "04:00 PM to 05:39 PM",
+   "Dur Muhurtam": "05:32 PM to 06:26 PM",
+   "Abhijit": "12:14 PM to 01:07 PM"
+  }
+ },
+ {
+  "city": "Mumbai",
+  "geoname": "1275339",
+  "date": "21-12-2026",
+  "rows": {
+   "Tithi": "Dwadashi upto 05:36 PM",
+   "Nakshatra": "Bharani upto 01:08 PM",
+   "Yoga": "Siddha upto 01:32 AM , Dec 22",
+   "Karana": "Balava upto 05:36 PM",
+   "Rahu Kalam": "08:29 AM to 09:52 AM",
+   "Yamaganda": "11:14 AM to 12:37 PM",
+   "Gulikai Kalam": "01:59 PM to 03:21 PM",
+   "Dur Muhurtam": "12:59 PM to 01:42 PM",
+   "Abhijit": "12:15 PM to 12:59 PM"
+  }
+ },
+ {
+  "city": "Chennai",
+  "geoname": "1264527",
+  "date": "20-03-2026",
+  "rows": {
+   "Tithi": "Dwitiya upto 02:30 AM , Mar 21",
+   "Nakshatra": "Revati upto 02:27 AM , Mar 21",
+   "Yoga": "Brahma upto 10:15 PM",
+   "Karana": "Balava upto 03:43 PM",
+   "Rahu Kalam": "10:46 AM to 12:16 PM",
+   "Yamaganda": "03:18 PM to 04:49 PM",
+   "Gulikai Kalam": "07:44 AM to 09:15 AM",
+   "Dur Muhurtam": "08:38 AM to 09:27 AM",
+   "Abhijit": "11:52 AM to 12:41 PM"
+  }
+ },
+ {
+  "city": "Chennai",
+  "geoname": "1264527",
+  "date": "21-06-2026",
+  "rows": {
+   "Tithi": "Saptami upto 03:20 PM",
+   "Nakshatra": "Purva Phalguni upto 09:31 AM",
+   "Yoga": "Siddhi upto 11:21 AM",
+   "Karana": "Vanija upto 03:20 PM",
+   "Rahu Kalam": "05:01 PM to 06:38 PM",
+   "Yamaganda": "12:11 PM to 01:47 PM",
+   "Gulikai Kalam": "03:24 PM to 05:01 PM",
+   "Dur Muhurtam": "04:54 PM to 05:46 PM",
+   "Abhijit": "11:45 AM to 12:37 PM"
+  }
+ },
+ {
+  "city": "Chennai",
+  "geoname": "1264527",
+  "date": "21-12-2026",
+  "rows": {
+   "Tithi": "Dwadashi upto 05:36 PM",
+   "Nakshatra": "Bharani upto 01:08 PM",
+   "Yoga": "Siddha upto 01:32 AM , Dec 22",
+   "Karana": "Bava upto 07:00 AM",
+   "Rahu Kalam": "07:51 AM to 09:17 AM",
+   "Yamaganda": "10:42 AM to 12:07 PM",
+   "Gulikai Kalam": "01:32 PM to 02:57 PM",
+   "Dur Muhurtam": "12:30 PM to 01:15 PM",
+   "Abhijit": "11:44 AM to 12:30 PM"
+  }
+ },
+ {
+  "city": "New Delhi",
+  "geoname": "1261481",
+  "date": "20-03-2026",
+  "rows": {
+   "Tithi": "Dwitiya upto 02:30 AM , Mar 21",
+   "Nakshatra": "Revati upto 02:27 AM , Mar 21",
+   "Yoga": "Brahma upto 10:15 PM",
+   "Karana": "Balava upto 03:43 PM",
+   "Rahu Kalam": "10:58 AM to 12:29 PM",
+   "Yamaganda": "03:30 PM to 05:01 PM",
+   "Gulikai Kalam": "07:56 AM to 09:27 AM",
+   "Dur Muhurtam": "08:51 AM to 09:39 AM",
+   "Abhijit": "12:05 PM to 12:53 PM"
+  }
+ },
+ {
+  "city": "New Delhi",
+  "geoname": "1261481",
+  "date": "21-06-2026",
+  "rows": {
+   "Tithi": "Saptami upto 03:20 PM",
+   "Nakshatra": "Purva Phalguni upto 09:31 AM",
+   "Yoga": "Siddhi upto 11:21 AM",
+   "Karana": "Vanija upto 03:20 PM",
+   "Rahu Kalam": "05:37 PM to 07:22 PM",
+   "Yamaganda": "12:23 PM to 02:08 PM",
+   "Gulikai Kalam": "03:52 PM to 05:37 PM",
+   "Dur Muhurtam": "05:30 PM to 06:26 PM",
+   "Abhijit": "11:55 AM to 12:51 PM"
+  }
+ },
+ {
+  "city": "New Delhi",
+  "geoname": "1261481",
+  "date": "21-12-2026",
+  "rows": {
+   "Tithi": "Dwadashi upto 05:36 PM",
+   "Nakshatra": "Bharani upto 01:08 PM",
+   "Yoga": "Siddha upto 01:32 AM , Dec 22",
+   "Karana": "Balava upto 05:36 PM",
+   "Rahu Kalam": "08:27 AM to 09:44 AM",
+   "Yamaganda": "11:02 AM to 12:19 PM",
+   "Gulikai Kalam": "01:37 PM to 02:54 PM",
+   "Dur Muhurtam": "12:40 PM to 01:21 PM",
+   "Abhijit": "11:59 AM to 12:40 PM"
+  }
+ }
+]

@@ -275,3 +275,20 @@ Hard requirements (summary):
 - Noted as future (per guide): “next 7 days” date-range table.
 - Next: **Phase 9** — validation: more known-date asserts + `tests/PANCHANG_VALIDATION.md`
   manual checklist (10 dates incl. two-tithi day, Samvat boundary, chart spot-check).
+
+### 2026-09-29 — Panchang Phase 9 done: testing & validation
+- New multi-city test `tests/panchang-multicity.test.js` (+ fixture
+  `scripts/panchang-calib/drik-panchang.json`): 12 city×date combos (Varanasi/Mumbai/Chennai/
+  Delhi × Mar/Jun/Dec) vs Drik — tithi/nakshatra/yoga/karana names + ends and Rahu/Yamaganda/
+  Gulika/Abhijit/Dur windows, all within 120 s (measured ≤ ~90 s).
+- `tests/PANCHANG_VALIDATION.md` generated (`npm run panchang:validation`) — 10 hand-check dates
+  spread across the year (two-tithi day, Full-Night display, Samvat flips, Adhika month,
+  Pravishte edges) with OUR values pre-filled + a Sep-29 Mumbai chart/planet-table check;
+  user fills “संदर्भ परिणाम / मैच?” columns.
+- README: new “पंचांग / Panchang — rules, calibration & how to verify” section (all known
+  variations + calibration record).
+- Refactor: `jdToUtcParts`/`sunriseKundli` moved to `src/panchang.js` (re-exported by the page)
+  so Node calib scripts don't import CSS.
+- Test count: **362 passing**.
+- Next: **Phase 10** — deploy (push → GitHub Actions → live; widget iframe embed instructions
+  for the mybapuji.com WordPress homepage; midnight-refresh check).

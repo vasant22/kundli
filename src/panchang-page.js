@@ -9,8 +9,8 @@
 // today at the fixed location; "पंचांग देखें" recomputes. URL params (also used
 // by the automated checks): ?lang=en&date=YYYY-MM-DD&lat=..&lon=..&tz=..&place=..
 
-import { initEphemeris, computeKundli } from './astro.js'
-import { computePanchang } from './panchang.js'
+import { initEphemeris } from './astro.js'
+import { computePanchang, jdToUtcParts, sunriseKundli } from './panchang.js'
 import { searchPlace } from './geocode.js'
 import { buildNorthChart, buildSouthChart, buildEastChart } from './charts.js'
 import { WIDGET_LOCATION } from './widget-location.js'
@@ -22,6 +22,9 @@ import {
 import './style.css'
 import './panchang.css'
 
+// Re-export for tests / other callers.
+export { jdToUtcParts, sunriseKundli }
+
 const SOURCE_URL = 'https://github.com/vasant22/kundli'
 
 const pad2 = (n) => String(n).padStart(2, '0')
@@ -29,17 +32,9 @@ const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => (
   { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
 ))
 
-// JD (UT) → UTC calendar parts + "HH:MM:SS" text (for the sunrise chart).
-export function jdToUtcParts(swe, jd) {
-  const d = swe.revjul(jd, 1)
-  const hraw = d.hour
-  let h = Math.floor(hraw)
-  let m = Math.floor((hraw - h) * 60)
-  let s = Math.round((((hraw - h) * 60) - m) * 60)
-  if (s === 60) { s = 0; m += 1 }
-  if (m === 60) { m = 0; h += 1 }
-  return { year: d.year, month: d.month, day: d.day, hour: h, minute: m, second: s, text: `${pad2(h)}:${pad2(m)}:${pad2(s)}` }
-}
+// JD (UT) → UTC calendar parts + "HH:MM:SS" text (for the sunrise chart) —
+// implementation lives in src/panchang.js (shared with the calib scripts);
+// kept re-exported above for the tests.
 
 // Degrees-minutes-seconds within the sign: 0.5498 → 0°32'59"
 export function dms(deg) {
@@ -52,16 +47,8 @@ export function dms(deg) {
   return `${d}°${pad2(m)}'${pad2(s)}"`
 }
 
-// The kundli cast for the moment of sunrise (the "Lagna Chart at Sunrise").
-export function sunriseKundli(swe, p, place) {
-  const uc = jdToUtcParts(swe, p.sunriseJd)
-  return computeKundli(swe, {
-    utc: { year: uc.year, month: uc.month, day: uc.day, hour: uc.hour, minute: uc.minute, second: uc.second },
-    latitude: place.latitude,
-    longitude: place.longitude,
-    nodeType: 'mean',
-  })
-}
+// The kundli cast for the moment of sunrise ("Lagna Chart at Sunrise") —
+// implementation lives in src/panchang.js; re-exported above.
 
 function uptoText(e) {
   if (e.fullNight) return t('panchang.fullNight')

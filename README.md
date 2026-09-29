@@ -105,6 +105,43 @@ calibration — adjust the noted spots if your tradition differs; each is commen
 
 Manual hand-verification checklist for the user: [`tests/MATCH_VALIDATION.md`](./tests/MATCH_VALIDATION.md).
 
+## पंचांग / Panchang — rules, calibration & how to verify
+
+The Panchang feature (full page at `/panchang/`; homepage widget at `/panchang-widget/` for the
+mybapuji.com iframe) shares the same Swiss-Ephemeris core. Formulas, sources and verification
+procedures live in **docs/PANCHANG_FORMULAS.md**; the hand-check checklist is
+**tests/PANCHANG_VALIDATION.md**.
+
+- **Anchoring**: everything is computed at the place's sunrise (sidereal Lahiri). Tithi /
+  Nakshatra / Yoga / Karana show the element(s) running from sunrise, end times in `HH:MM:SS`
+  (extended `24+H` across midnight; “upto Full Night” when the first element ends past the next
+  sunrise). The reference caps each limb at two entries — same here.
+- **Samvat years**: Shaka & Kali flip on the first sunrise after the Chaitra new moon; **Vikram
+  flips ~2 weeks earlier** — first sunrise after the Phalguna full moon (purnimanta Chaitra 1).
+  Samvatsara name = 60-year cycle, `idx = (Shaka + 12) mod 60`.
+- **Ritu** is reckoned on the **tropical (sayana) Sun** at sunrise, boundaries at 330°+60k — as
+  the reference sites do.
+- **Pravishte / Gate** (Bengali solar day-count): smooth count, Drik-verified on 2026–2027 edges.
+  AstroSage diverges on two known cases (2026 Srabon “2”-repeat; 16–17 Jul 2027 glitch) — see
+  docs/PANCHANG_FORMULAS.md §8.
+- **Moon rise/set**: first event after the date's sunrise (next-day spills shown as `24+H`);
+  disc = upper limb + refraction (matches AstroSage; Drik uses centre/no-refraction for the Moon
+  and differs ~4 min by design — documented, not a bug).
+- **Accepted variations**: element end times can differ from a given reference by up to ~3 min
+  (Drik and AstroSage themselves differ ~3–4 min on some dates; our values sit within ~1 min of
+  Drik). The 2025-03-29 Chatushpada→Naga karana change falls within ~1 min of sunrise — a given
+  site may show one more/fewer entry that day.
+- **Modern planets** (Uranus/Neptune/Pluto) are excluded by design (no role in classical Vedic
+  astrology); a labelled note under the planets table says so.
+- **Widget location** is fixed in `src/widget-location.js` (currently Mumbai); no geocoding ever
+  runs for widget visitors.
+- **Future additions** noted: multi-day (“next 7 days”) panchang table, festival/vrat
+  highlighting, Choghadiya.
+
+**Calibration record**: 63 New-Delhi dates vs AstroSage (all elements incl. end times), 12
+city×date combos vs Drik Panchang (elements + 5 muhurat windows per city), muhurat tables checked
+on all 7 weekdays against both sites, 4 Samvat-flip years verified (2024–2027). Run `npm test`.
+
 ## License
 
 AGPL-3.0 — required because Swiss Ephemeris is AGPL. See [`LICENSE`](./LICENSE).

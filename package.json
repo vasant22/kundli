@@ -12,7 +12,8 @@
     "prebuild": "npm run sync-wasm",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "panchang:validation": "node scripts/panchang-calib/gen-validation.mjs"
   },
   "dependencies": {
     "swisseph-wasm": "^0.1.0"

@@ -17,7 +17,7 @@
 // applied by the UI via i18n (Panchang Phase 6).
 
 import { computeDayTimes, formatLocalTime, formatLocalTimeSlipped, nextRiseSet, jdToLocal } from './sunrise.js'
-import { sunMoonLongitudes, sunSayanaLongitude } from './astro.js'
+import { sunMoonLongitudes, sunSayanaLongitude, computeKundli } from './astro.js'
 import { SAMVATSARA_NAMES } from './i18n.js'
 import { computeMuhurats } from './muhurat.js'
 import { dishaShoola, taraBala, chandraBala } from './panchang-extras.js'
@@ -383,4 +383,32 @@ function formatSeconds(total) {
   const s = total % 60
   const p = (n) => String(n).padStart(2, '0')
   return `${p(h)}:${p(m)}:${p(s)}`
+}
+
+// ---------------------------------------------------------------------------
+// Sunrise-chart helpers (shared by the /panchang/ page and its generators).
+// ---------------------------------------------------------------------------
+
+// JD (UT) → UTC calendar parts + "HH:MM:SS" text.
+export function jdToUtcParts(swe, jd) {
+  const d = swe.revjul(jd, 1)
+  const hraw = d.hour
+  const p2 = (n) => String(n).padStart(2, '0')
+  let h = Math.floor(hraw)
+  let m = Math.floor((hraw - h) * 60)
+  let s = Math.round((((hraw - h) * 60) - m) * 60)
+  if (s === 60) { s = 0; m += 1 }
+  if (m === 60) { m = 0; h += 1 }
+  return { year: d.year, month: d.month, day: d.day, hour: h, minute: m, second: s, text: `${p2(h)}:${p2(m)}:${p2(s)}` }
+}
+
+// The kundli cast for the moment of sunrise ("Lagna Chart at Sunrise").
+export function sunriseKundli(swe, p, place) {
+  const uc = jdToUtcParts(swe, p.sunriseJd)
+  return computeKundli(swe, {
+    utc: { year: uc.year, month: uc.month, day: uc.day, hour: uc.hour, minute: uc.minute, second: uc.second },
+    latitude: place.latitude,
+    longitude: place.longitude,
+    nodeType: 'mean',
+  })
 }
