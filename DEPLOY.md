@@ -65,3 +65,34 @@ Cloudflare → डोमेन **mybapuji.com** → **DNS → Records → Add re
 ## बाक़ी छोटे काम (repo बनने के बाद)
 
 - `src/main.js` की `SOURCE_URL` में असली username डाल दें (footer के "सोर्स कोड" लिंक के लिए)।
+
+## पंचांग पेज व होमपेज विजेट (Panchang)
+
+Deploy होने पर अपने-आप उपलब्ध होते हैं:
+- पूरा पंचांग पेज: <https://kundli.mybapuji.com/panchang/>
+- होमपेज विजेट (iframe के लिए): <https://kundli.mybapuji.com/panchang-widget/>
+
+### mybapuji.com (WordPress) होमपेज में विजेट लगाना — step by step
+
+1. WordPress admin → **Pages → Home (होमपेज) → Edit**।
+2. जहाँ कार्ड चाहिए वहाँ **"Custom HTML" ब्लॉक** जोड़ें (➕ Block Inserter में "Custom HTML" खोजें)।
+   - पेज किसी बिल्डर (Elementor आदि) से बना हो तो उसी का **HTML widget** इस्तेमाल करें।
+3. नीचे वाला कोड उसमें paste करें:
+
+```html
+<iframe
+  src="https://kundli.mybapuji.com/panchang-widget/?lang=hi"
+  title="आज का पंचांग / Today's Panchang"
+  style="width:100%; max-width:460px; height:640px; border:0; display:block; margin:0 auto;"
+  loading="lazy"
+></iframe>
+```
+
+4. **Preview → Publish**। बस! कार्ड रोज़ अपने-आप आज का पंचांग दिखाएगा — कोई क्लिक या देखभाल ज़रूरी नहीं; रात 12 बजे (मुंबई समय) के बाद भी ख़ुद-ब-ख़ुद बदल जाता है।
+
+छोटी टिप्पणियाँ:
+- ऊँचाई `640px` रखी है — नीचे से कटे तो `680px` कर दें; ज़्यादा जगह लगे तो `600px` आज़माएँ।
+- WordPress थीम से और घुलाने के लिए URL में `&transparent=1` जोड़ सकते हैं: `...?lang=hi&transparent=1`
+- अंग्रेज़ी संस्करण: `?lang=en`
+- कार्ड के नीचे **"आज का पंचांग" बटन** उपयोगकर्ता को पूरे पंचांग पेज पर ले जाता है।
+- यही iframe कहीं और (sidebar / post) भी लग सकता है — बस `width`/`height` बदल दें।
