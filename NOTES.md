@@ -431,3 +431,10 @@ Hard requirements (summary):
   sub-path दोनों पर सही)। Built output में verify: files 200 + links हर page पर। 393 tests ✓।
 - ⚠️ पुराने browsers tab-icon ज़िद्दी cache करते हैं — user को hard refresh / नया tab चाहिए
   हो सकता है; नए visitors को तुरंत दिखेगा।
+
+### 2026-09-29 — Fix: पंचांग विजेट का button नई tab में खोले (`2d0964c`)
+- User report: mybapuji होमपेज पर पंचांग कार्ड का “आज का पंचांग” button काम नहीं करता।
+  कारण: उस `<a>` में `target` नहीं था — iframe के अंदर click पर वह **उसी छोटे कार्ड को**
+  navigate करता (कटा/अधूरा दिखता)। फ़िक्स: `target="_blank" rel="noopener"` (कुंडली/मिलान
+  कार्ड जैसा)। + test assertions। Browser: click पर card अपनी जगह रहता है, नई tab खुलती है।
+- 393 tests ✓ (commit `2d0964c`)।
