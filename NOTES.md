@@ -414,3 +414,12 @@ Hard requirements (summary):
   (button के नीचे)। पूरे tools में भी same softening।
 - Browser-verified (kw): 'amla' search → pick → सूची तुरंत हटी ✓, confirm ✓, credit नीचे ✓।
 - Commit: `057a955` (+ notes commit)। Next: **Phase 6** — testing checklist अब भी बाक़ी।
+
+### 2026-09-29 — footer credits: "लगभग invisible" style (user request) (`9d0c501`)
+- User ने पूछा कि bottom की "गणना इंजन / सोर्स कोड" लाइन क्यों है — समझाया: ये license
+  शर्तें हैं (Swiss Ephemeris credit + AGPL source offer), इसलिए हटाना ठीक नहीं। User बोले
+  — रहने दो पर style **हल्का/almost invisible** कर दो।
+- `.site-footer .note`: color `#b7ab9d`, size 0.74rem; links अब underline-less (hover पर ही
+  underline + गहरा रंग)। Print में निजता-लाइन `#8f8f8f` (PDF पढ़ने लायक); credit line print
+  में छिपी रहती है (पहले जैसा)। 393 tests ✓; style.css बदला — तीनों pages (main/match/
+  panchang) पर असर।
