@@ -19,6 +19,7 @@
 import { computeDayTimes, formatLocalTime, formatLocalTimeSlipped, nextRiseSet, jdToLocal } from './sunrise.js'
 import { sunMoonLongitudes, sunSayanaLongitude } from './astro.js'
 import { SAMVATSARA_NAMES } from './i18n.js'
+import { computeMuhurats } from './muhurat.js'
 
 const norm360 = (x) => ((x % 360) + 360) % 360
 function signedDeg(x) {
@@ -321,6 +322,14 @@ export function computePanchang(swe, opts) {
   const ritu = Math.floor(((sayana + 30) % 360) / 60)
   const moonSign = Math.floor(angles.moon(swe, sunriseJD) / 30)
 
+  const muhurats = computeMuhurats(swe, {
+    sunriseJd: sunriseJD,
+    sunsetJd: sunsetJD,
+    weekday: vaar,
+    offsetMinutes,
+    date: dateParts,
+  })
+
   return {
     date: { year, month, day },
     offsetMinutes,
@@ -350,6 +359,7 @@ export function computePanchang(swe, opts) {
     },
     ritu, // 0=Vasanta, 1=Grishma, 2=Varsha, 3=Sharad, 4=Hemanta, 5=Shishira
     moonSign, // 0=Mesha … 11=Meena
+    muhurats, // Phase 4: rahu/yamaganda/gulika/kulika/kantaka/kalavela/yamaghanta/dushta[]/abhijit
     notes,
   }
 }

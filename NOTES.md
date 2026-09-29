@@ -202,3 +202,15 @@ Hard requirements (summary):
 - Tools: `scripts/panchang-calib/check-panchang.mjs`; `astrosage.json` grew to 63 records.
 - Next: **Phase 4** — `src/muhurat.js` (8-part Rahu/Yamaganda/Gulika; 15-part Kulika/Kantaka/
   Kalavela/Yamaghanta/Dushta/Abhijit — tables in docs/PANCHANG_FORMULAS.md §11).
+
+### 2026-09-29 — Panchang Phase 4 done: muhurat windows (`src/muhurat.js`)
+- `src/muhurat.js`: 8-part daytime (Rahu Kaal, Yamaganda, Gulika Kaal) + 15-part daytime
+  (Kulika, Kantaka/Mrityu, Kalavela/Ardhayaam, Yamaghanta, Dushta Muhurtas [1–2 windows],
+  Abhijit) — tables straight from docs/PANCHANG_FORMULAS.md §11 (pre-verified ×7 weekdays).
+  Entries carry {key, hi, en, from, to, fromJd, toJd}; integrated into `computePanchang()`
+  as `.muhurats`.
+- i18n.js: +`MUHURAT_NAMES` (9 rows hi+en — Phase 4 needs names in its returned object).
+- Tests: +65 (`tests/muhurat.test.js`: all fixture dates with muhurat fields + focused checks
+  incl. Monday's two Dushta windows & Abhijit centered on midday) → **260 passing**.
+- Next: **Phase 5** — `src/panchang-extras.js`: Disha Shoola, Tara Bala (reuse ashtakoot.js
+  tables), Chandra Bala.

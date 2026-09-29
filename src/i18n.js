@@ -508,3 +508,16 @@ export const SAMVATSARA_NAMES = [
   { hi: 'क्रोधन', en: 'Krodhana' },
   { hi: 'अक्षय', en: 'Akshaya' },
 ]
+
+// Muhurat window names (used by src/muhurat.js; UI strings follow in Phase 6).
+export const MUHURAT_NAMES = {
+  rahu: { hi: 'राहु काल', en: 'Rahu Kaal' },
+  yamaganda: { hi: 'यमगंड', en: 'Yamaganda' },
+  gulika: { hi: 'गुलिक काल', en: 'Gulika Kaal' },
+  kulika: { hi: 'कुलिक', en: 'Kulika' },
+  kantaka: { hi: 'कंटक / मृत्यु', en: 'Kantaka / Mrityu' },
+  kalavela: { hi: 'कालवेला / अर्धयाम', en: 'Kalavela / Ardhayaam' },
+  yamaghanta: { hi: 'यमघंट', en: 'Yamaghanta' },
+  dushta: { hi: 'दुष्ट मुहूर्त', en: 'Dushta Muhurtas' },
+  abhijit: { hi: 'अभिजीत', en: 'Abhijit' },
+}

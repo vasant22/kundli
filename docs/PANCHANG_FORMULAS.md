@@ -203,6 +203,10 @@ Fixture (Tue, Sep 29, 2026, D = 11:57:22): Rahu 15:10:42→16:40:22 ✓; Yamagan
 Gulika 12:11:22→13:41:02 ✓.
 
 ### 11b. 15-part of daytime (muhūrtas; verified ×7 days vs AstroSage, subset vs Drik)
+
+**Implemented (Phase 4):** `src/muhurat.js` — all windows above, output as `{key, hi, en, from, to}`;
+verified against AstroSage fixtures on all 7 weekdays (±180 s; most of the gap is the sites' own
+sunrise drift). Abhijit = the 8th of 15 parts (centered on the arithmetic midday).
 | Window (duration = D/15) | Sun | Mon | Tue | Wed | Thu | Fri | Sat |
 |---|---|---|---|---|---|---|---|
 | **Kulika** (#)                | 14 | 12 | 10 | 8 | 6 | 4 | 2 |
