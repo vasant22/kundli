@@ -315,3 +315,22 @@ Hard requirements (summary):
 - Handoff (user-side): PANCHANG_VALIDATION.md hand-check (10 dates, Mumbai, prefilled),
   WordPress homepage embed (code in DEPLOY.md + the report), midnight-check result arriving via
   cron `9465d2db…` (00:10 IST, reports in chat).
+
+### 2026-09-29 — Homepage Widgets (mybapuji.com 3-card row) — Phase 1 done
+- New project received via `widget.docx` spec: mybapuji.com homepage पर astrosage-शैली का
+  तीन-कार्ड row — Kundli mini-widget + Kundli-Matching mini-widget + existing Panchang widget.
+  सारा logic reuse; गणना में कोई बदलाव नहीं। Phases 1–8. Plan confirmed: हर mini-widget
+  query-string बनाकर full tool **नई tab** में खोलेगा (cross-domain iframe से data silently
+  share नहीं हो सकता)।
+- **Phase 1 (`5157705`)**: चारों live pages जाँचे (सब 200)। दो नए input-only widget pages की
+  ज़रूरत confirm। मौजूदा pages में **URL pre-fill + auto-run** जोड़ा (full tools अब link से
+  भरे हुए खुलेंगे):
+  - `src/prefill.js` (new) — pure param-parsing module (unit-tested)।
+  - `src/main.js` — `?name&gender&day&month&year&hour&min&sec&place&lat&lng&tz&lang`;
+    सब पूरा व सही हो तो calculation अपने-आप।
+  - `src/match.js` — वही keys `b_`/`g_` prefix से; दोनों तरफ़ पूरा हो तो report अपने-आप।
+  - `lon` = `lng` का alias; `lang=hi|en` optional. Widgets (Phases 2–3) यही format भेजेंगे।
+- Tests: +10 (`tests/prefill.test.js`) → **372 passing**. Real-browser round-trips (dev
+  server, असली engine): कुंडली (लग्न कन्या 7°02′ + चार्ट) और मिलान (कुल योग 29.5/36 + मंगल
+  दोष जाँच) दोनों link से अपने-आप चले ✓. Build ✓ (2.94 MiB).
+- Next: **Phase 2** — Kundli mini-widget page (kundli.mybapuji.com/widgets/kundli/).
