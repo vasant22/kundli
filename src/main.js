@@ -22,6 +22,10 @@ app.innerHTML = `
       <div>
         <h1 data-i18n="app.title"></h1>
         <p class="sub" data-i18n="app.subtitle"></p>
+        <nav class="site-nav">
+          <a href="./" class="active" data-i18n="nav.home"></a>
+          <a href="./match/" data-i18n="nav.match"></a>
+        </nav>
       </div>
       <button id="lang-toggle" class="lang-toggle" type="button"></button>
     </header>
