@@ -12,9 +12,13 @@ Calibration dataset (regenerate with `scripts/panchang-calib/fetch-astrosage.mjs
 - `scripts/panchang-calib/astrosage.json` — 50 AstroSage records (Sep 2026 week; all 12 sankranti
   boundaries of 2026 + early 2027; adhika-maasa month sample).
 - `scripts/panchang-calib/astrosage-hi.json` — the Hindi rendering of one full day (i18n strings).
+- `scripts/panchang-calib/drik-rise-set.json` + `tests/fixtures/sunrise-refs.json` — rise/set
+  references (4 cities × 3 dates, AstroSage second-level + Drik minute-level).
 - `scripts/panchang-calib/probe-sankranti.mjs` — sankranti-time & rise/set probe (Swiss Ephemeris).
 - `scripts/panchang-calib/probe-pravishte.mjs` — brute-force check of smooth candidate rules for
   the Bengali day-count (proves no simple time-offset formula fits; the stateful rule below does).
+- `scripts/panchang-calib/probe-moon.mjs` / `diff-sunrise.mjs` / `check-sunrise.mjs` — Phase-2
+  rise/set calibration tools.
 - Raw HTML cache: workspace `.openclaw/tmp/panchang-calib/` (not committed).
 
 All calculations: **sidereal, Lahiri ayanamsa, Swiss Ephemeris (existing WASM build)**, computed for
@@ -37,6 +41,12 @@ the place's local timezone at the place's **sunrise** unless noted.
    second elements alike (e.g. Tithi "24:15:26" on Apr 14, 2026).
 3. One further reference quirk: Tithi can read "upto Full Night" (e.g. Mar 13, 2026) — [FLAG]
    rendering TBD in Phase 3 (element spans the whole night; display "Full Night" text).
+4. **Moon rise/set (Phase 2 findings):** the reference shows the FIRST moonrise and moonset
+   after the date's SUNRISE; if the event falls after midnight it is rendered in the same
+   extended-hours notation (verified Oct 3–6, 2026: 23:26 → 24:33 → 25:41 → 26:45 — the hours
+   keep counting past 24/25/26). Sun & Moon disc convention: upper limb + refraction (Swiss
+   Ephemeris default) — matches AstroSage. NOTE: Drik Panchang uses center-of-disc without
+   refraction for the MOON (~4 min difference); we follow AstroSage.
 4. Weekday names in "Day": Sanskrit-style (Ravivara, Somavara, Mangalavara, Budhavara, Guruvara,
    Shukravara, Shanivara). Reference shows "Mangalavara" for Tuesday.
 5. The user-facing page must show **hindi / English** pairs for everything except chart-internals
@@ -300,3 +310,6 @@ normalized square, grid lines at 1/3 and ~2/3 in both axes, four corner cells sp
 6. Modern planets (Uranus/Neptune/Pluto): the reference DOES plot them in its charts
    (Asc Su Mo Ma Me Ju Ve Sa Ra Ke Ur Ne Pl) but the user's prompt says optional sub-section only.
    Default: skip in the planetary table; note in Phase 8 decision.
+7. **Moon conventions:** selection + disc = AstroSage-style (see §0.4). Drik's moon values differ
+   by design; our fixtures mark them "documentation only". Keep the divergence note in the
+   README if users compare against Drik.

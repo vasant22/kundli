@@ -165,3 +165,17 @@ Hard requirements (summary):
 - ⚠️ For the user’s review (also in README/MATCH_VALIDATION): Bhakoot nivaran = note only; Nadi strict (no exceptions); Gana orientation = reference’s; Vashya/Maitri/Varna variants where classical books differ.
 - Dev helper: `/match/?demo=1` prefills the sample couple (dev build only, not in production).
 - Handoff: all next steps are user-side (MATCH_VALIDATION hand checks, mybapuji.com link, device checks).
+
+### 2026-09-29 — Panchang Phase 2 done: sunrise/sunset/moonrise/moonset (`src/sunrise.js`)
+- `src/sunrise.js`: rise_trans-based. Sun & Moon disc = upper limb + refraction (matches
+  **AstroSage**; Drik uses center-of-disc/no-refraction for the Moon → ~4 min difference,
+  documented in code + fixtures, we follow AstroSage). Moonrise/moonset = first event AFTER the
+  date's sunrise, next-day spills shown in extended hours (24+, 25+, 26+ — verified vs AstroSage
+  Oct 3–6). Polar day/night → null + `note: 'polar'`. Timezone via `timeutil.offsetAt`.
+- Accuracy: sun ±30 s vs 12 Drik city×date refs (Varanasi/Mumbai/Chennai/Delhi × Mar 20/Jun 21/
+  Dec 21); AstroSage Delhi 2026-09-29: rise +19 s / set −22 s / day-length 11:56:41 vs 11:57:22
+  (±60 s tolerance); moon within ±2 min of AstroSage. Polar checked (Tromsø).
+- Tests: +23 → **124 passing** (`tests/sunrise.test.js`, fixtures `tests/fixtures/sunrise-refs.json`).
+- New calib tools: `scripts/panchang-calib/{probe-moon,diff-sunrise,check-sunrise}.mjs`, `drik-rise-set.json`.
+- Next: **Phase 3** — `src/panchang.js` core (tithi/nakshatra/yoga/karana + end times via
+  bisection, samvat years, amanta/purnimanta months incl. Adhika, ritu, moon sign, day duration).
