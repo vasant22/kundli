@@ -701,13 +701,21 @@ details.manual[open] summary {
   padding: 0.5rem 0 1.75rem;
 }
 
+/* फ़ुटर की fine-print — जान-बूझकर बहुत हल्की (credits मौजूद रहें, पर लगभग
+   invisible लगें — license की शर्तें पूरी करते हुए)। */
 .site-footer .note {
   text-align: center;
-  font-size: 0.8rem;
+  font-size: 0.74rem;
+  color: #b7ab9d;
 }
 
 .site-footer a {
-  color: var(--saffron-dark);
+  color: inherit;
+  text-decoration: none;
+}
+
+.site-footer a:hover {
+  color: #877969;
   text-decoration: underline;
 }
 
@@ -798,6 +806,11 @@ details.manual[open] summary {
   .summary-note-ok,
   .footer-credit-line {
     display: none !important;
+  }
+
+  /* निजता लाइन PDF में पढ़ने लायक रहे (screen पर यह बहुत हल्की है)। */
+  .site-footer .note {
+    color: #8f8f8f;
   }
 
   .chart-grid {
