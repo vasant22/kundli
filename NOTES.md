@@ -393,3 +393,13 @@ Hard requirements (summary):
 - Dev tools: `tests/widgets-preview.html` = WordPress block का हूबहू mirror (auto-height
   सहित, browser-verified)। `tests/resize-debug.html` सिर्फ़ debugging के लिए (commit नहीं)।
 - Next: **Phase 6** — testing (breakpoints, दोनों round-trips, `tests/HOMEPAGE_WIDGETS_CHECKLIST.md`)।
+
+### 2026-09-29 — Homepage Widgets Phase 5b: live-verification notes (mybapuji deploy के बाद)
+- Deploy के बाद homepage पर पहले कुछ 520 दिखे — जाँच में निकला: nginx cache खाली करने के
+  तुरंत बाद हर पेज origin से generate होता है (~2s), कुछ requests transient 520; cache
+  भरते ही स्थिर (8/8 → 200, फिर 0.34s)। **सबक: `/var/cache/nginx/*` साफ़ करने के बाद
+  `systemctl restart nginx` कर दें** (unlink() crit errors भी रुक जाते हैं)।
+- Cross-origin auto-height live-verified ✓: एक local test page में LIVE widget
+  (kundli.mybapuji.com से, 566px) → message arrive + applied। (तीनों widgets एक ही mechanism।)
+- Panel की 379px चौड़ाई में desktop 3-column का visual सिर्फ़ user के browser पर दिखेगा;
+  mobile = single column; दोनों एक ही grid से।
