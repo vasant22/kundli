@@ -487,3 +487,11 @@ Hard requirements (summary):
   - Sitemap `https://kundli.mybapuji.com/sitemap.xml` submit → **Status: Success · 3 discovered pages** (domain property की सूची में भी दिखता है)।
   - तीनों URLs: URL Inspection → **Request indexing** ("priority crawl queue")। फ़िलहाल स्थिति: "Discovered – currently not indexed" (पहला crawl आने वाले दिनों में)।
 - आगे: 2–4 हफ़्तों में GSC queries देखें; OG image (share preview) नहीं बनाया; mybapuji menu anchors अभी "कुंडली/जन्म पत्री/…" (चाहें तो "Free …" कर सकते हैं — user से पूछकर)।
+
+### 2026-09-30 — किताबें + Amazon Sponsored block (user request — तीनों pages के bottom पर)
+- User: जैसे mybapuji.com pages पर ज्योतिष-किताबों की free-download links व Amazon affiliate (Sponsored) है (sample: /pdf-astrology-books-english-free-download/), वैसे ही /, /match/, /panchang/ के bottom पर जोड़ो — title "ज्योतिष संबंधित किताबें मुफ़्त download करें" जैसा।
+- जोड़ा (तीनों HTML, static; seo-info के अंदर FAQ के नीचे):
+  - "ज्योतिष संबंधित किताबें मुफ़्त Download करें" box — 7 cards (ज्योतिष शास्त्र · KP ×3 · नाड़ी ज्योतिष · हस्त रेखा ज्ञान · ज्योतिष संग्रह — mybapuji links, 200 ✓) + chips: सभी हिंदी किताबें / English ज्योतिष किताबें।
+  - "Sponsored — आपके लिए चुनी किताबें" box — 6 Amazon search links (tag krishna220af-21; rel="nofollow sponsored noopener"; ज्योतिष/धार्मिक/मंत्र-तंत्र/वेदांत/प्रेरक/योग)।
+  - CSS `.book-grid/.book-card/.sponsored-tag/.seo-note`; print में seo-info साथ छिपता है। tests +3 → **406 ✓**; dist ≈ 3.13 MiB।
+- ⚠️ Amazon links static (rotation वाला mu-plugin यहाँ नहीं) — बदलने हों तो तीनों HTML में सीधे edit (tag रहने दें)।
