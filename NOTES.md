@@ -463,3 +463,5 @@ Hard requirements (summary):
   `.site-nav` links अब **chips**: सामान्य = हल्का saffron bg + border + बोल्ड text;
   active = गहरा saffron bg + सफ़ेद text (hover भी)। सिर्फ़ `src/style.css` (सभी pages
   पर लागू)। 393 tests ✓; dist वही **2.99 MiB**।
+- 2026-09-30 (follow-up): chips थोड़े tight किए (padding .85rem, gap .4rem) + hidden ≤340px
+  पर छोटी-सी बदलाव — अब **तीनों pages पर तीनों links एक ही लाइन** में (375px: 63+103+60px)।
