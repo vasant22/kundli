@@ -50,3 +50,18 @@ describe('SEO essentials — कुंडली / मिलान / पंचा
     })
   }
 })
+
+describe('ज्योतिष किताबें + Amazon sponsored block (30 Sep 2026)', () => {
+  for (const page of PAGES) {
+    it(`${page.file}: free-books block + affiliate links`, () => {
+      const html = read(page.file)
+      expect(html).toContain('ज्योतिष संबंधित किताबें')
+      expect(html).toContain('pdf-jyotish-books-hindi-vedic-astrology-free-download')
+      expect(html).toContain('सभी हिंदी किताबें')
+      expect(html).toContain('rel="nofollow sponsored noopener"')
+      expect(html).toContain('tag=krishna220af-21')
+      expect((html.match(/tag=krishna220af-21/g) || []).length).toBeGreaterThanOrEqual(5)
+      expect(html).toContain('आपके लिए चुनी किताबें')
+    })
+  }
+})
