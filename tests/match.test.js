@@ -67,6 +67,8 @@ describe('Phase 1 — Kundli Matching page shell', () => {
     expect(links[1].classList.contains('active')).toBe(true)
     expect(links[2].textContent).toBe('पंचांग')
     expect(links[2].getAttribute('href')).toBe('../panchang/')
+    // MyBapuji मुख्य-साइट पट्टी भी मौजूद
+    expect(document.querySelector('.mb-strip .brand').textContent).toContain('MyBapuji')
   })
 
   it('switches to English with the language toggle and back', () => {

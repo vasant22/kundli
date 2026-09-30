@@ -465,3 +465,10 @@ Hard requirements (summary):
   पर लागू)। 393 tests ✓; dist वही **2.99 MiB**।
 - 2026-09-30 (follow-up): chips थोड़े tight किए (padding .85rem, gap .4rem) + hidden ≤340px
   पर छोटी-सी बदलाव — अब **तीनों pages पर तीनों links एक ही लाइन** में (375px: 63+103+60px)।
+
+### 2026-09-30 — ऊपर MyBapuji (मुख्य साइट) की menu-पट्टी (user request)
+- User: "kundli पेज के top पर MyBapuji का home menu भी देना है, दिख नहीं रहा" → तीनों
+  पूरे पेजों (/, /match/, /panchang/) पर सबसे ऊपर **हरे रंग की पट्टी**: 🌿 MyBapuji.Com +
+  होम · किताबें · ब्लॉग · इलाज · वीडियो (सभी mybapuji.com पर; हिंदी/अंग्रेज़ी toggle साथ)।
+  नई फ़ाइल `src/mybapuji-strip.js`; `style.css` में `.mb-strip` (+ print में छिपी)।
+  widgets/mini pages पर नहीं — सिर्फ़ पूरे पेजों पर। **395 tests ✓** (2 नए + assertions)।

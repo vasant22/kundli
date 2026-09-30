@@ -204,6 +204,46 @@ body {
   display: none !important;
 }
 
+/* ---------- MyBapuji strip (मुख्य साइट का menu — सबसे ऊपर) ---------- */
+.mb-strip {
+  background: #0f5132;
+}
+
+.mb-strip .in {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 8px 1rem 9px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 18px;
+  row-gap: 2px;
+}
+
+.mb-strip .brand {
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+}
+
+.mb-strip .brand:hover {
+  text-decoration: underline;
+}
+
+.mb-strip .mb-link {
+  color: #d9eee2;
+  font-weight: 600;
+  font-size: 0.92rem;
+  text-decoration: none;
+  padding: 2px 0;
+}
+
+.mb-strip .mb-link:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
 /* ---------- header ---------- */
 .site-header {
   display: flex;
@@ -747,6 +787,7 @@ details.manual[open] summary {
 }
 
 @media print {
+  .mb-strip,
   .site-header,
   #kundli-form,
   #match-form,

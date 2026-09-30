@@ -110,6 +110,8 @@ describe('Phase 2 — input form', () => {
     expect($('#app h1').textContent).toBe('कुंडली')
     expect($('#get-btn').textContent).toBe('कुंडली बनाएँ')
     expect(document.documentElement.lang).toBe('hi')
+    expect(document.querySelector('.mb-strip .brand').textContent).toContain('MyBapuji')
+    expect(document.querySelectorAll('.mb-strip .mb-link').length).toBe(5)
     expect(monthLabels().length).toBe(12)
     expect(monthLabels()[0]).toBe('जनवरी')
     expect(monthLabels()[11]).toBe('दिसंबर')

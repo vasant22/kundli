@@ -8,6 +8,7 @@ import { validateBirth } from './birthvalidate.js'
 import { formatUtcOffset, parseUtcOffset, wallTimeToUtc } from './timeutil.js'
 import { computeKundli, initEphemeris, navamsaKundli, computeVimshottari } from './astro.js'
 import { buildNorthChart, buildSouthChart } from './charts.js'
+import { mybapujiStripHTML } from './mybapuji-strip.js'
 
 // Where the public source code lives — confirmed/adjusted when the GitHub
 // repo is created (deploy phase).
@@ -18,7 +19,7 @@ const app = document.querySelector('#app')
 // ---------------------------------------------------------------------------
 // App shell — header + form + output area
 // ---------------------------------------------------------------------------
-app.innerHTML = `
+app.innerHTML = mybapujiStripHTML() + `
   <div class="wrap">
     <header class="site-header">
       <div>

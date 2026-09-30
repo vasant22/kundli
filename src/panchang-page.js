@@ -19,6 +19,7 @@ import {
   t, setLang, getLang, tithiLabel, nakshatraLabel, yogaLabel, karanaLabel, vaaraLabel,
   lunarMonthLabel, pakshaLabel, rituLabel, rashiLabel, grahaLabel, MUHURAT_NAMES,
 } from './i18n.js'
+import { mybapujiStripHTML } from './mybapuji-strip.js'
 import './style.css'
 import './panchang.css'
 
@@ -238,7 +239,7 @@ export function bootPage() {
   }
   if (params.get('date')) state.date = params.get('date')
 
-  app.innerHTML = `
+  app.innerHTML = mybapujiStripHTML() + `
     <div class="wrap">
       <header class="site-header">
         <div>

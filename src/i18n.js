@@ -13,6 +13,13 @@ const STRINGS = {
     'nav.match': 'कुंडली मिलान',
     'nav.panchang': 'पंचांग',
 
+    // मुख्य साइट (MyBapuji) की ऊपरी पट्टी
+    'mb.home': 'होम',
+    'mb.books': 'किताबें',
+    'mb.blog': 'ब्लॉग',
+    'mb.treatment': 'इलाज',
+    'mb.video': 'वीडियो',
+
     // कुंडली मिलान (Kundli Matching) — नया पेज /match/
     'match.docTitle': 'कुंडली मिलान — अष्टकूट गुण मिलान',
     'match.title': 'कुंडली मिलान',
@@ -176,6 +183,13 @@ const STRINGS = {
     'nav.home': 'Kundli',
     'nav.match': 'Kundli Matching',
     'nav.panchang': 'Panchang',
+
+    // MyBapuji main-site strip
+    'mb.home': 'Home',
+    'mb.books': 'Books',
+    'mb.blog': 'Blog',
+    'mb.treatment': 'Treatment',
+    'mb.video': 'Videos',
 
     // Kundli Matching — the new /match/ page
     'match.docTitle': 'Kundli Matching — Ashtakoot Guna Milan',

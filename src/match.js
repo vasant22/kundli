@@ -15,6 +15,7 @@ import { computeKundli, initEphemeris } from './astro.js'
 import { computeAshtakoot } from './ashtakoot.js'
 import { checkMangalDosha, mangalPairNotes } from './mangaldosha.js'
 import { buildScorecardSvg } from './matchcard.js'
+import { mybapujiStripHTML } from './mybapuji-strip.js'
 
 // Where the public source code lives (same repo as the main page).
 const SOURCE_URL = 'https://github.com/vasant22/kundli'
@@ -119,7 +120,7 @@ function personFieldsHtml(p) {
 // ---------------------------------------------------------------------------
 // Page shell
 // ---------------------------------------------------------------------------
-app.innerHTML = `
+app.innerHTML = mybapujiStripHTML() + `
   <div class="wrap">
     <header class="site-header">
       <div>
