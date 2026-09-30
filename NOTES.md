@@ -472,3 +472,18 @@ Hard requirements (summary):
   होम · किताबें · ब्लॉग · इलाज · वीडियो (सभी mybapuji.com पर; हिंदी/अंग्रेज़ी toggle साथ)।
   नई फ़ाइल `src/mybapuji-strip.js`; `style.css` में `.mb-strip` (+ print में छिपी)।
   widgets/mini pages पर नहीं — सिर्फ़ पूरे पेजों पर। **395 tests ✓** (2 नए + assertions)।
+
+### 2026-09-30 — SEO + Google Search Console (कुंडली · मिलान · पंचांग — user request)
+- User: नई links (कुंडली/मिलान/पंचांग) Google में rank करें; "free" keyword ज़रूर; GSC में submit।
+- SEO changes (commit `2a76a7e`, **403 tests ✓**, CI success):
+  - Titles अब "Free …" → Free कुंडली बनाएं / Free कुंडली मिलान (36 गुण अष्टकूट) / Free पंचांग (Aaj Ka Panchang)।
+  - Meta description + **keywords** (free…), canonical, Open Graph, JSON-LD (**WebApplication + FAQPage**) — तीनों pages।
+  - पेज के अंत में स्थिर **FAQ/SEO भाग** (JS बंद हो तो भी दिखता है; `.seo-box`) + internal-link chips; H1 के नीचे **"✨ 100% Free …" badge** (i18n keys: `app.badge`/`match.badge`/`panchang.badge`)।
+  - `public/robots.txt` + `public/sitemap.xml` (3 URLs) — live दोनों 200; नया `tests/seo.test.js` (8 tests)।
+  - dist ≈ 3.1 MiB (+~25 KB HTML; gzip असर बहुत छोटा)।
+- Keyword research (जो pages rank कर रहे हैं → खोजशब्द): कुंडली = free kundli / जन्म कुंडली / जन्मपत्री / कुंडली बनाएं (AstroSage, Prokerala, AstroTalk, mpanchang…); मिलान = कुंडली मिलान / गुण मिलान / 36 गुण / अष्टकूट / मंगल दोष / नाम से मिलान (AstroSage, Shaadi, Prokerala, AstroTalk…); पंचांग = आज का पंचांग / आज की तिथि / राहु काल / शुभ मुहूर्त / हिन्दू पंचांग (Drik Panchang, Prokerala, onlinejyotish…)।
+- GSC (user खुद logged-in थे; कुछ नहीं पूछना पड़ा):
+  - नई property **https://kundli.mybapuji.com/** जोड़ी → **auto-verified** ("Domain name provider" से — parent domain property की बदौलत)।
+  - Sitemap `https://kundli.mybapuji.com/sitemap.xml` submit → **Status: Success · 3 discovered pages** (domain property की सूची में भी दिखता है)।
+  - तीनों URLs: URL Inspection → **Request indexing** ("priority crawl queue")। फ़िलहाल स्थिति: "Discovered – currently not indexed" (पहला crawl आने वाले दिनों में)।
+- आगे: 2–4 हफ़्तों में GSC queries देखें; OG image (share preview) नहीं बनाया; mybapuji menu anchors अभी "कुंडली/जन्म पत्री/…" (चाहें तो "Free …" कर सकते हैं — user से पूछकर)।
