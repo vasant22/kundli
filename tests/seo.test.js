@@ -47,6 +47,9 @@ describe('SEO essentials — कुंडली / मिलान / पंचा
       expect(html).toMatch(/class="seo-info"/)
       expect(html).toMatch(/Free/)
       expect(html).toMatch(/seo-links/)
+      expect((html.match(/<details class="faq-item">/g) || []).length).toBeGreaterThanOrEqual(3)
+      expect((html.match(/<summary>/g) || []).length).toBeGreaterThanOrEqual(3)
+      expect(html.indexOf('aria-label="और मुफ़्त टूल"')).toBeGreaterThan(html.lastIndexOf('</details>'))
     })
   }
 })

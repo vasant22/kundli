@@ -495,3 +495,9 @@ Hard requirements (summary):
   - "Sponsored — आपके लिए चुनी किताबें" box — 6 Amazon search links (tag krishna220af-21; rel="nofollow sponsored noopener"; ज्योतिष/धार्मिक/मंत्र-तंत्र/वेदांत/प्रेरक/योग)।
   - CSS `.book-grid/.book-card/.sponsored-tag/.seo-note`; print में seo-info साथ छिपता है। tests +3 → **406 ✓**; dist ≈ 3.13 MiB।
 - ⚠️ Amazon links static (rotation वाला mu-plugin यहाँ नहीं) — बदलने हों तो तीनों HTML में सीधे edit (tag रहने दें)।
+
+### 2026-09-30 — FAQ accordion (+/−) + tool links बाहर (user request)
+- तीनों पेजों का FAQ अब `<details class="faq-item">` accordion — प्रश्न ऊपर, "+" दबाने पर उत्तर (खुलने पर "−")।
+- "और मुफ़्त टूल" वाले दोनों chips अब FAQ box से बाहर — हमेशा दिखते हैं (कभी hide नहीं)।
+- CSS: `.faq-item/summary/::after`; `.seo-links` generic (बॉक्स-बाहर भी चलेगा); `.seo-info > * + *` spacing।
+- tests 406 ✓; dist check done।

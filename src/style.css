@@ -939,14 +939,14 @@ details.manual[open] summary {
   font-size: 0.95rem;
 }
 
-.seo-box .seo-links {
+.seo-links {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
   margin-top: 1rem;
 }
 
-.seo-box .seo-links a {
+.seo-links a {
   padding: 0.42rem 0.85rem;
   background: var(--saffron-soft);
   border: 1px solid var(--border);
@@ -957,7 +957,7 @@ details.manual[open] summary {
   font-size: 0.9rem;
 }
 
-.seo-box .seo-links a:hover {
+.seo-links a:hover {
   background: #ffe3c7;
   color: #8a3f04;
 }
@@ -971,7 +971,7 @@ details.manual[open] summary {
 }
 
 /* ---------- किताबें: mybapuji links + Sponsored strip — 30 Sep 2026 (user request) ---------- */
-.seo-info .seo-box + .seo-box {
+.seo-info > * + * {
   margin-top: 1rem;
 }
 
@@ -1048,4 +1048,61 @@ details.manual[open] summary {
   .book-grid-amz {
     grid-template-columns: repeat(2, 1fr);
   }
+}
+
+/* ---------- FAQ accordion (+/−) — 30 Sep 2026 (user request) ---------- */
+.faq-item + .faq-item {
+  border-top: 1px solid var(--border);
+}
+
+.faq-item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.6rem 0;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--ink);
+  cursor: pointer;
+  list-style: none;
+}
+
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-item summary:hover {
+  color: var(--saffron-dark);
+}
+
+.faq-item summary:focus-visible {
+  outline: 2px solid var(--saffron);
+  outline-offset: 2px;
+}
+
+.faq-item summary::after {
+  content: '+';
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.45rem;
+  height: 1.45rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--saffron-soft);
+  color: var(--saffron-dark);
+  font-weight: 700;
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+.faq-item[open] summary::after {
+  content: '−';
+}
+
+.faq-item p {
+  margin: 0 0 0.75rem;
+  padding-right: 2rem;
 }
