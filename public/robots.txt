@@ -1,0 +1,6 @@
+# kundli.mybapuji.com — free Kundli / Kundli Matching / Panchang tools (MyBapuji)
+# Widget pages are intentionally allowed to be crawled (they carry noindex meta on purpose).
+User-agent: *
+Allow: /
+
+Sitemap: https://kundli.mybapuji.com/sitemap.xml

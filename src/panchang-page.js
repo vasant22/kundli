@@ -245,6 +245,7 @@ export function bootPage() {
         <div>
           <h1 data-i18n="panchang.title"></h1>
           <p class="sub" data-i18n="panchang.subtitle"></p>
+          <p class="free-badge" data-i18n="panchang.badge"></p>
           <nav class="site-nav">
             <a href="../" data-i18n="nav.home"></a>
             <a href="../match/" data-i18n="nav.match"></a>

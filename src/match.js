@@ -126,6 +126,7 @@ app.innerHTML = mybapujiStripHTML() + `
       <div>
         <h1 data-i18n="match.title"></h1>
         <p class="sub" data-i18n="match.subtitle"></p>
+        <p class="free-badge" data-i18n="match.badge"></p>
         <nav class="site-nav">
           <a href="../" data-i18n="nav.home"></a>
           <a href="./" class="active" data-i18n="nav.match"></a>

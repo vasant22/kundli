@@ -6,14 +6,116 @@
     <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png" />
     <link rel="icon" type="image/png" sizes="192x192" href="../favicon.png" />
     <meta name="theme-color" content="#e8730c" />
+    <!-- SEO: Google के लिए मुख्य जानकारी — नई सामग्री जोड़ते समय canonical + sitemap.xml भी अपडेट करें -->
     <meta
       name="description"
-      content="आज का पंचांग / Today's Panchang — तिथि, नक्षत्र, योग, करण, संवत्, मुहूर्त, चंद्रबल-ताराबल, सूर्योदय का लग्न चार्ट और ग्रह स्थिति। दैनिक वैदिक पंचांग (हिंदी + English)."
+      content="आज का पंचांग मुफ़्त देखें — तिथि, नक्षत्र, योग, करण, सूर्योदय-सूर्यास्त, राहु काल, शुभ मुहूर्त, चंद्रबल-ताराबल और संवत्। अपने शहर व तारीख़ के अनुसार हिंदी में दैनिक पंचांग (100% Free)।"
     />
-    <title>आज का पंचांग / Today's Panchang</title>
+    <meta
+      name="keywords"
+      content="free पंचांग, आज का पंचांग, आज की तिथि, राहु काल आज, शुभ मुहूर्त, हिन्दू पंचांग, दैनिक पंचांग, चंद्रबल ताराबल, aaj ka panchang, panchang in hindi, tithi today, panchang today"
+    />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="canonical" href="https://kundli.mybapuji.com/panchang/" />
+    <meta property="og:site_name" content="MyBapuji" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://kundli.mybapuji.com/panchang/" />
+    <meta property="og:title" content="Free पंचांग — आज का पंचांग (Aaj Ka Panchang Today)" />
+    <meta
+      property="og:description"
+      content="तिथि, नक्षत्र, राहु काल, शुभ मुहूर्त, चंद्रबल-ताराबल — आज का पंचांग अपने शहर के लिए, हिंदी में।"
+    />
+    <meta property="og:locale" content="hi_IN" />
+    <title>Free पंचांग — आज का पंचांग (Aaj Ka Panchang Today in Hindi)</title>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebApplication",
+            "name": "Free पंचांग — आज का पंचांग (Aaj Ka Panchang)",
+            "alternateName": "Today's Panchang in Hindi — Tithi, Nakshatra, Rahu Kaal, Muhurat",
+            "url": "https://kundli.mybapuji.com/panchang/",
+            "applicationCategory": "LifestyleApplication",
+            "operatingSystem": "Web browser (mobile & desktop)",
+            "browserRequirements": "Requires JavaScript",
+            "inLanguage": ["hi-IN", "en"],
+            "isAccessibleForFree": true,
+            "keywords": "free पंचांग, आज का पंचांग, आज की तिथि, राहु काल, शुभ मुहूर्त, aaj ka panchang, panchang in hindi",
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+            "publisher": { "@type": "Organization", "name": "MyBapuji", "url": "https://mybapuji.com/" }
+          },
+          {
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "आज का पंचांग कैसे देखें?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "पेज खुलते ही आज का पंचांग दिखता है — तिथि, नक्षत्र, योग, करण, सूर्योदय-सूर्यास्त, राहु काल और मुहूर्त सहित। शहर खोजकर और तारीख़ बदलकर किसी भी दिन का पंचांग देखें।"
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "पंचांग में क्या-क्या होता है?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "तिथि, वार, नक्षत्र, योग, करण, पक्ष-मास, संवत्, ऋतु, सूर्योदय-सूर्यास्त, चंद्रोदय-चंद्रास्त, अशुभ समय (राहु काल, यमगंड, गुलिक), शुभ मुहूर्त, दिशा शूल, चंद्रबल-ताराबल और ग्रह स्थिति।"
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "राहु काल क्या है?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "राहु काल दिन का अशुभ समय है; शुभ काम टालने की सलाह दी जाती है। आज का राहु काल समय सहित पंचांग में साफ़ दिखता है।"
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "क्या पंचांग मुफ़्त और हिंदी में है?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "हाँ — पूरा पंचांग हिंदी और English में, 100% Free, किसी भी शहर और तारीख़ के लिए।"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="app"></div>
+    <!-- SEO जानकारी-भाग: Google और नए उपयोगकर्ताओं के लिए (JS के बिना भी दिखता है) -->
+    <section class="seo-info" lang="hi" aria-label="पंचांग के बारे में जानकारी">
+      <div class="seo-box">
+        <h2>Free पंचांग — आज का पंचांग (Aaj Ka Panchang in Hindi)</h2>
+        <p>
+          आज का पूरा पंचांग मुफ़्त में देखें — तिथि, वार, नक्षत्र, योग, करण, पक्ष-मास, संवत् और ऋतु,
+          सूर्योदय-सूर्यास्त व चंद्रोदय-चंद्रास्त, अशुभ समय (राहु काल, यमगंड, गुलिक), शुभ मुहूर्त (अभिजित,
+          ब्रह्म मुहूर्त आदि), दिशा शूल, चंद्रबल-ताराबल और ग्रह स्थिति। डिफ़ॉल्ट रूप से मुंबई — पर शहर खोजकर
+          अपना शहर और कोई भी तारीख़ चुन सकते हैं।
+        </p>
+        <h3>पंचांग में क्या-क्या होता है?</h3>
+        <p>
+          पंचांग के पाँच मुख्य अंग हैं — तिथि, वार, नक्षत्र, योग और करण। इसके साथ मुहूर्त, संवत्, ऋतु और
+          ग्रहों की स्थिति भी दैनिक पंचांग का हिस्सा हैं।
+        </p>
+        <h3>राहु काल क्या है?</h3>
+        <p>
+          हर दिन का एक अशुभ समय होता है — राहु काल (और यमगंड, गुलिक काल)। शुभ कार्य, खरीद-फरोख्त और नई
+          शुरुआत इस समय टालने की सलाह दी जाती है। आज का राहु काल ऊपर समय सहित दिखता है।
+        </p>
+        <h3>क्या पंचांग हिंदी में और मुफ़्त मिलेगा?</h3>
+        <p>हाँ — पूरा पंचांग हिंदी (और English) में, 100% Free, किसी भी शहर और तारीख़ के लिए।</p>
+        <nav class="seo-links" aria-label="और मुफ़्त टूल">
+          <a href="../">Free कुंडली बनाएं</a>
+          <a href="../match/">Free कुंडली मिलान</a>
+        </nav>
+      </div>
+    </section>
     <script type="module" src="/src/panchang-page.js"></script>
   </body>
 </html>

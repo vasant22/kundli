@@ -12,14 +12,125 @@
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
     <link rel="icon" type="image/png" sizes="192x192" href="favicon.png" />
     <meta name="theme-color" content="#e8730c" />
+    <!-- SEO: Google के लिए मुख्य जानकारी — नई सामग्री जोड़ते समय canonical + sitemap.xml भी अपडेट करें -->
     <meta
       name="description"
-      content="Free Vedic Kundli / जन्मपत्री — North & South Indian charts, Hindi & English. Calculated in your browser."
+      content="Free कुंडली बनाएं — जन्म तिथि, समय और जगह से तुरंत जन्मपत्री: लग्न, राशि, नक्षत्र, ग्रह स्थिति, उत्तर-दक्षिण भारतीय चार्ट और PNG डाउनलोड। 100% मुफ़्त, बिना साइन-अप।"
     />
-    <title>कुंडली / Kundli — जन्मपत्री</title>
+    <meta
+      name="keywords"
+      content="free कुंडली, कुंडली बनाएं, जन्म कुंडली, जन्मपत्री, जन्मपत्री बनाएं, ऑनलाइन कुंडली, कुंडली चार्ट, लग्न कुंडली, free kundli, janam kundli in hindi, kundli online in hindi, free janam kundli"
+    />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="canonical" href="https://kundli.mybapuji.com/" />
+    <meta property="og:site_name" content="MyBapuji" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://kundli.mybapuji.com/" />
+    <meta property="og:title" content="Free कुंडली बनाएं — जन्मपत्री / Janam Kundli Online" />
+    <meta
+      property="og:description"
+      content="Free कुंडली / जन्मपत्री — लग्न, राशि, नक्षत्र, ग्रह स्थिति, उत्तर-दक्षिण चार्ट। 100% मुफ़्त, बिना साइन-अप।"
+    />
+    <meta property="og:locale" content="hi_IN" />
+    <title>Free कुंडली बनाएं — जन्मपत्री / Janam Kundli Online</title>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebApplication",
+            "name": "Free कुंडली / जन्मपत्री — ऑनलाइन कुंडली (Janam Kundli)",
+            "alternateName": "Free Kundli / Janam Kundli Online in Hindi",
+            "url": "https://kundli.mybapuji.com/",
+            "applicationCategory": "LifestyleApplication",
+            "operatingSystem": "Web browser (mobile & desktop)",
+            "browserRequirements": "Requires JavaScript",
+            "inLanguage": ["hi-IN", "en"],
+            "isAccessibleForFree": true,
+            "keywords": "free कुंडली, कुंडली बनाएं, जन्म कुंडली, जन्मपत्री, free janam kundli, kundli online in hindi",
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+            "publisher": { "@type": "Organization", "name": "MyBapuji", "url": "https://mybapuji.com/" }
+          },
+          {
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Free कुंडली कैसे बनाएं?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "जन्म तिथि, जन्म समय और जन्म स्थान भरें और 'कुंडली बनाएं' दबाएँ — लग्न, राशि, नक्षत्र, ग्रह स्थिति और उत्तर/दक्षिण भारतीय चार्ट तुरंत दिखते हैं। कोई साइन-अप नहीं।"
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "क्या यह कुंडली टूल मुफ़्त है?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "हाँ — 100% Free। कोई शुल्क या लॉगिन नहीं; जितनी चाहें कुंडलियाँ बनाएँ।"
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "जन्मपत्री में क्या-क्या मिलता है?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "लग्न व राशि, नक्षत्र-चरण, नौ ग्रहों की स्थिति व भाव, वक्री ग्रह, उत्तर/दक्षिण भारतीय चार्ट और विस्तृत ग्रह तालिका — PNG डाउनलोड के साथ।"
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "मेरा जन्म-विवरण कहाँ जाता है?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "कहीं नहीं — पूरी गणना आपके ब्राउज़र में होती है; जन्म-विवरण सेव या कहीं भेजा नहीं जाता।"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="app"></div>
+    <!-- SEO जानकारी-भाग: Google और नए उपयोगकर्ताओं के लिए (JS के बिना भी दिखता है) -->
+    <section class="seo-info" lang="hi" aria-label="कुंडली के बारे में जानकारी">
+      <div class="seo-box">
+        <h2>Free कुंडली बनाएं — ऑनलाइन जन्मपत्री (Janam Kundli)</h2>
+        <p>
+          यह मुफ़्त कुंडली टूल आपकी जन्म तिथि, जन्म समय और जन्म स्थान से तुरंत जन्मपत्री बनाता है — कोई
+          साइन-अप नहीं, कोई शुल्क नहीं। कुछ ही पलों में आप देख सकते हैं: लग्न और राशि, नक्षत्र व चरण,
+          सभी ग्रहों की स्थिति (भाव, अंश, वक्री/मार्गी), अयनांश, और उत्तर भारतीय व दक्षिण भारतीय दोनों
+          चार्ट। गणना Swiss Ephemeris से लाहिरी अयनांश में होती है और पूरी तरह आपके ब्राउज़र में चलती है —
+          जन्म-विवरण कहीं सेव नहीं होता।
+        </p>
+        <h3>Free कुंडली बनाने के लिए क्या चाहिए?</h3>
+        <p>
+          सिर्फ़ तीन चीज़ें: जन्म तारीख़, जन्म का समय और जन्म का शहर। “कुंडली बनाएं” दबाते ही परिणाम सामने
+          होता है। चाहें तो कुंडली चार्ट PNG में डाउनलोड करें या प्रिंट करें।
+        </p>
+        <h3>क्या यह जन्मपत्री टूल मुफ़्त है?</h3>
+        <p>
+          हाँ — 100% Free। न शुल्क, न लॉगिन। आप जितनी बार चाहें, उतनी कुंडलियाँ बना सकते हैं — किसी भी
+          जन्म तिथि, समय और दुनिया में किसी भी जगह के लिए।
+        </p>
+        <h3>जन्मपत्री में क्या-क्या मिलता है?</h3>
+        <p>
+          लग्न व राशि, नक्षत्र-चरण, नौ ग्रहों की स्थिति और भाव, वक्री ग्रह, अयनांश, उत्तर/दक्षिण भारतीय
+          चार्ट और विस्तृत ग्रह तालिका — साथ में PNG डाउनलोड।
+        </p>
+        <h3>मेरा जन्म-विवरण कहाँ जाता है?</h3>
+        <p>
+          कहीं नहीं — पूरी गणना आपके ब्राउज़र (मोबाइल/कंप्यूटर) में होती है; जन्म-विवरण सर्वर पर सेव या
+          भेजा नहीं जाता।
+        </p>
+        <nav class="seo-links" aria-label="और मुफ़्त टूल">
+          <a href="./match/">Free कुंडली मिलान — 36 गुण</a>
+          <a href="./panchang/">Free आज का पंचांग</a>
+        </nav>
+      </div>
+    </section>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

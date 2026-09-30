@@ -891,3 +891,81 @@ details.manual[open] summary {
     break-inside: avoid;
   }
 }
+
+/* ---------- Free badge (H1 के नीचे छोटी पट्टी) — 30 Sep 2026 ---------- */
+.free-badge {
+  display: inline-block;
+  margin: 0.4rem 0 0;
+  padding: 0.2rem 0.65rem;
+  background: var(--saffron-soft);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--saffron-dark);
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+/* ---------- SEO जानकारी-भाग (पेज के अंत में; Google के लिए मुख्य सामग्री) ---------- */
+.seo-info {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 1rem 3rem;
+}
+
+.seo-box {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.2rem 1.1rem 1.4rem;
+  box-shadow: 0 1px 3px rgba(90, 50, 10, 0.06);
+}
+
+.seo-box h2 {
+  margin: 0 0 0.6rem;
+  font-size: 1.15rem;
+  color: var(--saffron-dark);
+}
+
+.seo-box h3 {
+  margin: 1.1rem 0 0.25rem;
+  font-size: 0.98rem;
+  color: var(--ink);
+}
+
+.seo-box p {
+  margin: 0.3rem 0;
+  color: var(--ink);
+  font-size: 0.95rem;
+}
+
+.seo-box .seo-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.seo-box .seo-links a {
+  padding: 0.42rem 0.85rem;
+  background: var(--saffron-soft);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--saffron-dark);
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.seo-box .seo-links a:hover {
+  background: #ffe3c7;
+  color: #8a3f04;
+}
+
+@media print {
+  /* FAQ/SEO भाग और badge PDF में न चलें — PDF साफ़ रहे */
+  .seo-info,
+  .free-badge {
+    display: none !important;
+  }
+}
