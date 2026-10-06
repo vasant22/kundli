@@ -1,11 +1,10 @@
-# BNN अयनांश calibration — नतीजे (2026-10-07)
+# BNN अयनांश + भावचलित calibration — नतीजे (2026-10-07)
 
-Reference चार्ट: जन्म **22-01-1980, 20:30, बैटूल (म.प्र.)** — guide भाग 5 के मान दोहराने का लक्ष्य (1 कला = 1 arcmin के भीतर)।
-Scripts: `scripts/bnn-calib/` · दोबारा चलाने के लिए: `node scripts/bnn-calib/ayanamsa-final.mjs`
+Reference चार्ट: जन्म **22-01-1980, 20:30, बैतूल** (user का अपना chart — software Ref No 58)।
+लक्ष्य: guide भाग 5 के सारे मान **1 कला (arcminute) के भीतर**।
+Scripts: `scripts/bnn-calib/` · दोबारा चलाएँ: `node scripts/bnn-calib/ayanamsa-final.mjs` (candidates) और `node scripts/bnn-calib/ayanamsa-confirm.mjs` (final check)।
 
 ## 1) KP / Krishnamurti candidates की जाँच
-
-(20:30, बैटूल 21°54′N 77°54′E पर — बिना input सुधार के, ताकि candidates की छँटाई हो सके)
 
 | sweph mode | नाम (package strings से) | value (22-01-1980) | ग्रहों का max अंतर | नतीजा |
 |---|---|---|---|---|
@@ -16,62 +15,70 @@ Scripts: `scripts/bnn-calib/` · दोबारा चलाने के ल�
 | 46 | Lahiri ICRC | 23°34′41″ | ~1.2′ | ~ पास |
 | 1 | Lahiri | 23°34′43″ | ~1.2′ | ~ पास |
 
-→ reference चार्ट का "KP New" **व्यवहार में mode 44 (23°35′06″)** जैसा है; Swiss Ephemeris  के Krishnamurti modes (5 / 45) मेल नहीं खाते।
+→ reference चार्ट का "KP New" **व्यवहार में mode 44 (23°35′06″)** जैसा है; Swiss Ephemeris के Krishnamurti modes (5 / 45) मेल नहीं खाते।
 
-## 2) चुना गया setting
+## 2) चुने गए settings
 
-**Ayanamsa = sweph sidereal mode 44 — value 23°35′06″ (22-01-1980)।**
-Code में: `src/bnn/kp.js` → `BNN_SETTINGS.ayanamsaMode = 44` (बदलना हो तो एक लाइन)।
+- **Ayanamsa = mode 44, value 23°35′06″** — `src/bnn/kp.js` → `BNN_SETTINGS.ayanamsaMode = 44`
+- **भाव-संधियाँ = UT + ΔT** — `BNN_SETTINGS.housesAtDeltaT = true` (नीचे §3)
 
-## 3) ⚠️ ज़रूरी नोट — input-fit (user/guru से confirm करना)
+## 3) ✅ पुष्टि — user के screenshots से (07-10-2026)
 
-दिए गए inputs (20:30 बजे · 21°54′N) पर ग्रह तो ≤1′ में मिलते हैं, पर **संधियाँ ~20–35′ दूर** रहती हैं। पूरा मिलान इस "reconstruction" पर मिलता है:
+पुराने software की details screen से: Betul **latitude 21.4833 / longitude 78.25**, जन्म **20:30:00**, GMT 5.5।
+इन exact inputs पर बचा हुआ अंतर सिर्फ़ ~50 सेकंड था — जो ठीक **ΔT(1980) = 50.6s** है। यानी
+**पुराना software भाव-संधियाँ UT + ΔT पर बनाता है** (चार्ट मिलान के लिए हमने भी वही settings लगाई)।
 
-- **अक्षांश ≈ 21°29′** (21°54′ की जगह), और
-- **जन्म समय ≈ 20:32:13 IST** (+2 मिनट 13 सेकंड)
+अंतिम मिलान (ΔT लगाकर, delta-t table):
 
-इन दोनों पर:
+- सभी 12 संधियाँ: **≤ 0.7′**
+- सभी ग्रह: **≤ 0.9′** (सूर्य +0.87′, चंद्र +0.73′, बाक़ी ≤0.82′)
 
-- सभी **12 संधियाँ ≤ 0.35′**
-- **ग्रह ≤ 1′(सूर्य 0.93′)**, चंद्र 1.55′ (reference की मिनट-राउंडिंग के भीतर)
-- चेक-मान बिल्कुल सही: **नक्षत्र उत्तरा भाद्रपद-3 · शुक्ल षष्ठी · शिव योग** ✓
+(रास्ता: पहले "+2m13s + lat≈21°29′" वाला सुराग़ निकला था — अब साफ़ है कि वह = coordinates
+(78.25 बनाम अनुमानित 77.90) + ΔT का जोड़ था।)
 
-**पूछना है:** (क) पुराने software में बैटूल की coords क्या दर्ज थीं? (ख) जन्म समय 20:30 है या ~20:32?
-(ग) ज़्यादा कुंडलियों के screenshots मिलते ही calibration दोबारा चलाकर यह पक्का कर लेंगे।)
-
-## 4) मिलान तालिका (चुने हुए settings + input-fit पर)
-
-### भाव-संधियाँ (संगणना vs reference · अंतर)
+### भाव-संधियाँ (ΔT सहित · संगणना vs reference)
 
 | संधि | संगणना | अंतर |
 |---|---|---|
-| 1 | सिंह 12°52.67′ | −0.33′ |
-| 2 | कन्या 10°54.14′ | +0.14′ |
-| 3 | तुला 11°31.11′ | +0.11′ |
-| 4 | वृश्चिक 12°51.70′ | −0.30′ |
-| 5 | धनु 13°36.35′ | +0.35′ |
-| 6 | मकर 13°38.04′ | +0.04′ |
+| 1 | सिंह 12°53.01′ | +0.01′ |
+| 2 | कन्या 10°54.45′ | +0.45′ |
+| 3 | तुला 11°31.41′ | +0.41′ |
+| 4 | वृश्चिक 12°52.01′ | +0.01′ |
+| 5 | धनु 13°36.69′ | +0.69′ |
+| 6 | मकर 13°38.39′ | +0.39′ |
 | 7–12 | (1–6 के दर्पण) | वही |
 
-### ग्रह
+### ग्रह (ΔT सहित)
 
 | ग्रह | संगणना | अंतर |
 |---|---|---|
-| सूर्य | मकर 8°09.93′ | +0.93′ |
-| चंद्र | मीन 12°31.55′ | +1.55′ |
+| सूर्य | मकर 8°09.87′ | +0.87′ |
+| चंद्र | मीन 12°30.73′ | +0.73′ |
 | मंगल# | सिंह 21°30.10′ | +0.10′ |
-| बुध | मकर 8°59.55′ | +0.55′ |
+| बुध | मकर 8°59.46′ | +0.46′ |
 | गुरु# | सिंह 15°30.44′ | +0.44′ |
-| शुक्र | कुंभ 14°18.82′ | +0.82′ |
+| शुक्र | कुंभ 14°18.76′ | +0.76′ |
 | शनि# | कन्या 3°12.82′ | +0.82′ |
-| राहु | सिंह 7°10.09′ | +0.09′ |
-| केतु | कुंभ 7°10.09′ | +0.09′ |
+| राहु | सिंह 7°10.10′ | +0.10′ |
+| केतु | कुंभ 7°10.10′ | +0.10′ |
 
-(सभी अंतर सकारात्मक — यह input-fit की बारीक़ अनिश्चितता की ओर संकेत करता है; असली मानों की पुष्टि §3 से करें।)
+तिथि/योग/नक्षत्र-पद जाँच: **उत्तरा भाद्रपद-3 · शुक्ल षष्ठी · शिव योग** ✓
 
-## 5) scripts
+## 4) scripts
 
-- `ayanamsa-check.mjs` — हर candidate की मुख्य तुलना (screening)
-- `ayanamsa-fit.mjs` — house-system × समय × latitude का shape-सर्च
-- `ayanamsa-diag.mjs` / `-diag2.mjs` — गहरी जाँच (dt tables, latitude scan)
-- `ayanamsa-final.mjs` — final: candidates सूची + fine fit + पूरी तालिका
+- `ayanamsa-check.mjs` — हर candidate की screening comparison
+- `ayanamsa-fit.mjs` / `-diag.mjs` / `-diag2.mjs` — house-system × समय × latitude की खोज
+- `ayanamsa-final.mjs` — candidates सूची + fine fit + पूरी तालिका
+- **`ayanamsa-confirm.mjs`** — exact coords पर final verification (§3 की तालिका)
+
+## 5) UI संदर्भ (old software के screenshots — Phase 2b+ के लिए)
+
+- **Left (चार्ट):** दक्षिण-शैली grid; हर राशि cell में लाल "NN dd.mm" (भाव-संधि नंबर + डिग्री.मिनट,
+  जैसे "09 11.31") और ग्रह "MOO 12.30" (वक्री पर #); सिंह cell में "ASC 12.53"; grid के बाहर चारों ओर
+  गोचर के ग्रह; top-left box में **"MERCURY<>SATURN"** label; नीचे Back/Save बटन।
+- **Centre panel** (grid के बीच): नाम / जगह / तारीख़+वार / AGE Y-M-D / नक्षत्र-पद / तिथि / योग /
+  "VEN DHASA: …<>…" / "MER BHUKTHI: …<>…"।
+- **Right side:** tables — BHAVA COMBINATION (1-5-9, 1-5-7-9, BRSSS, SPECIAL),
+  PLANET COMBINATION (1-5-7-9, 1-5-9, SPECIAL, PRSSS, ASTRONOMY), DHAṢĀ/BHUKTHI/ANDHIRAM।
+- Screenshots user के पास; नाम-सहित private ब्यौरा होने से **repo में नहीं रखे** — local copy:
+  `.openclaw/tmp/bnn-ref/` (outer face + Betul coords screen)।

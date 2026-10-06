@@ -1,10 +1,13 @@
 // kp.js — KP New ayanamsa + Bhava Chalit for the BNN chart (Phase 2).
 //
-// Ayanamsa (calibrated 2026-10-07, see docs/bnn-calib-findings.md):
-// sweph sidereal mode 44 — its name string inside the wasm package is
-// "Lahiri VP285"; its value at the reference chart (22-01-1980) is
-// 23°35'06". It is the only built-in mode that reproduces the reference
-// within ~1' (the KP/Krishnamurti built-ins are 5–7' away).
+// Calibration (2026-10-07, see docs/bnn-calib-findings.md):
+//  • Ayanamsa = sweph sidereal mode 44 — name string in the wasm package:
+//    "Lahiri VP285"; value at the reference chart (22-01-1980): 23°35'06".
+//    Only built-in that reproduces the reference within ~1′ (the
+//    KP/Krishnamurti built-ins are 5–7′ away).
+//  • Houses: the old software's bhava cusps equal Placidus computed at
+//    UT + ΔT (+50.6 s for 1980 — matches ΔT exactly). See BNN_SETTINGS
+//    .housesAtDeltaT. With both, every reference value is within ~0.9′.
 //
 // Guide refs: भाग 2 "भावचलित" + R9 — Placidus cusps with this ayanamsa;
 // house n runs from cusp n to cusp n+1; the drawn chart stays the Lagna
@@ -14,8 +17,10 @@
 import { describeLongitude, RASHI_LORDS } from '../astro.js'
 
 export const BNN_SETTINGS = Object.freeze({
-  // swisseph sidereal-mode id — reference-matched (docs/bnn-calib-findings.md §2).
+  // swisseph sidereal-mode id — reference-matched (docs/bnn-calib-findings.md §1–2).
   ayanamsaMode: 44,
+  // The old software's cusps = Placidus at UT + ΔT (findings §3).
+  housesAtDeltaT: true,
 })
 
 // The grahas, same order as the main app (Rahu/Ketu appended around the node).
@@ -51,9 +56,10 @@ export function computeBhavaChalit(swe, utc, place) {
   const jd = swe.julday(utc.year, utc.month, utc.day, hourDecimal)
   const flags = swe.SEFLG_SWIEPH | swe.SEFLG_SIDEREAL | swe.SEFLG_SPEED
 
-  // Placidus cusps (сidereal). Near the poles this can fail — the caller
-  // reports it; BNN charts are always cast for normal latitudes.
-  const h = swe.houses_ex(jd, swe.SEFLG_SWIEPH | swe.SEFLG_SIDEREAL, place.latitude, place.longitude, 'P')
+  // Placidus cusps (sidereal). The old software's cusps sit at UT + ΔT
+  // (+50.6 s at 1980) — reproduce that (docs/bnn-calib-findings.md §3).
+  const jdHouses = BNN_SETTINGS.housesAtDeltaT ? jd + swe.deltat(jd) : jd
+  const h = swe.houses_ex(jdHouses, swe.SEFLG_SWIEPH | swe.SEFLG_SIDEREAL, place.latitude, place.longitude, 'P')
   const cusps = []
   for (let i = 1; i <= 12; i++) {
     cusps.push({

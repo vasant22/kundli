@@ -41,6 +41,7 @@ describe('BNN Phase 1 — module API surfaces', () => {
     expect(dasha.DASHA_SETTINGS.bhukthiYearDays).toBe(366)
     expect(dasha.DASHA_SETTINGS.andhiramYearDays).toBe(364)
     expect(kp.BNN_SETTINGS.ayanamsaMode).toBe(44)
+    expect(kp.BNN_SETTINGS.housesAtDeltaT).toBe(true)
   })
 
   it('stubs throw with their phase until implemented', () => {

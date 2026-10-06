@@ -2,17 +2,18 @@
 // Uses the REAL Swiss Ephemeris WASM in Node (like tests/astro.test.js).
 //
 // Reference chart (docs/bnn-guide.txt भाग 5): 22-01-1980, 20:30, Betul.
-// The inputs below are the calibration fit from scripts/bnn-calib/
-// (see docs/bnn-calib-findings.md §3): to reproduce the old software's
-// printout, lat≈21.48 and birth time≈20:32:13 IST reproduce every value
-// within ~1–1.5' (the reference values are rounded to whole arcminutes).
+// Exact inputs confirmed from the old software's own screenshots (2026-10-07
+// user message; ref no 58): lat 21.4833, lon 78.25, 20:30:00 IST. Its cusps
+// correspond to UT + ΔT — see BNN_SETTINGS.housesAtDeltaT; with that every
+// reference value matches within ~0.9′ (values are whole-arcminute rounded).
 import { beforeAll, describe, expect, it } from 'vitest'
 import { initEphemeris } from '../src/astro.js'
 import { BNN_SETTINGS, computeBhavaChalit, findExchanges, tithiIndexOf, yogaIndexOf } from '../src/bnn/kp.js'
 
 const BIRTH = {
-  utc: { year: 1980, month: 1, day: 22, hour: 15, minute: 2, second: 13 }, // 20:32:13 IST
-  place: { latitude: 21.48, longitude: 77.9032 },
+  // Exact inputs from the old software (user screenshots, 2026-10-07):
+  utc: { year: 1980, month: 1, day: 22, hour: 15, minute: 0, second: 0 }, // 20:30:00 IST
+  place: { latitude: 21.4833, longitude: 78.25 }, // Betul per the old software
 }
 
 // Absolute longitudes from the guide's reference values.
@@ -50,11 +51,10 @@ describe('BNN Phase 2 — ayanamsa + bhava chalit', () => {
     expect(k.ascendant.rashi).toBe(4) // Leo
   })
 
-  it('reproduces the planets within 1′ (Moon 1.75′ — rounding of the reference)', () => {
+  it('reproduces the planets within 1′ (values are arcminute-rounded)', () => {
     const k = computeBhavaChalit(swe, BIRTH.utc, BIRTH.place)
     for (const p of k.planets) {
-      const tol = p.key === 'moon' ? 1.75 * ARCMIN : 1.0 * ARCMIN
-      expect(circDelta(p.longitude, REF_PLANETS[p.key]), p.key).toBeLessThan(tol)
+      expect(circDelta(p.longitude, REF_PLANETS[p.key]), p.key).toBeLessThan(1.0 * ARCMIN)
     }
     const mars = k.planets.find((p) => p.key === 'mars')
     const sun = k.planets.find((p) => p.key === 'sun')
