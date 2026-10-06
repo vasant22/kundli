@@ -524,3 +524,11 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - `src/bnn/kp.js` अब असली engine: computeBhavaChalit (Placidus + planets + bhava-map + tithi/yoga) · setBnnAyanamsa · findExchanges (MERCURY<>SATURN ✓) · BNN_SETTINGS। `tests/bnn-kp.test.js` (6 नए)। **421 ✓**।
 - Token: wallet 25071 → ~24405 (Δ ≈ 666 इस phase-भाग में)।
 - **अगला — Phase 2b**: लग्न-चार्ट drawing — उत्तर/दक्षिण बटन, लाल cusp अंक+डिग्री, '#' वक्री, centre panel (नाम/आयु/नक्षत्र-पद/तिथि/योग + MERCURY<>SATURN label), page में जोड़ना + tests।
+
+### 2026-10-07 — BNN Phase 2a सत्यापित (user screenshots) (`1486825`)
+- User ने अपने software के 2 screenshots भेजे: details screen में **lat 21.4833 / lon 78.25, जन्म 20:30:00, GMT 5.5** (Ref 58); outer face = हमारा लक्ष्य UI।
+- पहेली हल: बचा offset = **+50.6s = ΔT(1980)** → पुराना software **भाव-संधियाँ UT+ΔT** पर बनाता है। अब: **संधियाँ ≤0.7′, ग्रह ≤0.9′** — पूरा match ✓ (findings §3)।
+- `kp.js`: `housesAtDeltaT: true` जुड़ा; test fixture exact coords पर; `docs/bnn-calib-findings.md` updated (+UI संदर्भ §5)।
+- Screenshots (private ब्यौरा; repo में नहीं) → `.openclaw/tmp/bnn-ref/`; उनकी tables/transit अंक आगे के phases के test-डेटा।
+- **421 ✓**। Token: इस Phase-2a काम में कुल ≈ 1061 (wallet 25071 → 24010)।
+- **अगला — Phase 2b**: वही शक्ल का चार्ट drawing (south grid + लाल cusp + centre panel + MERCURY<>SATURN + उत्तर/दक्षिण toggle)।
