@@ -49,7 +49,6 @@ describe('BNN Phase 1 — module API surfaces', () => {
   })
 
   it('stubs throw with their phase until implemented', () => {
-    expect(() => prsss.computePrsss()).toThrow(/Phase 3/)
     expect(() => combos.computePlanetCombinations()).toThrow(/Phase 4/)
     expect(() => percent.planetToPlanetPercent()).toThrow(/Phase 5/)
     expect(() => dasha.computeDashaTree()).toThrow(/Phase 6/)
