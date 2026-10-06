@@ -541,3 +541,10 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - Token: wallet 24010 → ~23762 (Δ ≈ 250)।
 - **Push → CI → live: https://kundli.mybapuji.com/bnn/** (noindex; launch पर index + sitemap + nav links)।
 - **अगला — Phase 3**: PRSSS / BRSSS chains।
+
+### 2026-10-07 — BNN Phase 3: PRSSS / BRSSS (`e546321`)
+- `src/bnn/prsss.js` असली: पाँच स्तर (राशि स्वामी → नक्षत्र → उप → उप-उप → उप-उप-उप; विंशोत्तरी अनुपात 7/20/6/10/7/18/16/19/17, exact fractions); PRSSS = ग्रह की अपनी longitude से, BRSSS = भाव-संधि से।
+- Verification (`scripts/bnn-calib/prsss-check.mjs`): **PRSSS 9/9 · BRSSS 11/11 — पाँचों levels PASS (L5 भी!)**।
+- **B11 (guide: "मेल नहीं खाती")**: नियम से हमारा मान = `mercury, rahu, mercury, rahu, rahu` — report-only रखा, force नहीं किया; guru से पूछना बाक़ी।
+- Tests: `tests/bnn-prsss.test.js` (4 नए)। कुल **431 ✓**।
+- **अगला — Phase 4**: Combination engine (R1–R7: zones/order/aspects/parivartana BP-AP, Astronomy column)।
