@@ -1,21 +1,132 @@
-// kp.js — KP New ayanamsa + Bhava Chalit (Project BNN — Phase 2).
+// kp.js — KP New ayanamsa + Bhava Chalit for the BNN chart (Phase 2).
 //
-// Guide: भाग 2 "भावचलित" + R9 — Placidus cusps with the KP New ayanamsa;
+// Ayanamsa (calibrated 2026-10-07, see docs/bnn-calib-findings.md):
+// sweph sidereal mode 44 — its name string inside the wasm package is
+// "Lahiri VP285"; its value at the reference chart (22-01-1980) is
+// 23°35'06". It is the only built-in mode that reproduces the reference
+// within ~1' (the KP/Krishnamurti built-ins are 5–7' away).
+//
+// Guide refs: भाग 2 "भावचलित" + R9 — Placidus cusps with this ayanamsa;
 // house n runs from cusp n to cusp n+1; the drawn chart stays the Lagna
-// (rashi) chart, but every table is computed from this placement
-// (user-confirmed 2026-10-07). Phase 2 first lists the swisseph
-// KP / Krishnamurti sidereal-mode candidates, computes the reference chart
-// (22-01-1980 20:30 Betul) with each, and picks the variant that matches
-// within 1 arc-minute.
+// (rashi) chart, while every table is computed from this placement.
 //
-// Spec: docs/bnn-guide.txt → Phase 2.
+// Calibration scripts: scripts/bnn-calib/ (check · fit · diag · final).
+import { describeLongitude, RASHI_LORDS } from '../astro.js'
 
-/** Bhava-chalit positions: { cusps, houses, ascendant, ayanamsa, variant }. */
-export function computeBhavaChalit(_swe, _utc, _place, _options = {}) {
-  throw new Error('BNN kp.js: not implemented yet (Phase 2 — docs/bnn-guide.txt)')
+export const BNN_SETTINGS = Object.freeze({
+  // swisseph sidereal-mode id — reference-matched (docs/bnn-calib-findings.md §2).
+  ayanamsaMode: 44,
+})
+
+// The grahas, same order as the main app (Rahu/Ketu appended around the node).
+const GRAHAS = [
+  { key: 'sun', name: 'Sun', short: 'Su', constName: 'SE_SUN' },
+  { key: 'moon', name: 'Moon', short: 'Mo', constName: 'SE_MOON' },
+  { key: 'mars', name: 'Mars', short: 'Ma', constName: 'SE_MARS' },
+  { key: 'mercury', name: 'Mercury', short: 'Me', constName: 'SE_MERCURY' },
+  { key: 'jupiter', name: 'Jupiter', short: 'Ju', constName: 'SE_JUPITER' },
+  { key: 'venus', name: 'Venus', short: 'Ve', constName: 'SE_VENUS' },
+  { key: 'saturn', name: 'Saturn', short: 'Sa', constName: 'SE_SATURN' },
+]
+
+const norm = (x) => ((x % 360) + 360) % 360
+
+/** Set the BNN ayanamsa on a Swiss-Ephemeris instance (call before calc). */
+export function setBnnAyanamsa(swe) {
+  swe.set_sid_mode(BNN_SETTINGS.ayanamsaMode, 0, 0)
 }
 
-/** The verified KP New ayanamsa selection (set in Phase 2). */
-export function resolveKpAyanamsa(_swe) {
-  throw new Error('BNN kp.js: not implemented yet (Phase 2 — docs/bnn-guide.txt)')
+/**
+ * Bhava-chalit frame + planet positions for the BNN chart.
+ * @param {object} swe — initialised SwissEph instance.
+ * @param {object} utc — { year, month, day, hour, minute, second } (UT).
+ * @param {object} place — { latitude, longitude }.
+ * @returns {{ jd, ayanamsa, cusps, ascendant, planets, tithiIndex, yogaIndex }}
+ *   cusps: 12 entries { n, longitude, rashi, degInSign, … } (Placidus, KP New).
+ *   planets: 9 entries; each also carries `bhava` (1–12, from the cusp ranges).
+ */
+export function computeBhavaChalit(swe, utc, place) {
+  setBnnAyanamsa(swe)
+  const hourDecimal = utc.hour + utc.minute / 60 + utc.second / 3600
+  const jd = swe.julday(utc.year, utc.month, utc.day, hourDecimal)
+  const flags = swe.SEFLG_SWIEPH | swe.SEFLG_SIDEREAL | swe.SEFLG_SPEED
+
+  // Placidus cusps (сidereal). Near the poles this can fail — the caller
+  // reports it; BNN charts are always cast for normal latitudes.
+  const h = swe.houses_ex(jd, swe.SEFLG_SWIEPH | swe.SEFLG_SIDEREAL, place.latitude, place.longitude, 'P')
+  const cusps = []
+  for (let i = 1; i <= 12; i++) {
+    cusps.push({
+      n: i,
+      ...describeLongitude(h.cusps[i], 0, { key: `cusp${i}`, name: `Cusp ${i}`, short: String(i) }),
+    })
+  }
+  const ascendant = { ...cusps[0], key: 'asc', name: 'Ascendant', short: 'Asc' }
+
+  const planets = GRAHAS.map((g) => {
+    const r = swe.calc_ut(jd, swe[g.constName], flags)
+    return describeLongitude(r[0], r[3], g)
+  })
+  const node = swe.calc_ut(jd, swe.SE_MEAN_NODE, flags)
+  planets.push(
+    describeLongitude(node[0], node[3], { key: 'rahu', name: 'Rahu', short: 'Ra' }),
+    describeLongitude(node[0] + 180, node[3], { key: 'ketu', name: 'Ketu', short: 'Ke' })
+  )
+
+  // Bhava of each planet: house n = from cusp n to cusp n+1 (cusp values may
+  // wrap through 0°, hence the +360 normalisation on both sides).
+  const bhavaOf = (lon) => {
+    for (let i = 0; i < 12; i++) {
+      let a = cusps[i].longitude
+      let b = cusps[(i + 1) % 12].longitude
+      if (b <= a) b += 360
+      let x = lon
+      if (x < a) x += 360
+      if (x >= a && x < b) return i + 1
+    }
+    return 12
+  }
+  for (const p of planets) p.bhava = bhavaOf(p.longitude)
+
+  const sunLon = planets.find((p) => p.key === 'sun').longitude
+  const moonLon = planets.find((p) => p.key === 'moon').longitude
+
+  return {
+    jd,
+    ayanamsa: swe.get_ayanamsa(jd),
+    cusps,
+    ascendant,
+    planets,
+    tithiIndex: tithiIndexOf(sunLon, moonLon),
+    yogaIndex: yogaIndexOf(sunLon, moonLon),
+  }
+}
+
+/** Tithi 1–30 from sidereal Sun/Moon longitudes (1–15 शुक्ल, 16–30 कृष्ण). */
+export function tithiIndexOf(sunLon, moonLon) {
+  return Math.floor(norm(moonLon - sunLon) / 12) + 1
+}
+
+/** Yoga 1–27 from sidereal Sun+Moon longitudes. */
+export function yogaIndexOf(sunLon, moonLon) {
+  return Math.floor(norm(sunLon + moonLon) / (360 / 27)) + 1
+}
+
+/**
+ * R6 parivartana pairs: two planets sitting in each other's sign
+ * (owner-wise, so Rahu/Ketu can never take part).
+ * Returns e.g. [['mercury', 'saturn']].
+ */
+export function findExchanges(planets) {
+  const out = []
+  for (let i = 0; i < planets.length; i++) {
+    for (let j = i + 1; j < planets.length; j++) {
+      const a = planets[i]
+      const b = planets[j]
+      if (RASHI_LORDS[a.rashi] === b.key && RASHI_LORDS[b.rashi] === a.key) {
+        out.push([a.key, b.key])
+      }
+    }
+  }
+  return out
 }

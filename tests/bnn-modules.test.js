@@ -15,7 +15,10 @@ describe('BNN Phase 1 — module API surfaces', () => {
   it('exposes the planned functions', () => {
     const fns = [
       kp.computeBhavaChalit,
-      kp.resolveKpAyanamsa,
+      kp.setBnnAyanamsa,
+      kp.tithiIndexOf,
+      kp.yogaIndexOf,
+      kp.findExchanges,
       prsss.computePrsss,
       prsss.computeBrsss,
       combos.computePlanetCombinations,
@@ -37,10 +40,10 @@ describe('BNN Phase 1 — module API surfaces', () => {
     expect(percent.PERCENT_SETTINGS).toEqual({ p2pBase: 96.65, p2pPerDegree: 3.147, p2bWidthFactor: 0.942 })
     expect(dasha.DASHA_SETTINGS.bhukthiYearDays).toBe(366)
     expect(dasha.DASHA_SETTINGS.andhiramYearDays).toBe(364)
+    expect(kp.BNN_SETTINGS.ayanamsaMode).toBe(44)
   })
 
   it('stubs throw with their phase until implemented', () => {
-    expect(() => kp.computeBhavaChalit()).toThrow(/Phase 2/)
     expect(() => prsss.computePrsss()).toThrow(/Phase 3/)
     expect(() => combos.computePlanetCombinations()).toThrow(/Phase 4/)
     expect(() => percent.planetToPlanetPercent()).toThrow(/Phase 5/)
