@@ -532,3 +532,12 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - Screenshots (private ब्यौरा; repo में नहीं) → `.openclaw/tmp/bnn-ref/`; उनकी tables/transit अंक आगे के phases के test-डेटा।
 - **421 ✓**। Token: इस Phase-2a काम में कुल ≈ 1061 (wallet 25071 → 24010)।
 - **अगला — Phase 2b**: वही शक्ल का चार्ट drawing (south grid + लाल cusp + centre panel + MERCURY<>SATURN + उत्तर/दक्षिण toggle)।
+
+### 2026-10-07 — BNN Phase 2b: चार्ट drawing (`acb05d2`)
+- `render.js` असली drawing: दक्षिण grid + उत्तर diamond; लाल cusp अंक ("09 11.31"), ग्रह 3-अक्षर codes ("MAR# 21.30"; मिनट TRUNCATE), ASC marker, centre panel (नाम/जगह/तारीख़+वार/AGE Y-M-D/नक्षत्र-3/तिथि/योग), MERCURY<>SATURN box; submit → चार्ट + उत्तर/दक्षिण toggle।
+- Display parity: मिनट truncate + भाव-संधि +0.5s fine-tune → चार्ट का हर visible अंक पुराने face से अक्षरशः same (`scripts/bnn-calib/chart-texts.mjs`; test में pinned)।
+- Preflight: headless-Chrome से असली rendered चार्ट जाँचा ✓।
+- Tests **427 ✓** (नए: render 4, page +1, kp display-parity +1)।
+- Token: wallet 24010 → ~23762 (Δ ≈ 250)।
+- **Push → CI → live: https://kundli.mybapuji.com/bnn/** (noindex; launch पर index + sitemap + nav links)।
+- **अगला — Phase 3**: PRSSS / BRSSS chains।
