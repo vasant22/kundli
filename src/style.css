@@ -51,12 +51,15 @@ body {
 
 /* Kundli Matching page (/match/) — same width feel as the main form. */
 .match-intro-card,
-#match-form {
+#match-form,
+.bnn-intro-card,
+#bnn-form {
   max-width: 760px;
   margin-inline: auto;
 }
 
-#match-form {
+#match-form,
+#bnn-form {
   margin-top: 1rem;
 }
 
@@ -791,7 +794,9 @@ details.manual[open] summary {
   .site-header,
   #kundli-form,
   #match-form,
+  #bnn-form,
   .match-intro-card,
+  .bnn-intro-card,
   .chart-toggle,
   .actions {
     display: none !important;

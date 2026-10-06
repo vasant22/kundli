@@ -1,0 +1,44 @@
+<!doctype html>
+<!--
+  ⚠️ यह फ़ाइल सीधे (file:// से) खोलने पर खाली page दिखाएगी — पूरा app JavaScript से बनता है
+  और उसे local server से खोलना पड़ता है। Opening this file directly from disk shows a blank
+  page; the UI is rendered by JavaScript and must be served. Run `npm run dev` and open
+  http://localhost:5173/bnn/ (or `npm run preview` after a build).
+-->
+<html lang="hi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="../favicon.png" />
+    <meta name="theme-color" content="#e8730c" />
+    <!-- निर्माणाधीन पेज (2026-10-07 से) — चरण 9 तक Google में index न करें;
+         लॉन्च के समय robots को "index, follow" करें + sitemap.xml में URL जोड़ें। -->
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="canonical" href="https://kundli.mybapuji.com/bnn/" />
+    <title>भृगु नंदी नाड़ी (BNN) चार्ट — Bhrigu Nandi Nadi Chart</title>
+    <meta
+      name="description"
+      content="भृगु नंदी नाड़ी (BNN) चार्ट — भावचलित (KP New) आधारित लग्न कुंडली, संयोजन तालिकाएँ, दशा-भुक्ति-अंतर और गोचर। 100% मुफ़्त, ब्राउज़र में गणना। (निर्माणाधीन)"
+    />
+  </head>
+  <body>
+    <div id="app"></div>
+    <!-- SEO जानकारी-भाग: Google और नए उपयोगकर्ताओं के लिए (JS के बिना भी दिखता है) -->
+    <section class="seo-info" lang="hi" aria-label="BNN चार्ट के बारे में जानकारी">
+      <div class="seo-box">
+        <h2>भृगु नंदी नाड़ी (BNN) चार्ट — निर्माणाधीन</h2>
+        <p>
+          यह पेज अभी बन रहा है: भावचलित (KP New) स्थिति पर आधारित BNN चार्ट — लग्न कुंडली का चित्र, ग्रह/भाव संयोजन तालिकाएँ,
+          विंशोत्तरी दशा-भुक्ति-अंतर और गोचर — सब कुछ पूरी तरह आपके ब्राउज़र में, बिना साइन-अप।
+        </p>
+        <nav class="seo-links" aria-label="और मुफ़्त टूल">
+          <a href="../">Free कुंडली बनाएं</a>
+          <a href="../match/">Free कुंडली मिलान</a>
+          <a href="../panchang/">Free आज का पंचांग</a>
+        </nav>
+      </div>
+    </section>
+    <script type="module" src="/src/bnn/main.js"></script>
+  </body>
+</html>

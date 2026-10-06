@@ -1,0 +1,255 @@
+भृगु नंदी नाड़ी (BNN) चार्ट Software: संस्करण 2
+mybapuji.com के लिए: भावचलित कुंडली, नाड़ी संयोजन और Lordship तालिकाएँ, दशा-भुक्ति-अंतर और गोचर। पहले संस्करण की जगह यह नया संस्करण लें: इसमें आपके पूरे chart (PDF) और सभी screenshots से जाँचे हुए नियम हैं।
+भाग 1: यह project क्या बनाएगा
+	•	पिछले दोनों projects (Kundli और Kundli Matching) की उसी technology पर एक नया page, जैसे kundli.mybapuji.com/bnn/। Free, static, गणना visitor के browser में, कोई backend नहीं।
+	•	चार्ट: लग्न (राशि) कुंडली, जिसमें हर राशि में ग्रह और भाव-संधियों की डिग्री दिखें; चार्ट के नीचे उत्तर भारतीय / दक्षिण भारतीय शैली का बटन; चार्ट के बाहर गोचर के ग्रह; बीच में नाम, जन्म विवरण, आयु, नक्षत्र-पद, तिथि, योग और चल रही दशा-भुक्ति की तिथियाँ; और राशि परिवर्तन वाली जोड़ी (जैसे MERCURY<>SATURN) का लेबल। चित्र लग्न कुंडली है, पर सारी तालिकाएँ भावचलित (KP New) की स्थिति से बनती हैं।
+	•	Planet Combination तालिका: 1-5-7-9, 1-5-9, SPECIAL, PRSSS, और आख़िरी Astronomy column (प्रतिशत के साथ)।
+	•	Bhava Combination तालिका: 1-5-9, 1-5-7-9, BRSSS, SPECIAL (Lordship और Director)।
+	•	तालिकाओं में रंग-नियम (नीला मुख्य ग्रह, हरा उपग्रह, नारंगी कमज़ोर) और छोटा legend, क्योंकि फलादेश इसी पर टिका है।
+	•	ऊपर एक बटन: परिवर्तन से पहले (BP) / परिवर्तन के बाद (AP)। दोनों में सारी तालिकाएँ बदल जाती हैं। ज्योतिषी हाथ से चुनता है (30 साल से ऊपर के जातक के लिए AP)।
+	•	विंशोत्तरी दशा, भुक्ति और अंतर (Dhasa, Bhukthi, Andhiram) की तिथियाँ।
+	•	PCP (विशेष गोचर): जन्म का कोई ग्रह, 1579 या 159, शुरू-अंत की तारीख़ें चुनने पर गुरु और शनि का गोचर उस ग्रह पर कब प्रभाव शुरू (Start) और कब ख़त्म (End) करता है, F/R (मार्गी/वक्री) के साथ।
+	•	ज़रूरी सीमा: यह software किसी दूसरे software की फाइलें, tables या code नहीं पढ़ता। सारे नियम आपके गुरुजी की कक्षा के notes और आपके बताए नियमों से हैं, जो इस guide में लिखे हैं। आपके पुराने software के output केवल test data की तरह इस्तेमाल होंगे।
+भाग 2: तय हो चुके नियम
+विषय
+नियम
+चाल की दिशा
+मार्गी ग्रह आगे (clockwise), वक्री पीछे (anti-clockwise)। सूर्य-चंद्र कभी वक्री नहीं। राहु-केतु हमेशा वक्री। वक्री ग्रह के नाम के आगे # लगता है।
+क्षेत्र (span)
+ग्रह की अपनी डिग्री से 30° का क्षेत्र, अगली राशि की उसी डिग्री तक। यह 1, 5, 7, 9 स्थानों पर लगता है (राहु-केतु के लिए 1, 5, 9)। जिसकी डिग्री क्षेत्र के भीतर पड़े, वही संयोजन में आता है। राहु-केतु किसी के 7वें क्षेत्र में हों तो छोड़ दिए जाते हैं।
+क्रम
+मार्गी ग्रह: क्षेत्र के ग्रह राशि-डिग्री के बढ़ते क्रम में, ग्रह की अपनी डिग्री से शुरू करके (key = (Q की डिग्री − P की डिग्री) mod 30)। वक्री ग्रह: घटते क्रम में (key = (P − Q) mod 30)। समान डिग्री वाला ग्रह सबसे पहले।
+विशेष दृष्टि
+मंगल 4 और 8, शनि 3 और 10। बिंदु = अपनी राशि को 1 गिनकर आगे की राशि में वही डिग्री, हमेशा आगे की गिनती से (वक्री होने पर भी)। क्षेत्र बिंदु से पीछे 30° और आगे 2°। तालिका में यह ग्रह की तरह एक प्रविष्टि बनकर आती है (जैसे MAR8-67, SAT3-17), जिसका क्रम ग्रह से बिंदु तक की दूरी से तय होता है।
+राशि परिवर्तन
+दो ग्रह एक-दूसरे की राशि में हों तो AP में वे अपनी कुर्सी (राशि, डिग्री और मार्गी/वक्री स्थिति) आपस में बदल लेते हैं, फिर सारी गणना उसी कुर्सी से होती है। नाम के आगे का # ग्रह की मूल स्थिति दिखाता है, इसलिए वह नहीं बदलता। चार्ट का चित्र हमेशा मूल स्थिति दिखाता है। उदाहरण: बुध मकर 8°59' और शनि कन्या 3°12' → AP में बुध कन्या 3°12' (वक्री कुर्सी, पीछे की ओर) और शनि मकर 8°59' (आगे की ओर)।
+Astronomy column
+ग्रह अपनी (कुर्सी वाली) दिशा में बढ़ते हुए राशि की सीमा से बिना बँधे जिस पहले ग्रह से मिलता है, वही। यह गुरुजी का विशेष नियम है और तब काम आता है जब किसी ग्रह के 1-5-9 या 1-5-7-9 में कोई ग्रह न हो: तब यही उसका साथी माना जाता है।
+3/11, '10' tab
+गिने नहीं जाते, बनाने नहीं हैं। Research वाली तालिकाएँ (Astronomy tab की बाकी सामग्री) भी नहीं।
+भावचलित
+KP New: सामान्यतः Placidus भाव-संधियाँ और KP अयनांश। भाव n उसकी भाव-संधि n से शुरू होकर n+1 की भाव-संधि तक है। चार्ट का चित्र लग्न (राशि) कुंडली है, पर तालिकाएँ इसी भावचलित स्थिति से बनती हैं।
+PRSSS / BRSSS
+P/B, फिर R (राशि स्वामी), फिर नक्षत्र, उप, उप-उप, उप-उप-उप स्वामी (विंशोत्तरी अनुपात में)। ग्रह के लिए उसकी अपनी मूल देशांतर से (राशि परिवर्तन का असर नहीं), भाव के लिए भाव-संधि की देशांतर से।
+भाव तालिका
+B-n की पंक्ति में उन ग्रहों की सूची जो (BP/AP की स्थिति में) भाव n, n+4, n+8 (और 1-5-7-9 में n+6) में बैठे हैं, प्रतिशत के घटते क्रम में। राहु-केतु 7वें में छोड़े जाते हैं। मंगल-शनि की दृष्टि केवल उसी भाव की पंक्ति में जुड़ती है जिस पर वह पड़ रही है।
+Lordship (SPECIAL)
+भाव में बैठा ग्रह उस भाव का फल देता है, स्वामी नहीं, पर तब जब वह उसी राशि में (या ऐसी राशि में जिसका स्वामी वही है जो उस भाव की राशि का है) बैठा हो। एक से ज़्यादा हों तो भाव-संधि के सबसे पास वाला। कोई न हो तो भाव का स्वामी फल देता है। स्वामी की तालिका में 'बैठा हुआ भाव + जिन भावों का फल देता है' दिखाया जाता है। नक्षत्र स्वामी के भाव और उसके फल भी दिखाए जाते हैं। भाव तालिका के 'IN STAR OF A' में वे ग्रह आते हैं जिनका नक्षत्र स्वामी भाव के किसी ग्रह A में है (भाव खाली हो तो A की जगह भाव का स्वामी), और 'Director' वह ग्रह है जो उस भाव का फल दे रहा है।
+रंग (मुख्य ग्रह / उपग्रह)
+हर पंक्ति का पहला ग्रह नीले रंग में (मुख्य ग्रह): वह उस ग्रह/भाव पर जीवन भर सबसे ज़्यादा असर रखता है, दशा हो या न हो, चाहे उसका प्रतिशत 20 से कम हो। बाकी ग्रह (उपग्रह) हरे रंग में यदि प्रतिशत 20 या उससे अधिक हो: वे अपनी दशा-भुक्ति में असर देते हैं। प्रतिशत 20 से कम हो तो हल्के नारंगी रंग में: फलादेश में लगभग गिने नहीं जाते। गुरुजी का विशेष नियम: ग्रह शनि (मूल ग्रह के रूप में, उसकी दृष्टि नहीं), पंक्ति में कहीं भी हो या कितना भी कम प्रतिशत हो, हरे रंग में दिखाया जाता है, क्योंकि वह उस भाव/ग्रह पर असर ज़रूर डालता है। Astronomy column अलग (गुलाबी/बैंगनी) रंग में। पंक्ति का नाम (केंद्रीय ग्रह या भाव) लाल रंग में।
+दशा
+विंशोत्तरी। शेष दशा जन्म से कैलेंडर वर्ष-माह-दिन में। महादशा की तिथियाँ पूरे कैलेंडर वर्षों की। भुक्ति की लंबाई 366 दिन के वर्ष से (दशा वर्ष × 366 × भुक्ति वर्ष / 120), आख़िरी भुक्ति महादशा के अंत पर। अंतर की लंबाई भी अनुपात से, पर लगभग 364 दिन के वर्ष जैसी (नीचे 'जाँचना बाकी')।
+गोचर
+चार्ट के बाहर, राशि के अनुसार उस राशि के पास ग्रह और डिग्री (जैसे SAT# 17.24), और गोचर लग्न। चुनी हुई तारीख़-समय (default अभी) और वर्तमान स्थान से।
+भाग 3: प्रतिशत (closeness) का सूत्र
+पुराने software के output से मैंने ये सूत्र निकाले हैं। ये मिलान के लिए अच्छे हैं (औसत अंतर लगभग 0.3), पर पूरी तरह पक्के नहीं, इसलिए इन्हें settings में स्थिरांक की तरह रखें।
+	•	ग्रह से ग्रह (या ग्रह से बिंदु): प्रतिशत = 96.65 − 3.147 × d, जहाँ d = ग्रह से दूसरे ग्रह तक की डिग्री-दूरी उसकी चाल की दिशा में (0 से 30)। उदाहरण: बुध से मंगल d = 11.7° → 60।
+	•	ग्रह से भाव: प्रतिशत = 100 × (1 − d ÷ (0.942 × भाव की चौड़ाई)), जहाँ d = भाव की शुरुआती भाव-संधि से ग्रह की दूरी। उदाहरण: शुक्र (कुंभ 14°18', भाव 7) → 94; गुरु → 90; मंगल → 67।
+	•	मंगल-शनि की दृष्टि का बिंदु भाव से कितना पास है, यह भी भाव वाले सूत्र से (MAR4-71, MAR8-65 मेल खाते हैं); SAT3-13 और SAT10-6 अभी मेल नहीं खाते।
+भाग 4: जाँचना बाकी (AI tool को आपके screenshots से मिलाना है)
+	•	KP New अयनांश का सही variant: reference चार्ट की डिग्री से 1 कला के भीतर मेल खाने वाला।
+	•	शनि की 1-5-7-9 पंक्ति में सूर्य का 97% पर आना (सूर्य शनि से 0.83° पीछे है): कोई अलग नियम (लगभग एक अंश के भीतर साथ बैठे ग्रह?) या software की गड़बड़ी। अभी इसे implement न करें, केवल report करें।
+	•	Lordship का विस्तृत नियम (केतु का षष्ठ भाव का फल देना) एक ही चार्ट से निकला है: और कुंडलियों से जाँचना है।
+	•	अंतर की तिथियाँ 1 से 5 दिन तक अलग आती हैं: 364 दिन का वर्ष सबसे अच्छा बैठता है, पर पक्का नहीं। भुक्ति के लिए 366 दिन का वर्ष पूरी तरह मेल खाता है।
+	•	BRSSS में B11 की पंक्ति (मिथुन 13°36' की भाव-संधि से मेल नहीं खाती): संभवतः software की गड़बड़ी।
+	•	पुराने UI के tab नाम: NAT1579P / NAT159P (P = परिवर्तन के बाद) और NAT1579 / NAT159 (परिवर्तन से पहले)। नए UI में यही काम BP/AP बटन करता है। पुराने बिना-P वाले tab के कुछ आँकड़े (जैसे RAH-70 का दो बार आना) मुझे सही नहीं लगते, इसलिए BP की जाँच के लिए नए UI के BP screenshots चाहिए। TR1579P / TR1579 tabs का मतलब अभी नहीं पता: इस संस्करण में नहीं बनाना।
+	•	PCP (विशेष गोचर): मार्गी गोचर के 1/5/9 वाले Start-End मेल खाते हैं (Start = गोचर ग्रह की राशि-डिग्री जन्म ग्रह की डिग्री से 4° पहले, End = 1° बाद), पर 7वें स्थान की पंक्तियाँ और वक्री वाली पंक्तियाँ अभी समझ में नहीं आईं। इन्हें अनुमान से नहीं भरना: tool बताए कि उसके नियम से क्या आया और मुझसे पूछे।
+	•	गुलिक (चार्ट में GUL 20.09): इसका सूत्र आपसे चाहिए; तब तक नहीं बनाना।
+	•	30 साल की सीमा: BP/AP बटन हाथ से चुना जाता है। Default: चुनी हुई तारीख़ पर आयु 30 वर्ष या अधिक हो तो AP, नहीं तो BP।
+भाग 5: Test data (AI tool इसी से अपना काम जाँचेगा)
+Reference चार्ट: जन्म 22-01-1980, 20:30, बैतूल (म.प्र.), पुरुष
+लग्न सिंह 12°53'। स्थितियाँ (मूल): गुरु# सिंह 15°30', मंगल# सिंह 21°30', राहु सिंह 7°10', शनि# कन्या 3°12', केतु कुंभ 7°10', शुक्र कुंभ 14°18', सूर्य मकर 8°09', बुध मकर 8°59', चंद्र मीन 12°30'। बुध-शनि का राशि परिवर्तन है।
+भाव-संधियाँ: 1 सिंह 12°53', 2 कन्या 10°54', 3 तुला 11°31', 4 वृश्चिक 12°52', 5 धनु 13°36', 6 मकर 13°38', 7 कुंभ 12°53', 8 मीन 10°54', 9 मेष 11°31', 10 वृषभ 12°52', 11 मिथुन 13°36', 12 कर्क 13°38'।
+दशा: शुक्र दशा 23-12-2009 से 23-12-2029; बुध भुक्ति 04-01-2026 से 06-11-2028; आयु 46Y-8M-8D (30-09-2026)। नक्षत्र उत्तर भाद्रपद-3, शुक्ल षष्ठी, शिव योग।
+गोचर (01-10-2026, लगभग 12:16 IST): चार्ट के बाहर के अंक
+चंद्र 13°42' (वृषभ), शनि# 17°19' (मीन), राहु 3°28' (कुंभ), मंगल 7°37' और गुरु 25°24' (कर्क), केतु 3°28' (सिंह), सूर्य 13°52' (कन्या), शुक्र 14°10' और बुध 6°49' (तुला), गोचर लग्न 5°46'। राशियाँ चित्र की जगह से पढ़ी हैं। एक मोटे ephemeris से मैंने गुरु, शनि, मंगल, शुक्र, बुध और सूर्य इसी समय पर 0.05° के भीतर पाए (चंद्र और लग्न समय पर बहुत निर्भर हैं)। पिछला 30-09 वाला snapshot इस्तेमाल न करें: उसका समय स्पष्ट नहीं है।
+Planet Combination, 1-5-7-9, AP (अपेक्षित)
+ग्रह
+संयोजन (क्रम से, प्रतिशत के साथ)
+Astronomy
+JUP#
+VEN-93, RAH-70
+RAH
+SUN
+SAT#-94, KET-6
+SAT#
+MOO
+MAR8-67, RAH-19
+RAH
+MAR#
+JUP#-78, VEN-74, RAH-52
+JUP#
+MER
+MAR#-60, JUP#-41, VEN-37, RAH-15
+MAR#
+VEN
+JUP#-93, MAR#-74, MER-37, SAT3-17, MOO-8
+MOO
+SAT#
+SUN-97, KET-8
+KET
+RAH
+MOO-19
+MOO
+KET
+SAT#-8, SUN-6
+SAT#
+(1-5-9 tab और SPECIAL tab के screenshots मिलते ही उन्हें भी यहीं जोड़ें। शनि की पंक्ति में SUN वाला अंक भाग 4 का खुला मुद्दा है।)
+Bhava Combination, 1-5-7-9, AP (अपेक्षित)
+भाव
+ग्रह और प्रतिशत
+B01
+VEN-94, JUP#-90, MAR#-67, MER-23, SUN-13, SAT#-11
+B02
+MOO-94, KET-15, SAT10-6
+B03
+VEN-94
+B04
+MOO-94, MAR4-71, RAH-15
+B05
+JUP#-90, MAR#-67, MER-23, SUN-13, SAT#-11
+B06
+KET-15
+B07
+VEN-94, JUP#-90, MAR#-67, MER-23, SAT3-13
+B08
+MOO-94, MAR8-65, RAH-15
+B09
+JUP#-90, MAR#-67, MER-23, SUN-13, SAT#-11
+B10
+KET-15
+B11
+VEN-94, SUN-13, SAT#-11
+B12
+MOO-94, RAH-15
+PRSSS और BRSSS (अपेक्षित)
+PRSSS (राशि, नक्षत्र, उप, उप-उप, उप-उप-उप): JUP = SUN,VEN,VEN,KET,JUP। SUN = SAT,SUN,VEN,SUN,MAR। MOO = JUP,SAT,MAR,MER,MER। MAR = SUN,VEN,JUP,MOO,VEN। MER = SAT,SUN,(छिपा),JUP,SAT। VEN = SAT,RAH,MER,SAT,SUN। SAT = MER,SUN,SAT,SAT,MOO। RAH = SUN,KET,RAH,VEN,KET। KET = SAT,RAH,RAH,JUP,MOO।
+BRSSS: B01 SUN,KET,MER,JUP,MER। B02 MER,MOO,MOO,VEN,SUN। B03 VEN,RAH,SAT,VEN,MER। B04 MAR,SAT,MAR,MOO,MER। B05 JUP,VEN,VEN,VEN,SAT। B06 SAT,MOO,RAH,MOO,RAH। B07 SAT,RAH,MER,KET,RAH। B08 JUP,SAT,SUN,VEN,SUN। B09 MAR,KET,MER,MER,VEN। B10 VEN,MOO,RAH,MER,VEN। B12 MOO,SAT,RAH,SAT,MOO। (आख़िरी स्तर कला तक दी गई डिग्री से सेकंड के अंतर से बदल सकता है: पूरी शुद्धता से गणना करें और पहले चार स्तर मिलाएँ।)
+SPECIAL (अपेक्षित, AP)
+ग्रह
+Lord
+बैठा भाव-फल
+Star
+Star के फल
+JUP#
+5,8
+01-1,5
+VEN - 7
+3,7,10
+SUN
+1
+05-
+SUN - 5
+
+MOO
+12
+08-8,12
+SAT - 5
+
+MAR#
+4,9
+01-4,9
+VEN - 7
+3,7,10
+MER
+2,11
+01-2,11
+SUN - 5
+
+VEN
+3,10
+07-3,7,10
+RAH - 12
+
+SAT#
+6,7
+05-
+SUN - 5
+
+RAH
+
+12-
+KET - 6
+6
+KET
+
+06-6
+RAH - 12
+
+Director (भाव का फल देने वाला ग्रह): B01 JUP#, B02 MER, B03 VEN, B04 MAR, B05 JUP, B06 KET, B07 VEN, B08 MOO, B09 MAR, B10 VEN, B11 MER, B12 MOO। 'IN STAR OF A': B03 MAR#,JUP#; B05 SUN,MOO,MER,SAT#; B06 RAH; B07 MAR#,JUP#; B10 MAR#,JUP#; B12 VEN,KET; बाकी खाली।
+दशा, भुक्ति, अंतर (अपेक्षित)
+Dhasa अंतिम तिथि (आयु): SAT 23-12-1985 (5Y-11M-1D), MER 23-12-2002, KET 23-12-2009, VEN 23-12-2029 (49Y-11M-1D), SUN 23-12-2035, MOO 23-12-2045, MAR 23-12-2052, RAH 23-12-2070, JUP 23-12-2086 (106Y-11M-1D)।
+Bhukthi (शुक्र दशा) अंतिम तिथि: VEN 26-04-2013, SUN 27-04-2014, MOO 28-12-2015, MAR 27-02-2017, RAH 01-03-2020, JUP 02-11-2022, SAT 04-01-2026, MER 06-11-2028, KET 23-12-2029।
+Andhiram (शुक्र-बुध भुक्ति) अंतिम तिथि: MER 30-05-2026 (46Y-4M-8D), KET 29-07-2026, VEN 17-01-2027, SUN 09-03-2027, MOO 03-06-2027, MAR 02-08-2027, JUP 21-05-2028, SAT 06-11-2028 (48Y-9M-16D)। RAH की पंक्ति screenshot में कटी है।
+PCP (विशेष गोचर) अपेक्षित: जन्म सूर्य (मकर 8°09'), 1579, 01-10-2026 से 01-10-2048
+गुरु: SUN-5 17-08-2028 Start F, 10-09-2028 End F | SUN-1 31-03-2032 Start F, 10-06-2032 End R, 22-11-2032 Start F, 18-12-2032 End F | SUN-9 04-05-2036 Start F, 25-05-2036 End F | SUN-7 06-07-2037 Start F, 16-11-2037 End R, 16-03-2038 Start F, 30-06-2038 End F | SUN-5 01-12-2039 Start F, 30-01-2040 End R, 29-07-2040 Start F, 25-08-2040 End F | SUN-1 08-03-2044 Start F, 08-04-2044 End F।
+शनि: SUN-9 21-05-2030 Start F, 29-06-2030 End F | SUN-5 16-01-2031 Start R, 14-03-2031 End F | SUN-7 24-06-2033 Start F, 03-11-2033 End R, 16-03-2034 Start F, 02-10-2034 End F, 17-01-2035 Start R, 27-01-2035 End R, 31-03-2035 Start F, 18-06-2035 End F | SUN-5 12-12-2038 Start F, 09-01-2039 End R, 25-08-2039 Start F, 05-10-2039 End F।
+मेरे मोटे ephemeris से देखा कि मार्गी गोचर की शुरू वाली पंक्तियाँ (1, 5, 9) तब आती हैं जब गोचर ग्रह की राशि-डिग्री लगभग 4°09' (सूर्य की डिग्री − 4°) होती है, और अंत की पंक्तियाँ लगभग 9°09' (डिग्री + 1°) पर। 7वें स्थान की और वक्री वाली पंक्तियाँ इस नियम में नहीं बैठतीं।
+नियमों के test (कक्षा के उदाहरण)
+	•	मार्गी गुरु मेष 12°; सूर्य सिंह 15°, चंद्र धनु 28°, राहु मकर 2°, शनि वृश्चिक 4°, शुक्र कन्या 6°, बुध सिंह 2°, मंगल मकर 20°, केतु कर्क 2°। अपेक्षित: गुरु = सूर्य, चंद्र, राहु, शनि, शुक्र।
+	•	वक्री गुरु वृषभ 2°; केतु मेष 20°, मंगल मकर 20°, चंद्र धनु 1°, शनि वृश्चिक 4°, राहु तुला 20°, बुध सिंह 10°, शुक्र कन्या 1°, सूर्य कन्या 15°। अपेक्षित: गुरु = शुक्र, केतु, बुध।
+	•	मार्गी सूर्य कर्क 12°; राहु सिंह 2° (शामिल), मंगल सिंह 24° (बाहर), चंद्र कुंभ 1° (7वें क्षेत्र में)। अपेक्षित: सूर्य = चंद्र, राहु।
+	•	परिवर्तन: मंगल मकर 20° और शनि वृश्चिक 4° की अदला-बदली के बाद मंगल वृश्चिक 4° पर और शनि मकर 20° पर।
+भाग 6: AI tool को देने वाला Prompt
+नीचे के box का पूरा text एक साथ copy करके Claude Code, Cursor, Codex या किसी भी coding AI tool में paste करें, उसी repo में जहाँ पिछला Kundli project है। Prompt English में है, क्योंकि coding tools इसमें ज़्यादा सटीक काम करते हैं।
+You are a senior developer. Extend my existing static, browser-only Vedic astrology project (repo "kundli": Vite vanilla JS, Swiss Ephemeris WASM, GitHub Pages, AGPL-3.0; src/astro.js, src/timeutil.js, src/geocode.js, src/charts.js, src/i18n.js) with a new page "Bhrigu Nandi Nadi (BNN) Chart" at /bnn/. Work in the phases below, IN ORDER. After each phase run the tests, tell me what you did, and only then move on. Never invent library function names: read the real README / type definitions in node_modules. Ask me a question ONLY if truly blocked; otherwise choose a sensible default and tell me.
+ 
+## GOAL
+From birth details compute, entirely in the browser: (1) a chart page showing the Lagna (rashi) chart with the cusp degrees, a South Indian / North Indian style toggle under it, the current transit planets outside it, a centre panel and an exchange label (all tables are computed from the Bhava Chalit placement, not from this drawing); (2) Planet Combination tables (1-5-7-9, 1-5-9, SPECIAL, PRSSS + Astronomy column); (3) Bhava Combination tables (1-5-9, 1-5-7-9, BRSSS, SPECIAL with Director); (4) Vimshottari Dhasa / Bhukthi / Andhiram; (5) a BP / AP toggle (before / after parivartana); (6) a PCP 'special transit' window. No backend, database, or paid API. Reuse existing modules; do not duplicate code.
+IMPORTANT: implement ONLY the rules written in this prompt. Do not read, copy, decompile or reverse-engineer any other astrology software. The reference data below is test data only.
+ 
+## RULES (from my teacher's class notes and my own explanations)
+R1 Motion: direct planets count forward through the signs; retrograde planets count backward. Sun and Moon are never retrograde. Rahu and Ketu are always retrograde (mean node by default, setting for true node; Ketu = Rahu + 180). A '#' after a planet name marks the planet's own natal retrograde status.
+R2 Zones: for a source planet P at longitude L, the zone for house k is the 30-degree stretch starting at L rotated (k-1) signs in the direction of motion, extending 30 degrees in the direction of motion. k = 1,5,7,9 for all planets; k = 1,5,9 for Rahu and Ketu. Example (direct Jupiter Aries 12): Aries12-Taurus12, Leo12-Virgo12, Libra12-Scorpio12, Sagittarius12-Capricorn12.
+R3 Members: planet Q belongs to P's combination only if its exact longitude (full precision) lies inside a zone of P. Rahu/Ketu are ignored when they fall in a 7th-house zone.
+R4 Order: direct P at degree d: order members by (degree_Q - d) mod 30 ascending. Retrograde P (incl. Rahu, Ketu): by (d - degree_Q) mod 30 ascending. A planet at the same degree as P comes first.
+R5 Special aspects: Mars 4th and 8th, Saturn 3rd and 10th. Aspect point = same degree as the caster in the sign counted from the caster's sign as 1, always counted forward (also when the caster is retrograde). Influence zone = 30 degrees backward from the point plus 2 degrees forward. In a planet's combination the aspect appears as an extra entry (labels like MAR8, SAT3) located at the point; it is included when the point lies inside one of that planet's zones; its order key is the distance from the planet to the point in the planet's direction. Examples: Moon (12.50 Pisces) gets MAR8-67; Venus gets SAT3-17.
+R6 Parivartana (sign exchange): if A is in B's sign and B is in A's sign, then in AP mode the two swap seats (sign, degree AND direct/retrograde status) before every combination, Astronomy and Lordship computation. In BP mode nothing is swapped. Planet names keep their natal '#'. The chart drawing always shows the original positions; show a label such as 'MERCURY<>SATURN' and 'AFTER PARIVARDHANAI' / 'BEFORE PARIVARDHANAI'. PRSSS uses each planet's own natal longitude in both modes. A toggle button chooses BP or AP; default AP when the age on the analysis date is 30 or more, else BP.
+R7 Astronomy column: for each planet (using its seat's direction) the first planet met while moving on in that direction, ignoring zones and sign boundaries. Show it as the last column, and use it as the combination partner when a planet has no member in its 1-5-9 / 1-5-7-9 zones.
+R8 Do NOT implement: 3rd/11th relations, the '10' tab, the research parts of 'Astronomy', Gulika, and the TR1579P / TR1579 tabs (meaning unknown yet). In my older UI the tabs NAT1579P / NAT159P meant the after-parivartana (AP) version and NAT1579 / NAT159 the before-parivartana (BP) version; you only need the BP/AP toggle.
+R9 Bhava Chalit: KP New = sidereal zodiac with the KP New ayanamsa and Placidus cusps. House n runs from cusp n to cusp n+1. Bhava sign = whole sign counted from the ascendant sign. Planet rashi = its sign.
+R10 PRSSS / BRSSS: P (or B), rashi lord, star lord, sub lord, sub-sub lord, sub-sub-sub lord, by Vimshottari proportions (Ketu 7, Venus 20, Sun 6, Moon 10, Mars 7, Rahu 18, Jupiter 16, Saturn 19, Mercury 17 out of 120) with exact fractions. Bhava rows use the cusp longitude.
+R11 Percentages: planet-to-planet (or to an aspect point): p = 96.65 - 3.147 * d, d = distance in degrees along the direction of motion (0-30). Planet-to-bhava: p = 100 * (1 - d / (0.942 * W)), d = distance from the bhava's starting cusp, W = width of the bhava. Both are fitted approximations, keep the constants in settings and report residuals against my reference values. Show percentages in the tables and next to entries on the chart where useful.
+R12 Bhava table row B-n (1-5-9 tab): planets located in bhavas n, n+4, n+8; the 1-5-7-9 tab adds n+6 (Rahu/Ketu ignored there); Mars/Saturn aspects appear only in the row of the bhava they land on; entries sorted by percentage descending; never repeat a planet in a row.
+R13 Lordship (SPECIAL): a planet in a bhava gives that bhava's result instead of the bhava lord if it also sits in that bhava's sign, or in a sign owned by the same lord as the bhava's sign (Ketu in Aquarius gives the 6th, whose sign Capricorn is also owned by Saturn); if several qualify, the one nearest the bhava's starting cusp. If none qualifies, the bhava lord gives it. Planet table: houses owned, house sat in + houses whose results it gives, star lord + house it sits in, and the houses whose results the star lord gives. Bhava table: lord, planets in bhava (A), planets whose star lord is in A (if the bhava is empty use the bhava lord as A), Director = the planet giving the bhava's result. Rahu and Ketu own no houses.
+R14 Dasha: Vimshottari from the Moon's KP New longitude. Balance of the first dasha in calendar years-months-days from birth; mahadasha end dates by whole calendar years; show each end date with the native's age (Y-M-D). Bhukthi length = dasha_years * 366 days * bhukthi_years / 120 (this reproduces my reference dates exactly); the last bhukthi ends on the mahadasha end date. Andhiram length is proportional to the bhukthi length; my reference dates fit a year of about 364 days within 1 day, the last andhiram ends on the bhukthi end. Make the day counts settings, report the differences, and do not force my numbers.
+R15 Transit: outside the natal chart (both in the South Indian and the North Indian style), planets grouped by sign with degree.minute, '#' for retrograde, plus the transit ascendant for the current place; date-time selectable, default now.
+R16 Centre panel: name, place, birth date, weekday, age (Y-M-D on the analysis date), nakshatra-pada, tithi, yoga, current dhasa and bhukthi with their start and end dates.
+R17 Colours in the tables (legend shown under each table): the row label (centric planet or bhava) is red. The FIRST entry of each row is blue (main planet), whatever its percentage. Other entries are green if their percentage is 20 or more, and light orange if it is below 20 (almost ignored in phaladesh). Special rule from my guru: the planet Saturn itself (SAT / SAT#, not its aspects SAT3 / SAT10) is always green when it is not the first entry, even with a very low percentage. The Astronomy column is shown in a separate pink/purple colour. Meaning for the legend: blue = influences the centric planet or bhava all life long, irrespective of dasha; green = acts in its own dasha / bhukthi; orange = weak even in its own dasha.
+R18 PCP (special transit): inputs = a natal planet N, the combination set (1579 or 159), a start date and an end date; transit planets Jupiter and Saturn (also tabs All Planets / Rahu Ketu / Saturn Guru). Output per transit planet: rows labelled N-k (k = position 1, 5, 7 or 9 of N counted from the transit planet: forward for a direct transit planet, backward for a retrograde one), the date, Start or End, and F or R (transit planet direct or retrograde on that date). Preliminary rule that reproduces all direct 1/5/9 rows in my reference: Start = the transit planet, in the sign that puts N at position k, reaches the degree-in-sign of N minus 4 degrees; End = it passes the degree-in-sign of N plus 1 degree. Rows for the 7th position and rows around stations / retrograde motion are NOT explained yet (they start and end at larger distances). Implement what fits, list every expected row that does not fit together with the computed longitude on that date, and ask me instead of guessing. Dates must be found by searching the ephemeris day by day and refining to the day.
+ 
+## REFERENCE DATA (test data)
+Chart: born 22-01-1980, 20:30, Betul, Madhya Pradesh (IST +5:30), male. Ascendant Leo 12deg53'. Planets (deg.min): Jupiter(R) Leo 15.30, Mars(R) Leo 21.30, Saturn(R) Virgo 3.12, Rahu Leo 7.10, Ketu Aquarius 7.10, Sun Capricorn 8.09, Mercury Capricorn 8.59, Venus Aquarius 14.18, Moon Pisces 12.30. Mercury and Saturn are in exchange.
+Cusps 1..12: Leo 12.53, Virgo 10.54, Libra 11.31, Scorpio 12.52, Sagittarius 13.36, Capricorn 13.38, Aquarius 12.53, Pisces 10.54, Aries 11.31, Taurus 12.52, Gemini 13.36, Cancer 13.38.
+Expected AP planet combination (1-5-7-9): JUP = VEN-93,RAH-70 | SUN = SAT-94,KET-6 | MOO = MAR8-67,RAH-19 | MAR = JUP-78,VEN-74,RAH-52 | MER = MAR-60,JUP-41,VEN-37,RAH-15 | VEN = JUP-93,MAR-74,MER-37,SAT3-17,MOO-8 | SAT = SUN-97,KET-8 | RAH = MOO-19 | KET = SAT-8,SUN-6. Astronomy column: JUP RAH, SUN SAT, MOO RAH, MAR JUP, MER MAR, VEN MOO, SAT KET, RAH MOO, KET SAT. Known open item: my reference shows SUN-97 in Saturn's row although the Sun is 0.83 degrees behind Saturn; report what your rules give and do not force it.
+Expected AP bhava rows (1-5-7-9): B01 VEN-94,JUP-90,MAR-67,MER-23,SUN-13,SAT-11 | B02 MOO-94,KET-15,SAT10-6 | B03 VEN-94 | B04 MOO-94,MAR4-71,RAH-15 | B05 JUP-90,MAR-67,MER-23,SUN-13,SAT-11 | B06 KET-15 | B07 VEN-94,JUP-90,MAR-67,MER-23,SAT3-13 | B08 MOO-94,MAR8-65,RAH-15 | B09 = B05 | B10 KET-15 | B11 VEN-94,SUN-13,SAT-11 | B12 MOO-94,RAH-15. The percentages of SAT3-13 and SAT10-6 do not yet fit R11; report them.
+Expected colours (AP): bhava 1-5-9 tab B01 = JUP# blue, MAR# green, MER green, SUN orange, SAT# green (11%, Saturn rule); B04 = MOO blue, MAR4 green, RAH orange; B02 = KET blue (15%), SAT10 orange; B07 = VEN blue, SAT3 orange. Planet 1-5-7-9 tab: JUP = VEN blue, RAH green; SUN = SAT# blue, KET orange; MOO = MAR8 blue, RAH orange (19%); MAR = JUP# blue, VEN green, RAH green; MER = MAR# blue, JUP# green, VEN green, RAH orange; VEN = JUP# blue, MAR# green, MER green, SAT3 orange, MOO orange; SAT = SUN blue, KET orange; RAH = MOO blue (19%); KET = SAT# blue, SUN orange.
+Expected PRSSS rows and BRSSS rows, SPECIAL tables, Director and IN STAR OF A values, and the Dhasa / Bhukthi / Andhiram dates are listed in Part 5 of this guide; treat them as tests. Rule tests: (a) direct Jupiter Aries 12 with Sun Leo 15, Moon Sag 28, Rahu Cap 2, Saturn Sco 4, Venus Vir 6, Mercury Leo 2, Mars Cap 20, Ketu Can 2 -> SUN,MOO,RAH,SAT,VEN. (b) retro Jupiter Taurus 2 with Ketu Aries 20, Mars Cap 20, Moon Sag 1, Saturn Sco 4, Rahu Libra 20, Mercury Leo 10, Venus Virgo 1, Sun Virgo 15 -> VEN,KET,MER (Rahu ignored). (c) direct Sun Cancer 12 with Rahu Leo 2, Mars Leo 24, Moon Aquarius 1 -> MOO,RAH.
+ 
+## PHASE 1: Setup
+Add /bnn/ as a new page in the same Vite project reusing the existing modules, styles and deploy workflow. Create src/bnn/ with kp.js, prsss.js, combos.js, special.js, dasha.js, transit.js, percent.js, render.js and tests/. Same input form as the Kundli page.
+## PHASE 2: KP New Bhava Chalit
+List the Swiss Ephemeris sidereal modes for Krishnamurti / KP. Compute the reference chart with each candidate and report ascendant, Moon, planets and all 12 cusps. Choose the variant that matches the reference to within 1 arc-minute and say which. If none matches, stop and show me the differences. Draw the Lagna (rashi) chart (planets by sign with degrees, '#' for retrograde, red cusp numbers with degrees inside the sign), with a South Indian / North Indian toggle under it, the centre panel (R16) and the exchange label (R6).
+## PHASE 3: PRSSS and BRSSS
+Implement R10 with unit tests against the expected rows; show PASS/FAIL per level (mismatches only in the last level are expected from minute-rounded inputs). Report the B11 row, which I expect not to match.
+## PHASE 4: Combination engine
+Implement R1-R7 as pure functions with the BP/AP toggle. Unit-test all rule tests and edge cases: same-degree planets, planet exactly on a zone boundary (a clearly named setting, tell me the default), sign boundary 29.99 -> 0, double parivartana, retrograde Rahu/Ketu. Print the reference AP table and compare it with the expected values.
+## PHASE 5: Percentages, Lordship and Bhava tables
+Implement R11-R13. Produce the Planet Combination tabs (1-5-7-9, 1-5-9, SPECIAL, PRSSS with the Astronomy column) and the Bhava Combination tabs (1-5-9, 1-5-7-9, BRSSS, SPECIAL). Print all values for the reference chart with PASS/FAIL against Part 5 values.
+## PHASE 6: Dhasa / Bhukthi / Andhiram
+Implement R14. Show the Dhasa table (end dates with age), the Bhukthi table for the running dhasa, and the Andhiram table for the running bhukthi. Compare with the reference dates and report differences in days.
+## PHASE 7: Transit
+Implement R15 (planets outside the natal chart by sign, transit ascendant, selectable date-time). Compare the reference snapshot (30-09-2026 13:23:07) to within 1 arc-minute.
+## PHASE 7b: PCP (special transit)
+Implement R18 and compare with the PCP rows in Part 5 (natal Sun, 1579, 01-10-2026 to 01-10-2048, Jupiter and Saturn). Print PASS/FAIL per row with the transit longitude, and group the failing rows by pattern (7th position, retrograde, station) so that I can explain the rule.
+## PHASE 8: Verification
+Run everything on the reference chart and print a checklist (cusps, PRSSS, BRSSS, combinations, percentages, lordship, dasha dates, rule tests), each PASS or FAIL, with the open items listed separately. Make it easy to add more charts as JSON tests: I will add more reference charts, including one for a native under 30 (BP).
+## PHASE 9: Privacy, license, deploy
+No analytics, no cookies, no external scripts except the existing place search. Keep the AGPL-3.0 credit for Swiss Ephemeris. Deploy through the existing GitHub Pages workflow under the current custom domain. Update the README with the rules and settings.
+## FINAL REPORT
+List what was built, commands to run and test, files, the settings (ayanamsa variant, boundary behaviour, percentage constants, day counts), all PASS/FAIL results, and everything you were unsure about.
+भाग 7: आपके अपने काम
+	•	पुराने software में 3-4 और कुंडलियाँ बनाकर उनके screenshots रखें: सभी tabs (BP और AP दोनों), दशा-भुक्ति-अंतर, और कम से कम एक 30 साल से छोटे जातक की कुंडली।
+	•	भाग 4 के खुले मुद्दों पर, जब भी मौक़ा मिले, गुरुजी से एक बार पूछ लें: TR tabs, शनि-सूर्य वाली पंक्ति, गुलिक का सूत्र।
+	•	हर phase के बाद tool की PASS/FAIL रिपोर्ट देखें। मुझे भेज दें, तो मैं मिलान में मदद कर सकता हूँ।
+	•	Day 4 का बचा हिस्सा और Day 5 फलादेश के नियम हैं। ये गणना पर असर नहीं डालते, इसलिए बाद के चरण में जुड़ेंगे।

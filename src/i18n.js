@@ -13,6 +13,17 @@ const STRINGS = {
     'nav.home': 'कुंडली',
     'nav.match': 'कुंडली मिलान',
     'nav.panchang': 'पंचांग',
+    'nav.bnn': 'BNN चार्ट',
+
+    // भृगु नंदी नाड़ी (BNN) चार्ट — नया पेज /bnn/ (2026-10-07 से)
+    'bnn.docTitle': 'भृगु नंदी नाड़ी (BNN) चार्ट',
+    'bnn.title': 'भृगु नंदी नाड़ी चार्ट',
+    'bnn.subtitle': 'भावचलित (KP New) आधारित विशेष चार्ट',
+    'bnn.badge': '✨ 100% Free — बिना साइन-अप',
+    'bnn.intro': 'जन्म विवरण भरें — पूरी गणना आपके ब्राउज़र में, बिना साइन-अप।',
+    'bnn.btn': 'BNN चार्ट बनाएँ',
+    'bnn.noteTitle': '✅ जन्म विवरण ठीक है',
+    'bnn.noteBody': 'भावचलित (KP New) गणना और चार्ट अगले चरणों में जुड़ेंगे।',
 
     // मुख्य साइट (MyBapuji) की ऊपरी पट्टी
     'mb.home': 'होम',
@@ -186,6 +197,17 @@ const STRINGS = {
     'nav.home': 'Kundli',
     'nav.match': 'Kundli Matching',
     'nav.panchang': 'Panchang',
+    'nav.bnn': 'BNN Chart',
+
+    // Bhrigu Nandi Nadi (BNN) chart — new page /bnn/ (from 2026-10-07)
+    'bnn.docTitle': 'Bhrigu Nandi Nadi (BNN) Chart',
+    'bnn.title': 'Bhrigu Nandi Nadi Chart',
+    'bnn.subtitle': 'Bhava-chalit (KP New) based special chart',
+    'bnn.badge': '✨ 100% Free — no sign-up',
+    'bnn.intro': 'Enter the birth details — everything is computed in your browser.',
+    'bnn.btn': 'Create BNN Chart',
+    'bnn.noteTitle': '✅ Birth details checked',
+    'bnn.noteBody': 'The KP New bhava-chalit calculation and charts arrive in the next phases.',
 
     // MyBapuji main-site strip
     'mb.home': 'Home',
