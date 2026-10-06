@@ -9,6 +9,7 @@
 import { beforeAll, describe, expect, it } from 'vitest'
 import { initEphemeris } from '../src/astro.js'
 import { BNN_SETTINGS, computeBhavaChalit, findExchanges, tithiIndexOf, yogaIndexOf } from '../src/bnn/kp.js'
+import { cuspText, planetText } from '../src/bnn/render.js'
 
 const BIRTH = {
   // Exact inputs from the old software (user screenshots, 2026-10-07):
@@ -62,6 +63,23 @@ describe('BNN Phase 2 — ayanamsa + bhava chalit', () => {
     expect(mars.retro).toBe(true) // मंगल# वक्री
     expect(sun.retro).toBe(false)
     expect(rahu.retro).toBe(true) // राहु सदैव वक्री
+  })
+
+  it('matches the old face’s displayed arcminutes exactly (truncated)', () => {
+    const k = computeBhavaChalit(swe, BIRTH.utc, BIRTH.place)
+    expect(k.cusps.map((c) => cuspText(c)).slice(0, 6)).toEqual([
+      '01 12.53', '02 10.54', '03 11.31', '04 12.52', '05 13.36', '06 13.38',
+    ])
+    const byKey = Object.fromEntries(k.planets.map((p) => [p.key, planetText(p)]))
+    expect(byKey.sun).toBe('SUN 08.09')
+    expect(byKey.moon).toBe('MOO 12.30')
+    expect(byKey.venus).toBe('VEN 14.18')
+    expect(byKey.saturn).toBe('SAT# 03.12')
+    expect(byKey.jupiter).toBe('JUP# 15.30')
+    expect(byKey.mars).toBe('MAR# 21.30')
+    expect(byKey.mercury).toBe('MER 08.59')
+    expect(byKey.rahu).toBe('RAH 07.10')
+    expect(byKey.ketu).toBe('KET 07.10')
   })
 
   it('places planets into the cusp-based bhavas (wrap through 0° included)', () => {

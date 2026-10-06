@@ -56,9 +56,10 @@ export function computeBhavaChalit(swe, utc, place) {
   const jd = swe.julday(utc.year, utc.month, utc.day, hourDecimal)
   const flags = swe.SEFLG_SWIEPH | swe.SEFLG_SIDEREAL | swe.SEFLG_SPEED
 
-  // Placidus cusps (sidereal). The old software's cusps sit at UT + ΔT
-  // (+50.6 s at 1980) — reproduce that (docs/bnn-calib-findings.md §3).
-  const jdHouses = BNN_SETTINGS.housesAtDeltaT ? jd + swe.deltat(jd) : jd
+  // Placidus cusps (sidereal). The old software's cusps sit at UT + ΔT plus a
+  // ~+0.5 s fine-tune (verified so every displayed arcminute matches its face;
+  // docs/bnn-calib-findings.md §3 · scripts/bnn-calib/chart-texts.mjs).
+  const jdHouses = BNN_SETTINGS.housesAtDeltaT ? jd + swe.deltat(jd) + 0.5 / 86400 : jd
   const h = swe.houses_ex(jdHouses, swe.SEFLG_SWIEPH | swe.SEFLG_SIDEREAL, place.latitude, place.longitude, 'P')
   const cusps = []
   for (let i = 1; i <= 12; i++) {

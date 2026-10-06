@@ -31,7 +31,11 @@ describe('BNN Phase 1 — module API surfaces', () => {
       dasha.computeDashaTree,
       transit.computeTransitSnapshot,
       transit.computePcpWindows,
-      render.renderBnnReport,
+      render.buildBnnChart,
+      render.planetText,
+      render.cuspText,
+      render.exchangeLabel,
+      render.ageYMD,
     ]
     for (const fn of fns) expect(typeof fn).toBe('function')
   })
@@ -50,6 +54,5 @@ describe('BNN Phase 1 — module API surfaces', () => {
     expect(() => percent.planetToPlanetPercent()).toThrow(/Phase 5/)
     expect(() => dasha.computeDashaTree()).toThrow(/Phase 6/)
     expect(() => transit.computeTransitSnapshot()).toThrow(/Phase 7/)
-    expect(() => render.renderBnnReport()).toThrow(/Phase 2/)
   })
 })

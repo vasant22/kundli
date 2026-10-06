@@ -36,6 +36,12 @@ Scripts: `scripts/bnn-calib/` · दोबारा चलाएँ: `node scrip
 (रास्ता: पहले "+2m13s + lat≈21°29′" वाला सुराग़ निकला था — अब साफ़ है कि वह = coordinates
 (78.25 बनाम अनुमानित 77.90) + ΔT का जोड़ था।)
 
+इसके साथ दो बारीक़ियाँ और मिलाई गईं (दोनों code+tests में pinned):
+
+- चार्ट के text में **मिनट truncate** होते हैं (8°09.87′ → "08.09", 13°36.69′ → "13.36")।
+- भाव-संधि में **+0.5 सेकंड का fine-tune** — इससे चार्ट का हर visible अंक पुराने face से
+  अक्षरशः same निकलता है (जाँच: `scripts/bnn-calib/chart-texts.mjs`)।
+
 ### भाव-संधियाँ (ΔT सहित · संगणना vs reference)
 
 | संधि | संगणना | अंतर |
@@ -70,6 +76,7 @@ Scripts: `scripts/bnn-calib/` · दोबारा चलाएँ: `node scrip
 - `ayanamsa-fit.mjs` / `-diag.mjs` / `-diag2.mjs` — house-system × समय × latitude की खोज
 - `ayanamsa-final.mjs` — candidates सूची + fine fit + पूरी तालिका
 - **`ayanamsa-confirm.mjs`** — exact coords पर final verification (§3 की तालिका)
+- `chart-texts.mjs` — चार्ट के display-text (truncated arcminutes) पुराने face से मिलान + +0.5s fine-tune
 
 ## 5) UI संदर्भ (old software के screenshots — Phase 2b+ के लिए)
 

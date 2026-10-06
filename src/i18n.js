@@ -24,6 +24,8 @@ const STRINGS = {
     'bnn.btn': 'BNN चार्ट बनाएँ',
     'bnn.noteTitle': '✅ जन्म विवरण ठीक है',
     'bnn.noteBody': 'भावचलित (KP New) गणना और चार्ट अगले चरणों में जुड़ेंगे।',
+    'bnn.calculating': '⏳ BNN चार्ट की गणना हो रही है…',
+    'bnn.calcError': 'गणना इंजन लोड नहीं हो सका — थोड़ी देर बाद दोबारा कोशिश करें।',
 
     // मुख्य साइट (MyBapuji) की ऊपरी पट्टी
     'mb.home': 'होम',
@@ -208,6 +210,8 @@ const STRINGS = {
     'bnn.btn': 'Create BNN Chart',
     'bnn.noteTitle': '✅ Birth details checked',
     'bnn.noteBody': 'The KP New bhava-chalit calculation and charts arrive in the next phases.',
+    'bnn.calculating': '⏳ Computing the BNN chart…',
+    'bnn.calcError': 'The calculation engine could not load — please try again in a moment.',
 
     // MyBapuji main-site strip
     'mb.home': 'Home',

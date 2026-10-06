@@ -3,14 +3,18 @@
 // (shared modules only — geocode / prefill / birthvalidate / timeutil / i18n).
 // The BNN maths live in the sibling modules:
 //   kp.js (Ph 2) · prsss.js (Ph 3) · combos.js (Ph 4) · percent.js +
-//   special.js (Ph 5) · dasha.js (Ph 6) · transit.js (Ph 7) · render.js (2+).
+//   special.js (Ph 5) · dasha.js (Ph 6) · transit.js (Ph 7) · render.js (2b).
+// On submit: KP New bhava chalit → the Lagna chart with the north/south toggle.
 // Spec: docs/bnn-guide.txt.
 import '../style.css'
-import { t, getLang, setLang, months } from '../i18n.js'
+import { t, getLang, setLang, months, NAKSHATRAS, TITHIS, YOGAS } from '../i18n.js'
 import { searchPlace } from '../geocode.js'
 import { parseBirthParams } from '../prefill.js'
 import { validateBirth } from '../birthvalidate.js'
 import { wallTimeToUtc } from '../timeutil.js'
+import { initEphemeris } from '../astro.js'
+import { computeBhavaChalit, findExchanges } from './kp.js'
+import { ageYMD, buildBnnChart, exchangeLabel, weekdayEN } from './render.js'
 import { mybapujiStripHTML } from '../mybapuji-strip.js'
 
 // Where the public source code lives (same repo as the other pages).
@@ -207,6 +211,25 @@ function computeConversion(values) {
   }
 }
 
+// The WASM ephemeris is heavy; load it once, on the first calculation.
+let swePromise = null
+function ensureEphemeris() {
+  if (!swePromise) swePromise = initEphemeris()
+  return swePromise
+}
+
+// Latitude/longitude for the chart (manual fields win — same as validation).
+function resolveCoordinates(values) {
+  const manualUsed = values.manual.lat !== '' && values.manual.lon !== '' && values.manual.tz !== ''
+  if (manualUsed) {
+    return { latitude: Number(values.manual.lat), longitude: Number(values.manual.lon) }
+  }
+  if (values.selectedPlace) {
+    return { latitude: values.selectedPlace.latitude, longitude: values.selectedPlace.longitude }
+  }
+  return null
+}
+
 // ---------------------------------------------------------------------------
 // Language (Hindi default ⇄ English)
 // ---------------------------------------------------------------------------
@@ -249,7 +272,7 @@ function applyLanguage() {
   if (!searchNote.hidden && lastNoteKey) searchNote.textContent = t(lastNoteKey)
   renderConfirm()
   if (Object.keys(lastErrors).length > 0) showErrors(lastErrors)
-  if (lastValues) showSummary(lastValues, false)
+  if (lastValues && lastValues.bnn) showReport(lastValues, false)
 }
 
 // ---------------------------------------------------------------------------
@@ -291,27 +314,98 @@ function showErrors(errors) {
 }
 
 // ---------------------------------------------------------------------------
-// Interim output card — Phase 1 keeps this page honest: it says exactly which
-// step comes next instead of showing numbers the later phases will compute.
+// Report card — the Lagna (rashi) chart drawn from the KP New bhava-chalit
+// data, with the north/south style toggle under it (Phase 2b).
 // ---------------------------------------------------------------------------
-function showSummary(values, scroll) {
+function buildBnnMeta(values) {
+  const bnn = values.bnn
+  const moon = bnn.planets.find((p) => p.key === 'moon')
+  const now = new Date()
+  const age = ageYMD(
+    { year: Number(values.year), month: Number(values.month), day: Number(values.day) },
+    { year: now.getFullYear(), month: now.getMonth() + 1, day: now.getDate() }
+  )
+  const pad = (n) => String(n).padStart(2, '0')
+  const gender = values.gender ? ` ${values.gender.toUpperCase()}` : ''
+  return {
+    name: values.name,
+    placeText: values.selectedPlace ? displayName(values.selectedPlace) : values.place,
+    dateTimeText: `${pad(Number(values.day))}-${pad(Number(values.month))}-${values.year} - ${pad(Number(values.hour))}:${pad(Number(values.minute))}:${pad(values.second === '' ? 0 : Number(values.second))}`,
+    weekday: weekdayEN(Number(values.year), Number(values.month), Number(values.day)),
+    ageText: `AGE : ${age.y}Y-${age.m}M-${age.d}D${gender}`,
+    nakText: `${NAKSHATRAS[moon.nakshatra - 1].en.toUpperCase()} - ${moon.pada}`,
+    tithiText: `${bnn.tithiIndex <= 15 ? 'SHUKLA' : 'KRISHNA'} - ${TITHIS[bnn.tithiIndex - 1].en.toUpperCase()}`,
+    yogaText: `${YOGAS[bnn.yogaIndex - 1].en.toUpperCase()} YOGA`,
+  }
+}
+
+function showReport(values, scroll) {
   output.hidden = false
   output.replaceChildren()
 
   const card = document.createElement('div')
-  card.className = 'card summary'
-  const heading = document.createElement('h2')
-  heading.textContent = t('bnn.noteTitle')
-  const note = document.createElement('p')
-  note.className = 'note'
-  note.textContent = t('bnn.noteBody')
-  card.append(heading, note)
+  card.className = 'card summary bnn-card'
+
+  const exchangeBox = document.createElement('div')
+  exchangeBox.className = 'bnn-exchange-box'
+  const pairs = findExchanges(values.bnn.planets)
+  if (pairs.length > 0) {
+    exchangeBox.textContent = exchangeLabel(pairs)
+  } else {
+    exchangeBox.hidden = true
+  }
+
+  const chartBox = document.createElement('div')
+  chartBox.className = 'chart-box'
+
+  const toggleBar = document.createElement('div')
+  toggleBar.className = 'chart-toggle'
+  const northBtn = document.createElement('button')
+  northBtn.type = 'button'
+  northBtn.textContent = t('chart.north')
+  const southBtn = document.createElement('button')
+  southBtn.type = 'button'
+  southBtn.textContent = t('chart.south')
+  toggleBar.append(northBtn, southBtn)
+
+  const paint = () => {
+    const style = values.bnnStyle === 'north' ? 'north' : 'south'
+    chartBox.replaceChildren(buildBnnChart(values.bnn, { style, meta: values.bnnMeta }))
+    northBtn.classList.toggle('active', style === 'north')
+    southBtn.classList.toggle('active', style === 'south')
+    northBtn.setAttribute('aria-pressed', String(style === 'north'))
+    southBtn.setAttribute('aria-pressed', String(style === 'south'))
+  }
+  northBtn.addEventListener('click', () => {
+    values.bnnStyle = 'north'
+    paint()
+  })
+  southBtn.addEventListener('click', () => {
+    values.bnnStyle = 'south'
+    paint()
+  })
+
+  card.append(exchangeBox, chartBox, toggleBar)
   output.append(card)
+  paint()
 
   // scrollIntoView is not available in every environment (e.g. test runners)
   if (scroll && typeof output.scrollIntoView === 'function') {
     output.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
+}
+
+// A small single-note card (calculating… / engine error).
+function showNotice(text) {
+  output.hidden = false
+  output.replaceChildren()
+  const card = document.createElement('div')
+  card.className = 'card summary'
+  const note = document.createElement('p')
+  note.className = 'note'
+  note.textContent = text
+  card.append(note)
+  output.append(card)
 }
 
 // ---------------------------------------------------------------------------
@@ -411,10 +505,9 @@ placeInput.addEventListener('input', () => {
 })
 
 // ---------------------------------------------------------------------------
-// Submit — validate and convert the birth time. The KP New bhava-chalit
-// computation (and everything built on it) arrives in Phases 2+.
+// Submit — validate → convert the birth time → KP New bhava chalit → draw.
 // ---------------------------------------------------------------------------
-function submitForm() {
+async function submitForm() {
   const values = readForm()
   const errors = validateBirth(values)
   lastErrors = errors
@@ -430,8 +523,22 @@ function submitForm() {
   }
 
   values.converted = computeConversion(values)
+  const coords = resolveCoordinates(values)
   lastValues = values
-  showSummary(values, true)
+  showNotice(t('bnn.calculating'))
+
+  try {
+    if (!values.converted || !coords) throw new Error('birth data incomplete')
+    const swe = await ensureEphemeris()
+    values.bnn = computeBhavaChalit(swe, values.converted.utc, coords)
+    values.bnnMeta = buildBnnMeta(values)
+    values.bnnStyle = 'south'
+    if (lastValues === values) showReport(values, true)
+  } catch (err) {
+    console.error('BNN calculation failed:', err)
+    swePromise = null // allow a retry on the next attempt
+    if (lastValues === values) showNotice(t('bnn.calcError'))
+  }
 }
 
 form.addEventListener('submit', (event) => {

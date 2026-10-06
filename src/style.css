@@ -1111,3 +1111,24 @@ details.manual[open] summary {
   margin: 0 0 0.75rem;
   padding-right: 2rem;
 }
+
+/* ------------------------------------------------------------------
+   BNN चार्ट page (/bnn/) — Phase 2b (old-software जैसा exchange label box)
+   ------------------------------------------------------------------ */
+.bnn-exchange-box {
+  display: inline-block;
+  background: #fdf3d7;
+  border: 1px solid #b98a2e;
+  border-radius: 6px;
+  padding: 0.35rem 0.7rem;
+  margin: 0 0 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.bnn-exchange-box[hidden] {
+  display: none;
+}
+.bnn-card .chart-box {
+  max-width: 420px;
+  margin-inline: auto;
+}
