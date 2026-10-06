@@ -1,7 +1,7 @@
 # Kundli / जन्मपत्री App — Project Notes (handoff)
 
 Created: 2026-09-28. Status: **Main app COMPLETE; “Kundli Matching” (Ashtakoot Guna Milan) COMPLETE — Phases 1–8 done 2026-09-29, live at https://kundli.mybapuji.com/match/** (same repo; nav link added on the main page). **Third project “Panchang” — COMPLETE (Phases 1–11, 2026-09-29) — live at https://kundli.mybapuji.com/panchang/ and /panchang-widget/; 362 tests.** User-side remainders: Panchang hand-checks (tests/PANCHANG_VALIDATION.md), WordPress embed, plus the older 10-chart AstroSage validation (tests/VALIDATION.md), matching hand-checks (tests/MATCH_VALIDATION.md), mybapuji.com link, device checks.
-First thing to do in a fresh chat: read this file + `docs/kundli-matching-guide.txt` (current task spec; `docs/kundli-guide.txt` = spec of the completed main app, reference only). Old HTTPS-cert notes below are resolved — no action needed.
+First thing to do in a fresh chat: read this file + `docs/bnn-guide.txt` (current task spec — Project #4 BNN चार्ट; `docs/kundli-guide.txt` / `docs/kundli-matching-guide.txt` / `docs/panchang-guide.txt` = specs of the completed apps, reference only). Old HTTPS-cert notes below are resolved — no action needed.
 
 ## What to build
 Static, browser-only Vedic "Kundli / Birth Chart" web app for mybapuji.com.
@@ -501,3 +501,18 @@ Hard requirements (summary):
 - "और मुफ़्त टूल" वाले दोनों chips अब FAQ box से बाहर — हमेशा दिखते हैं (कभी hide नहीं)।
 - CSS: `.faq-item/summary/::after`; `.seo-links` generic (बॉक्स-बाहर भी चलेगा); `.seo-info > * + *` spacing।
 - tests 406 ✓; dist check done।
+
+---
+
+## Project #4 — BNN (भृगु नंदी नाड़ी) चार्ट — शुरू 2026-10-07
+Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्करण 2)। Guide भाग 6 में phases 1–9 — हर phase के बाद: test → छोटी हिंदी रिपोर्ट → commit।
+नियम (user-confirmed 2026-10-07): **चित्र = लग्न (राशि) कुंडली; सारी गणना/तालिकाएँ ग्रहों की degree + भावचलित (KP New) से।** BP/AP toggle (आयु 30+ → default AP)। प्रतिशत constants settings में (R11)। खुले मुद्दे implement नहीं — report/पूछना only (शनि-सूर्य-97, गुलिक, TR tabs, PCP 7th/वक्री, BRSSS B11, अंतर-वर्ष 364)।
+
+### 2026-10-07 — BNN Phase 1 done (`d5cb72c`)
+- नया page `/bnn/` — `bnn/index.html` + entry `src/bnn/main.js`: कुंडली page वाला ही input form (वही shared modules — birthvalidate/geocode/prefill/timeutil/i18n; कोई duplicate rule नहीं)। Nav में "BNN चार्ट" (सिर्फ़ bnn page पर; बाक़ी pages पर launch के समय) ।
+- `src/bnn/` stubs (अगले चरणों का contract): kp (Ph2) · prsss (Ph3) · combos (Ph4) · percent + special (Ph5) · dasha (Ph6) · transit (Ph7) · render (2+)। `vite.config.js` multi-page input जुड़ा।
+- SEO: फ़िलहाल `noindex` + canonical (निर्माणाधीन); चरण 9 में index + sitemap + बाक़ी pages के nav links।
+- Tests: **415 ✓** (नए: `tests/bnn.test.js` 6, `tests/bnn-modules.test.js` 3)। `npm run build` ✓ — dist 3.1M; `/bnn/` = 3.75 kB HTML + ~11 kB JS।
+- ⚠️ jsdom में `scrollIntoView` नहीं होता → guard लगाया (main.js वाला ही pattern)।
+- Token: wallet 25313 → ~25071 (Δ ≈ 242 इस चरण में)।
+- **अगला — Phase 2**: swisseph के KP/Krishnamurti sidereal-mode candidates की सूची → reference chart (22-01-1980, 20:30, बैतूल) पर हर candidate → 1 कला के भीतर मेल वाला variant; फिर लग्न-चार्ट drawing (उत्तर/दक्षिण toggle) + centre panel (R16) + exchange label (R6)।
