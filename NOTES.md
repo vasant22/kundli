@@ -516,3 +516,11 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - ⚠️ jsdom में `scrollIntoView` नहीं होता → guard लगाया (main.js वाला ही pattern)।
 - Token: wallet 25313 → ~25071 (Δ ≈ 242 इस चरण में)।
 - **अगला — Phase 2**: swisseph के KP/Krishnamurti sidereal-mode candidates की सूची → reference chart (22-01-1980, 20:30, बैतूल) पर हर candidate → 1 कला के भीतर मेल वाला variant; फिर लग्न-चार्ट drawing (उत्तर/दक्षिण toggle) + centre panel (R16) + exchange label (R6)।
+
+### 2026-10-07 — BNN Phase 2a: अयनांश तय (reference match) (`62f03e0`)
+- Reference चार्ट (22-01-1980, 20:30, बैतूल) पर sweph के सारे KP/Krishnamurti candidates जाँचे — `scripts/bnn-calib/` + **`docs/bnn-calib-findings.md`**।
+- **चुना: sidereal mode 44 ("Lahiri VP285") = 23°35′06″** — अकेला candidate जो ग्रह ≤0.84′ देता है (Krishnamurti 5/45: 5.8–7′ ✗; Lahiri/ICRC ~1.2′)।
+- **Input-fit खुलासा**: पुराने outputs पूरे देते हैं lat≈21°29′ + समय≈20:32:13 (+2m13s) पर → संधियाँ ≤0.35′, ग्रह ≤1.55′, तिथि/योग/नक्षत्र-उत्तरा भाद्रपद-3 exactly ✓। (user/guru से confirm — findings §3; ज़्यादा कुंडलियाँ मिलें तो recalibrate।)
+- `src/bnn/kp.js` अब असली engine: computeBhavaChalit (Placidus + planets + bhava-map + tithi/yoga) · setBnnAyanamsa · findExchanges (MERCURY<>SATURN ✓) · BNN_SETTINGS। `tests/bnn-kp.test.js` (6 नए)। **421 ✓**।
+- Token: wallet 25071 → ~24405 (Δ ≈ 666 इस phase-भाग में)।
+- **अगला — Phase 2b**: लग्न-चार्ट drawing — उत्तर/दक्षिण बटन, लाल cusp अंक+डिग्री, '#' वक्री, centre panel (नाम/आयु/नक्षत्र-पद/तिथि/योग + MERCURY<>SATURN label), page में जोड़ना + tests।
