@@ -1287,3 +1287,11 @@ details.manual[open] summary {
 .bnn-actions-row .bnn-allchart-btn { background: #b0470a; border-color: #b0470a; }
 .bnn-actions-row .bnn-allchart-btn:hover { background: #8f3a08; }
 .bnn-dasha-table tr.row-blank td { color: #b9ac8e; }
+.bnn-legend .lg-dot {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  margin-right: 4px;
+  vertical-align: -1px;
+}

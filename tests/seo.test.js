@@ -9,16 +9,17 @@ const PAGES = [
   { file: 'index.html', title: /Free कुंडली बनाएं/, canonical: 'https://kundli.mybapuji.com/' },
   { file: 'match/index.html', title: /Free कुंडली मिलान/, canonical: 'https://kundli.mybapuji.com/match/' },
   { file: 'panchang/index.html', title: /Free पंचांग/, canonical: 'https://kundli.mybapuji.com/panchang/' },
+  { file: 'bnn/index.html', title: /Free BNN चार्ट/, canonical: 'https://kundli.mybapuji.com/bnn/' },
 ]
 
-describe('SEO essentials — कुंडली / मिलान / पंचांग', () => {
+describe('SEO essentials — कुंडली / मिलान / पंचांग / BNN', () => {
   it('robots.txt allows crawling and points to the sitemap', () => {
     const robots = read('public/robots.txt')
     expect(robots).toMatch(/User-agent: \*/)
     expect(robots).toMatch(/Sitemap: https:\/\/kundli\.mybapuji\.com\/sitemap\.xml/)
   })
 
-  it('sitemap.xml lists all three pages', () => {
+  it('sitemap.xml lists all four pages', () => {
     const sitemap = read('public/sitemap.xml')
     for (const url of PAGES.map((p) => p.canonical)) {
       expect(sitemap).toContain(`<loc>${url}</loc>`)

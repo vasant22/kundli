@@ -515,8 +515,22 @@ function entCell(e, i) {
 const cell = (text, cls) => el2('td', cls, text)
 const th = (text) => el2('th', null, text)
 
-function legendLine() {
-  return el2('p', 'bnn-legend', t('bnn.legend'))
+// Table legends (user 2026-10-07d): colored dots + short labels only —
+// brown = row item (bhava / centric planet), blue = main planet, green =
+// upagraha (≥20 %), orange = weak (अल्प बलशाली ग्रह).
+const LG_DOT = { brown: '#b3261e', blue: '#1565c0', green: '#2e7d32', orange: '#ef6c00' }
+function legendLine(items) {
+  const p = el2('p', 'bnn-legend')
+  items.forEach(([dot, key], i) => {
+    if (i > 0) p.append(document.createTextNode(' · '))
+    const item = el2('span', 'lg-item')
+    const d = document.createElement('span')
+    d.className = 'lg-dot'
+    d.style.background = LG_DOT[dot]
+    item.append(d, document.createTextNode(t(key)))
+    p.append(item)
+  })
+  return p
 }
 
 function tabBar(defs, onSelect) {
@@ -617,7 +631,12 @@ export function buildBhavaTables(bnn, mode, opts = {}) {
   }
   section.append(bar.bar, content)
   render()
-  section.append(legendLine())
+  section.append(legendLine([
+    ['brown', 'bnn.lg.bhava'],
+    ['blue', 'bnn.lg.main'],
+    ['green', 'bnn.lg.sub'],
+    ['orange', 'bnn.lg.weak'],
+  ]))
   return section
 }
 
@@ -711,7 +730,12 @@ export function buildPlanetTables(bnn, mode, opts = {}) {
   }
   section.append(bar.bar, content)
   render()
-  section.append(legendLine())
+  section.append(legendLine([
+    ['brown', 'bnn.lg.centric'],
+    ['blue', 'bnn.lg.main'],
+    ['green', 'bnn.lg.sub'],
+    ['orange', 'bnn.lg.weak'],
+  ]))
   return section
 }
 

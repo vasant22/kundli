@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- kundli.mybapuji.com — the three free tools. Keep in sync with pages + canonical URLs. -->
+<!-- kundli.mybapuji.com — the four free tools. Keep in sync with pages + canonical URLs. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://kundli.mybapuji.com/</loc>
@@ -17,6 +17,12 @@
     <loc>https://kundli.mybapuji.com/panchang/</loc>
     <lastmod>2026-09-30</lastmod>
     <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://kundli.mybapuji.com/bnn/</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 </urlset>

@@ -13,10 +13,10 @@ const STRINGS = {
     'nav.home': 'कुंडली',
     'nav.match': 'कुंडली मिलान',
     'nav.panchang': 'पंचांग',
-    'nav.bnn': 'BNN चार्ट',
+    'nav.bnn': 'Free BNN चार्ट',
 
     // भृगु नंदी नाड़ी (BNN) चार्ट — नया पेज /bnn/ (2026-10-07 से)
-    'bnn.docTitle': 'भृगु नंदी नाड़ी (BNN) चार्ट',
+    'bnn.docTitle': 'Free BNN चार्ट (भृगु नंदी नाड़ी ज्योतिष) — Online बनाएं & PDF Download',
     'bnn.title': 'भृगु नंदी नाड़ी चार्ट',
     'bnn.subtitle': 'भावचलित (KP New) आधारित विशेष चार्ट',
     'bnn.badge': '✨ 100% Free — बिना साइन-अप',
@@ -35,6 +35,11 @@ const STRINGS = {
     'bnn.transitPlace': 'गोचर स्थान',
     'bnn.print': '🖨️ प्रिंट / PDF बनाएँ',
     'bnn.allChart': '📄 ऑल चार्ट (PNG)',
+    'bnn.lg.bhava': 'भाव',
+    'bnn.lg.centric': 'केन्द्रीय ग्रह',
+    'bnn.lg.main': 'मुख्य ग्रह',
+    'bnn.lg.sub': 'उपग्रह',
+    'bnn.lg.weak': 'अल्प बलशाली ग्रह',
 
     // मुख्य साइट (MyBapuji) की ऊपरी पट्टी
     'mb.home': 'होम',
@@ -208,10 +213,10 @@ const STRINGS = {
     'nav.home': 'Kundli',
     'nav.match': 'Kundli Matching',
     'nav.panchang': 'Panchang',
-    'nav.bnn': 'BNN Chart',
+    'nav.bnn': 'Free BNN Chart',
 
     // Bhrigu Nandi Nadi (BNN) chart — new page /bnn/ (from 2026-10-07)
-    'bnn.docTitle': 'Bhrigu Nandi Nadi (BNN) Chart',
+    'bnn.docTitle': 'Free BNN Chart (Bhrigu Nandi Nadi) — Create Online & Download PDF',
     'bnn.title': 'Bhrigu Nandi Nadi Chart',
     'bnn.subtitle': 'Bhava-chalit (KP New) based special chart',
     'bnn.badge': '✨ 100% Free — no sign-up',
@@ -230,6 +235,11 @@ const STRINGS = {
     'bnn.transitPlace': 'Transit place',
     'bnn.print': '🖨️ Print / Save PDF',
     'bnn.allChart': '📄 All Chart (PNG)',
+    'bnn.lg.bhava': 'Bhava',
+    'bnn.lg.centric': 'Centric planet',
+    'bnn.lg.main': 'Main planet',
+    'bnn.lg.sub': 'Sub planet',
+    'bnn.lg.weak': 'Weak planet',
 
     // MyBapuji main-site strip
     'mb.home': 'Home',

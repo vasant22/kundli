@@ -67,7 +67,7 @@ describe('Phase 1 — Kundli Matching page shell', () => {
     expect(links[1].classList.contains('active')).toBe(true)
     expect(links[2].textContent).toBe('पंचांग')
     expect(links[2].getAttribute('href')).toBe('../panchang/')
-    expect(links[3].textContent).toBe('BNN चार्ट')
+    expect(links[3].textContent).toBe('Free BNN चार्ट')
     expect(links[3].getAttribute('href')).toBe('../bnn/')
     // MyBapuji मुख्य-साइट पट्टी भी मौजूद
     expect(document.querySelector('.mb-strip .brand').textContent).toContain('MyBapuji')

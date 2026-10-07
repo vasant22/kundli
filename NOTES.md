@@ -680,3 +680,16 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
   web जैसी) ④ क्रम: **BHAVA पहले, फिर PLANET** (combo व special — दोनों जोड़े bhava-first) ⑤ ज़रूरत से
   ज़्यादा page-break हटाया — अब 5 pages, बिना आधा-खाली पेज।
 - Tests **466 ✓**; print (5-page) · screen · ऑल-चार्ट — तीनों headless में जाँचे ✓।
+
+### 2026-10-07 — BNN corrections-8: bottom में किताबें+affiliate, BNN FAQ, SEO (free), नए legends
+- **पेज के bottom में** (मिलान/पंचांग जैसा): **BNN FAQ** (5 प्रश्न — BNN क्या है (Gemini School of
+  Astrology की BNN class + Selvam sir व श्री सुलूर गोस्वामी सर द्वारा हज़ारों कुंडलियों की research से
+  विकसित सिद्धांत), free/बिना साइन-अप, क्या-क्या मिलता है, भावचलित KP New, PDF/PNG download) +
+  "ज्योतिष संबंधित किताबें मुफ़्त Download" (7 कार्ड + 2 chips) + "Sponsored — आपके लिए चुनी किताबें"
+  (6 Amazon links, tag=krishna220af-21) + Free tool chips।
+- **SEO**: title/description/keywords में "free"; robots अब **index, follow** (निर्माणाधीन हटाया);
+  OG tags; JSON-LD (WebApplication + FAQPage); **sitemap.xml में /bnn/ जोड़ा**; nav link अब
+  **"Free BNN चार्ट"** (चारों पेजों में)। ⚠️ बाक़ी: GSC में /bnn/ submit करना (user)।
+- **Legends** (दोनों combination तालिकाएँ): ● भाव / ● केन्द्रीय ग्रह (dark brown = row-label रंग) ·
+  ● मुख्य ग्रह · ● उपग्रह · ● अल्प बलशाली ग्रह — पुरानी लंबी व्याख्या + pink item हटाए।
+- Tests **466 → 469 ✓**; bottom + legends headless में जाँचे ✓।
