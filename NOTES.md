@@ -575,3 +575,6 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - Tests **443 ✓** (page tables + BP/AP toggle सहित)। Headless-Chrome से असली render जाँचा ✓ (screenshot)।
 - Token: wallet 22210 → 21657 (Δ ≈ 553; इस phase का UI+verification काम)।
 - **अगला — Phase 6**: विंशोत्तरी दशा/भुक्ति/अंतर (disposal dates + ages; 366/364-दिन वर्ष settings)।
+
+### 2026-10-07 — BNN पेज अब menu में (user request) (`285d6ea`)
+- चारों पेजों के top nav में **"BNN चार्ट"** link जोड़ा — user को पेज live दिख नहीं रहा था (menu link नहीं था; browser 10-मिनट cache भी)। `match.test.js` nav update (4 links)। Tests **443 ✓**; live JS में link present ✓।
