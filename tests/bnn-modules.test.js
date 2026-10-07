@@ -21,9 +21,12 @@ describe('BNN Phase 1 — module API surfaces', () => {
       kp.findExchanges,
       prsss.computePrsss,
       prsss.computeBrsss,
-      combos.computePlanetCombinations,
-      combos.computeBhavaCombinations,
-      combos.findAstronomyPartner,
+      combos.seatPositions,
+      combos.planetCombination,
+      combos.planetCombinations,
+      combos.bhavaCombinations,
+      combos.astronomyPartner,
+      combos.aspectPoints,
       percent.planetToPlanetPercent,
       percent.planetToBhavaPercent,
       special.computeLordship,
@@ -49,8 +52,6 @@ describe('BNN Phase 1 — module API surfaces', () => {
   })
 
   it('stubs throw with their phase until implemented', () => {
-    expect(() => combos.computePlanetCombinations()).toThrow(/Phase 4/)
-    expect(() => percent.planetToPlanetPercent()).toThrow(/Phase 5/)
     expect(() => dasha.computeDashaTree()).toThrow(/Phase 6/)
     expect(() => transit.computeTransitSnapshot()).toThrow(/Phase 7/)
   })

@@ -1,22 +1,234 @@
-// combos.js — combination engine (Project BNN — Phase 4).
-//
-// Guide R1–R7: motion direction, 1-5-7-9 zones, member order, Mars 4/8 and
-// Saturn 3/10 special aspects, parivartana BP/AP seat swap, and the
-// Astronomy column. Pure functions — no DOM here (rendering = render.js).
-//
-// Spec: docs/bnn-guide.txt → Phase 4.
+// combos.js — the combination engine (Phase 4). Guide rules R1–R7:
+//   R1 motion direction · R2 zones (k = 1,5,7,9; Ra/Ke: 1,5,9) · R3 members
+//   (Ra/Ke are skipped when they land in a 7th zone) · R4 member order
+//   ((Q−P) mod 30 forward / (P−Q) mod 30 backward; same degree first) ·
+//   R5 Mars 4/8 & Saturn 3/10 aspect entries (point counted always forward;
+//   included when the point lies in a zone; order key = distance to the
+//   point) · R6 parivartana BP/AP (seat swap incl. motion status) · R7 the
+//   Astronomy partner (first planet met in the seat's direction, zones and
+//   signs ignored).
+// The bhava rows (R12/13 area, Phase 5 tables) are provided here too:
+//   row B-n lists planets in bhavas n, n+4, n+8 (list159) plus n+6 (list1579,
+//   Ra/Ke skipped there); aspect entries appear only in the row of the bhava
+//   they land on; entries sorted by percentage (closeness) descending.
+// Spec: docs/bnn-guide.txt. Reference checks: scripts/bnn-calib/combos-check.mjs
+import { findExchanges } from './kp.js'
+import { planetToBhavaPercent, planetToPlanetPercent } from './percent.js'
 
-/** Planet Combination rows for one chart state ('BP' | 'AP'). */
-export function computePlanetCombinations(_ctx, _mode = 'AP') {
-  throw new Error('BNN combos.js: not implemented yet (Phase 4 — docs/bnn-guide.txt)')
+const norm = (x) => ((x % 360) + 360) % 360
+
+// Allowed zone offsets (k−1): k ∈ {1,5,7,9} → {0,4,6,8}; Ra/Ke only {0,4,8}.
+const OFFSETS_NORMAL = [0, 4, 6, 8]
+const OFFSETS_NODES = [0, 4, 8]
+const isNode = (key) => key === 'rahu' || key === 'ketu'
+
+/**
+ * Seat positions per mode. BP = natal positions; AP = mutual-exchange pairs
+ * swapped (sign, degree AND motion status — R6). `natalRetro` keeps the '#'.
+ */
+export function seatPositions(planets, mode = 'AP') {
+  const seats = {}
+  for (const p of planets) {
+    seats[p.key] = {
+      key: p.key,
+      lon: p.longitude,
+      rashi: p.rashi,
+      degInSign: p.degInSign,
+      retro: p.retro,
+      natalRetro: p.retro,
+    }
+  }
+  if (mode === 'AP') {
+    for (const [aKey, bKey] of findExchanges(planets)) {
+      const a = seats[aKey]
+      const b = seats[bKey]
+      const a0 = { lon: a.lon, rashi: a.rashi, degInSign: a.degInSign, retro: a.retro }
+      Object.assign(a, { lon: b.lon, rashi: b.rashi, degInSign: b.degInSign, retro: b.retro })
+      Object.assign(b, a0)
+    }
+  }
+  return seats
 }
 
-/** Bhava Combination rows (1-5-9 / 1-5-7-9) for one chart state. */
-export function computeBhavaCombinations(_ctx, _mode = 'AP') {
-  throw new Error('BNN combos.js: not implemented yet (Phase 4 — docs/bnn-guide.txt)')
+/** In-direction degrees from a seat to a point (0 ≤ d < 360). */
+function deltaTo(seat, x) {
+  return seat.retro ? norm(seat.lon - x) : norm(x - seat.lon)
 }
 
-/** The astronomy partner for a planet with no zone members (R7). */
-export function findAstronomyPartner(_ctx, _planetKey, _mode = 'AP') {
-  throw new Error('BNN combos.js: not implemented yet (Phase 4 — docs/bnn-guide.txt)')
+/**
+ * Zone membership + order key for a point against a source seat.
+ * Returns null when the point is outside the source's zones.
+ */
+export function memberOf(seat, x) {
+  const d = deltaTo(seat, x)
+  const off = Math.floor(d / 30)
+  const allowed = isNode(seat.key) ? OFFSETS_NODES : OFFSETS_NORMAL
+  if (!allowed.includes(off)) return null
+  return { zone: off + 1, key: d % 30, delta: d }
+}
+
+/** Mars 4/8 and Saturn 3/10 aspect points (always counted forward). */
+export function aspectPoints(seat) {
+  if (seat.key === 'mars') {
+    return [
+      { label: 'MAR4', from: 'mars', point: norm(seat.lon + 90) },
+      { label: 'MAR8', from: 'mars', point: norm(seat.lon + 210) },
+    ]
+  }
+  if (seat.key === 'saturn') {
+    return [
+      { label: 'SAT3', from: 'saturn', point: norm(seat.lon + 60) },
+      { label: 'SAT10', from: 'saturn', point: norm(seat.lon + 270) },
+    ]
+  }
+  return []
+}
+
+/**
+ * One planet's combination: ordered entries [{ type, key|label, zone,
+ * distance, percent }]. Ra/Ke as members are skipped in the source's 7th zone.
+ */
+export function planetCombination(planetKey, seats) {
+  const seat = seats[planetKey]
+  const entries = []
+  for (const other of Object.values(seats)) {
+    if (other.key === planetKey) continue
+    const m = memberOf(seat, other.lon)
+    if (!m) continue
+    if (isNode(other.key) && m.zone === 7) continue // R3
+    entries.push({
+      type: 'planet',
+      key: other.key,
+      zone: m.zone,
+      distance: m.key,
+      percent: planetToPlanetPercent(m.key),
+      natalRetro: other.natalRetro,
+    })
+  }
+  // R5: an aspect enters the list when the planet sits inside the aspect's
+  // influence zone — [point − 30°, point + 2°] (zodiac absolute; from the
+  // planet's side: the point lies between 2° behind and 30° ahead of it).
+  // Order key = distance to the point in the seat's motion direction.
+  for (const caster of Object.values(seats)) {
+    for (const ap of aspectPoints(caster)) {
+      const rel = norm(ap.point - seat.lon)
+      if (!(rel <= 30 || rel >= 358)) continue
+      const ddir = seat.retro ? norm(seat.lon - ap.point) : norm(ap.point - seat.lon)
+      const key = ddir % 30
+      entries.push({
+        type: 'aspect',
+        label: ap.label,
+        from: ap.from,
+        distance: key,
+        percent: planetToPlanetPercent(key),
+      })
+    }
+  }
+  entries.sort((a, b) => a.distance - b.distance)
+  return entries
+}
+
+/** All nine planet combinations for a mode. */
+export function planetCombinations(planets, mode = 'AP') {
+  const seats = seatPositions(planets, mode)
+  const out = {}
+  for (const p of planets) out[p.key] = planetCombination(p.key, seats)
+  return out
+}
+
+/** R7 — the first planet met along the seat's direction (zones/signs ignored). */
+export function astronomyPartner(planetKey, seats) {
+  const seat = seats[planetKey]
+  let best = null
+  for (const other of Object.values(seats)) {
+    if (other.key === planetKey) continue
+    const d = deltaTo(seat, other.lon)
+    if (d === 0) return other.key // same degree meets first
+    if (!best || d < best.d) best = { key: other.key, d }
+  }
+  return best ? best.key : null
+}
+
+export function astronomyPartners(planets, mode = 'AP') {
+  const seats = seatPositions(planets, mode)
+  const out = {}
+  for (const p of planets) out[p.key] = astronomyPartner(p.key, seats)
+  return out
+}
+
+// ---------------------------------------------------------------------------
+// Bhava combination rows (B-01 … B-12)
+// ---------------------------------------------------------------------------
+const bhavaMembership = (cusps) => {
+  const list = cusps.map((c) => c.longitude)
+  return (lon) => {
+    for (let i = 0; i < 12; i++) {
+      let a = list[i]
+      let b = list[(i + 1) % 12]
+      if (b <= a) b += 360
+      let x = lon
+      if (x < a) x += 360
+      if (x >= a && x < b) return i + 1
+    }
+    return 12
+  }
+}
+
+/**
+ * Rows for both tabs. Returns { [n]: { list159, list1579 } } — each list is
+ * ordered by closeness (percentage) descending. Aspect entries appear only in
+ * the row of the bhava they land on; in list1579 Ra/Ke in the n+6 bhava are
+ * skipped.
+ */
+export function bhavaCombinations(planets, cusps, mode = 'AP') {
+  const seats = seatPositions(planets, mode)
+  const cuspList = cusps.map((c) => c.longitude)
+  const bhavaOf = bhavaMembership(cusps)
+
+  // Precompute entries for every bhava: planets + landed aspects.
+  const perBhava = Array.from({ length: 13 }, () => [])
+  for (const other of Object.values(seats)) {
+    const b = bhavaOf(other.lon)
+    const d = norm(other.lon - cuspList[b - 1])
+    const w = norm(cuspList[b % 12] - cuspList[b - 1]) || 360
+    perBhava[b].push({
+      type: 'planet',
+      key: other.key,
+      distance: d,
+      percent: planetToBhavaPercent(d, w),
+      natalRetro: other.natalRetro,
+    })
+  }
+  for (const caster of Object.values(seats)) {
+    for (const ap of aspectPoints(caster)) {
+      const b = bhavaOf(ap.point)
+      const d = norm(ap.point - cuspList[b - 1])
+      const w = norm(cuspList[b % 12] - cuspList[b - 1]) || 360
+      perBhava[b].push({
+        type: 'aspect',
+        label: ap.label,
+        from: ap.from,
+        distance: d,
+        percent: planetToBhavaPercent(d, w),
+      })
+    }
+  }
+  for (const list of perBhava) list.sort((a, b) => b.percent - a.percent)
+
+  const bh = (n) => ((n - 1) % 12) + 1
+  // Planets from the row's bhava set; aspect entries ONLY in the row of the
+  // bhava they land on (row n == landed bhava).
+  const planetsOf = (set) => set.flatMap((b) => perBhava[b]).filter((e) => e.type === 'planet')
+  const aspectsOf = (n) => perBhava[n].filter((e) => e.type === 'aspect')
+  const out = {}
+  for (let n = 1; n <= 12; n++) {
+    const set159 = [n, bh(n + 4), bh(n + 8)]
+    const extra = bh(n + 6)
+    const base = [...planetsOf(set159), ...aspectsOf(n)]
+    const list159 = base.slice().sort((a, b) => b.percent - a.percent)
+    const list1579 = [...base, ...planetsOf([extra]).filter((e) => !isNode(e.key))]
+    list1579.sort((a, b) => b.percent - a.percent)
+    out[n] = { list159, list1579 }
+  }
+  return out
 }
