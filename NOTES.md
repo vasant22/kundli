@@ -548,3 +548,14 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - **B11 (guide: "मेल नहीं खाती")**: नियम से हमारा मान = `mercury, rahu, mercury, rahu, rahu` — report-only रखा, force नहीं किया; guru से पूछना बाक़ी।
 - Tests: `tests/bnn-prsss.test.js` (4 नए)। कुल **431 ✓**।
 - **अगला — Phase 4**: Combination engine (R1–R7: zones/order/aspects/parivartana BP-AP, Astronomy column)।
+
+### 2026-10-07 — BNN Phase 4: Combination engine (R1–R7) (`505957c`)
+- `combos.js` असली: directions/zones (1-5-7-9; Ra-Ke 1-5-9 + 7वें-zone का skip), order keys (Q−P)/(P−Q) mod 30, Mars 4/8 + Saturn 3/10 aspects, **parivartana BP/AP seat swap**, Astronomy column; `percent.js` (R11 formulas) भी अब असली।
+- **Aspect नियम की खोज (reference से)**: aspect entries सिर्फ़ तब जुड़ते हैं जब ग्रह उसकी influence zone **[बिंदु −30°, +2°]** में हो (guide के "zone" शब्द का सटीक अर्थ)।
+- **Verification (`scripts/bnn-calib/combos-check.mjs`): 51/51 PASS** — AP planet+bhava (guide भाग 5) · BP planet+bhava list159 + ASTRONOMY (user screenshots) — सब match ✓।
+- **Screenshots-verification (user, 2026-10-07)**: PRSSS 9/9 (छिपा 3rd level भी 'VEN' निकला ✓) · BRSSS 12/12 (B11 = MER,RAH,MER,RAH,RAH — पुरानी "B11 मेल नहीं खाती" शंका हल ✓)।
+- **Report-only खुले मुद्दे**: पुराना software ~1° पीछे बैठे ग्रह को भी जोड़ता है (AP: SAT row में SUN-97; BP: MER row में SUN) — guide कहती है implement न करें, केवल report — वैसा ही रखा।
+- **Display order (user, Phase 5 के लिए)**: bhava tabs `[1-5-9 | 1-5-7-9 | BRSSS | SPECIAL]`; planet tabs `[1-5-7-9 | 1-5-9 | SPECIAL | 3-11 | 10 | PRSSS | ASTRONOMY]` — 3-11/10 guide R8 से नहीं बनाएँगे (सॉफ्टवेयर में ख़ाली हैं)।
+- Tests: `tests/bnn-combos.test.js` (10 नए) — कुल **441 ✓**।
+- Token: wallet 23148 → 22319 (Δ ≈ 829; गहरी screenshot-verification)।
+- **अगला — Phase 5**: Percentages (R11, हो चुका — रिपोर्ट/रंग बाक़ी) + Lordship/SPECIAL (R13) + पूरी tables पेज पर (Planet/Bhava संयोजन tabs)।
