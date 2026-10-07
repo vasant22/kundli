@@ -1177,3 +1177,23 @@ details.manual[open] summary {
   color: #6b5b3a;
   margin: 0.3rem 0 0.2rem;
 }
+.bnn-tabs {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin: 0.4rem 0 0.5rem;
+}
+.bnn-tabs button {
+  padding: 0.3rem 0.85rem;
+  border: 1px solid #e8730c;
+  background: #fff;
+  color: #b0470a;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+.bnn-tabs button.active {
+  background: #e8730c;
+  color: #fff;
+}

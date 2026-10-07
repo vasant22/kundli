@@ -394,8 +394,8 @@ function showReport(values, scroll) {
   const paintTables = () => {
     const mode = values.bnnMode === 'BP' ? 'BP' : 'AP'
     tablesBox.replaceChildren(
-      buildPlanetTables(values.bnn, mode),
-      buildBhavaTables(values.bnn, mode)
+      buildBhavaTables(values.bnn, mode),
+      buildPlanetTables(values.bnn, mode)
     )
     if (pairs.length > 0) {
       exchangeBox.textContent = `${exchangeLabel(pairs)} — ${mode === 'AP' ? 'AFTER' : 'BEFORE'} PARIVARDHANAI (${mode})`

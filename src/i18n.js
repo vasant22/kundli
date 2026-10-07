@@ -28,7 +28,7 @@ const STRINGS = {
     'bnn.calcError': 'गणना इंजन लोड नहीं हो सका — थोड़ी देर बाद दोबारा कोशिश करें।',
     'bnn.bp': 'परिवर्तन से पहले (BP)',
     'bnn.ap': 'परिवर्तन के बाद (AP)',
-    'bnn.legend': '🔵 मुख्य ग्रह — जीवन भर असर · 🟢 20%+ — अपनी दशा-भुक्ति में असर · 🟠 20% से कम — कमज़ोर · 🩷 Astronomy — आगे बढ़ने पर पहले मिलने वाला ग्रह',
+    'bnn.legend': '🔵 मुख्य ग्रह — जीवन भर असर · 🟢 20%+ — अपनी दशा-भुक्ति में असर · 🟠 20% से कम — कमज़ोर · 🩷 आगे बढ़ने पर पहले मिलने वाला ग्रह',
 
     // मुख्य साइट (MyBapuji) की ऊपरी पट्टी
     'mb.home': 'होम',
@@ -217,7 +217,7 @@ const STRINGS = {
     'bnn.calcError': 'The calculation engine could not load — please try again in a moment.',
     'bnn.bp': 'Before parivartana (BP)',
     'bnn.ap': 'After parivartana (AP)',
-    'bnn.legend': '🔵 main planet — lifelong · 🟢 20%+ — acts in its dasha · 🟠 below 20% — weak · 🩷 Astronomy — first planet met ahead',
+    'bnn.legend': '🔵 main planet — lifelong · 🟢 20%+ — acts in its dasha · 🟠 below 20% — weak · 🩷 first planet met on progression',
 
     // MyBapuji main-site strip
     'mb.home': 'Home',

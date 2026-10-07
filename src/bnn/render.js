@@ -8,7 +8,7 @@
 // Spec: docs/bnn-guide.txt → Phase 2; layout reference: old software outer
 // face (screenshots; see docs/bnn-calib-findings.md §5).
 import { GRAHAS, t } from '../i18n.js'
-import { astronomyPartners, bhavaCombinations, labelSuffix, planetCombinations } from './combos.js'
+import { astronomyPartners, bhavaCombinations, labelSuffix, planetCombinations, seatPositions } from './combos.js'
 import { computeBrsss, computePrsss } from './prsss.js'
 import { entryColour, specialTables } from './special.js'
 
@@ -298,13 +298,17 @@ export function buildBnnChart(bnn, opts = {}) {
 }
 
 // ---------------------------------------------------------------------------
-// Combination tables (Phase 5). Rendered in the old face's style (English
-// codes + rounded percentages) with the R17 colour legend; the row label
-// carries the closeness-to-own-bhava suffix (labelSuffix).
+// Combination tables (Phase 5 — tabbed view; corrected 2026-10-07 per user).
+// Two tables — BHAVA first, then PLANET. Each shows ONE tab at a time:
+//   bhava tabs:  1-5-9 · 1-5-7-9 · BRSSS · SPECIAL
+//   planet tabs: 1-5-7-9 · 1-5-9 · SPECIAL · PRSSS
+// Colours per R17; labels carry the seat-based closeness suffix; the planet
+// views' last column = the progression partner (first met, no header label —
+// the word "ASTRONOMY" is not used).
 // ---------------------------------------------------------------------------
 const ENT_CLASS = { blue: 'ent-blue', green: 'ent-green', orange: 'ent-orange' }
 const hashOf = (key, retro) => (retro && key !== 'rahu' && key !== 'ketu' ? '#' : '')
-const rowLabelText = (p, cusps) => `${CODE[p.key]}${hashOf(p.key, p.retro)}-${labelSuffix(p.longitude, cusps).value}`
+const rowLabel = (p, seatLon, cusps) => `${CODE[p.key]}${hashOf(p.key, p.retro)}-${labelSuffix(seatLon, cusps).value}`
 const entText = (e) =>
   e.type === 'planet'
     ? `${CODE[e.key]}${hashOf(e.key, e.natalRetro)}-${Math.round(e.percent)}`
@@ -327,64 +331,37 @@ function entCell(e, i) {
   return td
 }
 
+const cell = (text, cls) => el2('td', cls, text)
+const th = (text) => el2('th', null, text)
+
 function legendLine() {
   return el2('p', 'bnn-legend', t('bnn.legend'))
 }
 
-const PLANET_ORDER = ['jupiter', 'sun', 'moon', 'mars', 'mercury', 'venus', 'saturn', 'rahu', 'ketu']
-
-/** PLANET COMBINATION table (columns: 1-5-7-9 · 1-5-9 · SPECIAL · PRSSS · ASTRONOMY). */
-export function buildPlanetTables(bnn, mode) {
-  const { planets, cusps } = bnn
-  const pc = planetCombinations(planets, mode)
-  const sp = specialTables(planets, cusps, mode)
-  const astro = astronomyPartners(planets, mode)
-  const byKey = Object.fromEntries(planets.map((p) => [p.key, p]))
-
-  const section = el2('div', 'bnn-section')
-  section.append(el2('h3', 'bnn-table-title', `PLANET COMBINATION — NATAL — ${mode}`))
-
-  const max7 = Math.max(...PLANET_ORDER.map((k) => pc[k].list1579.length))
-  const max9 = Math.max(...PLANET_ORDER.map((k) => pc[k].list159.length))
-
-  const table = el2('table', 'bnn-table bnn-planet-table')
-  const thead = document.createElement('thead')
-  const hrow = document.createElement('tr')
-  hrow.append(el2('th', null, ''), el2('th', null, '1-5-7-9'), el2('th', null, '1-5-9'), el2('th', null, 'SPECIAL'))
-  const prsssTh = el2('th', null, 'PRSSS')
-  prsssTh.colSpan = 5
-  hrow.append(prsssTh, el2('th', null, 'ASTRONOMY'))
-  thead.append(hrow)
-  table.append(thead)
-
-  const tbody = document.createElement('tbody')
-  for (const key of PLANET_ORDER) {
-    const p = byKey[key]
-    const row = document.createElement('tr')
-    row.append(el2('td', 'row-label', rowLabelText(p, cusps)))
-    const l7 = pc[key].list1579
-    const l9 = pc[key].list159
-    for (let i = 0; i < max7; i++) row.append(entCell(l7[i], i))
-    for (let i = 0; i < max9; i++) row.append(entCell(l9[i], i))
-    const r = sp.rows[key]
-    const spec = el2('td', 'special')
-    spec.append(
-      el2('div', null, `Lord ${r.owns.length ? r.owns.join(',') : '—'}`),
-      el2('div', null, `${String(r.sitsAt).padStart(2, '0')} → ${r.gives.length ? r.gives.join(',') : '—'}`),
-      el2('div', null, `★ ${CODE[r.starLord]}-${r.starAt}${r.starGives.length ? ' → ' + r.starGives.join(',') : ''}`)
-    )
-    row.append(spec)
-    for (const link of computePrsss(p.longitude)) row.append(el2('td', null, CODE[link]))
-    const ast = el2('td', 'ent-pink', astro[key] ? CODE[astro[key]] : '—')
-    row.append(ast)
-    tbody.append(row)
+function tabBar(defs, onSelect) {
+  const bar = el2('div', 'bnn-tabs')
+  const buttons = new Map()
+  for (const d of defs) {
+    const b = document.createElement('button')
+    b.type = 'button'
+    b.textContent = d.label
+    b.addEventListener('click', () => onSelect(d.key))
+    buttons.set(d.key, b)
+    bar.append(b)
   }
-  table.append(tbody)
-  section.append(table, legendLine())
-  return section
+  return {
+    bar,
+    setActive: (key) => {
+      for (const [k, b] of buttons) b.classList.toggle('active', k === key)
+    },
+  }
 }
 
-/** BHAVA COMBINATION table (columns: 1-5-9 · 1-5-7-9 · BRSSS · SPECIAL). */
+const PLANET_ORDER = ['jupiter', 'sun', 'moon', 'mars', 'mercury', 'venus', 'saturn', 'rahu', 'ketu']
+const B_ORDER = Array.from({ length: 12 }, (_, i) => i + 1)
+const bLabel = (n) => `B${String(n).padStart(2, '0')}`
+
+/** BHAVA COMBINATION table (tabs: 1-5-9 · 1-5-7-9 · BRSSS · SPECIAL). */
 export function buildBhavaTables(bnn, mode) {
   const { planets, cusps } = bnn
   const bc = bhavaCombinations(planets, cusps, mode)
@@ -392,36 +369,153 @@ export function buildBhavaTables(bnn, mode) {
 
   const section = el2('div', 'bnn-section')
   section.append(el2('h3', 'bnn-table-title', `BHAVA COMBINATION — NATAL — ${mode}`))
+  const content = el2('div', 'bnn-tab-content')
 
-  const max9 = Math.max(...Array.from({ length: 12 }, (_, i) => bc[i + 1].list159.length))
-  const max7 = Math.max(...Array.from({ length: 12 }, (_, i) => bc[i + 1].list1579.length))
+  const max9 = Math.max(...B_ORDER.map((n) => bc[n].list159.length))
+  const max7 = Math.max(...B_ORDER.map((n) => bc[n].list1579.length))
 
-  const table = el2('table', 'bnn-table bnn-bhava-table')
-  const thead = document.createElement('thead')
-  const hrow = document.createElement('tr')
-  hrow.append(el2('th', null, ''), el2('th', null, '1-5-9'), el2('th', null, '1-5-7-9'))
-  const brTh = el2('th', null, 'BRSSS')
-  brTh.colSpan = 5
-  hrow.append(brTh, el2('th', null, 'SPECIAL'))
-  thead.append(hrow)
-  table.append(thead)
-
-  const tbody = document.createElement('tbody')
-  for (let n = 1; n <= 12; n++) {
-    const row = document.createElement('tr')
-    row.append(el2('td', 'row-label', `B${String(n).padStart(2, '0')}`))
-    for (let i = 0; i < max9; i++) row.append(entCell(bc[n].list159[i], i))
-    for (let i = 0; i < max7; i++) row.append(entCell(bc[n].list1579[i], i))
-    for (const link of computeBrsss(cusps[n - 1].longitude)) row.append(el2('td', null, CODE[link]))
-    const spec = el2('td', 'special')
-    spec.append(
-      el2('div', null, `Director: ${CODE[sp.directors[n]]}`),
-      el2('div', null, `IN STAR OF A: ${sp.inStarOf[n].length ? sp.inStarOf[n].map((k) => CODE[k]).join(', ') : '—'}`)
-    )
-    row.append(spec)
-    tbody.append(row)
+  const listView = (key, max) => () => {
+    const tbl = el2('table', 'bnn-table bnn-bhava-table')
+    for (const n of B_ORDER) {
+      const row = document.createElement('tr')
+      row.append(el2('td', 'row-label', bLabel(n)))
+      for (let i = 0; i < max; i++) row.append(entCell(bc[n][key][i], i))
+      tbl.append(row)
+    }
+    return tbl
   }
-  table.append(tbody)
-  section.append(table, legendLine())
+  const brsssView = () => {
+    const tbl = el2('table', 'bnn-table bnn-bhava-table')
+    for (const n of B_ORDER) {
+      const row = document.createElement('tr')
+      row.append(el2('td', 'row-label', bLabel(n)))
+      for (const link of computeBrsss(cusps[n - 1].longitude)) row.append(cell(CODE[link]))
+      tbl.append(row)
+    }
+    return tbl
+  }
+  const specialView = () => {
+    const tbl = el2('table', 'bnn-table bnn-bhava-table')
+    const hr = document.createElement('tr')
+    hr.append(th(''), th('Director'), th('IN STAR OF A'))
+    tbl.append(hr)
+    for (const n of B_ORDER) {
+      const row = document.createElement('tr')
+      row.append(el2('td', 'row-label', bLabel(n)))
+      row.append(cell(CODE[sp.directors[n]]))
+      row.append(cell(sp.inStarOf[n].length ? sp.inStarOf[n].map((k) => CODE[k]).join(', ') : '—'))
+      tbl.append(row)
+    }
+    return tbl
+  }
+
+  const views = { '159': listView('list159', max9), '1579': listView('list1579', max7), brsss: brsssView, special: specialView }
+  let active = '159'
+  const bar = tabBar(
+    [
+      { key: '159', label: '1-5-9' },
+      { key: '1579', label: '1-5-7-9' },
+      { key: 'brsss', label: 'BRSSS' },
+      { key: 'special', label: 'SPECIAL' },
+    ],
+    (k) => {
+      active = k
+      render()
+    }
+  )
+  const render = () => {
+    content.replaceChildren(views[active]())
+    bar.setActive(active)
+  }
+  section.append(bar.bar, content)
+  render()
+  section.append(legendLine())
+  return section
+}
+
+/** PLANET COMBINATION table (tabs: 1-5-7-9 · 1-5-9 · SPECIAL · PRSSS). */
+export function buildPlanetTables(bnn, mode) {
+  const { planets, cusps } = bnn
+  const pc = planetCombinations(planets, mode)
+  const sp = specialTables(planets, cusps, mode)
+  const astro = astronomyPartners(planets, mode)
+  const seats = seatPositions(planets, mode)
+  const byKey = Object.fromEntries(planets.map((p) => [p.key, p]))
+
+  const section = el2('div', 'bnn-section')
+  section.append(el2('h3', 'bnn-table-title', `PLANET COMBINATION — NATAL — ${mode}`))
+  const content = el2('div', 'bnn-tab-content')
+
+  const max7 = Math.max(...PLANET_ORDER.map((k) => pc[k].list1579.length))
+  const max9 = Math.max(...PLANET_ORDER.map((k) => pc[k].list159.length))
+
+  const listView = (key, max) => () => {
+    const tbl = el2('table', 'bnn-table bnn-planet-table')
+    const hr = document.createElement('tr')
+    for (let i = -1; i < max; i++) hr.append(th(''))
+    hr.append(th('')) // progression partner — no header label
+    tbl.append(hr)
+    for (const pkey of PLANET_ORDER) {
+      const p = byKey[pkey]
+      const row = document.createElement('tr')
+      row.append(el2('td', 'row-label', rowLabel(p, seats[pkey].lon, cusps)))
+      const list = pc[pkey][key]
+      for (let i = 0; i < max; i++) row.append(entCell(list[i], i))
+      const partner = astro[pkey] ? byKey[astro[pkey]] : null
+      row.append(partner ? el2('td', 'ent-pink', `${CODE[partner.key]}${hashOf(partner.key, partner.retro)}`) : el2('td', null, '—'))
+      tbl.append(row)
+    }
+    return tbl
+  }
+  const specialView = () => {
+    const tbl = el2('table', 'bnn-table bnn-planet-table')
+    const hr = document.createElement('tr')
+    hr.append(th(''), th('Lord'), th('sits → gives'), th('★ star'))
+    tbl.append(hr)
+    for (const pkey of PLANET_ORDER) {
+      const p = byKey[pkey]
+      const r = sp.rows[pkey]
+      const row = document.createElement('tr')
+      row.append(el2('td', 'row-label', rowLabel(p, seats[pkey].lon, cusps)))
+      row.append(cell(r.owns.length ? r.owns.join(',') : '—'))
+      row.append(cell(`${String(r.sitsAt).padStart(2, '0')} → ${r.gives.length ? r.gives.join(',') : '—'}`))
+      row.append(cell(`★ ${CODE[r.starLord]}-${r.starAt}${r.starGives.length ? ' → ' + r.starGives.join(',') : ''}`))
+      tbl.append(row)
+    }
+    return tbl
+  }
+  const prsssView = () => {
+    const tbl = el2('table', 'bnn-table bnn-planet-table')
+    for (const pkey of PLANET_ORDER) {
+      const p = byKey[pkey]
+      const row = document.createElement('tr')
+      row.append(el2('td', 'row-label', rowLabel(p, seats[pkey].lon, cusps)))
+      for (const link of computePrsss(p.longitude)) row.append(cell(CODE[link]))
+      tbl.append(row)
+    }
+    return tbl
+  }
+
+  const views = { '1579': listView('list1579', max7), '159': listView('list159', max9), special: specialView, prsss: prsssView }
+  let active = '1579'
+  const bar = tabBar(
+    [
+      { key: '1579', label: '1-5-7-9' },
+      { key: '159', label: '1-5-9' },
+      { key: 'special', label: 'SPECIAL' },
+      { key: 'prsss', label: 'PRSSS' },
+    ],
+    (k) => {
+      active = k
+      render()
+    }
+  )
+  const render = () => {
+    content.replaceChildren(views[active]())
+    bar.setActive(active)
+  }
+  section.append(bar.bar, content)
+  render()
+  section.append(legendLine())
   return section
 }

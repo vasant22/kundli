@@ -136,17 +136,31 @@ describe('BNN page — chart (Phase 2b)', () => {
     expect(buttons[1].classList.contains('active')).toBe(true)
   })
 
-  it('renders the combination tables (Phase 5)', () => {
+  it('renders the tabbed combination tables (bhava first)', () => {
     expect(document.querySelectorAll('.bnn-table').length).toBe(2)
-    const pt = document.querySelector('.bnn-planet-table')
-    expect(pt.textContent).toContain('1-5-7-9')
-    expect(pt.textContent).toContain('PRSSS')
-    expect(pt.textContent).toContain('JUP#')
-    expect(pt.textContent).toContain('ASTRONOMY')
-    const bt = document.querySelector('.bnn-bhava-table')
-    expect(bt.textContent).toContain('B01')
-    expect(bt.textContent).toContain('BRSSS')
-    expect(bt.textContent).toContain('Director')
+    const sections = document.querySelectorAll('.bnn-section')
+    expect(sections[0].textContent).toContain('BHAVA COMBINATION — NATAL — AP')
+    expect(sections[1].textContent).toContain('PLANET COMBINATION — NATAL — AP')
+    expect(sections[0].textContent).toContain('B01')
+    expect(sections[0].textContent).toContain('BRSSS')
+    expect(sections[1].textContent).toContain('JUP#-')
+    expect(sections[1].textContent).not.toContain('ASTRONOMY')
+    expect(sections[0].querySelectorAll('.bnn-tabs button').length).toBe(4)
+    expect(sections[1].querySelectorAll('.bnn-tabs button').length).toBe(4)
+  })
+
+  it('table tabs switch the view (SPECIAL, PRSSS)', () => {
+    const sections = document.querySelectorAll('.bnn-section')
+    const bhavaTabs = sections[0].querySelectorAll('.bnn-tabs button')
+    bhavaTabs[3].click() // SPECIAL
+    expect(sections[0].textContent).toContain('Director')
+    bhavaTabs[0].click() // back to 1-5-9
+    expect(sections[0].textContent).toContain('B01')
+    const planetTabs = sections[1].querySelectorAll('.bnn-tabs button')
+    planetTabs[2].click() // SPECIAL
+    expect(sections[1].textContent).toContain('Lord')
+    planetTabs[3].click() // PRSSS
+    expect(sections[1].textContent).toContain('VEN')
   })
 
   it('BP / AP mode toggle re-renders the tables', () => {

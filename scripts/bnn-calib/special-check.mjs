@@ -1,7 +1,7 @@
 // special-check.mjs — BNN Phase 5 PASS/FAIL: SPECIAL (R13) + label suffix (R11b) + colours (R17).
 import SwissEph from 'swisseph-wasm'
 import { computeBhavaChalit } from '../../src/bnn/kp.js'
-import { labelSuffix } from '../../src/bnn/combos.js'
+import { labelSuffix, seatPositions } from '../../src/bnn/combos.js'
 import { entryColour, specialTables } from '../../src/bnn/special.js'
 
 const CODE = { sun: 'SUN', moon: 'MOO', mars: 'MAR', mercury: 'MER', jupiter: 'JUP', venus: 'VEN', saturn: 'SAT', rahu: 'RAH', ketu: 'KET' }
@@ -33,13 +33,18 @@ eq('KET', [R.ketu.owns, R.ketu.sitsAt, R.ketu.gives, R.ketu.starLord, R.ketu.sta
 console.log('== IN STAR OF A ==')
 const STAR = { 3: ['mars', 'jupiter'], 5: ['sun', 'moon', 'mercury', 'saturn'], 6: ['rahu'], 7: ['mars', 'jupiter'], 10: ['mars', 'jupiter'], 12: ['venus', 'ketu'] }
 for (let b = 1; b <= 12; b++) eq(`B${String(b).padStart(2, '0')}`, sp.inStarOf[b], STAR[b] || [])
-console.log('== label suffixes ==')
-const SUF = { sun: 18, moon: 95, mars: 69, mercury: 15, jupiter: 91, venus: 95, saturn: 27, rahu: 20, ketu: 20 }
-for (const p of k.planets) {
-  const ls = labelSuffix(p.longitude, k.cusps)
-  const ok = ls.value === SUF[p.key]
-  if (ok) pass++; else { fail++; console.log(`  ❌ ${p.key}: got ${ls.value} (bhava ${ls.bhava}) want ${SUF[p.key]}`) }
-  if (ok) console.log(`  ✅ ${p.key}-${ls.value} (bhava ${ls.bhava})`)
+console.log('== label suffixes (seat-based, both modes) ==')
+const SUF = {
+  AP: { sun: 18, moon: 95, mars: 69, mercury: 27, jupiter: 91, venus: 95, saturn: 15, rahu: 20, ketu: 20 },
+  BP: { sun: 18, moon: 95, mars: 69, mercury: 15, jupiter: 91, venus: 95, saturn: 27, rahu: 20, ketu: 20 },
+}
+for (const mode of ['AP', 'BP']) {
+  const seats = seatPositions(k.planets, mode)
+  for (const p of k.planets) {
+    const ls = labelSuffix(seats[p.key].lon, k.cusps)
+    if (ls.value === SUF[mode][p.key]) { pass++; console.log(`  \u2705 ${mode} ${p.key}-${ls.value}`) }
+    else { fail++; console.log(`  \u274c ${mode} ${p.key}: got ${ls.value} (bhava ${ls.bhava}) want ${SUF[mode][p.key]}`) }
+  }
 }
 console.log('== colours (spot) ==')
 eq('SAT rule', entryColour(11, false, 'saturn'), 'green')
