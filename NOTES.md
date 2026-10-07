@@ -729,3 +729,9 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - Software में labels का रहस्य खुला (MAR-k = motion-direction में स्थिति); direct window ≈ [N−5°, N+1°]; 1579/159 radio मिल गया।
 - पूरा ब्यौरा + दोनों tables के सारे rows: `docs/bnn-calib-findings.md` §10।
 - अगला कदम: **display-रणनीति** user के साथ तय करना (कैसे /bnn/ पर दिखाएँ) — reply में विकल्प भेजे।
+
+### 2026-10-07 — PCP तीसरा दौर: Mercury@159 पढ़ा + label-नियम हल + 1579-test pending
+- **Label नियम पूरा हल**: k = जन्म-ग्रह की स्थिति, गोचर-ग्रह की (segment के अंत वाली) राशि से, चाल की दिशा में गिनकर (direct=आगे, retro=पीछे) — ~30 rows verified।
+- End ≈ "डिग्री +1°" या station; starts का exact margin अभी open (hh:mm या guru-rules चाहिए)।
+- Bonus: main window verified (dasha ages/BRSSS/old tabs मेल)।
+- ⚠️ मेरे keys से END DATE 07→04-01-2033 हुआ था — user से वापस कराना + ●1579 करके Find कराना (reply में लिखा)। पूरा ब्यौरा findings §11।

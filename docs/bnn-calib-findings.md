@@ -149,3 +149,12 @@ Scripts: `scripts/bnn-calib/` · दोबारा चलाएँ: `node scrip
 - **Saturn rows**: MAR-5 29-07-28→23-08-28(R); MAR-5 05-04-29→23-05-29; MAR-9 07-09-29(R)→19-01-30;
   MAR-1 06-10-37→04-02-38(R); MAR-1 23-06-38→22-08-38; MAR-1 08-03-39(R)→25-05-39।
 - अगला: display-रणनीति (user के साथ) + exact margins के लिए समय-सहित output (Print?) / और charts।
+
+## 11) PCP तीसरा दौर — Mercury@159 + main-window verification (07-10-2026)
+- **Setup (user)**: Saturn Guru · BIRTH=MERCURY · ●**159** · range 01-01-2025 → 07-01-2033। दोनों tables पढ़े व verify किये।
+- **🎯 LABEL-नियम पूरा हल (+ ~30 rows पर verified)**: "MER-k"/"MAR-k" में k = **जन्म-ग्रह की स्थिति, गोचर-ग्रह की राशि से गिनकर — गिनती उस segment की चाल की दिशा में**:
+  मार्गी (direct) → आगे की गिनती; वक्री → पीछे की गिनती। Anchor = गोचर की वह राशि जहाँ segment का **अंत** होता है (straddle करने वाले dips भी अब fit: MAR-1, MAR-5, MER-9 वग़ैरह सब ✓)।
+- **End-events**: ज़्यादातर = "जन्म-ग्रह की डिग्री + 1°" उस frame-राशि में (Jupiter Vir 10.06, Cap 10.12, Tau 9.99-10.03; Saturn Tau 9.99-10.03 — सब ≈ +1°/day-slop के भीतर) अथवा **station** (वक्री मोड़)। Rows stations पर टूटती हैं।
+- **Start-events**: अभी 100% pin नहीं (Mars@1579 में ≈ N−5 जैसा दिखा; Mercury@159 में ≈ N+0.1..0.2 जैसा) — datetimes (hh:mm) मिले तो exact margins निकलेंगे; या guru-rules।
+- **159 vs 1579 तुलना अधूरी**: 1579 वाला run pending (user से कराया जाएगा — 159 में rows कम/hल्की दिखीं)।
+- **Main-window verification (bonus)**: चार्ट + centre panel + BHAVA/PLANET tables + VIMSHOTTARI live देखा — हमारी गणनाओं से मेल: dasha ages (49Y-11M-1D … 106Y-11M-1D), BRSSS rows, "3-11"/"10" tabs वाला old UI (जो हम नहीं बनाते)।
