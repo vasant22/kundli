@@ -158,3 +158,12 @@ Scripts: `scripts/bnn-calib/` · दोबारा चलाएँ: `node scrip
 - **Start-events**: अभी 100% pin नहीं (Mars@1579 में ≈ N−5 जैसा दिखा; Mercury@159 में ≈ N+0.1..0.2 जैसा) — datetimes (hh:mm) मिले तो exact margins निकलेंगे; या guru-rules।
 - **159 vs 1579 तुलना अधूरी**: 1579 वाला run pending (user से कराया जाएगा — 159 में rows कम/hल्की दिखीं)।
 - **Main-window verification (bonus)**: चार्ट + centre panel + BHAVA/PLANET tables + VIMSHOTTARI live देखा — हमारी गणनाओं से मेल: dasha ages (49Y-11M-1D … 106Y-11M-1D), BRSSS rows, "3-11"/"10" tabs वाला old UI (जो हम नहीं बनाते)।
+
+## 12) 159 vs 1579 — पहली तुलना (Mercury · Saturn Guru · 01-01-2025→07-01-2033) — 07-10-2026
+- **Jupiter table का फ़र्क़ (159 → 1579)**:
+  - 1579 में **जुड़ी**: `MER-7 [16-07-2026 → 20-07-2026]` — गुरु कर्क [9.19° → 10.07°] (जाँचा: कर्क = बुध की 7वीं स्थिति; window वही "≈ [N+0.25°, N+1°]" पैटर्न)।
+  - 1579 में **हटी**: `MER-9 [11-02-2029 → 14-06-2029]` (गुरु का वक्री-चक्कर: station-r Lib 3.15 → station-d Vir 23.23) — यह row सिर्फ़ 159 में आई थी।
+  - बाक़ी दोनों में समान: MER-5 [2025], MER-5 [10-09-2028→14-09-2028], MER-1 [18-12-2032→22-12-2032]।
+- **Saturn table: दोनों modes में बिल्कुल समान** (8 rows, कोई फ़र्क़ नहीं)।
+- **अर्थ (working)**: 1579 = 7वीं स्थिति जोड़ता है (MER-7); कुछ 9-वर्गीय station-वाले segments (सिर्फ़-159) हट जाते हैं। Exact अंतर-नियम अभी open — guru से पूछने लायक।
+- **Mercury-सेट labels re-verified**: MER-5 (Tau↔retro-back & Vir-fwd), MER-7 (Can = opposition), MER-9 (Vir-back), MER-1 (Cap) — सब "direction-counted" नियम से ✓।

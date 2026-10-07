@@ -735,3 +735,7 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - End ≈ "डिग्री +1°" या station; starts का exact margin अभी open (hh:mm या guru-rules चाहिए)।
 - Bonus: main window verified (dasha ages/BRSSS/old tabs मेल)।
 - ⚠️ मेरे keys से END DATE 07→04-01-2033 हुआ था — user से वापस कराना + ●1579 करके Find कराना (reply में लिखा)। पूरा ब्यौरा findings §11।
+
+### 2026-10-07 — PCP: 159 vs 1579 पहली तुलना (Mercury)
+- Live screen से निकाला: 1579 = 159 + `MER-7 16-07-2026→20-07-2026` − `MER-9 11-02-2029→14-06-2029`; Saturn दोनों में समान।
+- MER-7 की degree-window भी जाँची (कर्क 9.19→10.07 = वही ~[+0.25°, +1°] पैटर्न)। पूरा ब्यौरा findings §12।
