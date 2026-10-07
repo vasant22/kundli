@@ -669,3 +669,14 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
   ही export में भी वही; tab keys main.js के values.bnnBhavaTab/bnnPlanetTab में दर्ज होती हैं), नीचे
   **चल रही दशा-भुक्ति-अंतर** strip। SVG → canvas → PNG download; headless में पूरा output देखा ✓।
 - Tests **462 → 466 ✓**; live deploy ✓।
+
+### 2026-10-07 — BNN corrections-7: परिवर्तन-box + print के बड़े/रंगीन tables + भाव पहले
+- **परिवर्तन box** (screen + print + ऑल-चार्ट सब में — user के sample मुताबिक): जब ग्रह-परिवर्तन हो,
+  चार्ट के **ऊपर-बाएँ कोने पर छोटा box** — "MERCURY<>SATURN" जैसी जोड़ी 2 पंक्तियों में; चार्ट खोलते ही
+  नज़र आता है (`render.js` → `drawExchangeBox`; margin अब परिवर्तन होने पर भी खुलता है; परिवर्तन न हो तो
+  box नहीं)।
+- **Print PDF**: ① चार्ट **122 → 175mm** (net ग्रिड ~129mm) ② सारी tables **font 9.5 → 12.5px**, cells
+  मोटी (padding 3×7), headings 13.5px ③ combination tables अब **रंगीन** (blue/green/orange/pink —
+  web जैसी) ④ क्रम: **BHAVA पहले, फिर PLANET** (combo व special — दोनों जोड़े bhava-first) ⑤ ज़रूरत से
+  ज़्यादा page-break हटाया — अब 5 pages, बिना आधा-खाली पेज।
+- Tests **466 ✓**; print (5-page) · screen · ऑल-चार्ट — तीनों headless में जाँचे ✓।

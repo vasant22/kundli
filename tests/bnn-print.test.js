@@ -77,6 +77,13 @@ describe('BNN print sheet', () => {
     expect(sheet.textContent).toContain('PLANET — SPECIAL')
     expect(sheet.textContent).toContain('LORDSHIP')
     expect(sheet.textContent).toContain('BHAVA — SPECIAL')
+    // BHAVA first, then PLANET (user 2026-10-07c)
+    expect(sheet.textContent.indexOf('BHAVA COMBINATION')).toBeLessThan(sheet.textContent.indexOf('PLANET COMBINATION'))
+    // colorful combo cells like the web page
+    expect(sheet.querySelectorAll('td.ent-blue').length).toBeGreaterThan(0)
+    expect(sheet.querySelectorAll('td.ent-green').length).toBeGreaterThan(0)
+    // the parivartana box rides inside the printed chart
+    expect(sheet.textContent).toContain('MERCURY<>SATURN')
     expect(sheet.textContent).toContain('PRSSS')
     expect(sheet.textContent).toContain('BRSSS')
     expect(sheet.textContent).toContain('DHASA')

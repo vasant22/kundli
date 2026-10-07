@@ -123,13 +123,35 @@ export function buildPrintSheet(values) {
   sheet.append(p1)
 
   // ---------------- page 2 — combination + SPECIAL tables ----------------
-  const p2 = el('section', 'bp-page bp-break')
+  // Order (user 2026-10-07c): BHAVA first, then PLANET — and colorful like the
+  // web page (blue = first entry, green ≥20 %, orange <20 %, Saturn always
+  // green, pink = progression).
+  const p2 = el('section', 'bp-page')
   const pc = planetCombinations(bnn.planets, mode, { cusps: bnn.cusps })
   const astro = astronomyPartners(bnn.planets, mode)
   const seats = seatPositions(bnn.planets, mode)
   const entText = (e) => (e.type === 'planet'
     ? `${planetCode(e.key)}${HASH(e.key, e.natalRetro)}-${Math.round(e.percent)}`
     : `${e.label}-${Math.round(e.percent)}`)
+  const colourOf = (e, i) => {
+    if (i === 0) return 'ent-blue'
+    if (e.type === 'planet' && e.key === 'saturn') return 'ent-green'
+    return Math.round(e.percent) >= 20 ? 'ent-green' : 'ent-orange'
+  }
+  const entCell = (e, i) => el('td', colourOf(e, i), entText(e))
+
+  p2.append(heading(`BHAVA COMBINATION (1-5-7-9) — ${mode}`))
+  {
+    const bc = bhavaCombinations(bnn.planets, bnn.cusps, mode)
+    const rows = []
+    for (let n = 1; n <= 12; n++) {
+      const cells = [el('td', 'bp-lab', `B${String(n).padStart(2, '0')}`)]
+      bc[n].list1579.forEach((e, i) => cells.push(entCell(e, i)))
+      while (cells.length < 9) cells.push(el('td', null, ''))
+      rows.push(cells)
+    }
+    p2.append(simpleTable(null, rows, 'bp-bhava'))
+  }
 
   p2.append(heading(`PLANET COMBINATION (1-5-7-9) — ${mode}`))
   {
@@ -138,7 +160,7 @@ export function buildPrintSheet(values) {
     for (const pkey of PLANET_ORDER) {
       const list = pc[pkey].list1579
       const cells = [el('td', 'bp-lab', `${planetCode(pkey)}${HASH(pkey, byKey[pkey].retro)}-${labelSuffix(seats[pkey].lon, bnn.cusps).value}`)]
-      for (let i = 0; i < maxLen; i++) cells.push(el('td', null, list[i] ? entText(list[i]) : ''))
+      for (let i = 0; i < maxLen; i++) cells.push(list[i] ? entCell(list[i], i) : el('td', null, ''))
       const partner = astro[pkey]
       cells.push(el('td', 'bp-prog', partner ? `${planetCode(partner)}${HASH(partner, byKey[partner].retro)}` : ''))
       rows.push(cells)
@@ -146,20 +168,22 @@ export function buildPrintSheet(values) {
     p2.append(simpleTable(null, rows, 'bp-planet'))
   }
 
-  p2.append(heading(`BHAVA COMBINATION (1-5-7-9) — ${mode}`))
+  const sp = specialTables(bnn.planets, bnn.cusps, mode)
+  p2.append(heading(`BHAVA — SPECIAL — ${mode}`))
   {
-    const bc = bhavaCombinations(bnn.planets, bnn.cusps, mode)
     const rows = []
     for (let n = 1; n <= 12; n++) {
-      const cells = [el('td', 'bp-lab', `B${String(n).padStart(2, '0')}`)]
-      for (const e of bc[n].list1579) cells.push(el('td', null, entText(e)))
-      while (cells.length < 9) cells.push(el('td', null, ''))
-      rows.push(cells)
+      rows.push([
+        el('td', 'bp-lab', `B${String(n).padStart(2, '0')}`),
+        el('td', null, planetCode(sp.lords[n])),
+        el('td', null, sp.inBhava[n].length ? sp.inBhava[n].map((e) => `${planetCode(e.key)}${HASH(e.key, e.natalRetro)}`).join(', ') : '—'),
+        el('td', null, sp.inStarOf[n].length ? sp.inStarOf[n].map((k) => `${planetCode(k)}${HASH(k, byKey[k].retro)}`).join(', ') : '—'),
+        el('td', null, `${planetCode(sp.directors[n])}${HASH(sp.directors[n], byKey[sp.directors[n]].retro)}`),
+      ])
     }
-    p2.append(simpleTable(null, rows, 'bp-bhava'))
+    p2.append(simpleTable(['BHAVA', 'LORD', 'PLANETS(A)', 'IN STAR OF A', 'LORDSHIP'], rows, 'bp-special'))
   }
 
-  const sp = specialTables(bnn.planets, bnn.cusps, mode)
   p2.append(heading(`PLANET — SPECIAL — ${mode}`))
   {
     const rows = []
@@ -174,21 +198,6 @@ export function buildPrintSheet(values) {
       ])
     }
     p2.append(simpleTable(['PLANET', 'LORD', 'LORDSHIP', 'STAR', 'LORDSHIP'], rows, 'bp-special'))
-  }
-
-  p2.append(heading(`BHAVA — SPECIAL — ${mode}`))
-  {
-    const rows = []
-    for (let n = 1; n <= 12; n++) {
-      rows.push([
-        el('td', 'bp-lab', `B${String(n).padStart(2, '0')}`),
-        el('td', null, planetCode(sp.lords[n])),
-        el('td', null, sp.inBhava[n].length ? sp.inBhava[n].map((e) => `${planetCode(e.key)}${HASH(e.key, e.natalRetro)}`).join(', ') : '—'),
-        el('td', null, sp.inStarOf[n].length ? sp.inStarOf[n].map((k) => `${planetCode(k)}${HASH(k, byKey[k].retro)}`).join(', ') : '—'),
-        el('td', null, `${planetCode(sp.directors[n])}${HASH(sp.directors[n], byKey[sp.directors[n]].retro)}`),
-      ])
-    }
-    p2.append(simpleTable(['BHAVA', 'LORD', 'PLANETS(A)', 'IN STAR OF A', 'LORDSHIP'], rows, 'bp-special'))
   }
   p2.append(footer())
   sheet.append(p2)

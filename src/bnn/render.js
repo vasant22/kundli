@@ -8,6 +8,7 @@
 // Spec: docs/bnn-guide.txt → Phase 2; layout reference: old software outer
 // face (screenshots; see docs/bnn-calib-findings.md §5).
 import { GRAHAS, t } from '../i18n.js'
+import { findExchanges } from './kp.js'
 import { astronomyPartners, bhavaCombinations, labelSuffix, planetCombinations, seatPositions } from './combos.js'
 import { fmtDMY } from './dasha.js'
 import { computeBrsss, computePrsss } from './prsss.js'
@@ -263,6 +264,33 @@ const northSideOf = (ascRashi) => (rashi) => {
   return { side, u }
 }
 
+// ---------------------------------------------------------------------------
+// Parivartana box (user request 2026-10-07c): a small box in the chart's
+// top-left corner (outside the grid) showing every graha-parivartana pair —
+// visible at a glance on screen, in print and in the All-Chart export.
+// ---------------------------------------------------------------------------
+function drawExchangeBox(svg, pairs) {
+  if (!pairs || pairs.length === 0) return
+  const m = RING_MARGIN
+  const x = -m + 5
+  const y = -m + 5
+  const w = 58
+  const lines = []
+  for (const [a, b] of pairs) {
+    lines.push(`${a.toUpperCase()}<>`, b.toUpperCase())
+  }
+  const lineH = 12
+  const box = el('g', { class: 'exchange-box' })
+  box.append(el('rect', {
+    x, y, width: w, height: 10 + lines.length * lineH, rx: 4,
+    fill: '#fff3dd', stroke: '#e8a13c', 'stroke-width': 1.2,
+  }))
+  lines.forEach((line, i) => {
+    box.append(textNode(x + w / 2, y + 13 + i * lineH, line, { size: 9, weight: 700, fill: '#7a2e00' }))
+  })
+  svg.append(box)
+}
+
 function drawTransitRing(svg, bnn, transit, style) {
   if (!transit) return
   const sideOf = style === 'north' ? northSideOf(bnn.ascendant.rashi) : southSideOf
@@ -298,8 +326,10 @@ function drawTransitRing(svg, bnn, transit, style) {
 export function buildSouthBnn(bnn, meta = {}, transit = null) {
   const S = SIZE
   const C = S / 4
+  const pairs = findExchanges(bnn.planets)
+  const ring = transit != null || pairs.length > 0
   const svg = el('svg', {
-    viewBox: transit
+    viewBox: ring
       ? `${-RING_MARGIN} ${-RING_MARGIN} ${S + 2 * RING_MARGIN} ${S + 2 * RING_MARGIN}`
       : `0 0 ${S} ${S}`,
     class: 'chart chart-south',
@@ -371,6 +401,7 @@ export function buildSouthBnn(bnn, meta = {}, transit = null) {
   svg.append(panel)
 
   drawTransitRing(svg, bnn, transit, 'south')
+  drawExchangeBox(svg, pairs)
   return svg
 }
 
@@ -379,8 +410,10 @@ export function buildSouthBnn(bnn, meta = {}, transit = null) {
 // ---------------------------------------------------------------------------
 export function buildNorthBnn(bnn, meta = {}, transit = null) {
   const S = SIZE
+  const pairs = findExchanges(bnn.planets)
+  const ring = transit != null || pairs.length > 0
   const svg = el('svg', {
-    viewBox: transit
+    viewBox: ring
       ? `${-RING_MARGIN} ${-RING_MARGIN} ${S + 2 * RING_MARGIN} ${S + 2 * RING_MARGIN}`
       : `0 0 ${S} ${S}`,
     class: 'chart chart-north',
@@ -434,6 +467,7 @@ export function buildNorthBnn(bnn, meta = {}, transit = null) {
   svg.append(panel)
 
   drawTransitRing(svg, bnn, transit, 'north')
+  drawExchangeBox(svg, pairs)
   return svg
 }
 

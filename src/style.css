@@ -1253,15 +1253,15 @@ details.manual[open] summary {
   #bnn-print .bp-name { font-size: 12.5px; font-weight: 700; margin-top: 1px; }
   #bnn-print .bp-mantra { font-size: 12.5px; color: #c62828; margin: 3px 0 2px; font-weight: 600; }
   #bnn-print .bp-contact { font-size: 10px; color: #6b5b3a; }
-  #bnn-print .bp-h { font-size: 11.5px; color: #b0470a; border-bottom: 1px solid #e8cfa0; margin: 9px 0 4px; padding-bottom: 1px; }
+  #bnn-print .bp-h { font-size: 13.5px; color: #b0470a; border-bottom: 1px solid #e8cfa0; margin: 9px 0 4px; padding-bottom: 1px; }
   #bnn-print .bp-details { display: grid; gap: 2.5px; margin-bottom: 6px; }
   #bnn-print .bp-detail-row { display: grid; grid-template-columns: 105px 1fr 84px 1fr; gap: 1px 6px; font-size: 10.5px; }
   #bnn-print .bp-dl { color: #6b5b3a; }
   #bnn-print .bp-dv { font-weight: 600; }
-  #bnn-print .bp-chart svg { width: 122mm; max-width: 100%; display: block; margin: 2px auto 0; }
+  #bnn-print .bp-chart svg { width: 175mm; max-width: 100%; display: block; margin: 2px auto 0; }
   #bnn-print .bp-note { text-align: center; font-size: 10px; color: #6b5b3a; margin: 2px 0 0; }
   #bnn-print .bp-table { border-collapse: collapse; width: 100%; margin: 4px 0 9px; }
-  #bnn-print .bp-table th, #bnn-print .bp-table td { border: 1px solid #cbb98d; padding: 1.5px 4px; font-size: 9.5px; text-align: center; }
+  #bnn-print .bp-table th, #bnn-print .bp-table td { border: 1px solid #cbb98d; padding: 3px 7px; font-size: 12.5px; text-align: center; }
   #bnn-print .bp-table th { background: #f7ecd5; }
   #bnn-print .bp-lab { font-weight: 700; color: #b3261e; background: #faf6ea; }
   #bnn-print .bp-prog { color: #8e24aa; font-weight: 600; }

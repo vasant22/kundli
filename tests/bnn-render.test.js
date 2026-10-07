@@ -146,9 +146,16 @@ describe('BNN Phase 2b — chart drawing', () => {
     const north = buildBnnChart(BNN, { style: 'north', meta: META, transit: TRANSIT })
     expect(north.textContent).toContain('SAT# 16.52')
     expect(north.textContent).toContain('MAR 10.53')
-    // Without a transit the ring is absent and the viewBox is unchanged.
+    // Without a transit the ring is absent — but the parivartana box still
+    // opens the margin (the fixture's chart has MERCURY<>SATURN).
     const plain = buildBnnChart(BNN, { style: 'south', meta: META })
-    expect(plain.getAttribute('viewBox')).toBe('0 0 360 360')
     expect(plain.textContent).not.toContain('SAT# 16.52')
+    expect(plain.textContent).toContain('MERCURY<>SATURN')
+    expect(plain.querySelector('.exchange-box')).toBeTruthy()
+    // A chart without any exchange (and without transit) keeps the bare viewBox.
+    const noEx = { ...BNN, planets: BNN.planets.map((p) => (p.key === 'saturn' ? { ...p, rashi: 3 } : p)) }
+    const bare = buildBnnChart(noEx, { style: 'south', meta: META })
+    expect(bare.getAttribute('viewBox')).toBe('0 0 360 360')
+    expect(bare.querySelector('.exchange-box')).toBeFalsy()
   })
 })
