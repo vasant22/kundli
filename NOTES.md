@@ -706,3 +706,16 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
   पुराने version से था; fresh live load == हमारे numbers (calibration 69/69 · 59/59 pass)। Reply में
   hard-refresh (⌘+Shift+R) की सलाह दी।
 - Tests **469 → 471 ✓**; headless export + FAQ verify ✓।
+
+### 2026-10-07 — BNN: AI-handover pack (desktop conversion) + skill update (user request)
+- **`docs/bnn-ai-handover.md`** (नया, ≈31KB): user चाहते हैं कि कोई भी AI tool इसे पढ़कर BNN को desktop software
+  में convert कर सके। अंदर: §0 उपयोग · §1 product summary · §2 implementation + module-map · §3 पूरा computation
+  spec (ayanamsa mode 44, UT+ΔT+0.5s, zones/aspects/parivartana/returned-catch, 159/1579, percent constants,
+  colours, PRSSS/BRSSS, SPECIAL, dasha/andhiram formulas, transit, display/print/PNG conventions) · §4 constants ·
+  §5 सारे acceptance vectors (AP/BP तालिकाएँ, PRSSS/BRSSS, दशा 27/27, transit) · §6 खुले मुद्दे · §7 desktop routes
+  (Tauri/Electron vs native + checklist) · Appendix A ready-to-paste prompt।
+- **ZIP pack** `BNN-AI-Handover-Pack_2026-10-07.zip` (doc + src + tests + scripts/bnn-calib + docs + NOTES;
+  ≈409KB) — workspace root व Desktop पर delivery के लिए; repo में नहीं (snapshot)।
+- **Skill update प्रस्ताव** `mybapuji-kundli-20261007-35742f5eb7` (pending) — BNN section §7 + module map +
+  checks + desktop-handover pointers जोड़े (skill_workshop से)।
+- Repo में कोई गणना-बदलाव नहीं (सिर्फ़ doc + notes); tests 471 ✓।
