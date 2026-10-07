@@ -33,6 +33,11 @@ eq('KET', [R.ketu.owns, R.ketu.sitsAt, R.ketu.gives, R.ketu.starLord, R.ketu.sta
 console.log('== IN STAR OF A ==')
 const STAR = { 3: ['mars', 'jupiter'], 5: ['sun', 'moon', 'mercury', 'saturn'], 6: ['rahu'], 7: ['mars', 'jupiter'], 10: ['mars', 'jupiter'], 12: ['venus', 'ketu'] }
 for (let b = 1; b <= 12; b++) eq(`B${String(b).padStart(2, '0')}`, sp.inStarOf[b], STAR[b] || [])
+console.log('== bhava LORD + PLANETS(A) (guru software layout, AP) ==')
+const LORDS = { 1: 'sun', 2: 'mercury', 3: 'venus', 4: 'mars', 5: 'jupiter', 6: 'saturn', 7: 'saturn', 8: 'jupiter', 9: 'mars', 10: 'venus', 11: 'mercury', 12: 'moon' }
+for (let b = 1; b <= 12; b++) eq(`LORD B${String(b).padStart(2, '0')}`, sp.lords[b], LORDS[b])
+const INB = { 1: ['jupiter', 'mars', 'mercury'], 5: ['sun', 'saturn'], 6: ['ketu'], 7: ['venus'], 8: ['moon'], 12: ['rahu'] }
+for (let b = 1; b <= 12; b++) eq(`PLANETS(A) B${String(b).padStart(2, '0')}`, sp.inBhava[b].map((e) => e.key), INB[b] || [])
 console.log('== label suffixes (seat-based, both modes) ==')
 const SUF = {
   AP: { sun: 18, moon: 95, mars: 69, mercury: 27, jupiter: 91, venus: 95, saturn: 15, rahu: 20, ketu: 20 },

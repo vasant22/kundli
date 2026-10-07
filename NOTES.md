@@ -610,3 +610,14 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - Tests **445 → 451 ✓**; headless-Chrome से असली render जाँचा ✓ (SUN-97, 9-column, दशा tables सब मौजूद)।
 - Token: wallet 19593 (session शुरुआत) → 18241; Δ ≈ 1350 (corrections-2 + Phase 6 साथ में)।
 - **अगला — Phase 7**: गोचर (chart के बाहर + गोचर लग्न; reference 30-09-2026) और Phase 7b PCP।
+
+### 2026-10-07 — BNN correction-3: SPECIAL (भाव) tab अब sir के software जैसा
+- User (screenshots 08:01/08:07): भाव-वाले SPECIAL tab की शक्ल बदलनी थी — columns अब: **LORD**
+  (भाव का स्वामी) · **PLANETS(A)** (भाव में बैठे ग्रह; cusp के सबसे पास वाला पहले; # = वक्री) ·
+  **IN STAR OF A** · **LORDSHIP** (= पहले का "Director" — भाव का फल देने वाला ग्रह)।
+  पहले हमारे पास सिर्फ़ [Director | IN STAR OF A] था।
+- **IN STAR OF A decode** (user ने पूछा था): जिन ग्रहों का **नक्षत्र-स्वामी** भाव के किसी बैठे ग्रह A में
+  हो (भाव खाली → A = भाव-स्वामी)। हमारे numbers sir के software से पहले से exactly मेल खाते थे ✓।
+- Verification: `special-check` **45 → 69 ✓** (+12 LORD, +12 PLANETS(A) — sir के screenshot से);
+  असली browser render की पूरी 12-row तालिका sir के software से अक्षरशः मेल ✓; tests **451 ✓**।
+- **अगला — Phase 7**: गोचर (transit) + PCP — user की "आगे बढ़ो" पर।

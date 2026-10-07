@@ -209,7 +209,10 @@ describe('BNN page — chart (Phase 2b)', () => {
     const sections = document.querySelectorAll('.bnn-section')
     const bhavaTabs = sections[0].querySelectorAll('.bnn-tabs button')
     bhavaTabs[3].click() // SPECIAL
-    expect(sections[0].textContent).toContain('Director')
+    expect(sections[0].textContent).toContain('LORDSHIP')
+    expect(sections[0].textContent).toContain('PLANETS(A)')
+    expect(sections[0].textContent).toContain('JUP#, MAR#, MER') // B01 planets (AP)
+    expect(sections[0].textContent).toContain('MAR#, JUP#') // B03 in-star
     bhavaTabs[0].click() // back to 1-5-9
     expect(sections[0].textContent).toContain('B01')
     const planetTabs = sections[1].querySelectorAll('.bnn-tabs button')

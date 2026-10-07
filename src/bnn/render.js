@@ -306,7 +306,8 @@ export function buildBnnChart(bnn, opts = {}) {
 // ---------------------------------------------------------------------------
 // Combination tables (Phase 5 — tabbed view; corrected 2026-10-07 per user).
 // Two tables — BHAVA first, then PLANET. Each shows ONE tab at a time:
-//   bhava tabs:  1-5-9 · 1-5-7-9 · BRSSS · SPECIAL
+//   bhava tabs:  1-5-9 · 1-5-7-9 · BRSSS · SPECIAL (LORD · PLANETS(A) ·
+//   IN STAR OF A · LORDSHIP — the guru-software layout, user 2026-10-07)
 //   planet tabs: 1-5-7-9 · 1-5-9 · SPECIAL · PRSSS
 // Colours per R17; labels carry the seat-based closeness suffix; the planet
 // views' last column = the progression partner (first met, no header label —
@@ -401,15 +402,21 @@ export function buildBhavaTables(bnn, mode) {
     return tbl
   }
   const specialView = () => {
+    // Guru's software layout (user correction 2026-10-07): BHAVA · LORD ·
+    // PLANETS(A) · IN STAR OF A · LORDSHIP (= the planet giving the result).
     const tbl = el2('table', 'bnn-table bnn-bhava-table')
     const hr = document.createElement('tr')
-    hr.append(th(''), th('Director'), th('IN STAR OF A'))
+    hr.append(th(''), th('LORD'), th('PLANETS(A)'), th('IN STAR OF A'), th('LORDSHIP'))
     tbl.append(hr)
+    const retroOf = Object.fromEntries(planets.map((p) => [p.key, p.retro]))
+    const ent = (k) => `${CODE[k]}${hashOf(k, retroOf[k])}`
     for (const n of B_ORDER) {
       const row = document.createElement('tr')
       row.append(el2('td', 'row-label', bLabel(n)))
+      row.append(cell(CODE[sp.lords[n]]))
+      row.append(cell(sp.inBhava[n].length ? sp.inBhava[n].map((e) => `${CODE[e.key]}${hashOf(e.key, e.natalRetro)}`).join(', ') : '—'))
+      row.append(cell(sp.inStarOf[n].length ? sp.inStarOf[n].map(ent).join(', ') : '—'))
       row.append(cell(CODE[sp.directors[n]]))
-      row.append(cell(sp.inStarOf[n].length ? sp.inStarOf[n].map((k) => CODE[k]).join(', ') : '—'))
       tbl.append(row)
     }
     return tbl

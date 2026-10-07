@@ -72,7 +72,19 @@ export function specialTables(planets, cusps, mode = 'AP') {
     inStarOf[b] = planets.filter((p) => aSet.includes(starLordOf(p.longitude))).map((p) => p.key)
   }
 
-  return { directors, rows, inStarOf }
+  // Bhava side of the SPECIAL tab (guru's software layout — user 2026-10-07):
+  // LORD = the bhava's rashi lord; PLANETS(A) = planets sitting in the bhava
+  // (nearest the cusp first — the order the reference screenshots show).
+  const lords = {}
+  const inBhava = {}
+  for (let b = 1; b <= 12; b++) {
+    lords[b] = bhavaLord[b - 1]
+    const occupants = Object.values(seats).filter((p) => bhavaIndexOf(p.lon, cusps) === b)
+    occupants.sort((p, q) => norm(p.lon - cuspLons[b - 1]) - norm(q.lon - cuspLons[b - 1]))
+    inBhava[b] = occupants.map((p) => ({ key: p.key, natalRetro: p.natalRetro }))
+  }
+
+  return { directors, lords, inBhava, rows, inStarOf }
 }
 
 /** R17 entry colour class: 'blue' | 'green' | 'orange'. */
