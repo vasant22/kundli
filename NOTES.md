@@ -559,3 +559,11 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - Tests: `tests/bnn-combos.test.js` (10 नए) — कुल **441 ✓**।
 - Token: wallet 23148 → 22319 (Δ ≈ 829; गहरी screenshot-verification)।
 - **अगला — Phase 5**: Percentages (R11, हो चुका — रिपोर्ट/रंग बाक़ी) + Lordship/SPECIAL (R13) + पूरी tables पेज पर (Planet/Bhava संयोजन tabs)।
+
+### 2026-10-07 — BNN Phase 4b: 159/1579 split + नए screenshots verification (`ec54fe9`)
+- User के नए 4 screenshots (planet & bhava × NAT159/NAT1579) से पुष्टि: **159 = सिर्फ़ 1-5-9-zone members (7th-zone हटाकर)**; 1579 = पूरा (1-5-7-9)। **आख़िरी column = astronomy = "progression में पहले मिलने वाला ग्रह"** — यह पहले से सही था (सब 9 ✓)।
+- Duplicate cells (जैसे JUP-159 में RAH दो बार, VEN-row में MOO-8 दो बार, B02 में SAT10-6 दो बार) = user-घोषित software bugs → हमारा output साफ़ (dedup)।
+- `combos.js`: `planetCombinations` अब per planet **`{ list159, list1579 }`** देता है। `combos-check`: **59/59 PASS**। Tests **441 ✓**।
+- खुले note: MER row में mixed-seat quirks (SUN-97 class) वैसे ही report-only; screenshot के B02/B07 में bug-cells।
+- ❓ User से पूछा (reply में): labels के साथ के **-91 / -95 / -18 जैसे अंक** किस चीज़ के हैं? (Phase 5 table display के लिए चाहिए।)
+- Token: wallet 22319 → 22210 (Δ ≈ 109)।
