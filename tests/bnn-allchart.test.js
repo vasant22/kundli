@@ -90,4 +90,14 @@ describe('All Chart export sheet', () => {
     expect(svg.textContent).toContain('BHAVA — BRSSS — AP')
     expect(svg.textContent).toContain('PLANET — PRSSS — AP')
   })
+
+  it('combo tables enlarged — right-hand space used, bigger font/rows (user 2026-10-07e)', () => {
+    const svg = buildAllChartSvg(VALUES)
+    const cells = Array.from(svg.querySelectorAll('rect')).filter((r) => r.getAttribute('stroke') === '#cbb98d')
+    const maxRight = Math.max(...cells.map((r) => Number(r.getAttribute('x')) + Number(r.getAttribute('width'))))
+    expect(maxRight).toBeGreaterThan(1550) // was ~1508; now fills the previously-empty right side
+    expect(cells.filter((r) => r.getAttribute('height') === '31').length).toBeGreaterThan(60) // rowH 25.5 -> 31
+    const ven = Array.from(svg.querySelectorAll('text')).find((t) => t.textContent === 'VEN-95')
+    expect(ven.getAttribute('font-size')).toBe('16') // combo cell font 14 -> 16
+  })
 })

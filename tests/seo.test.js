@@ -13,6 +13,12 @@ const PAGES = [
 ]
 
 describe('SEO essentials — कुंडली / मिलान / पंचांग / BNN', () => {
+  it('BNN FAQ स्वतंत्र description देता है — किसी व्यक्ति/क्लास का नाम नहीं (user 2026-10-07e)', () => {
+    const html = read('bnn/index.html')
+    expect(html).not.toMatch(/Gemini|Selvam|सुलूर|गोस्वामी|sir/i)
+    expect(html).toContain('नाड़ी-परंपरा')
+  })
+
   it('robots.txt allows crawling and points to the sitemap', () => {
     const robots = read('public/robots.txt')
     expect(robots).toMatch(/User-agent: \*/)

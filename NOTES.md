@@ -693,3 +693,16 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - **Legends** (दोनों combination तालिकाएँ): ● भाव / ● केन्द्रीय ग्रह (dark brown = row-label रंग) ·
   ● मुख्य ग्रह · ● उपग्रह · ● अल्प बलशाली ग्रह — पुरानी लंबी व्याख्या + pink item हटाए।
 - Tests **466 → 469 ✓**; bottom + legends headless में जाँचे ✓।
+
+### 2026-10-07 — BNN corrections-9 (user 11:34): FAQ बिना नाम + All Chart की tables बड़ी
+- **FAQ text** (visible + JSON-LD दोनों): पुराना text — जिसमें Gemini School/Selvam sir/सुलूर गोस्वामी सर के नाम थे
+  (वे सिर्फ़ search-hint थे) — हटा। अब internet-research आधारित सामान्य विवरण: BNN = प्राचीन नाड़ी-परंपरा
+  से जुड़ी चार्ट-आधारित पद्धति; नाम महर्षि भृगु–नंदी परंपरा से; फलादेश ग्रहों की राशि-डिग्री + संयोजन/
+  त्रिकोण जैसे ग्रह-संबंधों से। किसी व्यक्ति/class का ज़िक्र नहीं (seo.test में guard जुड़ा)।
+- **All Chart PNG**: दोनों combination tables बड़ी — font 14→16, rowH 25.5→31, columns दाईं जगह भरते हुए
+  चौड़े (bhava ≈798px, planet ≈800px; पहले 578/688) — "Right-hand side" की ख़ाली जगह इस्तेमाल; बाएँ चार्ट
+  यथावत (user ने कहा वह ठीक है)। `tests/bnn-allchart.test.js` में size-assertions जुड़ीं।
+- **अंक-जाँच नोट**: user के screenshot वाले values हर जगह 1 कम थे — जाँच का नतीजा: वह उनके browser के
+  पुराने version से था; fresh live load == हमारे numbers (calibration 69/69 · 59/59 pass)। Reply में
+  hard-refresh (⌘+Shift+R) की सलाह दी।
+- Tests **469 → 471 ✓**; headless export + FAQ verify ✓।

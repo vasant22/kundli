@@ -152,8 +152,9 @@ export function buildAllChartSvg(values) {
       while (cells.length < 1 + maxLen) cells.push({ t: '' })
       rows.push(cells)
     }
-    const colW = maxLen >= 6 ? 92 : 104
-    ty = tableBlock(svg, RX, ty, { title: `BHAVA COMBINATION — ${bhavaTab === '1579' ? '1-5-7-9' : '1-5-9'} — ${mode}`, colWidths: [58, ...Array(maxLen).fill(colW)], rows, rowH: 25.5, fontSize: 14 })
+    // combo tables enlarged (user 2026-10-07e): use the right-hand space, easier to read
+    const colW = Math.min(150, Math.floor((800 - 58) / maxLen))
+    ty = tableBlock(svg, RX, ty, { title: `BHAVA COMBINATION — ${bhavaTab === '1579' ? '1-5-7-9' : '1-5-9'} — ${mode}`, colWidths: [58, ...Array(maxLen).fill(colW)], rows, rowH: 31, fontSize: 16 })
   }
 
   ty += 34
@@ -198,8 +199,8 @@ export function buildAllChartSvg(values) {
       cells.push({ t: partner ? `${planetCode(partner)}${HASH(partner, byKey[partner].retro)}` : '—', color: '#8e24aa', bold: true })
       rows.push(cells)
     }
-    const colW = 96
-    ty = tableBlock(svg, RX, ty, { title: `PLANET COMBINATION — ${planetTab === '159' ? '1-5-9' : '1-5-7-9'} — ${mode}`, colWidths: [112, ...Array(maxLen).fill(colW), 96], rows, rowH: 25.5, fontSize: 14 })
+    const colW = Math.min(140, Math.floor((800 - 130 - 110) / maxLen))
+    ty = tableBlock(svg, RX, ty, { title: `PLANET COMBINATION — ${planetTab === '159' ? '1-5-9' : '1-5-7-9'} — ${mode}`, colWidths: [130, ...Array(maxLen).fill(colW), 110], rows, rowH: 31, fontSize: 16 })
   }
 
   ty += 36
