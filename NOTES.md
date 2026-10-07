@@ -739,3 +739,7 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 ### 2026-10-07 — PCP: 159 vs 1579 पहली तुलना (Mercury)
 - Live screen से निकाला: 1579 = 159 + `MER-7 16-07-2026→20-07-2026` − `MER-9 11-02-2029→14-06-2029`; Saturn दोनों में समान।
 - MER-7 की degree-window भी जाँची (कर्क 9.19→10.07 = वही ~[+0.25°, +1°] पैटर्न)। पूरा ब्यौरा findings §12।
+
+### 2026-10-07 — BNN Phase 7b: स्पेशल ट्रांज़िट (Special Transit) LIVE
+- इंजन + UI + tests: **engine 15/15 vs legacy मंगल तालिका** (pcp-check.mjs); page के bottom में section (tabs/g्रह/1579-159/dates/खोजें/per-planet tables/प्रिंट); headless verify ✓; **477 tests ✓**।
+- बाक़ी: start-margin के guru-confirm + छोटी polish। विवरण findings §13।

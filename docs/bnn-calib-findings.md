@@ -167,3 +167,9 @@ Scripts: `scripts/bnn-calib/` · दोबारा चलाएँ: `node scrip
 - **Saturn table: दोनों modes में बिल्कुल समान** (8 rows, कोई फ़र्क़ नहीं)।
 - **अर्थ (working)**: 1579 = 7वीं स्थिति जोड़ता है (MER-7); कुछ 9-वर्गीय station-वाले segments (सिर्फ़-159) हट जाते हैं। Exact अंतर-नियम अभी open — guru से पूछने लायक।
 - **Mercury-सेट labels re-verified**: MER-5 (Tau↔retro-back & Vir-fwd), MER-7 (Can = opposition), MER-9 (Vir-back), MER-1 (Cap) — सब "direction-counted" नियम से ✓।
+
+## 13) स्पेशल ट्रांज़िट (PCP) — हमारा version बना (Phase 7b, 2026-10-07)
+- **इंजन `src/bnn/pcp.js`** (decode किये नियम): frames = जन्म-राशि + {0,4,6,8}; direct pass = [N−5° → N+1°]; retro dips = [N+10°40′↓ या station-R → N−1°↓ या station-D]; stations-cut; labels = चाल-दिशा में स्थिति k; 159/1579 sets; range-clip।
+- **`scripts/bnn-calib/pcp-check.mjs`: 15/15 PASS** — legacy की मंगल तालिका (गुरु 9 rows + शनि 6 rows) से ±1 दिन के भीतर, labels exact।
+- **UI**: page के bottom में section — tabs [सभी ग्रह | राहु-केतु | शनि-गुरु] · जन्म-ग्रह chips · ●1579/●159 · start/end · खोजें · TRANSIT tables (PLANET/DATE/ASPECT/RETRO) · प्रिंट। Headless browser में पूरा verify।
+- खुला: start-margin का चार्ट-दर-चार्ट फ़र्क़ (Sun −4°, Mercury +0.2°, Mars −5°) — guru-पुष्टि बाक़ी; 1579 में एक dip-अपवाद (Mercury-2029)।

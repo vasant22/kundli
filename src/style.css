@@ -1295,3 +1295,80 @@ details.manual[open] summary {
   margin-right: 4px;
   vertical-align: -1px;
 }
+
+/* स्पेशल ट्रांज़िट (legacy PCP) — page के bottom पर (2026-10-07) */
+.bnn-st-section { margin-top: 1rem; }
+.bnn-st-intro { font-size: 0.85rem; color: #6b5b3a; margin: 0.25rem 0 0.6rem; }
+.bnn-st-controls { display: flex; flex-direction: column; gap: 0.45rem; margin-bottom: 0.7rem; }
+.bnn-st-row { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; font-size: 0.85rem; }
+.bnn-st-label { color: #7a2e00; font-weight: 600; }
+.bnn-st-radios { display: inline-flex; gap: 0.3rem; flex-wrap: wrap; }
+.bnn-st-chip {
+  font: inherit;
+  padding: 0.12rem 0.6rem;
+  border: 1px solid #e8730c;
+  background: #fff;
+  color: #b0470a;
+  border-radius: 14px;
+  cursor: pointer;
+  font-size: 0.82rem;
+}
+.bnn-st-chip.active { background: #e8730c; border-color: #e8730c; color: #fff; font-weight: 600; }
+.bnn-st-date {
+  font: inherit;
+  padding: 0.15rem 0.4rem;
+  border: 1px solid #cbb98d;
+  border-radius: 6px;
+  background: #fffdf7;
+  color: #3a2410;
+}
+.bnn-st-find {
+  font: inherit;
+  padding: 0.2rem 0.9rem;
+  border: 1px solid #256428;
+  background: #2c7a32;
+  color: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.bnn-st-find:disabled { opacity: 0.6; cursor: wait; }
+.bnn-st-print-btn {
+  font: inherit;
+  padding: 0.2rem 0.7rem;
+  border: 1px solid #cbb98d;
+  background: #fff;
+  color: #7a2e00;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.bnn-st-results { margin-top: 0.4rem; }
+.bnn-st-tablewrap { margin: 0.6rem 0 1rem; overflow-x: auto; }
+.bnn-st-title {
+  display: inline-block;
+  background: #e8f5e9;
+  border: 1px solid #9ccc9f;
+  color: #1b5e20;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0.15rem 0.7rem;
+  border-radius: 6px;
+  margin-bottom: 0.35rem;
+}
+.bnn-st-table td, .bnn-st-table th { padding: 0.22rem 0.55rem; }
+.bnn-st-table tr.pair-a td { background: #fff8e1; }
+.bnn-st-table tr.pair-b td { background: #f2f9ee; }
+.bnn-st-table td.st-label { font-weight: 700; color: #b3261e; }
+.bnn-st-empty { font-size: 0.85rem; color: #6b5b3a; margin: 0.3rem 0; }
+.bnn-st-sheet { display: none; }
+@media print {
+  body.bnn-st-printing > *:not(#bnn-st-print) { display: none !important; }
+  body.bnn-st-printing #bnn-st-print { display: block !important; padding: 8mm; }
+  body.bnn-st-printing #bnn-st-print .bnn-st-print-btn,
+  body.bnn-st-printing #bnn-st-print .bnn-st-controls { display: none !important; }
+  body.bnn-st-printing .bnn-st-table tr.pair-a td,
+  body.bnn-st-printing .bnn-st-table tr.pair-b td {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

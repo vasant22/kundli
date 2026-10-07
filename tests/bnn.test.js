@@ -238,7 +238,7 @@ describe('BNN page — chart (Phase 2b)', () => {
   it('renders the tabbed combination tables (bhava first) + dasha tables', () => {
     expect(document.querySelectorAll('.bnn-table').length).toBe(3)
     const sections = document.querySelectorAll('.bnn-section')
-    expect(sections.length).toBe(3)
+    expect(sections.length).toBe(4)
     expect(sections[0].textContent).toContain('BHAVA COMBINATION — NATAL — AP')
     expect(sections[1].textContent).toContain('PLANET COMBINATION — NATAL — AP')
     expect(sections[0].textContent).toContain('B01')
@@ -257,6 +257,11 @@ describe('BNN page — chart (Phase 2b)', () => {
     expect(sections[2].textContent).toContain('SAT')
     expect(sections[2].textContent).toContain('23-12-1985')
     expect(sections[2].querySelectorAll('.bnn-tabs button').length).toBe(3)
+    // Special Transit (bottom of the page — user request 2026-10-07e)
+    expect(sections[3].textContent).toContain('स्पेशल ट्रांज़िट')
+    expect(sections[3].querySelectorAll('.bnn-st-groups button').length).toBe(3)
+    expect(sections[3].querySelectorAll('.bnn-st-chip').length).toBe(11) // 9 planets + 1579/159
+    expect(sections[3].querySelector('.bnn-st-find')).toBeTruthy()
   })
 
   it('dasha tabs switch views and the centre panel shows running lines', () => {

@@ -41,6 +41,22 @@ const STRINGS = {
     'bnn.lg.sub': 'उपग्रह',
     'bnn.lg.weak': 'अल्प बलशाली ग्रह',
 
+    // स्पेशल ट्रांज़िट (legacy PCP) — page के bottom पर
+    'st.title': '🌟 स्पेशल ट्रांज़िट (Special Transit)',
+    'st.intro': 'गोचर करते ग्रह जब जन्म-ग्रह के 1-5-7-9 (या 1-5-9) स्थानों से गुज़रते हैं — Start/End तिथियाँ।',
+    'st.group.all': 'सभी ग्रह',
+    'st.group.nodes': 'राहु-केतु',
+    'st.group.sg': 'शनि-गुरु',
+    'st.birth': 'जन्म का ग्रह (मुख्य ग्रह)',
+    'st.start': 'शुरू तारीख़',
+    'st.end': 'अंत तारीख़',
+    'st.find': 'खोजें',
+    'st.print': '🖨️ प्रिंट / PDF',
+    'st.computing': '⏳ गणना हो रही है…',
+    'st.none': 'इस अवधि में कोई पंक्ति नहीं मिली।',
+    'st.aspect': 'ASPECT',
+    'st.retro': 'RETRO',
+
     // मुख्य साइट (MyBapuji) की ऊपरी पट्टी
     'mb.home': 'होम',
     'mb.books': 'किताबें',
@@ -240,6 +256,22 @@ const STRINGS = {
     'bnn.lg.main': 'Main planet',
     'bnn.lg.sub': 'Sub planet',
     'bnn.lg.weak': 'Weak planet',
+
+    // Special Transit (legacy PCP) — bottom of the page
+    'st.title': '🌟 Special Transit (PCP)',
+    'st.intro': 'Periods when transiting planets pass over the birth planet’s 1-5-7-9 (or 1-5-9) positions — Start/End dates.',
+    'st.group.all': 'All Planets',
+    'st.group.nodes': 'Rahu Kethu',
+    'st.group.sg': 'Saturn Guru',
+    'st.birth': 'Birth planet',
+    'st.start': 'Start date',
+    'st.end': 'End date',
+    'st.find': 'Find',
+    'st.print': '🖨️ Print / PDF',
+    'st.computing': '⏳ Computing…',
+    'st.none': 'No rows in this period.',
+    'st.aspect': 'ASPECT',
+    'st.retro': 'RETRO',
 
     // MyBapuji main-site strip
     'mb.home': 'Home',

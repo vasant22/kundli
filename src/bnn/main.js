@@ -3,7 +3,8 @@
 // (shared modules only — geocode / prefill / birthvalidate / timeutil / i18n).
 // The BNN maths live in the sibling modules:
 //   kp.js (Ph 2) · prsss.js (Ph 3) · combos.js (Ph 4) · percent.js +
-//   special.js (Ph 5) · dasha.js (Ph 6) · transit.js (Ph 7) · render.js (2b).
+//   special.js (Ph 5) · dasha.js (Ph 6) · transit.js (Ph 7) · render.js (2b) ·
+//   pcp.js + pcp-ui.js (Ph 7b — Special Transit / legacy PCP).
 // On submit: KP New bhava chalit → the Lagna chart with the north/south toggle.
 // Spec: docs/bnn-guide.txt.
 import '../style.css'
@@ -16,6 +17,7 @@ import { initEphemeris } from '../astro.js'
 import { computeBhavaChalit, findExchanges } from './kp.js'
 import { computeDashaTree, fmtDMY } from './dasha.js'
 import { computeTransitSnapshot } from './transit.js'
+import { buildSpecialTransitSection } from './pcp-ui.js'
 import { buildPrintSheet } from './print.js'
 import { buildAllChartSvg, downloadAllChartPng } from './allchart.js'
 import { ageYMD, buildBhavaTables, buildBnnChart, buildDashaTables, buildPlanetTables, exchangeLabel, planetCode, weekdayEN } from './render.js'
@@ -526,6 +528,8 @@ function showReport(values, scroll) {
       }),
     ]
     if (values.bnnDasha) sections.push(buildDashaTables(values.bnnDasha))
+    // Special Transit (legacy PCP) — bottom of the page, per user request.
+    sections.push(buildSpecialTransitSection(values, { getSwe: () => sweRef }))
     tablesBox.replaceChildren(...sections)
     if (pairs.length > 0) {
       exchangeBox.textContent = `${exchangeLabel(pairs)} — ${mode === 'AP' ? 'AFTER' : 'BEFORE'} PARIVARDHANAI (${mode})`
