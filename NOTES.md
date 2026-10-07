@@ -724,3 +724,8 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - User ने दिखाया कि Windows VM में PCP वाला option है ("उसे command में समझा नहीं पाऊँगा")। मैंने Parallels `prlctl capture` + keyboard-events से स्क्रीन देखी और ख़ुद एक search (Find) चलाया।
 - नतीजे/सुराग पूरे लिखे: `docs/bnn-calib-findings.md` §9 (End = ग्रह-डिग्री +1°, rows की chaining, खुले मुद्दे)।
 - अगला: गुरु/शनि वाला test + tabs + 159/1579 का चुनाव ढूँढना, फिर **display-रणनीति** user के साथ तय करना।
+
+### 2026-10-07 — PCP दूसरा दौर: user ने MARS/1579/Saturn-Guru setup दिया — मैंने पढ़ा
+- Software में labels का रहस्य खुला (MAR-k = motion-direction में स्थिति); direct window ≈ [N−5°, N+1°]; 1579/159 radio मिल गया।
+- पूरा ब्यौरा + दोनों tables के सारे rows: `docs/bnn-calib-findings.md` §10।
+- अगला कदम: **display-रणनीति** user के साथ तय करना (कैसे /bnn/ पर दिखाएँ) — reply में विकल्प भेजे।

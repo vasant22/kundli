@@ -132,3 +132,20 @@ Scripts: `scripts/bnn-calib/` · दोबारा चलाएँ: `node scrip
 - Rows **जुड़ी हुई** दिखीं: एक का End = अगले का Start (दोनों बार exact मिनट)।
 - **खुला**: Start का नियम (पहली row का Start "07-10-2026 12:16" — संभवतः range-start समय; "4° पहले" इन rows में नहीं दिखा; chaining vs window-start अगली जाँच); 159/1579 का चुनाव इस dialog में नहीं दिखा (शायद मुख्य window की setting); tabs का असर; वक्री (R) वाले rows।
 - अगला test: **गुरु/शनि** (guide भाग-4 वाला: `SUN-5 17-08-2028` आदि से मिलान) + tabs + 159/1579 की खोज — user के साथ।
+
+## 10) PCP दूसरा दौर — user का setup (MARS · 1579 · Saturn Guru) — 07-10-2026
+- **Settings**: tab = Saturn Guru · **BIRTH = MARS** · ● **1579** (यही 159/1579 का चुनाव है — END DATE के पास!) · range 07-10-2026 → 07-01-2040।
+  दो tables: **TRANSIT JUPITER** (9 segments) + **TRANSIT SATURN** (6 segments)।
+- **Format का रहस्य खुला**: "MAR-k" में k = गोचर-ग्रह से **मंगल की स्थिति** — काउंट **motion की दिशा में** (मार्गी = आगे, वक्री = पीछे)। guide R18 से मेल ✓
+  (जैसे MAR-1 = वही राशि; MAR-5 = आगे से 5वीं; वक्री में पीछे से 9वीं = "MAR-9")।
+- **Direct segments का window**: [Start, End] ≈ जब गोचर ग्रह उस frame-राशि में **[N−5°, N+1°]** में हो
+  (exact margins ±0.1° तक पिन करने के लिए hh:mm चाहिए — display में सिर्फ़ तारीख़ें हैं)। उदाहरण-सत्यापन:
+  MAR-1 = Leo [16.5→22.5] (गुरु 15-09-2027→13-10-2027); MAR-9 = Sag [16.5→22.5]; MAR-7 = Aqu; MAR-5 = Ari।
+- **Retro/station segments** अलग rows में (R flags); stations पर segments बँटते हैं। कुछ छोटे retro "dip" segments के
+  start-boundary का exact rule अभी pin नहीं हुआ (≈ अगली राशि के ~2.16° जैसा लगा — 3 samples) — और data चाहिए।
+- **Jupiter rows** (Start→End): MAR-1 15-09-27→13-10-27; MAR-1 08-02-28(R)→14-05-28; MAR-9 03-01-32→29-01-32;
+  MAR-5 25-07-32(R)→18-09-32; MAR-7 30-01-34→25-02-34; MAR-5 17-06-35→22-07-35; MAR-9 10-09-35(R)→14-11-35(R);
+  MAR-5 15-01-36→09-03-36; MAR-1 31-08-39→27-09-39।
+- **Saturn rows**: MAR-5 29-07-28→23-08-28(R); MAR-5 05-04-29→23-05-29; MAR-9 07-09-29(R)→19-01-30;
+  MAR-1 06-10-37→04-02-38(R); MAR-1 23-06-38→22-08-38; MAR-1 08-03-39(R)→25-05-39।
+- अगला: display-रणनीति (user के साथ) + exact margins के लिए समय-सहित output (Print?) / और charts।
