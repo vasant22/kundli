@@ -44,17 +44,34 @@ export const PCP_SETTINGS = Object.freeze({
 
 // Per-planet start leads (degrees BEFORE the natal degree where the direct pass
 // begins) — decoded from the legacy software's tables 2026-10-07:
-//   मंगल = 5° · शुक्र = 6° · सूर्य ≈ 3.86° · बुध ≈ 0.15°
-// (Hypothesis being confirmed with the owner: a fixed value per SELECTED planet;
-// the remaining planets (Moon/Jupiter/Saturn/nodes) still default to 5.)
+//   मंगल 5° · शुक्र 6° · सूर्य 3.86° · बुध 0.15° · चंद्र 2.44° (गुरु-गोचर)
+//   गुरु 0.17° · शनि 0.89° · राहु 14.42° · केतु 13.94° (गुरु-गोचर)
+// कुछ leads गोचर-ग्रह के हिसाब से भी अलग दिखे (चंद्र: शनि-गोचर 8.29°) —
+// इसलिए मान दो स्तरों में: पहले (birth × transit), फिर (birth) का default।
 export const PCP_LEADS = Object.freeze({
   sun: 3.86,
+  moon: 2.44,
   mars: 5,
   mercury: 0.15,
+  jupiter: 0.17,
   venus: 6,
+  saturn: 0.89,
+  rahu: 14.42,
+  ketu: 13.94,
 })
 
-export function leadFor(key) {
+const PCP_LEADS_BY_TRANSIT = Object.freeze({
+  mars: { saturn: 5 },
+  moon: { saturn: 8.29 },
+  jupiter: { saturn: 5.36 },
+  saturn: { jupiter: 10.75 },
+  rahu: { saturn: 10.4 },
+})
+
+export function leadFor(key, transitKey) {
+  if (transitKey && PCP_LEADS_BY_TRANSIT[key] && PCP_LEADS_BY_TRANSIT[key][transitKey] != null) {
+    return PCP_LEADS_BY_TRANSIT[key][transitKey]
+  }
   return PCP_LEADS[key] ?? PCP_SETTINGS.startDeg * -1
 }
 
@@ -282,11 +299,11 @@ export function groupPlanets(group) {
  */
 export function computeSpecialTransit(lonAtFor, opts) {
   const { tStartMs, tEndMs, zSign, zDeg, mode, group, birthKey } = opts
-  const leadDeg = opts.leadDeg ?? leadFor(birthKey)
   const out = []
   for (const key of groupPlanets(group)) {
     const lonAt = lonAtFor(key)
     if (!lonAt) continue
+    const leadDeg = opts.leadDeg ?? leadFor(birthKey, key)
     const segments = computeRowsForPlanet(lonAt, tStartMs, tEndMs, zSign, zDeg, mode, {
       stepMs: stepFor(key),
       preRollMs: preRollFor(key),

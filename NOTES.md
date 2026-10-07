@@ -749,3 +749,6 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 
 ### 2026-10-07 — PCP: 🎯 start-lead = हर ग्रह का तय अंक (मंगल 5°, शुक्र 6°, सूर्य 3.86°, बुध 0.15°)
 - Owner के hint से पकड़ा; engine में लगाया + validation 19/23 (मंगल 15/15)। बाक़ी 4 = dip/station बारीक़ियाँ। बाक़ी 5 ग्रहों के tests user से माँगे। findings §15।
+
+### 2026-10-07 — PCP: पाँचों ग्रहों के leads मिले + engine update (validation 27/51)
+- feeds: चंद्र 2.44/8.29 · गुरु 0.17/5.4 · शनि 0.89/10.75 · राहु 14.42/10.4 · केतु 13.94 (गु/श)। बाक़ी = वक्री-टुकड़ों की structure। findings §16।

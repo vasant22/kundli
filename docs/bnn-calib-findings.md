@@ -193,3 +193,11 @@ Scripts: `scripts/bnn-calib/` · दोबारा चलाएँ: `node scrip
 - Engine में लगाया (`PCP_LEADS`); nई validation: **19/23 PASS** — मंगल 15/15 ✓, सूर्य: SUN-5 ✓ + SUN-9 ✓ (2/4), शुक्र: VEN-7 ✓ + VEN-5-2029 ✓ (2/4)।
 - बाक़ी 4 FAIL = सब "वक्री-मोड़/dip-split" परिवार: (a) dip का top कब station-r और कब E-line(+10.67) — कुछ जगह legacy station से शुरू करता है (VEN-9, Mercury-2029) और कहीं E-line से (Mars-j2); (b) post-dip rise कहीं station-D से शुरू (SUN-7); (c) clipped-dip का असली start।
 - **अगला data-collection**: बाक़ी 5 ग्रहों (चंद्र/गुरु/शनि/राहु/केतु) की PCP tables — ताकि पूरा lead-table बने।
+
+## 16) पाँचों बाक़ी ग्रहों की tables decode (owner, 14:37) — leads का पूरा नक़्शा
+- Owner ने चंद्र/गुरु/शनि/राहु/केतु की tables दीं (समान settings)। Leads निकाले:
+  - चंद्र ≈ 2.44° (गुरु-गोचर; शनि-गोचर ≈ 8.29°) · गुरु ≈ 0.17° (शनि-गोचर ≈ 5.4°) · शनि ≈ 0.89° (गुरु-गोचर ≈ 10.75°)
+  - राहु ≈ 14.42° (गु) / 10.4° (श) · केतु ≈ 13.94° (गु)
+  - (पहले से: मंगल 5, शुक्र 6, सूर्य 3.86, बुध 0.15)
+- Engine में (birth × transit) table के रूप में लगाया; **validation अब 27/51 PASS** (मंगल 15/15; सूर्य 2/4; शुक्र 2/4; चंद्र 4/9; गुरु 2/4; शनि 2/5; राहु 0/7; केतु 0/4)।
+- बाक़ी FAIL = सब "वक्री/station-टुकड़ों" की structure (जैसे RAH-1 = [−23.55→station], KET-5 = [x→station]-प्रकार) — इसका rule अगला काम।
