@@ -122,3 +122,13 @@ Scripts: `scripts/bnn-calib/` · दोबारा चलाएँ: `node scrip
   VEN# 13.59 · MER 13.56 · SUN 19.28 · MOO 03.39 · ASC 28.01 — exact; RAH/KET में ~0.6′
   (उनका mean-node model swisseph से थोड़ा अलग; sign/degree ठीक)।
 - check: `scripts/bnn-calib/transit-check.mjs` — **20/20 PASS**।
+
+## 9) PCP (विशेष गोचर) — software का प्रथम अवलोकन (07-10-2026)
+- Parallels VM (Windows 11) में Gemini software की **"GEMINI'S SPECIAL TRANSIT"** विंडो देखी + प्रथम search चलाया।
+- Dialog: tabs **[All Planets | Rahu Kethu | Saturn Guru]** · START / END DATE (dropdown) · **Find** · Print · बाएँ **TRANSIT** radio-सूची (Sun…Kethu) · results: **PLANET | DATE | ASPECT | RETRO**।
+- Run (Transit=**Sun**, 07-10-2026 → 07-11-2026): 
+  `SUN-KET 07-10 12:16 Start → 26-10 01:04 End` · `SUN-VEN 26-10 01:04 Start → 02-11 04:40 End` · `SUN-MOO 02-11 04:40 Start → (चालू)` — सब **F**।
+- **सत्यापित (हमारे sweph से exact)**: "End" = जब गोचर-सूर्य की डिग्री = जन्म-ग्रह की डिग्री **+1°** (26-10: तुला 8°09.85' ≈ केतु 7°10' +1; 02-11: तुला 15°18.2' ≈ शुक्र 14°18' +1 — ~5 मिनट के भीतर)। यानी guide का "1° बाद" ✓। संबंध-क्षेत्र = "5वाँ स्थान" (सूर्य तुला में ↔ केतु/शुक्र कुंभ में)।
+- Rows **जुड़ी हुई** दिखीं: एक का End = अगले का Start (दोनों बार exact मिनट)।
+- **खुला**: Start का नियम (पहली row का Start "07-10-2026 12:16" — संभवतः range-start समय; "4° पहले" इन rows में नहीं दिखा; chaining vs window-start अगली जाँच); 159/1579 का चुनाव इस dialog में नहीं दिखा (शायद मुख्य window की setting); tabs का असर; वक्री (R) वाले rows।
+- अगला test: **गुरु/शनि** (guide भाग-4 वाला: `SUN-5 17-08-2028` आदि से मिलान) + tabs + 159/1579 की खोज — user के साथ।

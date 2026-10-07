@@ -719,3 +719,8 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - **Skill update प्रस्ताव** `mybapuji-kundli-20261007-35742f5eb7` (pending) — BNN section §7 + module map +
   checks + desktop-handover pointers जोड़े (skill_workshop से)।
 - Repo में कोई गणना-बदलाव नहीं (सिर्फ़ doc + notes); tests 471 ✓।
+
+### 2026-10-07 — PCP प्रथम अवलोकन (Gemini software — Parallels VM में)
+- User ने दिखाया कि Windows VM में PCP वाला option है ("उसे command में समझा नहीं पाऊँगा")। मैंने Parallels `prlctl capture` + keyboard-events से स्क्रीन देखी और ख़ुद एक search (Find) चलाया।
+- नतीजे/सुराग पूरे लिखे: `docs/bnn-calib-findings.md` §9 (End = ग्रह-डिग्री +1°, rows की chaining, खुले मुद्दे)।
+- अगला: गुरु/शनि वाला test + tabs + 159/1579 का चुनाव ढूँढना, फिर **display-रणनीति** user के साथ तय करना।
