@@ -578,3 +578,12 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 
 ### 2026-10-07 — BNN पेज अब menu में (user request) (`285d6ea`)
 - चारों पेजों के top nav में **"BNN चार्ट"** link जोड़ा — user को पेज live दिख नहीं रहा था (menu link नहीं था; browser 10-मिनट cache भी)। `match.test.js` nav update (4 links)। Tests **443 ✓**; live JS में link present ✓।
+
+### 2026-10-07 — BNN corrections (user screenshots) (`e1c22a4`)
+- **भाव table पहले, planet table बाद में** (order swap)।
+- **159/1579/SPECIAL/PRSSS अब tabs** (एक साथ columns नहीं): bhava tabs [1-5-9, 1-5-7-9, BRSSS, SPECIAL]; planet tabs [1-5-7-9, 1-5-9, SPECIAL, PRSSS]।
+- **"ASTRONOMY" शब्द पूरी तरह हटाया** — progression column बिना header (pink), legend से भी हटाया। Software का Astronomy tab नहीं बनाते (guide R8)।
+- **-NN labels अब seat-based**: AP में MER-27, SAT#-15; BP में MER-15, SAT#-27 — दोनों modes verified (special-check अब **45/45**)।
+- Tests **444 ✓**; live ✓ (menu link सहित, `kundli.mybapuji.com` → "BNN चार्ट")।
+- ❓ User से पूछा: SAT# की 1-5-7-9 पंक्ति में SUN (~97%) — software दिखाता है; guide कहती थी "implement न करें" — दिखाना है या नहीं? (जवाब पर अगला कदम।)
+- **अगला — Phase 6** (user की पुष्टि के बाद): दशा/भुक्ति/अंतर।
