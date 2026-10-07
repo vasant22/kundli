@@ -256,6 +256,7 @@ export function buildSpecialTransitSection(values, opts) {
           zDeg: birth.degInSign,
           mode: values.stMode || '1579',
           group: values.stGroup || 'sg',
+          birthKey: values.stBirth || 'sun',
         })
         // attach the F/R flags (speed sign at the event instant)
         for (const p of st) {

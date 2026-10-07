@@ -185,3 +185,11 @@ Scripts: `scripts/bnn-calib/` · दोबारा चलाएँ: `node scrip
 - **extra-stub बग-सा दिखने वाला मामला**: हमारी एक अतिरिक्त छोटी row [05-01→12-01-2028] — वह गुरु के micro-wiggle (Vir 3.15→3.25) से बनी; सही Sun-margin (−3.85) होने पर यह नहीं बनती। यानी यह भी margin का ही परिणाम।
 - शनि-2030-31 dip का splitting भी margins से ही बदलता है (हम vs software अलग टुकड़े)।
 - **Guru से पूछने वाला सटीक सवाल**: "PCP में हर कुंडली की Start-सीमा क्या होती है (N से कितने अंश पहले)? और वक्री-मोड़ों पर पंक्तियाँ कैसे बँटती हैं?"
+
+## 15) 🎯 START-LEAD मिल गया — हर ग्रह का तय अंक (owner के hint + चार कुंडलियों से)
+- Owner का hint: "sir ने कुछ degree आगे से starting point ले लिया... end = degree पार करने पर"।
+- **Verified leads (चुने हुए ग्रह के अनुसार)**:
+  - **मंगल = 5.0°** (7 rows) · **शुक्र = 6.0°** (2 rows) · **सूर्य = 3.86°** (2 rows) · **बुध = 0.15°** (5+ rows)
+- Engine में लगाया (`PCP_LEADS`); nई validation: **19/23 PASS** — मंगल 15/15 ✓, सूर्य: SUN-5 ✓ + SUN-9 ✓ (2/4), शुक्र: VEN-7 ✓ + VEN-5-2029 ✓ (2/4)।
+- बाक़ी 4 FAIL = सब "वक्री-मोड़/dip-split" परिवार: (a) dip का top कब station-r और कब E-line(+10.67) — कुछ जगह legacy station से शुरू करता है (VEN-9, Mercury-2029) और कहीं E-line से (Mars-j2); (b) post-dip rise कहीं station-D से शुरू (SUN-7); (c) clipped-dip का असली start।
+- **अगला data-collection**: बाक़ी 5 ग्रहों (चंद्र/गुरु/शनि/राहु/केतु) की PCP tables — ताकि पूरा lead-table बने।

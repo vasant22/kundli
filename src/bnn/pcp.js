@@ -36,11 +36,27 @@
 import { planetCode } from './render.js'
 
 export const PCP_SETTINGS = Object.freeze({
-  startDeg: -5,             // direct entry line
+  startDeg: -5,             // default direct entry line (per-planet leads below)
   endDeg: 1,                // direct exit line
   midDeg: -1,               // the −1° line
   dipStartDeg: 10 + 2 / 3,  // retro dip entry line ("+10°40′")
 })
+
+// Per-planet start leads (degrees BEFORE the natal degree where the direct pass
+// begins) — decoded from the legacy software's tables 2026-10-07:
+//   मंगल = 5° · शुक्र = 6° · सूर्य ≈ 3.86° · बुध ≈ 0.15°
+// (Hypothesis being confirmed with the owner: a fixed value per SELECTED planet;
+// the remaining planets (Moon/Jupiter/Saturn/nodes) still default to 5.)
+export const PCP_LEADS = Object.freeze({
+  sun: 3.86,
+  mars: 5,
+  mercury: 0.15,
+  venus: 6,
+})
+
+export function leadFor(key) {
+  return PCP_LEADS[key] ?? PCP_SETTINGS.startDeg * -1
+}
 
 export const PCP_POSITION_SETS = Object.freeze({
   1579: [1, 5, 7, 9],
@@ -136,8 +152,9 @@ function bisectSpeed(lonAt, lo, hi, dirDown) {
 // ---------------------------------------------------------------------------
 // Types: A (rv=−5↑), B (rv=+1↑), E (rv=+10°40′↓), F (rv=−1↓),
 //        C (station retrograde, carries `rv`), D (station direct).
-export function collectEvents(lonAt, samples, rv, frameSign, zDeg) {
+export function collectEvents(lonAt, samples, rv, frameSign, zDeg, opts = {}) {
   const S = PCP_SETTINGS
+  const startLine = opts.startLine ?? S.startDeg
   const events = []
   for (let i = 1; i < samples.length; i++) {
     const s0 = samples[i - 1]
@@ -161,7 +178,7 @@ export function collectEvents(lonAt, samples, rv, frameSign, zDeg) {
         events.push({ t: bisectCrossing(lonAt, frameSign, zDeg, s0.t, s1.t, level, dir), type })
       }
     }
-    chk('A', S.startDeg, +1)
+    chk('A', startLine, +1)
     chk('B', S.endDeg, +1)
     chk('E', S.dipStartDeg, -1)
     chk('F', S.midDeg, -1)
@@ -210,12 +227,14 @@ export function computeRowsForPlanet(lonAt, tStartMs, tEndMs, zSign, zDeg, mode,
   const set = PCP_POSITION_SETS[mode] || PCP_POSITION_SETS[1579]
   const stepMs = opts.stepMs || 24 * 3600 * 1000
   const preRoll = opts.preRollMs ?? 900 * 24 * 3600 * 1000
+  // Per-planet start lead: start line = −lead (crossed upward).
+  const startLine = -(opts.leadDeg ?? leadFor(opts.planetKey))
   const t0 = tStartMs - preRoll
   const samples = samplePlanet(lonAt, t0, tEndMs, stepMs)
   const rows = []
   for (const F of frameSigns(zSign)) {
     const rv = rvSeries(samples, F, zDeg)
-    const events = collectEvents(lonAt, samples, rv, F, zDeg)
+    const events = collectEvents(lonAt, samples, rv, F, zDeg, { startLine })
     for (const seg of assembleSegments(events)) {
       const k = seg.kind === 'dir' ? fwdCount(F, zSign) : backCount(F, zSign)
       if (!set.includes(k)) continue
@@ -262,7 +281,8 @@ export function groupPlanets(group) {
  * @returns Array<{ key, planet, segments }>
  */
 export function computeSpecialTransit(lonAtFor, opts) {
-  const { tStartMs, tEndMs, zSign, zDeg, mode, group } = opts
+  const { tStartMs, tEndMs, zSign, zDeg, mode, group, birthKey } = opts
+  const leadDeg = opts.leadDeg ?? leadFor(birthKey)
   const out = []
   for (const key of groupPlanets(group)) {
     const lonAt = lonAtFor(key)
@@ -270,6 +290,7 @@ export function computeSpecialTransit(lonAtFor, opts) {
     const segments = computeRowsForPlanet(lonAt, tStartMs, tEndMs, zSign, zDeg, mode, {
       stepMs: stepFor(key),
       preRollMs: preRollFor(key),
+      leadDeg,
     })
     out.push({ key, planet: planetCode(key), segments })
   }

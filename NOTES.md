@@ -746,3 +746,6 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 
 ### 2026-10-07 — PCP: सूर्य-कुंडली से तुलना — start-margin chart-दर-chart अलग (मंगल −5°, सूर्य −3.85°, बुध +0.15°)
 - End-नियम सब जगह ✓; start-rule पकड़ में नहीं आया — guru से पूछने का सटीक सवाल तैयार (findings §14)। Reply भेजा।
+
+### 2026-10-07 — PCP: 🎯 start-lead = हर ग्रह का तय अंक (मंगल 5°, शुक्र 6°, सूर्य 3.86°, बुध 0.15°)
+- Owner के hint से पकड़ा; engine में लगाया + validation 19/23 (मंगल 15/15)। बाक़ी 4 = dip/station बारीक़ियाँ। बाक़ी 5 ग्रहों के tests user से माँगे। findings §15।
