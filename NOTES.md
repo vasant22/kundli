@@ -743,3 +743,6 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 ### 2026-10-07 — BNN Phase 7b: स्पेशल ट्रांज़िट (Special Transit) LIVE
 - इंजन + UI + tests: **engine 15/15 vs legacy मंगल तालिका** (pcp-check.mjs); page के bottom में section (tabs/g्रह/1579-159/dates/खोजें/per-planet tables/प्रिंट); headless verify ✓; **477 tests ✓**।
 - बाक़ी: start-margin के guru-confirm + छोटी polish। विवरण findings §13।
+
+### 2026-10-07 — PCP: सूर्य-कुंडली से तुलना — start-margin chart-दर-chart अलग (मंगल −5°, सूर्य −3.85°, बुध +0.15°)
+- End-नियम सब जगह ✓; start-rule पकड़ में नहीं आया — guru से पूछने का सटीक सवाल तैयार (findings §14)। Reply भेजा।

@@ -173,3 +173,15 @@ Scripts: `scripts/bnn-calib/` · दोबारा चलाएँ: `node scrip
 - **`scripts/bnn-calib/pcp-check.mjs`: 15/15 PASS** — legacy की मंगल तालिका (गुरु 9 rows + शनि 6 rows) से ±1 दिन के भीतर, labels exact।
 - **UI**: page के bottom में section — tabs [सभी ग्रह | राहु-केतु | शनि-गुरु] · जन्म-ग्रह chips · ●1579/●159 · start/end · खोजें · TRANSIT tables (PLANET/DATE/ASPECT/RETRO) · प्रिंट। Headless browser में पूरा verify।
 - खुला: start-margin का चार्ट-दर-चार्ट फ़र्क़ (Sun −4°, Mercury +0.2°, Mars −5°) — guru-पुष्टि बाक़ी; 1579 में एक dip-अपवाद (Mercury-2029)।
+
+## 14) सूर्य-कुंडली की PCP तुलना (user, 14:15) — start-margin का रहस्य और गहरा हुआ
+- User ने हमारा output vs software का output (SUN · 1579 · 07-01-2026→07-06-2031 · Jup+Sat) मिलाया।
+- **मेल**: सारे **End** (+1° नियम) — 16-07-2026 ✓, 10-09-2028 (±1d) ✓, 29-06-2030 ✓; labels/set सही।
+- **फ़र्क़ — start-margins chart-दर-chart बदलते हैं (verified precisely)**:
+  - मंगल: ≈ **N − 5.0°** (7 rows)
+  - सूर्य: ≈ **N − 3.85°** (2 rows: Jup-Vir 4.31, Sat-Tau 4.28 — दोनों −3.85±0.02) — और एक row station-D से शुरू (SUN-7 11-03-2026 = गुरु का Gem 20.86 station!)
+  - बुध: ≈ N + 0.15°
+  → कोई universal formula नहीं मिला; guru-rule ज़रूरी। (हमारा [−5,+1] सिर्फ़ मंगल पर perfect; अन्य charts पर start कुछ दिन-महीने खिसकता है।)
+- **extra-stub बग-सा दिखने वाला मामला**: हमारी एक अतिरिक्त छोटी row [05-01→12-01-2028] — वह गुरु के micro-wiggle (Vir 3.15→3.25) से बनी; सही Sun-margin (−3.85) होने पर यह नहीं बनती। यानी यह भी margin का ही परिणाम।
+- शनि-2030-31 dip का splitting भी margins से ही बदलता है (हम vs software अलग टुकड़े)।
+- **Guru से पूछने वाला सटीक सवाल**: "PCP में हर कुंडली की Start-सीमा क्या होती है (N से कितने अंश पहले)? और वक्री-मोड़ों पर पंक्तियाँ कैसे बँटती हैं?"
