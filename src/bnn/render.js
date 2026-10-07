@@ -9,6 +9,7 @@
 // face (screenshots; see docs/bnn-calib-findings.md §5).
 import { GRAHAS, t } from '../i18n.js'
 import { astronomyPartners, bhavaCombinations, labelSuffix, planetCombinations, seatPositions } from './combos.js'
+import { fmtDMY } from './dasha.js'
 import { computeBrsss, computePrsss } from './prsss.js'
 import { entryColour, specialTables } from './special.js'
 
@@ -36,6 +37,9 @@ const CODE = {
   sun: 'SUN', moon: 'MOO', mars: 'MAR', mercury: 'MER',
   jupiter: 'JUP', venus: 'VEN', saturn: 'SAT', rahu: 'RAH', ketu: 'KET',
 }
+
+/** Uppercase code for display (centre panel lines etc.). */
+export const planetCode = (key) => CODE[key] || String(key).toUpperCase()
 
 function el(name, attrs = {}) {
   const node = document.createElementNS(NS, name)
@@ -150,6 +154,8 @@ function metaLines(meta) {
     { text: meta.nakText, size: 10 },
     { text: meta.tithiText, size: 10 },
     { text: meta.yogaText, size: 10 },
+    { text: meta.dashaText, size: 9.5 },
+    { text: meta.bhuktiText, size: 9.5 },
   ].filter((l) => l.text)
   const lines = []
   for (const l of raw) {
@@ -436,7 +442,7 @@ export function buildBhavaTables(bnn, mode) {
 /** PLANET COMBINATION table (tabs: 1-5-7-9 · 1-5-9 · SPECIAL · PRSSS). */
 export function buildPlanetTables(bnn, mode) {
   const { planets, cusps } = bnn
-  const pc = planetCombinations(planets, mode)
+  const pc = planetCombinations(planets, mode, { cusps })
   const sp = specialTables(planets, cusps, mode)
   const astro = astronomyPartners(planets, mode)
   const seats = seatPositions(planets, mode)
@@ -450,17 +456,20 @@ export function buildPlanetTables(bnn, mode) {
   const max9 = Math.max(...PLANET_ORDER.map((k) => pc[k].list159.length))
 
   const listView = (key, max) => () => {
+    // Fixed frame (user, 2026-10-07): seven combination columns + the
+    // progression planet ALWAYS in the 9th column — so it can never be
+    // mistaken for a combination member, in both the 1-5-9 and 1-5-7-9 tabs.
+    const cols = Math.max(7, max)
     const tbl = el2('table', 'bnn-table bnn-planet-table')
     const hr = document.createElement('tr')
-    for (let i = -1; i < max; i++) hr.append(th(''))
-    hr.append(th('')) // progression partner — no header label
+    for (let i = 0; i < cols + 2; i++) hr.append(th('')) // label + combos + progression (no header labels)
     tbl.append(hr)
     for (const pkey of PLANET_ORDER) {
       const p = byKey[pkey]
       const row = document.createElement('tr')
       row.append(el2('td', 'row-label', rowLabel(p, seats[pkey].lon, cusps)))
       const list = pc[pkey][key]
-      for (let i = 0; i < max; i++) row.append(entCell(list[i], i))
+      for (let i = 0; i < cols; i++) row.append(entCell(list[i], i))
       const partner = astro[pkey] ? byKey[astro[pkey]] : null
       row.append(partner ? el2('td', 'ent-pink', `${CODE[partner.key]}${hashOf(partner.key, partner.retro)}`) : el2('td', null, '—'))
       tbl.append(row)
@@ -517,5 +526,62 @@ export function buildPlanetTables(bnn, mode) {
   section.append(bar.bar, content)
   render()
   section.append(legendLine())
+  return section
+}
+
+// ---------------------------------------------------------------------------
+// Vimshottari tables (Phase 6): DHASA (nine end dates + age), BHUKTHI (of the
+// running dasha), ANDHIRAM (of the running bhukthi). The running row is
+// tinted. Values come from dasha.js (computed in main.js with the ephemeris).
+// ---------------------------------------------------------------------------
+const ageText = (a) => `${a.y}Y-${a.m}M-${a.d}D`
+
+/** DHASA / BHUKTHI / ANDHIRAM tables (tabs). */
+export function buildDashaTables(dasha) {
+  const section = el2('div', 'bnn-section')
+  section.append(el2('h3', 'bnn-table-title', 'VIMSHOTTARI — DHASA / BHUKTHI / ANDHIRAM'))
+  const content = el2('div', 'bnn-tab-content')
+
+  const listTable = (rows, runningIdx) => {
+    const tbl = el2('table', 'bnn-table bnn-dasha-table')
+    rows.forEach((r, i) => {
+      const row = document.createElement('tr')
+      if (i === runningIdx) row.className = 'row-running'
+      row.append(el2('td', 'dasha-lord', CODE[r.lord]))
+      row.append(el2('td', null, fmtDMY(r.endISO)))
+      row.append(el2('td', null, ageText(r.age)))
+      tbl.append(row)
+    })
+    return tbl
+  }
+  const empty = () => {
+    const p = el2('p', 'bnn-legend', '—')
+    return p
+  }
+
+  const views = {
+    dhasa: () => listTable(dasha.mahadashas, dasha.running.mahaIndex),
+    bhukthi: () => (dasha.running.bhukthis ? listTable(dasha.running.bhukthis, dasha.running.bhukthiIndex) : empty()),
+    andhiram: () => (dasha.running.andhirams ? listTable(dasha.running.andhirams, dasha.running.andhiramIndex) : empty()),
+  }
+  let active = 'dhasa'
+  const bar = tabBar(
+    [
+      { key: 'dhasa', label: 'DHASA' },
+      { key: 'bhukthi', label: 'BHUKTHI' },
+      { key: 'andhiram', label: 'ANDHIRAM' },
+    ],
+    (k) => {
+      active = k
+      render()
+    }
+  )
+  const render = () => {
+    content.replaceChildren(views[active]())
+    bar.setActive(active)
+  }
+  section.append(bar.bar, content)
+  render()
+  section.append(el2('p', 'bnn-legend', t('bnn.dashaNote')))
   return section
 }

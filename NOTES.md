@@ -587,3 +587,26 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - Tests **444 ✓**; live ✓ (menu link सहित, `kundli.mybapuji.com` → "BNN चार्ट")।
 - ❓ User से पूछा: SAT# की 1-5-7-9 पंक्ति में SUN (~97%) — software दिखाता है; guide कहती थी "implement न करें" — दिखाना है या नहीं? (जवाब पर अगला कदम।)
 - **अगला — Phase 6** (user की पुष्टि के बाद): दशा/भुक्ति/अंतर।
+
+### 2026-10-07 — BNN corrections-2: progression column + गुरुजी का परिवर्तन-नियम
+- **Progression planet अब हमेशा 9वें column में** — fixed frame: label + 7 combo slots + progression;
+  1-5-7-9 और 1-5-9 दोनों tabs में एक-सी शक्ल (old software जैसी 9-column)। पहले user ने "8वें",
+  फिर "9वें ज़्यादा अच्छा" कहा — वही लागू (arrows-screenshots 06:45/07:09 के मुताबिक)।
+- **SUN-97 का जवाब मिला + लागू (गुरुजी नियम)**: परिवर्तन वाले ग्रह की कुर्सी-डिग्री से **1° के भीतर
+  पीछे (उल्टी दिशा)** बैठा ग्रह combination में जुड़ता है → **AP में SAT# row = SUN-97 | KET-8**,
+  **BP में MER row = SUN-97 | KET-8** — दोनों old software से exactly मेल (percent भाव-सूत्र से = 97)।
+  `combos.js` → `COMBO_SETTINGS.returnedCatchDeg = 1.0`। (`combos-check`: 59/59 + catch ✅✅)
+- Report-only बाक़ी: BP-1579 MER row के extra cells VEN-37/RAH-15 (159 में SAT10-18) — नियम अभी नहीं मिला।
+- User के browser में labels −1 (पुराना cache) दिख रहा था — live/server सही; hard refresh से ठीक।
+
+### 2026-10-07 — BNN Phase 6: दशा / भुक्ति / अंतर
+- **दशा-अंशांकन**: पुराना software दशा **UT+ΔT** वाले चंद्र से चलाता है (जैसे भाव-संधियाँ) — इसी से
+  पहली दशा-अंत 23-12-1985 exactly आती है (plain UT: 28-12-1985)। `src/bnn/dasha.js` असली — balance,
+  महादशा 9 अंत-तिथियाँ+आयु, भुक्ति (366-दिन) और अंतर (भुक्ति × a/120; आख़िरी = भुक्ति-अंत)।
+- **`scripts/bnn-calib/dasha-check.mjs`: 27/27 PASS** — महादशा 9/9 · भुक्ति 9/9 · अंतर 9/9 (guide भाग 5;
+  "RAH कटी" पंक्ति हमारे पास = 04-01-2028)। Findings doc §6-7।
+- UI: नया section **"VIMSHOTTARI — DHASA / BHUKTHI / ANDHIRAM"** (tabs; चल रही पंक्ति पीली);
+  centre panel में अब **"VEN DHASA: 23-12-2009 -> 23-12-2029"** + **"MER BHUKTI: 04-01-2026 -> 06-11-2028"** ✓।
+- Tests **445 → 451 ✓**; headless-Chrome से असली render जाँचा ✓ (SUN-97, 9-column, दशा tables सब मौजूद)।
+- Token: wallet 19593 (session शुरुआत) → 18241; Δ ≈ 1350 (corrections-2 + Phase 6 साथ में)।
+- **अगला — Phase 7**: गोचर (chart के बाहर + गोचर लग्न; reference 30-09-2026) और Phase 7b PCP।

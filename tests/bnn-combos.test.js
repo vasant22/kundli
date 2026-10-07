@@ -1,9 +1,10 @@
 // tests/bnn-combos.test.js — BNN combination engine (Phase 4, rules R1–R7).
 // Part 1: the guide's worked rule examples (pure, no ephemeris).
 // Part 2: the reference chart — AP vs guide भाग 5; BP vs the old software's
-// screenshots (user, 2026-10-07). Known open quirks (guide: report, don't
-// implement): the old software also lists a planet sitting ≲1° behind another
-// in that planet's row (SUN in MER's BP row / SUN-97 in SAT's AP row).
+// screenshots (user, 2026-10-07). The guru's parivartana "returned degree"
+// catch (user, 2026-10-07) is implemented: SUN-97 shows in SAT's AP row and
+// MER's BP row. Still open (report-only): the old software's extra mixed-seat
+// cells VEN-37 / RAH-15 / SAT10-18 in MER's BP row.
 import { beforeAll, describe, expect, it } from 'vitest'
 import { initEphemeris } from '../src/astro.js'
 import { computeBhavaChalit } from '../src/bnn/kp.js'
@@ -17,7 +18,7 @@ const P = (key, lon, retro = false) => ({
   retro,
 })
 const seq = (list) => list.map((e) => (e.type === 'planet' ? e.key : e.label.toLowerCase()))
-const combosOf = (planets, mode) => planetCombinations(planets, mode)
+const combosOf = (planets, mode, opts) => planetCombinations(planets, mode, opts)
 
 describe('BNN Phase 4 — rule examples (guide कक्षा)', () => {
   it('(a) direct Jupiter Aries 12° → SUN, MOO, RAH, SAT, VEN', () => {
@@ -83,7 +84,7 @@ const AP_PLANETS = {
   mars: ['jupiter', 'venus', 'rahu'],
   mercury: ['mars', 'jupiter', 'venus', 'rahu'],
   venus: ['jupiter', 'mars', 'mercury', 'sat3', 'moon'],
-  saturn: ['ketu'], // software also shows SUN-97 — the known open quirk
+  saturn: ['sun', 'ketu'], // SUN-97 = the guru catch (user 2026-10-07)
   rahu: ['moon'],
   ketu: ['saturn', 'sun'],
 }
@@ -106,7 +107,7 @@ const BP_PLANETS = {
   sun: ['mercury', 'ketu'],
   moon: ['mar8', 'rahu'],
   mars: ['jupiter', 'venus', 'rahu'],
-  mercury: ['ketu'], // software also shows SUN — same quirk as above
+  mercury: ['sun', 'ketu'], // SUN-97 = the guru catch (same as AP SAT row)
   venus: ['jupiter', 'mars', 'saturn', 'moon'],
   saturn: ['mars', 'jupiter', 'venus', 'rahu'],
   rahu: ['moon'],
@@ -131,7 +132,8 @@ const BP_ASTRO = {
   venus: 'moon', saturn: 'mars', rahu: 'moon', ketu: 'mercury',
 }
 // 159-column (drops 7th-zone members) — verified from the user's screenshots
-// (2026-10-07, later message).
+// (2026-10-07, later message). Mercury: the readable core [SUN-97, KET-8]; the
+// extra SAT10-18 / RAH-15 cells remain report-only (see NOTES.md).
 const BP_PLANETS_159 = {
   jupiter: ['rahu'],
   mars: ['jupiter', 'rahu'],
@@ -139,6 +141,7 @@ const BP_PLANETS_159 = {
   saturn: ['mars', 'jupiter', 'rahu'],
   moon: ['mar8', 'rahu'],
   sun: ['mercury', 'ketu'],
+  mercury: ['sun', 'ketu'],
   rahu: ['moon'],
   ketu: ['mercury', 'sun'],
 }
@@ -151,7 +154,7 @@ beforeAll(async () => {
 describe('BNN Phase 4 — reference chart (AP = guide, BP = software)', () => {
   it('AP planet combinations match the guide', () => {
     const k = computeBhavaChalit(swe, BIRTH.utc, BIRTH.place)
-    const pc = combosOf(k.planets, 'AP')
+    const pc = combosOf(k.planets, 'AP', { cusps: k.cusps })
     for (const [key, want] of Object.entries(AP_PLANETS)) {
       expect(seq(pc[key].list1579), key).toEqual(want)
     }
@@ -171,12 +174,25 @@ describe('BNN Phase 4 — reference chart (AP = guide, BP = software)', () => {
 
   it('BP planet combinations match the software screenshots', () => {
     const k = computeBhavaChalit(swe, BIRTH.utc, BIRTH.place)
-    const pc = combosOf(k.planets, 'BP')
+    const pc = combosOf(k.planets, 'BP', { cusps: k.cusps })
     for (const [key, want] of Object.entries(BP_PLANETS)) {
       expect(seq(pc[key].list1579), key).toEqual(want)
     }
     for (const [key, want] of Object.entries(BP_PLANETS_159)) {
       expect(seq(pc[key].list159), `${key} (159)`).toEqual(want)
+    }
+  })
+
+  it('guru returned-degree catch: SUN-97 in SAT (AP) and MER (BP), first in row', () => {
+    const k = computeBhavaChalit(swe, BIRTH.utc, BIRTH.place)
+    for (const [mode, key] of [['AP', 'saturn'], ['BP', 'mercury']]) {
+      const pc = combosOf(k.planets, mode, { cusps: k.cusps })
+      const first = pc[key].list1579[0]
+      expect([mode, key, first.key]).toEqual([mode, key, 'sun'])
+      expect(Math.round(first.percent)).toBe(97)
+      expect(first.caught).toBe(true)
+      // and it stays in both tabs (159 keeps it)
+      expect(seq(pc[key].list159)).toContain('sun')
     }
   })
 

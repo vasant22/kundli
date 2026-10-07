@@ -39,6 +39,42 @@ vi.mock('../src/bnn/kp.js', () => {
   }
 })
 
+vi.mock('../src/bnn/dasha.js', () => {
+  const maha = (lord, endISO) => ({ lord, startISO: '1980-01-22', endISO, age: { y: 5, m: 11, d: 1 } })
+  const rows = [
+    { lord: 'venus', startISO: '2009-12-23', endISO: '2013-04-26', age: { y: 33, m: 3, d: 4 } },
+    { lord: 'sun', startISO: '2013-04-26', endISO: '2014-04-27', age: { y: 34, m: 3, d: 5 } },
+    { lord: 'moon', startISO: '2014-04-27', endISO: '2015-12-28', age: { y: 35, m: 11, d: 6 } },
+    { lord: 'mars', startISO: '2015-12-28', endISO: '2017-02-27', age: { y: 37, m: 1, d: 5 } },
+    { lord: 'rahu', startISO: '2017-02-27', endISO: '2020-03-01', age: { y: 40, m: 1, d: 8 } },
+    { lord: 'jupiter', startISO: '2020-03-01', endISO: '2022-11-02', age: { y: 42, m: 9, d: 11 } },
+    { lord: 'saturn', startISO: '2022-11-02', endISO: '2026-01-04', age: { y: 45, m: 11, d: 13 } },
+    { lord: 'mercury', startISO: '2026-01-04', endISO: '2028-11-06', age: { y: 48, m: 9, d: 15 } },
+    { lord: 'ketu', startISO: '2028-11-06', endISO: '2029-12-23', age: { y: 49, m: 11, d: 1 } },
+  ]
+  const an = [
+    { lord: 'mercury', startISO: '2026-01-04', endISO: '2026-05-30', age: { y: 46, m: 4, d: 8 } },
+    { lord: 'ketu', startISO: '2026-05-30', endISO: '2026-07-29', age: { y: 46, m: 6, d: 7 } },
+    { lord: 'venus', startISO: '2026-07-29', endISO: '2027-01-17', age: { y: 46, m: 11, d: 26 } },
+  ]
+  return {
+    computeDashaTree: vi.fn(() => ({
+      moonLon: 342.5, nakshatra: 26, lord: 'saturn', balance: { y: 5, m: 11, d: 1 },
+      mahadashas: [
+        maha('saturn', '1985-12-23'), maha('mercury', '2002-12-23'), maha('ketu', '2009-12-23'),
+        { lord: 'venus', startISO: '2009-12-23', endISO: '2029-12-23', age: { y: 49, m: 11, d: 1 } },
+        maha('sun', '2035-12-23'), maha('moon', '2045-12-23'), maha('mars', '2052-12-23'),
+        maha('rahu', '2070-12-23'), maha('jupiter', '2086-12-23'),
+      ],
+      running: { mahaIndex: 3, bhukthiIndex: 7, andhiramIndex: 2, bhukthis: rows, andhirams: an },
+    })),
+    fmtDMY: (isoStr) => {
+      const [y, m, d] = isoStr.split('-')
+      return `${d}-${m}-${y}`
+    },
+  }
+})
+
 beforeAll(async () => {
   document.body.innerHTML = '<div id="app"></div>'
   await import('../src/bnn/main.js')
@@ -136,9 +172,10 @@ describe('BNN page — chart (Phase 2b)', () => {
     expect(buttons[1].classList.contains('active')).toBe(true)
   })
 
-  it('renders the tabbed combination tables (bhava first)', () => {
-    expect(document.querySelectorAll('.bnn-table').length).toBe(2)
+  it('renders the tabbed combination tables (bhava first) + dasha tables', () => {
+    expect(document.querySelectorAll('.bnn-table').length).toBe(3)
     const sections = document.querySelectorAll('.bnn-section')
+    expect(sections.length).toBe(3)
     expect(sections[0].textContent).toContain('BHAVA COMBINATION — NATAL — AP')
     expect(sections[1].textContent).toContain('PLANET COMBINATION — NATAL — AP')
     expect(sections[0].textContent).toContain('B01')
@@ -147,6 +184,25 @@ describe('BNN page — chart (Phase 2b)', () => {
     expect(sections[1].textContent).not.toContain('ASTRONOMY')
     expect(sections[0].querySelectorAll('.bnn-tabs button').length).toBe(4)
     expect(sections[1].querySelectorAll('.bnn-tabs button').length).toBe(4)
+    // Vimshottari (Phase 6)
+    expect(sections[2].textContent).toContain('VIMSHOTTARI')
+    expect(sections[2].textContent).toContain('SAT')
+    expect(sections[2].textContent).toContain('23-12-1985')
+    expect(sections[2].querySelectorAll('.bnn-tabs button').length).toBe(3)
+  })
+
+  it('dasha tabs switch views and the centre panel shows running lines', () => {
+    const sections = document.querySelectorAll('.bnn-section')
+    const tabs = sections[2].querySelectorAll('.bnn-tabs button')
+    tabs[1].click() // BHUKTHI
+    expect(sections[2].textContent).toContain('26-04-2013')
+    tabs[2].click() // ANDHIRAM
+    expect(sections[2].textContent).toContain('30-05-2026')
+    tabs[0].click() // back to DHASA
+    expect(sections[2].textContent).toContain('23-12-1985')
+    const svg = $('#bnn-output svg')
+    expect(svg.textContent).toContain('VEN DHASA: 23-12-2009 -> 23-12-2029')
+    expect(svg.textContent).toContain('MER BHUKTI: 04-01-2026 -> 06-11-2028')
   })
 
   it('table tabs switch the view (SPECIAL, PRSSS)', () => {

@@ -22,7 +22,7 @@ const AP_PLANETS = {
   jupiter: ['venus', 'rahu'], sun: ['saturn', 'ketu'], moon: ['mar8', 'rahu'],
   mars: ['jupiter', 'venus', 'rahu'], mercury: ['mars', 'jupiter', 'venus', 'rahu'],
   venus: ['jupiter', 'mars', 'mercury', 'sat3', 'moon'],
-  saturn: ['ketu'], // + SUN in the software = the known open quirk (not implemented)
+  saturn: ['sun', 'ketu'], // SUN-97 = guru returned-degree catch (2026-10-07)
   rahu: ['moon'], ketu: ['saturn', 'sun'],
 }
 const AP_BHAVA = {
@@ -36,7 +36,7 @@ const AP_BHAVA = {
 // ---- expected (old software screenshots, BP) ----
 const BP_PLANETS = {
   jupiter: ['venus', 'rahu'], sun: ['mercury', 'ketu'], moon: ['mar8', 'rahu'],
-  mars: ['jupiter', 'venus', 'rahu'], mercury: ['ketu'],
+  mars: ['jupiter', 'venus', 'rahu'], mercury: ['sun', 'ketu'],
   venus: ['jupiter', 'mars', 'saturn', 'moon'],
   saturn: ['mars', 'jupiter', 'venus', 'rahu'], rahu: ['moon'], ketu: ['mercury', 'sun'],
 }
@@ -58,7 +58,7 @@ const check = (name, got, want) => {
 
 for (const mode of ['AP', 'BP']) {
   console.log(`===== ${mode} — PLANETS =====`)
-  const pc = planetCombinations(planets, mode)
+  const pc = planetCombinations(planets, mode, { cusps: k.cusps })
   for (const p of planets) {
     console.log(`  ${CODE[p.key].padEnd(4)} ${pc[p.key].list1579.map(lab).join(' | ')}`)
   }
@@ -102,7 +102,7 @@ for (const mode of ['AP', 'BP']) {
 // ---- planet 159-column (later user screenshots; drops 7th-zone members) ----
 {
   console.log('===== BP — PLANET list159 (screenshots) =====')
-  const pc = planetCombinations(planets, 'BP')
+  const pc = planetCombinations(planets, 'BP', { cusps: k.cusps })
   const want = {
     jupiter: ['rahu'], mars: ['jupiter', 'rahu'], venus: ['moon'],
     saturn: ['mars', 'jupiter', 'rahu'], moon: ['mar8', 'rahu'],
@@ -115,5 +115,16 @@ for (const mode of ['AP', 'BP']) {
   }
 }
 console.log(`\nTOTAL: ${pass} PASS / ${fail} FAIL`)
+
+// ---- guru's returned-degree catch (2026-10-07): SUN-97 both modes ----
+{
+  console.log('===== returned-degree catch (SUN-97, guru rule) =====')
+  for (const [mode, key] of [['AP', 'saturn'], ['BP', 'mercury']]) {
+    const pc = planetCombinations(planets, mode, { cusps: k.cusps })
+    const first = pc[key].list1579[0]
+    const ok = first && first.key === 'sun' && first.caught === true && Math.round(first.percent) === 97
+    console.log(`  ${ok ? '✅' : '❌'} ${mode} ${CODE[key]}: first=${first ? lab(first) : '—'} (want SUN-97)`)
+  }
+}
 
 process.exit(0)

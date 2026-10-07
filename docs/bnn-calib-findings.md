@@ -89,3 +89,24 @@ Scripts: `scripts/bnn-calib/` · दोबारा चलाएँ: `node scrip
   PLANET COMBINATION (1-5-7-9, 1-5-9, SPECIAL, PRSSS, ASTRONOMY), DHAṢĀ/BHUKTHI/ANDHIRAM।
 - Screenshots user के पास; नाम-सहित private ब्यौरा होने से **repo में नहीं रखे** — local copy:
   `.openclaw/tmp/bnn-ref/` (outer face + Betul coords screen)।
+
+## 6) दशा अंशांकन (Phase 6, 2026-10-07)
+
+- **दशा का चंद्र = UT + ΔT** (+0.5 s fine-tune — वही convention जो भाव-संधियों की है)। plain UT से पहली
+  दशा-अंत 28-12-1985 आती; ΔT से **23-12-1985 exactly** (reference, guide भाग 5)। `dasha.js` →
+  `DASHA_SETTINGS.useDeltaT`।
+- Balance → कैलेंडर Y-M-D (वर्ष 365.25 दिन; महीना-भिन्न = 365.25/12; दिन round) → 5Y-11M-1D।
+- महादशा-अंत = पूर्व-अंत + पूरे कैलेंडर वर्ष; भुक्ति = round(Y×366×b/120) दिन (आख़िरी = दशा-अंत);
+  अंतर = floor(भुक्ति(नाममात्र) × a/120) दिन (आख़िरी = भुक्ति-अंत)।
+- guide कहती है "अंतर का वर्ष ~364 दिन (±1 दिन)" — reference से re-fit: **366-आधारित floor हर
+  readable तारीख़ से exactly मिलता है** (rows 1–6 + "JUP 21-05-2028" + "SAT 06-11-2028"=आख़िरी)।
+  Screenshot में "RAH की पंक्ति कटी" थी; हमारी पूरी सूची में वह पंक्ति = 04-01-2028।
+- Check: `scripts/bnn-calib/dasha-check.mjs` — **27/27 PASS** (महादशा 9 + भुक्ति 9 + अंतर 9)।
+
+## 7) परिवर्तन "returned degree" नियम (गुरुजी — user, 2026-10-07)
+
+- बदली हुई कुर्सी वाले ग्रह के लिए: उसकी कुर्सी-डिग्री से **1° के भीतर पीछे (उल्टी दिशा)** बैठा
+  ग्रह combination में जुड़ता है। यहाँ: सूर्य बुध की डिग्री से 0.83° पीछे → **AP में SAT# row = SUN-97,
+  BP में MER row = SUN-97** — दोनों old software से exactly मेल। प्रतिशत भाव-सूत्र से (97) —
+  सीधे ग्रह-सूत्र से 94 आता था; match के लिए भाव-सूत्र। `combos.js` → `COMBO_SETTINGS.returnedCatchDeg = 1.0`।
+- Report-only बाक़ी: BP-1579 MER row के extra cells VEN-37 / RAH-15 (159 में SAT10-18) — नियम नहीं मिला।

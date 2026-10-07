@@ -14,7 +14,8 @@ import { validateBirth } from '../birthvalidate.js'
 import { wallTimeToUtc } from '../timeutil.js'
 import { initEphemeris } from '../astro.js'
 import { computeBhavaChalit, findExchanges } from './kp.js'
-import { ageYMD, buildBhavaTables, buildBnnChart, buildPlanetTables, exchangeLabel, weekdayEN } from './render.js'
+import { computeDashaTree, fmtDMY } from './dasha.js'
+import { ageYMD, buildBhavaTables, buildBnnChart, buildDashaTables, buildPlanetTables, exchangeLabel, planetCode, weekdayEN } from './render.js'
 import { mybapujiStripHTML } from '../mybapuji-strip.js'
 
 // Where the public source code lives (same repo as the other pages).
@@ -327,6 +328,18 @@ function buildBnnMeta(values) {
   )
   const pad = (n) => String(n).padStart(2, '0')
   const gender = values.gender ? ` ${values.gender.toUpperCase()}` : ''
+
+  // Running dhasa / bhukthi lines (Phase 6 — same as the old face's centre).
+  let dashaText = ''
+  let bhuktiText = ''
+  const d = values.bnnDasha
+  if (d && d.running && d.running.mahaIndex >= 0) {
+    const m = d.mahadashas[d.running.mahaIndex]
+    dashaText = `${planetCode(m.lord)} DHASA: ${fmtDMY(m.startISO)} -> ${fmtDMY(m.endISO)}`
+    const b = d.running.bhukthis ? d.running.bhukthis[d.running.bhukthiIndex] : null
+    if (b) bhuktiText = `${planetCode(b.lord)} BHUKTI: ${fmtDMY(b.startISO)} -> ${fmtDMY(b.endISO)}`
+  }
+
   return {
     name: values.name,
     placeText: values.selectedPlace ? displayName(values.selectedPlace) : values.place,
@@ -337,6 +350,8 @@ function buildBnnMeta(values) {
     nakText: `${NAKSHATRAS[moon.nakshatra - 1].en.toUpperCase()} - ${moon.pada}`,
     tithiText: `${bnn.tithiIndex <= 15 ? 'SHUKLA' : 'KRISHNA'} - ${TITHIS[bnn.tithiIndex - 1].en.toUpperCase()}`,
     yogaText: `${YOGAS[bnn.yogaIndex - 1].en.toUpperCase()} YOGA`,
+    dashaText,
+    bhuktiText,
   }
 }
 
@@ -393,10 +408,12 @@ function showReport(values, scroll) {
 
   const paintTables = () => {
     const mode = values.bnnMode === 'BP' ? 'BP' : 'AP'
-    tablesBox.replaceChildren(
+    const sections = [
       buildBhavaTables(values.bnn, mode),
-      buildPlanetTables(values.bnn, mode)
-    )
+      buildPlanetTables(values.bnn, mode),
+    ]
+    if (values.bnnDasha) sections.push(buildDashaTables(values.bnnDasha))
+    tablesBox.replaceChildren(...sections)
     if (pairs.length > 0) {
       exchangeBox.textContent = `${exchangeLabel(pairs)} — ${mode === 'AP' ? 'AFTER' : 'BEFORE'} PARIVARDHANAI (${mode})`
     }
@@ -570,6 +587,11 @@ async function submitForm() {
     if (!values.converted || !coords) throw new Error('birth data incomplete')
     const swe = await ensureEphemeris()
     values.bnn = computeBhavaChalit(swe, values.converted.utc, coords)
+    values.bnnDasha = computeDashaTree(swe, values.bnn.jd, {
+      year: Number(values.year),
+      month: Number(values.month),
+      day: Number(values.day),
+    })
     values.bnnMeta = buildBnnMeta(values)
     values.bnnStyle = 'south'
     values.bnnMode = values.bnnMeta.ageY >= 30 ? 'AP' : 'BP' // guide: default AP when 30+

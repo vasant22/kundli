@@ -51,13 +51,14 @@ describe('BNN Phase 1 — module API surfaces', () => {
   it('carries the guide constants in settings', () => {
     expect(percent.PERCENT_SETTINGS).toEqual({ p2pBase: 96.65, p2pPerDegree: 3.147, p2bWidthFactor: 0.942 })
     expect(dasha.DASHA_SETTINGS.bhukthiYearDays).toBe(366)
-    expect(dasha.DASHA_SETTINGS.andhiramYearDays).toBe(364)
+    expect(dasha.DASHA_SETTINGS.useDeltaT).toBe(true)
+    expect(dasha.DASHA_SETTINGS.balanceYearDays).toBe(365.25)
     expect(kp.BNN_SETTINGS.ayanamsaMode).toBe(44)
     expect(kp.BNN_SETTINGS.housesAtDeltaT).toBe(true)
   })
 
   it('stubs throw with their phase until implemented', () => {
-    expect(() => dasha.computeDashaTree()).toThrow(/Phase 6/)
+    // Phase 6 (dasha) is implemented — the remaining stub is Phase 7 transit.
     expect(() => transit.computeTransitSnapshot()).toThrow(/Phase 7/)
   })
 })

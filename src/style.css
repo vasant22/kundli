@@ -1172,6 +1172,20 @@ details.manual[open] summary {
 .ent-green { color: #2e7d32; font-weight: 600; }
 .ent-orange { color: #ef6c00; font-weight: 600; }
 .ent-pink { color: #8e24aa; font-weight: 600; }
+/* दशा तालिकाएँ (Phase 6) */
+.bnn-dasha-table td {
+  padding: 0.22rem 0.7rem;
+}
+.bnn-dasha-table td.dasha-lord {
+  font-weight: 700;
+  background: #faf6ea;
+}
+.bnn-dasha-table tr.row-running td {
+  background: #fff6cc;
+}
+.bnn-dasha-table tr.row-running td.dasha-lord {
+  background: #ffeaa3;
+}
 .bnn-legend {
   font-size: 0.75rem;
   color: #6b5b3a;
