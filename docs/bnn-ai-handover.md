@@ -50,7 +50,8 @@ A free, offline-capable **Bhrigu Nandi Nadi (BNN) astrology chart** tool. Input:
 | `prsss.js` | PRSSS / BRSSS five-level sub-lord chains (Vimshottari proportions) |
 | `special.js` | SPECIAL tables (Director, IN-STAR-OF-A, owns/sits→gives, star results) + colour helper |
 | `dasha.js` | Vimshottari dhasa / bhukthi / andhiram incl. all settings, age maths, lists |
-| `transit.js` | Transit snapshot (ring) + PCP stub (Phase 7b, not built — see §6) |
+| `transit.js` | Transit snapshot (ring) |
+| `pcp.js` + `pcp-ui.js` | “Special Transit” (PCP): engine + page section — per-planet start leads; calibration `scripts/bnn-calib/pcp-check.mjs`; research log `docs/pcp-research.md` |
 | `render.js` | Chart drawing (south/north), centre panel, exchange box, tables UI, tabs, legends |
 | `print.js` | The 5-page A4 print sheet (DOM + print CSS) |
 | `allchart.js` | The All-Chart PNG sheet (SVG → canvas → PNG) |
@@ -237,7 +238,7 @@ Progression column (AP): JUP→RAH, SUN→SAT, MOO→RAH, MAR→JUP, MER→MAR, 
 
 ## 6. Deliberately open items (do NOT invent rules; keep as report-only)
 
-1. **PCP (special transit window)** — NOT implemented (web app Phase 7b pending). Partially known rule: for a natal planet N and set {1579|159}, using transit Jupiter/Saturn: direct-planet rows 1/5/9: Start = transit planet reaches (N's degree-in-sign − 4°), End = (N's degree + 1°); rows for the 7th position and rows around stations/retrograde are unexplained (they start/end at larger distances). The owner must be asked before implementing; list unmatched expected rows with computed longitudes.
+1. **PCP (special transit window)** — **first version built & live** (2026-10-07): the `/bnn/` page's bottom section **“Special Transit”** (engine `src/bnn/pcp.js`, UI `src/bnn/pcp-ui.js`, check `scripts/bnn-calib/pcp-check.mjs`). Per-planet start-leads decoded empirically (बुध ≈0.15° · गुरु ≈0.17° · शनि ≈0.9° · चंद्र ≈2.44° · सूर्य ≈3.86° · मंगल 5° · शुक्र 6° · केतु ≈13.9° · राहु ≈14.4° — Jupiter-transit rows; some differ for Saturn rows). Calibration vs the legacy tables: **Mars chart 15/15**, overall 27/51; the **retro/station splitting rules are still being decoded** (owner collaboration ongoing). Full research log + open items: `docs/pcp-research.md`.
 2. **Gulika (GUL)** — formula not supplied yet; not drawn.
 3. **Legacy tabs TR1579 / TR159** — meaning unknown; not built.
 4. **3rd/11th relations and the '10' tab** — not built (spec excludes them).
@@ -278,7 +279,7 @@ Progression column (AP): JUP→RAH, SUN→SAT, MOO→RAH, MAR→JUP, MER→MAR, 
 - `src/` — full source (BNN modules + shared modules + fonts/styles)
 - `tests/` — all automated tests incl. fixtures (471 tests)
 - `scripts/bnn-calib/` — calibration & verification scripts (the PASS/FAIL checks referenced throughout)
-- `docs/bnn-guide.txt`, `docs/bnn-calib-findings.md` — original requirements guide (v2) + the calibration ledger
+- `docs/bnn-guide.txt`, `docs/bnn-calib-findings.md`, `docs/pcp-research.md` — original requirements guide (v2) + calibration ledger + PCP/Special-Transit research log
 - `package.json`, `vite.config.js`, `README.md`, `NOTES.md` — build config + project history (NOTES.md contains the full correction log)
 
 *Prepared 2026-10-07 for the project owner (mybapuji.com). Legacy reference screenshots are private and not included; the numeric reference values above are the portable substitute.*
