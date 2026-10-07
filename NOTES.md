@@ -567,3 +567,11 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - खुले note: MER row में mixed-seat quirks (SUN-97 class) वैसे ही report-only; screenshot के B02/B07 में bug-cells।
 - ❓ User से पूछा (reply में): labels के साथ के **-91 / -95 / -18 जैसे अंक** किस चीज़ के हैं? (Phase 5 table display के लिए चाहिए।)
 - Token: wallet 22319 → 22210 (Δ ≈ 109)।
+
+### 2026-10-07 — BNN Phase 5: पूरी Combination tables पेज पर (`56ef906`)
+- **`-NN` suffix का रहस्य हल (user की बात सही)**: label पर का अंक = ग्रह की अपने भाव से closeness, **बिना 0.942 गुणांक**: `100 × (1 − d/W)` — 9/9 exactly (JUP 91, SUN 18, MOO 95, MAR 69, MER 15, VEN 95, SAT 27, RAH 20, KET 20) ✓ → tables में लगा दिया।
+- **SPECIAL engine (R13)**: Director (भाव-अनुसार), owns/sits→gives, star lord + star-gives, 'IN STAR OF A' — guide के AP expectations से **36/36 PASS** (`scripts/bnn-calib/special-check.mjs`)।
+- **Tables UI पेज पर**: PLANET COMBINATION (1-5-7-9 · 1-5-9 · SPECIAL · PRSSS · ASTRONOMY + label suffix) और BHAVA COMBINATION (1-5-9 · 1-5-7-9 · BRSSS · SPECIAL: Director/IN STAR OF A) — R17 रंग (🔵/🟢/🟠, Saturn-always-green), legend, **BP/AP toggle** (आयु 30+ → default AP) + exchange label अब "AFTER/BEFORE PARIVARDHANAI (AP/BP)"।
+- Tests **443 ✓** (page tables + BP/AP toggle सहित)। Headless-Chrome से असली render जाँचा ✓ (screenshot)।
+- Token: wallet 22210 → 21657 (Δ ≈ 553; इस phase का UI+verification काम)।
+- **अगला — Phase 6**: विंशोत्तरी दशा/भुक्ति/अंतर (disposal dates + ages; 366/364-दिन वर्ष settings)।
