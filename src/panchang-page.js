@@ -250,6 +250,7 @@ export function bootPage() {
             <a href="../" data-i18n="nav.home"></a>
             <a href="../match/" data-i18n="nav.match"></a>
             <a href="./" class="active" data-i18n="nav.panchang"></a>
+            <a href="../bnn/" data-i18n="nav.bnn"></a>
           </nav>
         </div>
         <button id="lang-toggle" class="lang-toggle" type="button" data-i18n="lang.switchTo"></button>

@@ -58,15 +58,17 @@ describe('Phase 1 — Kundli Matching page shell', () => {
     expect(document.documentElement.lang).toBe('hi')
   })
 
-  it('has the site navigation (कुंडली / कुंडली मिलान / पंचांग)', () => {
+  it('has the site navigation (कुंडली / कुंडली मिलान / पंचांग / BNN)', () => {
     const links = document.querySelectorAll('.site-nav a')
-    expect(links.length).toBe(3)
+    expect(links.length).toBe(4)
     expect(links[0].textContent).toBe('कुंडली')
     expect(links[0].getAttribute('href')).toBe('../')
     expect(links[1].textContent).toBe('कुंडली मिलान')
     expect(links[1].classList.contains('active')).toBe(true)
     expect(links[2].textContent).toBe('पंचांग')
     expect(links[2].getAttribute('href')).toBe('../panchang/')
+    expect(links[3].textContent).toBe('BNN चार्ट')
+    expect(links[3].getAttribute('href')).toBe('../bnn/')
     // MyBapuji मुख्य-साइट पट्टी भी मौजूद
     expect(document.querySelector('.mb-strip .brand').textContent).toContain('MyBapuji')
   })
