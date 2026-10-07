@@ -640,3 +640,19 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
   SUN 19.28, MOO 03.39, ASC 28.01 exact; RAH/KET में ~0.6′ node-model अंतर (नोट)।
 - Tests **451 → 456 ✓**; headless render में ring जाँचा ✓।
 - **अगला — Phase 7b**: PCP (विशेष गोचर)।
+
+### 2026-10-07 — BNN corrections-5: उत्तर चार्ट overlap + लग्न-चिह्न + Printing output (PDF)
+- **उत्तर भारतीय चार्ट**: भाव-नाम व ग्रह centre-square में घुस रहे थे → अब हर block panel से टकराते ही
+  सबसे छोटी दिशा में बाहर खिसक जाता है (चारों दिशाओं के लिए जाँच ✓, user का screenshot).
+- **दक्षिणी चार्ट**: लग्न वाले खाने के **ऊपर-बाएँ कोने में दो छोटे आड़े डंडे** — चार्ट देखते ही लग्न पहचान
+  आता है (ASC text पहले जैसा)।
+- **Printing output**: नया बटन **"🖨️ प्रिंट / PDF बनाएँ"** (`src/bnn/print.js` + @media-print CSS) — 5-page A4:
+  ① हरि ॐ · नाम · मंत्र (ॐ ऐं ह्रीं श्रीं क्लीं चामुण्डायै विच्चे नमः) · info@mybapuji.com · mybapuji.com;
+  बाएँ **गणपति**, दाएँ **माँ सरस्वती** (AI-निर्मित, transparent PNG ~35KB); BASIC DETAILS + चार्ट |
+  ② combination + दोनों SPECIAL टेबल | ③-④ PRSSS/BRSSS + DHASA + सारी 81 भुक्तियाँ + ANDHIRAM; हर पेज पर
+  mybapuji.com footer। (sample से सिर्फ़ structure लिया — design/नाम/टेबल शैली हमारी अपनी, copy नहीं।)
+- **पहली (आंशिक) दशा की भुक्तियाँ** (sample खोज): SAT block = शुरू की 6 ख़ाली rows + [MAR 01-08-1980,
+  RAH 10-06-1983, JUP 23-12-1985]; sample में [12-08-1980, 21-06-1983] (~11 दिन का अंतर = उनका internal
+  scale; बाक़ी सब blocks exactly: MER 22-05-1988 ✓ …)। `dasha.js` bhukthiList अब यही structure देता है।
+- Tests **456 → 462 ✓**; headless `--print-to-pdf` से पूरा 5-page output जाँचा ✓; dist ≈ 3.3 MiB (2 images +).
+- **जवाब**: बाक़ी phases = 7b PCP (Windows के समय) · 8 Verification (और कुंडलियाँ) · 9 Final launch।

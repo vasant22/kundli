@@ -1238,3 +1238,50 @@ details.manual[open] summary {
   background: #e8730c;
   color: #fff;
 }
+
+/* ===== BNN print sheet (Phase 7 add-on — /bnn/ printing output) ===== */
+#bnn-print { display: none; }
+@page { size: A4; margin: 11mm 10mm; }
+@media print {
+  body.bnn-printing > #app { display: none !important; }
+  body.bnn-printing #bnn-print { display: block; color: #3a2410; font-size: 10px; }
+  #bnn-print .bp-break { break-after: page; }
+  #bnn-print .bp-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; border-bottom: 2.5px solid #e8730c; padding-bottom: 6px; margin-bottom: 8px; }
+  #bnn-print .bp-head-img img { width: 82px; height: auto; display: block; }
+  #bnn-print .bp-head-mid { text-align: center; flex: 1; }
+  #bnn-print .bp-hariom { font-size: 14px; font-weight: 700; color: #b0470a; }
+  #bnn-print .bp-name { font-size: 12.5px; font-weight: 700; margin-top: 1px; }
+  #bnn-print .bp-mantra { font-size: 12.5px; color: #c62828; margin: 3px 0 2px; font-weight: 600; }
+  #bnn-print .bp-contact { font-size: 10px; color: #6b5b3a; }
+  #bnn-print .bp-h { font-size: 11.5px; color: #b0470a; border-bottom: 1px solid #e8cfa0; margin: 9px 0 4px; padding-bottom: 1px; }
+  #bnn-print .bp-details { display: grid; gap: 2.5px; margin-bottom: 6px; }
+  #bnn-print .bp-detail-row { display: grid; grid-template-columns: 105px 1fr 84px 1fr; gap: 1px 6px; font-size: 10.5px; }
+  #bnn-print .bp-dl { color: #6b5b3a; }
+  #bnn-print .bp-dv { font-weight: 600; }
+  #bnn-print .bp-chart svg { width: 94mm; max-width: 100%; display: block; margin: 2px auto 0; }
+  #bnn-print .bp-note { text-align: center; font-size: 10px; color: #6b5b3a; margin: 2px 0 0; }
+  #bnn-print .bp-table { border-collapse: collapse; width: 100%; margin: 4px 0 9px; }
+  #bnn-print .bp-table th, #bnn-print .bp-table td { border: 1px solid #cbb98d; padding: 1.5px 4px; font-size: 9.5px; text-align: center; }
+  #bnn-print .bp-table th { background: #f7ecd5; }
+  #bnn-print .bp-lab { font-weight: 700; color: #b3261e; background: #faf6ea; }
+  #bnn-print .bp-prog { color: #8e24aa; font-weight: 600; }
+  #bnn-print .bp-bhukthi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 12px; }
+  #bnn-print .bp-bhukthi { break-inside: avoid; margin: 0 0 4px; }
+  #bnn-print .bp-foot { text-align: center; border-top: 1px solid #e8cfa0; padding-top: 3px; margin-top: 10px; }
+  #bnn-print .bp-foot-main { font-weight: 600; color: #b0470a; font-size: 10px; }
+  #bnn-print .bp-foot-sub { font-size: 9px; color: #6b5b3a; }
+  #bnn-print .bp-page { padding-bottom: 4px; }
+}
+.bnn-print-row { display: flex; gap: 0.5rem; margin: 0.6rem 0 0.2rem; }
+.bnn-print-row button {
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 0.35rem 1.1rem;
+  border: 1px solid #2e7d32;
+  background: #2e7d32;
+  color: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.bnn-print-row button:hover { background: #256428; }
+.bnn-dasha-table tr.row-blank td { color: #b9ac8e; }

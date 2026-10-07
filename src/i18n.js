@@ -33,6 +33,7 @@ const STRINGS = {
     'bnn.transitTime': 'गोचर समय',
     'bnn.transitNow': 'अभी',
     'bnn.transitPlace': 'गोचर स्थान',
+    'bnn.print': '🖨️ प्रिंट / PDF बनाएँ',
 
     // मुख्य साइट (MyBapuji) की ऊपरी पट्टी
     'mb.home': 'होम',
@@ -226,6 +227,7 @@ const STRINGS = {
     'bnn.transitTime': 'Transit time',
     'bnn.transitNow': 'Now',
     'bnn.transitPlace': 'Transit place',
+    'bnn.print': '🖨️ Print / Save PDF',
 
     // MyBapuji main-site strip
     'mb.home': 'Home',

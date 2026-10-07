@@ -111,6 +111,28 @@ describe('BNN Phase 2b — chart drawing', () => {
     expect(weekdayEN(1980, 1, 22)).toBe('TUESDAY')
   })
 
+  it('south chart: the lagna cell carries the two-bar mark', () => {
+    const svg = buildBnnChart(BNN, { style: 'south', meta: META })
+    const mark = svg.querySelector('.lagna-mark')
+    expect(mark).toBeTruthy()
+    expect(mark.querySelectorAll('line').length).toBe(2)
+    // Leo (asc) sits at col 3 / row 2 → the bars start inside that cell
+    const x1 = Number(mark.querySelector('line').getAttribute('x1'))
+    const y1 = Number(mark.querySelector('line').getAttribute('y1'))
+    expect(x1).toBeGreaterThan(270)
+    expect(y1).toBeGreaterThan(180)
+  })
+
+  it('north chart: house blocks stay clear of the centre panel', () => {
+    const svg = buildBnnChart(BNN, { style: 'north', meta: META })
+    const ys = (house) => [...svg.querySelector(`[data-house="${house}"]`).querySelectorAll('text')].map((t) => Number(t.getAttribute('y')))
+    const xs = (house) => [...svg.querySelector(`[data-house="${house}"]`).querySelectorAll('text')].map((t) => Number(t.getAttribute('x')))
+    expect(Math.max(...ys(1))).toBeLessThan(93) // top block pushed above the panel
+    expect(Math.min(...ys(7))).toBeGreaterThan(267) // bottom block pushed below
+    expect(Math.max(...xs(4))).toBeLessThan(93) // left block pushed left
+    expect(Math.min(...xs(10))).toBeGreaterThan(267) // right block pushed right
+  })
+
   it('transit ring: labels sit outside the chart with rounded minutes (both styles)', () => {
     const south = buildBnnChart(BNN, { style: 'south', meta: META, transit: TRANSIT })
     expect(south.getAttribute('viewBox')).toBe('-64 -64 488 488')

@@ -72,6 +72,10 @@ vi.mock('../src/bnn/dasha.js', () => {
       const [y, m, d] = isoStr.split('-')
       return `${d}-${m}-${y}`
     },
+    // print.js needs this too (mocked to a passthrough row for the page test)
+    bhukthiList: (maha) => [
+      { lord: maha.lord, startISO: maha.startISO, endISO: maha.endISO, age: { y: 0, m: 0, d: 0 } },
+    ],
   }
 })
 
@@ -192,6 +196,18 @@ describe('BNN page — chart (Phase 2b)', () => {
     const last = computeTransitSnapshot.mock.calls.at(-1)[1]
     expect(last).toEqual({ year: 2026, month: 10, day: 1, hour: 6, minute: 46, second: 0 })
     expect($('#bnn-output svg').textContent).toContain('SAT# 16.52')
+  })
+
+  it('print button builds the A4 sheet (mantra + contact + tables)', async () => {
+    const btn = document.querySelector('.bnn-print-row button')
+    expect(btn.textContent).toContain('प्रिंट')
+    btn.click()
+    await vi.waitFor(() => expect(document.getElementById('bnn-print')).toBeTruthy())
+    const sheet = document.getElementById('bnn-print')
+    expect(sheet.textContent).toContain('चामुण्डायै विच्चे नमः')
+    expect(sheet.textContent).toContain('info@mybapuji.com')
+    expect(sheet.textContent).toContain('DHASA')
+    expect(document.body.classList.contains('bnn-printing')).toBe(true)
   })
 
   it('switches the chart style with the toggle', () => {

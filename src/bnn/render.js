@@ -156,6 +156,40 @@ function wrapText(text, max = 26) {
 
 const gray = (count) => (count >= 5 ? 9 : count >= 3 ? 10 : 11)
 
+// ---------------------------------------------------------------------------
+// Keep a north-style house block OUT of the centre panel (user correction
+// 2026-10-07 — bhava name & planets were spilling into the panel). Estimated
+// text box (jsdom-safe char-count approximation), pushed along the shortest
+// axis that clears the panel.
+// ---------------------------------------------------------------------------
+const PANEL_HALF = 83 // the centre panel rect: 180 ± 83, both axes
+function estimateBlockBox(lines, cx, cy) {
+  const h = lines.reduce((a, l) => a + l.size * 1.2, 0)
+  const w = Math.max(16, ...lines.map((l) => l.text.length * l.size * 0.62))
+  return { l: cx - w / 2, r: cx + w / 2, t: cy - h / 2, b: cy + h / 2 }
+}
+function avoidCentrePanel(lines, cx, cy) {
+  const m = 6
+  const P = { l: 180 - PANEL_HALF, t: 180 - PANEL_HALF, r: 180 + PANEL_HALF, b: 180 + PANEL_HALF }
+  const box = estimateBlockBox(lines, cx, cy)
+  if (box.r <= P.l - m || box.l >= P.r + m || box.b <= P.t - m || box.t >= P.b + m) return { cx, cy }
+  const options = [
+    { cx: cx - (box.r - (P.l - m)), cy },
+    { cx: cx + ((P.r + m) - box.l), cy },
+    { cx, cy: cy - (box.b - (P.t - m)) },
+    { cx, cy: cy + ((P.b + m) - box.t) },
+  ]
+  let best = null
+  for (const o of options) {
+    const b2 = estimateBlockBox(lines, o.cx, o.cy)
+    const clear = b2.r <= P.l - m || b2.l >= P.r + m || b2.b <= P.t - m || b2.t >= P.b + m
+    if (!clear) continue
+    const d = Math.hypot(o.cx - cx, o.cy - cy)
+    if (!best || d < best.d) best = { cx: o.cx, cy: o.cy, d }
+  }
+  return best || { cx, cy }
+}
+
 // The centre-panel text lines (English; the dasha lines join in Phase 6).
 function metaLines(meta) {
   const raw = [
@@ -311,6 +345,23 @@ export function buildSouthBnn(bnn, meta = {}, transit = null) {
     svg.append(group)
   }
 
+  // Lagna mark (user request 2026-10-07): two short horizontal bars at the
+  // top-left inside edge of the ascendant's cell — the lagua reads at a
+  // glance (in addition to the "ASC …" text).
+  {
+    const [lagnaCol, lagnaRow] = S_CELLS[ascRashi]
+    const marks = el('g', { class: 'lagna-mark' })
+    const x0 = lagnaCol * C + 7
+    const y0 = lagnaRow * C + 8
+    for (const dy of [0, 6]) {
+      marks.append(el('line', {
+        x1: x0, y1: y0 + dy, x2: x0 + C * 0.3, y2: y0 + dy,
+        stroke: '#5a3410', 'stroke-width': 2.4, 'stroke-linecap': 'round',
+      }))
+    }
+    svg.append(marks)
+  }
+
   const panel = el('g', { class: 'center-panel' })
   layoutLines(panel, S / 2, S / 2, metaLines(meta))
   svg.append(panel)
@@ -367,7 +418,10 @@ export function buildNorthBnn(bnn, meta = {}, transit = null) {
       house === 1,
       bnn.ascendant
     )
-    if (block.length > 0) layoutLines(group, fx * S, fy * S, block)
+    if (block.length > 0) {
+      const { cx, cy } = avoidCentrePanel(block, fx * S, fy * S)
+      layoutLines(group, cx, cy, block)
+    }
     svg.append(group)
   }
 
@@ -498,7 +552,7 @@ export function buildBhavaTables(bnn, mode) {
       row.append(cell(CODE[sp.lords[n]]))
       row.append(cell(sp.inBhava[n].length ? sp.inBhava[n].map((e) => `${CODE[e.key]}${hashOf(e.key, e.natalRetro)}`).join(', ') : '—'))
       row.append(cell(sp.inStarOf[n].length ? sp.inStarOf[n].map(ent).join(', ') : '—'))
-      row.append(cell(CODE[sp.directors[n]]))
+      row.append(cell(ent(sp.directors[n])))
       tbl.append(row)
     }
     return tbl
@@ -639,9 +693,14 @@ export function buildDashaTables(dasha) {
     rows.forEach((r, i) => {
       const row = document.createElement('tr')
       if (i === runningIdx) row.className = 'row-running'
-      row.append(el2('td', 'dasha-lord', CODE[r.lord]))
-      row.append(el2('td', null, fmtDMY(r.endISO)))
-      row.append(el2('td', null, ageText(r.age)))
+      if (r.blank) {
+        row.className = `${row.className} row-blank`.trim()
+        row.append(el2('td', 'dasha-lord', CODE[r.lord]), el2('td'), el2('td'))
+      } else {
+        row.append(el2('td', 'dasha-lord', CODE[r.lord]))
+        row.append(el2('td', null, fmtDMY(r.endISO)))
+        row.append(el2('td', null, ageText(r.age)))
+      }
       tbl.append(row)
     })
     return tbl

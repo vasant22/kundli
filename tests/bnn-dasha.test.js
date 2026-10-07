@@ -5,7 +5,7 @@
 import { beforeAll, describe, expect, it } from 'vitest'
 import { initEphemeris } from '../src/astro.js'
 import { computeBhavaChalit } from '../src/bnn/kp.js'
-import { computeDashaTree, dashaBalance, fmtDMY } from '../src/bnn/dasha.js'
+import { computeDashaTree, bhukthiList, dashaBalance, fmtDMY } from '../src/bnn/dasha.js'
 
 const BIRTH = { year: 1980, month: 1, day: 22 }
 const UTC = { year: 1980, month: 1, day: 22, hour: 15, minute: 0, second: 0 }
@@ -78,5 +78,19 @@ describe('BNN Phase 6 — dasha / bhukthi / andhiram', () => {
     expect(b.lord).toBe('saturn')
     expect(b.nakshatra).toBe(26)
     expect(b.ymd).toEqual({ y: 5, m: 11, d: 1 })
+  })
+
+  it('the first (partial) mahadasha: blank lead rows + remaining-part bhukthis', () => {
+    const tree = computeDashaTree(swe, k.jd, BIRTH, { now: NOW })
+    const rows = bhukthiList(tree.mahadashas[0], BIRTH)
+    // sample-PDF structure (user 2026-10-07): elapsed bhukthis = empty rows
+    expect(rows.map((r) => (r.blank ? '—' : r.lord))).toEqual(['—', '—', '—', '—', '—', '—', 'mars', 'rahu', 'jupiter'])
+    expect(rows[6].endISO).toBe('1980-08-01')
+    expect(rows[7].endISO).toBe('1983-06-10')
+    expect(rows[8].endISO).toBe('1985-12-23')
+    // Other mahadashas are unaffected — the MER block matches the sample exactly.
+    const mer = bhukthiList(tree.mahadashas[1], BIRTH)
+    expect(mer[0].endISO).toBe('1988-05-22')
+    expect(mer[8].endISO).toBe('2002-12-23')
   })
 })

@@ -16,6 +16,7 @@ import { initEphemeris } from '../astro.js'
 import { computeBhavaChalit, findExchanges } from './kp.js'
 import { computeDashaTree, fmtDMY } from './dasha.js'
 import { computeTransitSnapshot } from './transit.js'
+import { buildPrintSheet } from './print.js'
 import { ageYMD, buildBhavaTables, buildBnnChart, buildDashaTables, buildPlanetTables, exchangeLabel, planetCode, weekdayEN } from './render.js'
 import { mybapujiStripHTML } from '../mybapuji-strip.js'
 
@@ -469,6 +470,27 @@ function showReport(values, scroll) {
     applyTransitInput()
   })
 
+  // Print / PDF (Phase 7 add-on) — builds the hidden A4 sheet and opens the
+  // browser's print dialog; see src/bnn/print.js + the @media print styles.
+  const printRow = document.createElement('div')
+  printRow.className = 'bnn-print-row'
+  const printBtn = document.createElement('button')
+  printBtn.type = 'button'
+  printBtn.textContent = t('bnn.print')
+  printRow.append(printBtn)
+  printBtn.addEventListener('click', async () => {
+    document.getElementById('bnn-print')?.remove()
+    document.body.append(buildPrintSheet(values))
+    document.body.classList.add('bnn-printing')
+    const imgs = [...document.querySelectorAll('#bnn-print img')]
+    await Promise.all(imgs.map((im) => (im.decode ? im.decode().catch(() => {}) : Promise.resolve())))
+    try {
+      if (typeof window.print === 'function') window.print()
+    } catch {
+      /* test environments */
+    }
+  })
+
   const paint = () => {
     const style = values.bnnStyle === 'north' ? 'north' : 'south'
     chartBox.replaceChildren(buildBnnChart(values.bnn, { style, meta: values.bnnMeta, transit: values.bnnTransit }))
@@ -512,7 +534,7 @@ function showReport(values, scroll) {
     paintTables()
   })
 
-  card.append(exchangeBox, chartBox, toggleBar, modeBar, transitRow, tablesBox)
+  card.append(exchangeBox, chartBox, toggleBar, modeBar, transitRow, printRow, tablesBox)
   output.append(card)
   paint()
   paintTables()

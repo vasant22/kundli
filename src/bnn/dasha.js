@@ -115,6 +115,10 @@ export function mahadashaList(balance, birth, settings = DASHA_SETTINGS) {
 /**
  * The nine bhukthis inside a mahadasha (sequence starts from the maha lord).
  * Length = round(Y × 366 × b / 120) days; the last one ends on the maha end.
+ * The FIRST mahadasha is partial (it began before birth): its earlier bhukthis
+ * are returned as `blank` rows and the first visible one keeps only its
+ * remaining part — the old software's print shows exactly this shape
+ * (sample PDF, user 2026-10-07; the elapsed part is shown as empty rows).
  */
 export function bhukthiList(maha, birth, settings = DASHA_SETTINGS) {
   const b0 = birthYMD(birth)
@@ -122,12 +126,33 @@ export function bhukthiList(maha, birth, settings = DASHA_SETTINGS) {
   let start = parseISO(maha.startISO)
   const end = parseISO(maha.endISO)
   const lordIdx = ORDER.indexOf(maha.lord)
+  const nominal = (lord) => Math.round((YEARS[maha.lord] * settings.bhukthiYearDays * YEARS[lord]) / 120)
+  // Partial (first) mahadasha: distribute the overhang over the elapsed lead.
+  let overhang = 0
+  {
+    let sum = 0
+    for (let i = 0; i < 9; i++) sum += nominal(ORDER[(lordIdx + i) % 9])
+    const span = Math.round((end - start) / 86400000)
+    if (sum - span > 366) overhang = sum - span
+  }
   for (let i = 0; i < 9; i++) {
     const lord = ORDER[(lordIdx + i) % 9]
     const last = i === 8
-    const e = last
-      ? end
-      : addDays(start, Math.round((YEARS[maha.lord] * settings.bhukthiYearDays * YEARS[lord]) / 120))
+    if (overhang > 0) {
+      const nom = nominal(lord)
+      if (overhang >= nom) {
+        overhang -= nom
+        rows.push({ lord, blank: true, startISO: null, endISO: null, age: null })
+        continue
+      }
+      const len = nom - overhang
+      overhang = 0
+      const e = addDays(start, len)
+      rows.push({ lord, startISO: iso(start), endISO: iso(e), age: ymdDiff(b0, ymdOf(e)) })
+      start = e
+      continue
+    }
+    const e = last ? end : addDays(start, nominal(lord))
     rows.push({ lord, startISO: iso(start), endISO: iso(e), age: ymdDiff(b0, ymdOf(e)) })
     start = e
   }
