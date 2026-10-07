@@ -218,6 +218,9 @@ describe('BNN page — chart (Phase 2b)', () => {
     const planetTabs = sections[1].querySelectorAll('.bnn-tabs button')
     planetTabs[2].click() // SPECIAL
     expect(sections[1].textContent).toContain('Lord')
+    expect(sections[1].textContent).toContain('LORDSHIP')
+    expect(sections[1].textContent).toContain('VEN - 7') // JUP's star
+    expect(sections[1].textContent).toContain('3,7,10') // JUP's star-lordship (separate column)
     planetTabs[3].click() // PRSSS
     expect(sections[1].textContent).toContain('VEN')
   })

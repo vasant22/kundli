@@ -621,3 +621,10 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - Verification: `special-check` **45 → 69 ✓** (+12 LORD, +12 PLANETS(A) — sir के screenshot से);
   असली browser render की पूरी 12-row तालिका sir के software से अक्षरशः मेल ✓; tests **451 ✓**।
 - **अगला — Phase 7**: गोचर (transit) + PCP — user की "आगे बढ़ो" पर।
+
+### 2026-10-07 — BNN correction-4: planet SPECIAL में LORDSHIP अलग column
+- User (screenshot 08:16): planet combination का SPECIAL tab — star के फल वाला हिस्सा पहले
+  ★ star cell में मिला हुआ था ("★ VEN-7 → 3,7,10")। अब **अलग columns**: [Lord | sits → gives |
+  **STAR** | **LORDSHIP**] — जैसे JUP: `5,8 | 01 → 1,5 | VEN - 7 | 3,7,10` (sir के software से मेल)।
+- असली browser render से जाँचा ✓; tests **451 ✓**।
+- **अगला — Phase 7**: गोचर (transit) + PCP।

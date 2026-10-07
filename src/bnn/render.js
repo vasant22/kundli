@@ -484,9 +484,11 @@ export function buildPlanetTables(bnn, mode) {
     return tbl
   }
   const specialView = () => {
+    // Guru-software layout (user correction, 2026-10-07): the star's lordship
+    // (star के फल) is its own column — [Lord · sits → gives · STAR · LORDSHIP].
     const tbl = el2('table', 'bnn-table bnn-planet-table')
     const hr = document.createElement('tr')
-    hr.append(th(''), th('Lord'), th('sits → gives'), th('★ star'))
+    hr.append(th(''), th('Lord'), th('sits → gives'), th('STAR'), th('LORDSHIP'))
     tbl.append(hr)
     for (const pkey of PLANET_ORDER) {
       const p = byKey[pkey]
@@ -495,7 +497,8 @@ export function buildPlanetTables(bnn, mode) {
       row.append(el2('td', 'row-label', rowLabel(p, seats[pkey].lon, cusps)))
       row.append(cell(r.owns.length ? r.owns.join(',') : '—'))
       row.append(cell(`${String(r.sitsAt).padStart(2, '0')} → ${r.gives.length ? r.gives.join(',') : '—'}`))
-      row.append(cell(`★ ${CODE[r.starLord]}-${r.starAt}${r.starGives.length ? ' → ' + r.starGives.join(',') : ''}`))
+      row.append(cell(`${CODE[r.starLord]} - ${r.starAt}`))
+      row.append(cell(r.starGives.length ? r.starGives.join(',') : '—'))
       tbl.append(row)
     }
     return tbl
