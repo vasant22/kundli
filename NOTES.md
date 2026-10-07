@@ -628,3 +628,15 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
   **STAR** | **LORDSHIP**] — जैसे JUP: `5,8 | 01 → 1,5 | VEN - 7 | 3,7,10` (sir के software से मेल)।
 - असली browser render से जाँचा ✓; tests **451 ✓**।
 - **अगला — Phase 7**: गोचर (transit) + PCP।
+
+### 2026-10-07 — BNN Phase 7: गोचर (transit) ring
+- चार्ट के चारों ओर **गोचर के ग्रह + गोचर लग्न** — पुराने face की तरह अपनी राशि के किनारे (बाएँ/
+  दाएँ/ऊपर/नीचे), degree.mm के साथ, वक्री पर #, गहरे-मैरून रंग में। नीचे पट्टी: **गोचर समय**
+  (default अभी) + "अभी" बटन + गोचर स्थान; समय बदलते ही ring अपने-आप बदलता है। दोनों styles में।
+- अंशांकन (findings §8): transit = **UT+ΔT(+0.5s)** (भाव-संधि जैसा); बाहर के अंक **round** होते हैं
+  ("ASC 28.01" सबूत), अंदर का text truncate ही रहता है।
+- **`transit-check.mjs`: 20/20 PASS** — ① guide भाग 5 (01-10-2026 ≈12:16, सब ≤0.63′) ② outer-face
+  screenshot (07-10-2026 04:40:03) — SAT# 16.52, MAR 10.53, JUP 26.24, VEN# 13.59, MER 13.56,
+  SUN 19.28, MOO 03.39, ASC 28.01 exact; RAH/KET में ~0.6′ node-model अंतर (नोट)।
+- Tests **451 → 456 ✓**; headless render में ring जाँचा ✓।
+- **अगला — Phase 7b**: PCP (विशेष गोचर)।

@@ -75,6 +75,24 @@ vi.mock('../src/bnn/dasha.js', () => {
   }
 })
 
+vi.mock('../src/bnn/transit.js', () => ({
+  computeTransitSnapshot: vi.fn(() => ({
+    jd: 0,
+    planets: [
+      { key: 'saturn', retro: true, rashi: 11, degInSign: 16.8703 },
+      { key: 'rahu', retro: true, rashi: 10, degInSign: 3.1596 },
+      { key: 'ketu', retro: true, rashi: 4, degInSign: 3.1596 },
+      { key: 'mars', retro: false, rashi: 3, degInSign: 10.8891 },
+      { key: 'jupiter', retro: false, rashi: 3, degInSign: 26.3942 },
+      { key: 'venus', retro: true, rashi: 6, degInSign: 13.9881 },
+      { key: 'mercury', retro: false, rashi: 6, degInSign: 13.9326 },
+      { key: 'sun', retro: false, rashi: 5, degInSign: 19.4723 },
+      { key: 'moon', retro: false, rashi: 4, degInSign: 3.6517 },
+    ],
+    ascendant: { key: 'asc', retro: false, rashi: 4, degInSign: 28.0152 },
+  })),
+}))
+
 beforeAll(async () => {
   document.body.innerHTML = '<div id="app"></div>'
   await import('../src/bnn/main.js')
@@ -158,7 +176,22 @@ describe('BNN page — chart (Phase 2b)', () => {
     expect(svg.textContent).toContain('MAR# 21.30') // मंगल# सिंह में
     expect(svg.textContent).toContain('ASC 12.53')
     expect(svg.textContent).toContain('UTTARA BHADRAPADA - 3')
+    expect(svg.textContent).toContain('SAT# 16.52') // transit ring (mocked)
+    expect(document.querySelector('.bnn-transit-row')).toBeTruthy()
+    expect(document.querySelector('.bnn-transit-row input').value).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/)
     expect($('.bnn-exchange-box').textContent).toContain('MERCURY<>SATURN')
+  })
+
+  it('transit time control re-computes the ring', async () => {
+    const { computeTransitSnapshot } = await import('../src/bnn/transit.js')
+    const before = computeTransitSnapshot.mock.calls.length
+    const input = document.querySelector('.bnn-transit-row input')
+    input.value = '2026-10-01T12:16'
+    input.dispatchEvent(new Event('change'))
+    expect(computeTransitSnapshot.mock.calls.length).toBeGreaterThan(before)
+    const last = computeTransitSnapshot.mock.calls.at(-1)[1]
+    expect(last).toEqual({ year: 2026, month: 10, day: 1, hour: 6, minute: 46, second: 0 })
+    expect($('#bnn-output svg').textContent).toContain('SAT# 16.52')
   })
 
   it('switches the chart style with the toggle', () => {

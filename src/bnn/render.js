@@ -1,4 +1,4 @@
-// render.js — BNN chart drawing (Phase 2b).
+// render.js — BNN chart drawing (Phase 2b) + transit ring (Phase 7).
 // Text INSIDE the chart is English only (repo rule), matching the old
 // software's outer face: planet codes (SUN MOO MAR …) with '#' for
 // retrograde, red cusp numbers with degrees ("09 11.31"), an "ASC 12.53"
@@ -18,6 +18,8 @@ const SIZE = 360 // svg viewBox is 0 0 360 360; CSS scales it responsively
 const RED = '#c62828'
 const INK = '#3a2410'
 const ACC = '#a94f05'
+const TRANSIT_RED = '#700000' // transit ring text (old-software colour)
+const RING_MARGIN = 64 // extra viewBox space around the chart for the transit ring
 
 // South-Indian fixed layout: rashi index (0 = Aries) → [col, row] in the 4×4 grid.
 const S_CELLS = [
@@ -37,6 +39,7 @@ const CODE = {
   sun: 'SUN', moon: 'MOO', mars: 'MAR', mercury: 'MER',
   jupiter: 'JUP', venus: 'VEN', saturn: 'SAT', rahu: 'RAH', ketu: 'KET',
 }
+const hashOf = (key, retro) => (retro && key !== 'rahu' && key !== 'ketu' ? '#' : '')
 
 /** Uppercase code for display (centre panel lines etc.). */
 export const planetCode = (key) => CODE[key] || String(key).toUpperCase()
@@ -81,6 +84,15 @@ export function degDot(deg) {
   const totalSec = Math.floor(deg * 3600 + 1e-7)
   const d = Math.floor(totalSec / 3600)
   const m = Math.floor((totalSec % 3600) / 60)
+  return `${String(d).padStart(2, '0')}.${String(m).padStart(2, '0')}`
+}
+
+// Transit-ring variant: arcminutes ROUNDED (calibrated against the old face's
+// outside numbers, e.g. its "ASC 28.01" = 28°00.9′ — findings §8).
+export function degDotR(deg) {
+  const total = Math.round(deg * 60)
+  const d = Math.floor(total / 60)
+  const m = total % 60
   return `${String(d).padStart(2, '0')}.${String(m).padStart(2, '0')}`
 }
 
@@ -183,13 +195,79 @@ function cellBlock(cusps, planets, includeAsc, asc) {
 }
 
 // ---------------------------------------------------------------------------
+// Transit ring (Phase 7) — the old face shows the transit planets and the
+// transit ascendant OUTSIDE the chart, next to their sign's side (left / right
+// / top / bottom), stacked and sorted by degree. Numbers round to the
+// arcminute (degDotR — calibrated). Hidden when no transit is provided.
+// ---------------------------------------------------------------------------
+function transitGroups(transit, sideOf) {
+  const byRashi = new Map()
+  for (const p of [...transit.planets, transit.ascendant]) {
+    if (!byRashi.has(p.rashi)) byRashi.set(p.rashi, [])
+    byRashi.get(p.rashi).push(p)
+  }
+  const groups = []
+  for (const [rashi, list] of byRashi) {
+    list.sort((a, b) => a.degInSign - b.degInSign)
+    const { side, u } = sideOf(rashi)
+    groups.push({ side, u, list })
+  }
+  return groups
+}
+
+const southSideOf = (rashi) => {
+  const [col, row] = S_CELLS[rashi]
+  const side = col === 0 ? 'left' : col === 3 ? 'right' : row === 0 ? 'top' : 'bottom'
+  const u = side === 'top' || side === 'bottom' ? (col + 0.5) * 90 : (row + 0.5) * 90
+  return { side, u }
+}
+const northSideOf = (ascRashi) => (rashi) => {
+  const region = ((rashi - ascRashi + 12) % 12) + 1
+  const [fx, fy] = N_CENTERS[region - 1]
+  const side = fx <= 0.3 ? 'left' : fx >= 0.7 ? 'right' : fy < 0.5 ? 'top' : 'bottom'
+  const u = side === 'top' || side === 'bottom' ? fx * 360 : fy * 360
+  return { side, u }
+}
+
+function drawTransitRing(svg, bnn, transit, style) {
+  if (!transit) return
+  const sideOf = style === 'north' ? northSideOf(bnn.ascendant.rashi) : southSideOf
+  const ring = el('g', { class: 'transit-ring' })
+  for (const g of transitGroups(transit, sideOf)) {
+    const n = g.list.length
+    g.list.forEach((p, i) => {
+      const code = p.key === 'asc' ? 'ASC' : CODE[p.key]
+      const text = `${code}${hashOf(p.key, p.retro)} ${degDotR(p.degInSign)}`
+      let x
+      let y
+      let anchor = 'middle'
+      if (g.side === 'left' || g.side === 'right') {
+        x = g.side === 'left' ? -6 : 366
+        y = g.u + (i - (n - 1) / 2) * 11.5
+        anchor = g.side === 'left' ? 'end' : 'start'
+      } else if (g.side === 'top') {
+        x = g.u
+        y = -10 - (n - 1 - i) * 11.5
+      } else {
+        x = g.u
+        y = 371 + i * 11.5
+      }
+      ring.append(textNode(x, y, text, { size: 10, weight: 600, anchor, fill: TRANSIT_RED }))
+    })
+  }
+  svg.append(ring)
+}
+
+// ---------------------------------------------------------------------------
 // SOUTH style — fixed 4×4 rashi grid (same geometry as the main app's chart)
 // ---------------------------------------------------------------------------
-export function buildSouthBnn(bnn, meta = {}) {
+export function buildSouthBnn(bnn, meta = {}, transit = null) {
   const S = SIZE
   const C = S / 4
   const svg = el('svg', {
-    viewBox: `0 0 ${S} ${S}`,
+    viewBox: transit
+      ? `${-RING_MARGIN} ${-RING_MARGIN} ${S + 2 * RING_MARGIN} ${S + 2 * RING_MARGIN}`
+      : `0 0 ${S} ${S}`,
     class: 'chart chart-south',
     'data-chart': 'south',
     role: 'img',
@@ -237,16 +315,19 @@ export function buildSouthBnn(bnn, meta = {}) {
   layoutLines(panel, S / 2, S / 2, metaLines(meta))
   svg.append(panel)
 
+  drawTransitRing(svg, bnn, transit, 'south')
   return svg
 }
 
 // ---------------------------------------------------------------------------
 // NORTH style — diamond (fixed houses; region n = the ascendant's nth sign)
 // ---------------------------------------------------------------------------
-export function buildNorthBnn(bnn, meta = {}) {
+export function buildNorthBnn(bnn, meta = {}, transit = null) {
   const S = SIZE
   const svg = el('svg', {
-    viewBox: `0 0 ${S} ${S}`,
+    viewBox: transit
+      ? `${-RING_MARGIN} ${-RING_MARGIN} ${S + 2 * RING_MARGIN} ${S + 2 * RING_MARGIN}`
+      : `0 0 ${S} ${S}`,
     class: 'chart chart-north',
     'data-chart': 'north',
     role: 'img',
@@ -294,13 +375,15 @@ export function buildNorthBnn(bnn, meta = {}) {
   layoutLines(panel, S / 2, S / 2, metaLines(meta))
   svg.append(panel)
 
+  drawTransitRing(svg, bnn, transit, 'north')
   return svg
 }
 
 /** Draw the BNN chart in the given style ('south' default — the old face). */
 export function buildBnnChart(bnn, opts = {}) {
   const style = opts.style === 'north' ? 'north' : 'south'
-  return style === 'north' ? buildNorthBnn(bnn, opts.meta) : buildSouthBnn(bnn, opts.meta)
+  const transit = opts.transit || null
+  return style === 'north' ? buildNorthBnn(bnn, opts.meta, transit) : buildSouthBnn(bnn, opts.meta, transit)
 }
 
 // ---------------------------------------------------------------------------
@@ -314,7 +397,6 @@ export function buildBnnChart(bnn, opts = {}) {
 // the word "ASTRONOMY" is not used).
 // ---------------------------------------------------------------------------
 const ENT_CLASS = { blue: 'ent-blue', green: 'ent-green', orange: 'ent-orange' }
-const hashOf = (key, retro) => (retro && key !== 'rahu' && key !== 'ketu' ? '#' : '')
 const rowLabel = (p, seatLon, cusps) => `${CODE[p.key]}${hashOf(p.key, p.retro)}-${labelSuffix(seatLon, cusps).value}`
 const entText = (e) =>
   e.type === 'planet'

@@ -1172,6 +1172,33 @@ details.manual[open] summary {
 .ent-green { color: #2e7d32; font-weight: 600; }
 .ent-orange { color: #ef6c00; font-weight: 600; }
 .ent-pink { color: #8e24aa; font-weight: 600; }
+/* गोचर (Phase 7) */
+.bnn-transit-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin: 0.35rem 0 0.6rem;
+  font-size: 0.85rem;
+  color: #6b5b3a;
+}
+.bnn-transit-row input {
+  font: inherit;
+  padding: 0.15rem 0.4rem;
+  border: 1px solid #cbb98d;
+  border-radius: 6px;
+  background: #fffdf7;
+  color: #3a2410;
+}
+.bnn-transit-row button {
+  font: inherit;
+  padding: 0.2rem 0.7rem;
+  border: 1px solid #e8730c;
+  background: #fff;
+  color: #b0470a;
+  border-radius: 8px;
+  cursor: pointer;
+}
 /* दशा तालिकाएँ (Phase 6) */
 .bnn-dasha-table td {
   padding: 0.22rem 0.7rem;

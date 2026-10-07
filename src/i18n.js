@@ -30,6 +30,9 @@ const STRINGS = {
     'bnn.ap': 'परिवर्तन के बाद (AP)',
     'bnn.legend': '🔵 मुख्य ग्रह — जीवन भर असर · 🟢 20%+ — अपनी दशा-भुक्ति में असर · 🟠 20% से कम — कमज़ोर · 🩷 आगे बढ़ने पर पहले मिलने वाला ग्रह',
     'bnn.dashaNote': 'अंतिम तिथि — उस समय की आयु · पीली पंक्ति = अभी चल रही दशा/भुक्ति/अंतर',
+    'bnn.transitTime': 'गोचर समय',
+    'bnn.transitNow': 'अभी',
+    'bnn.transitPlace': 'गोचर स्थान',
 
     // मुख्य साइट (MyBapuji) की ऊपरी पट्टी
     'mb.home': 'होम',
@@ -220,6 +223,9 @@ const STRINGS = {
     'bnn.ap': 'After parivartana (AP)',
     'bnn.legend': '🔵 main planet — lifelong · 🟢 20%+ — acts in its dasha · 🟠 below 20% — weak · 🩷 first planet met on progression',
     'bnn.dashaNote': 'End date — age at that time · yellow row = currently running',
+    'bnn.transitTime': 'Transit time',
+    'bnn.transitNow': 'Now',
+    'bnn.transitPlace': 'Transit place',
 
     // MyBapuji main-site strip
     'mb.home': 'Home',

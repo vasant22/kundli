@@ -15,6 +15,7 @@ import { wallTimeToUtc } from '../timeutil.js'
 import { initEphemeris } from '../astro.js'
 import { computeBhavaChalit, findExchanges } from './kp.js'
 import { computeDashaTree, fmtDMY } from './dasha.js'
+import { computeTransitSnapshot } from './transit.js'
 import { ageYMD, buildBhavaTables, buildBnnChart, buildDashaTables, buildPlanetTables, exchangeLabel, planetCode, weekdayEN } from './render.js'
 import { mybapujiStripHTML } from '../mybapuji-strip.js'
 
@@ -214,10 +215,43 @@ function computeConversion(values) {
 
 // The WASM ephemeris is heavy; load it once, on the first calculation.
 let swePromise = null
+let sweRef = null // the loaded instance (used by the transit re-compute)
 function ensureEphemeris() {
-  if (!swePromise) swePromise = initEphemeris()
+  if (!swePromise) {
+    swePromise = initEphemeris().then((swe) => {
+      sweRef = swe
+      return swe
+    })
+  }
   return swePromise
 }
+
+// Current wall-clock components in a zone (IANA name or "+05:30").
+function nowWallInZone(zone) {
+  const now = new Date()
+  if (/^[+-]\d{2}:\d{2}$/.test(zone)) {
+    const sign = zone[0] === '-' ? -1 : 1
+    const [hh, mm] = zone.slice(1).split(':').map(Number)
+    const shifted = new Date(now.getTime() + sign * (hh * 60 + mm) * 60000)
+    return {
+      year: shifted.getUTCFullYear(), month: shifted.getUTCMonth() + 1, day: shifted.getUTCDate(),
+      hour: shifted.getUTCHours(), minute: shifted.getUTCMinutes(), second: shifted.getUTCSeconds(),
+    }
+  }
+  try {
+    const parts = new Intl.DateTimeFormat('en-CA', {
+      timeZone: zone, year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
+    }).formatToParts(now)
+    const g = (type) => Number(parts.find((p) => p.type === type)?.value ?? 0)
+    return { year: g('year'), month: g('month'), day: g('day'), hour: g('hour') % 24, minute: g('minute'), second: g('second') }
+  } catch {
+    return { year: now.getFullYear(), month: now.getMonth() + 1, day: now.getDate(), hour: now.getHours(), minute: now.getMinutes(), second: now.getSeconds() }
+  }
+}
+
+const fmtInputValue = (w) =>
+  `${w.year}-${String(w.month).padStart(2, '0')}-${String(w.day).padStart(2, '0')}T${String(w.hour).padStart(2, '0')}:${String(w.minute).padStart(2, '0')}`
 
 // Latitude/longitude for the chart (manual fields win — same as validation).
 function resolveCoordinates(values) {
@@ -397,9 +431,47 @@ function showReport(values, scroll) {
   const tablesBox = document.createElement('div')
   tablesBox.className = 'bnn-tables'
 
+  // Transit time controls (Phase 7) — default "now", computed in the chart's
+  // time zone for the chart's place (the old face's transit location).
+  const transitRow = document.createElement('div')
+  transitRow.className = 'bnn-transit-row'
+  const transitLabel = document.createElement('span')
+  transitLabel.textContent = `${t('bnn.transitTime')}:`
+  const transitInput = document.createElement('input')
+  transitInput.type = 'datetime-local'
+  transitInput.step = '60'
+  transitInput.value = values.transitInput || ''
+  transitInput.setAttribute('aria-label', t('bnn.transitTime'))
+  const transitNow = document.createElement('button')
+  transitNow.type = 'button'
+  transitNow.textContent = t('bnn.transitNow')
+  const transitPlace = document.createElement('span')
+  transitPlace.className = 'muted'
+  transitPlace.textContent = `${t('bnn.transitPlace')}: ${values.selectedPlace ? values.selectedPlace.name : values.place}`
+  transitRow.append(transitLabel, transitInput, transitNow, transitPlace)
+
+  const applyTransitInput = () => {
+    const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(transitInput.value)
+    if (!m || !sweRef || !values.bnnZone || !values.bnnCoords) return
+    const whenWall = { year: +m[1], month: +m[2], day: +m[3], hour: +m[4], minute: +m[5], second: 0 }
+    try {
+      const conv = wallTimeToUtc(whenWall, values.bnnZone)
+      values.bnnTransit = computeTransitSnapshot(sweRef, conv.utc, values.bnnCoords)
+      values.transitInput = transitInput.value
+      paint()
+    } catch (err) {
+      console.error('Transit re-compute failed:', err)
+    }
+  }
+  transitInput.addEventListener('change', applyTransitInput)
+  transitNow.addEventListener('click', () => {
+    transitInput.value = fmtInputValue(nowWallInZone(values.bnnZone))
+    applyTransitInput()
+  })
+
   const paint = () => {
     const style = values.bnnStyle === 'north' ? 'north' : 'south'
-    chartBox.replaceChildren(buildBnnChart(values.bnn, { style, meta: values.bnnMeta }))
+    chartBox.replaceChildren(buildBnnChart(values.bnn, { style, meta: values.bnnMeta, transit: values.bnnTransit }))
     northBtn.classList.toggle('active', style === 'north')
     southBtn.classList.toggle('active', style === 'south')
     northBtn.setAttribute('aria-pressed', String(style === 'north'))
@@ -440,7 +512,7 @@ function showReport(values, scroll) {
     paintTables()
   })
 
-  card.append(exchangeBox, chartBox, toggleBar, modeBar, tablesBox)
+  card.append(exchangeBox, chartBox, toggleBar, modeBar, transitRow, tablesBox)
   output.append(card)
   paint()
   paintTables()
@@ -592,6 +664,12 @@ async function submitForm() {
       month: Number(values.month),
       day: Number(values.day),
     })
+    // Transit (Phase 7): default "now" in the chart's zone, at the chart's place.
+    values.bnnZone = resolveZone(values)
+    values.bnnCoords = coords
+    const nowW = nowWallInZone(values.bnnZone)
+    values.transitInput = fmtInputValue(nowW)
+    values.bnnTransit = computeTransitSnapshot(swe, wallTimeToUtc({ ...nowW, second: 0 }, values.bnnZone).utc, coords)
     values.bnnMeta = buildBnnMeta(values)
     values.bnnStyle = 'south'
     values.bnnMode = values.bnnMeta.ageY >= 30 ? 'AP' : 'BP' // guide: default AP when 30+

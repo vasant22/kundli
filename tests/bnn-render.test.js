@@ -40,6 +40,21 @@ const META = {
   tithiText: 'SHUKLA - SHASHTHI',
   yogaText: 'SHIVA YOGA',
 }
+// A small transit fixture mirroring the outer-face snapshot (07-10-2026).
+const TRANSIT = {
+  planets: [
+    { key: 'saturn', retro: true, rashi: 11, degInSign: 16.8703 },
+    { key: 'rahu', retro: true, rashi: 10, degInSign: 3.1596 },
+    { key: 'ketu', retro: true, rashi: 4, degInSign: 3.1596 },
+    { key: 'mars', retro: false, rashi: 3, degInSign: 10.8891 },
+    { key: 'jupiter', retro: false, rashi: 3, degInSign: 26.3942 },
+    { key: 'venus', retro: true, rashi: 6, degInSign: 13.9881 },
+    { key: 'mercury', retro: false, rashi: 6, degInSign: 13.9326 },
+    { key: 'sun', retro: false, rashi: 5, degInSign: 19.4723 },
+    { key: 'moon', retro: false, rashi: 4, degInSign: 3.6517 },
+  ],
+  ascendant: { key: 'asc', retro: false, rashi: 4, degInSign: 28.0152 },
+}
 
 describe('BNN Phase 2b — chart drawing', () => {
   it('formats text the old-software way', () => {
@@ -94,5 +109,20 @@ describe('BNN Phase 2b — chart drawing', () => {
     expect(ageYMD({ year: 1980, month: 1, day: 22 }, { year: 2026, month: 10, day: 7 })).toEqual({ y: 46, m: 8, d: 15 })
     expect(ageYMD({ year: 1990, month: 5, day: 15 }, { year: 1991, month: 5, day: 14 })).toEqual({ y: 0, m: 11, d: 29 })
     expect(weekdayEN(1980, 1, 22)).toBe('TUESDAY')
+  })
+
+  it('transit ring: labels sit outside the chart with rounded minutes (both styles)', () => {
+    const south = buildBnnChart(BNN, { style: 'south', meta: META, transit: TRANSIT })
+    expect(south.getAttribute('viewBox')).toBe('-64 -64 488 488')
+    expect(south.textContent).toContain('SAT# 16.52')
+    expect(south.textContent).toContain('VEN# 13.59')
+    expect(south.textContent).toContain('ASC 28.01')
+    const north = buildBnnChart(BNN, { style: 'north', meta: META, transit: TRANSIT })
+    expect(north.textContent).toContain('SAT# 16.52')
+    expect(north.textContent).toContain('MAR 10.53')
+    // Without a transit the ring is absent and the viewBox is unchanged.
+    const plain = buildBnnChart(BNN, { style: 'south', meta: META })
+    expect(plain.getAttribute('viewBox')).toBe('0 0 360 360')
+    expect(plain.textContent).not.toContain('SAT# 16.52')
   })
 })

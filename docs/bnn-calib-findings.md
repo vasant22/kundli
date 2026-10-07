@@ -110,3 +110,15 @@ Scripts: `scripts/bnn-calib/` · दोबारा चलाएँ: `node scrip
   BP में MER row = SUN-97** — दोनों old software से exactly मेल। प्रतिशत भाव-सूत्र से (97) —
   सीधे ग्रह-सूत्र से 94 आता था; match के लिए भाव-सूत्र। `combos.js` → `COMBO_SETTINGS.returnedCatchDeg = 1.0`।
 - Report-only बाक़ी: BP-1579 MER row के extra cells VEN-37 / RAH-15 (159 में SAT10-18) — नियम नहीं मिला।
+
+## 8) गोचर अंशांकन (Phase 7, 2026-10-07)
+
+- Transit planets & ascendant: **UT + ΔT (+0.5 s)** — वही convention जो भाव-संधियों की।
+  बाहर के अंक **arcminute पर ROUND** होते हैं (सबूत: "ASC 28.01" = 28°00.9′);
+  अंदर के chart-text truncate ही रहते हैं (दो अलग code-paths)।
+- Ref-1 (01-10-2026 ≈12:16 IST, guide भाग 5): सब 9 ग्रह ≤0.63′; "ASC 5°46′" ≈12:15:03 पर
+  मिलता है (guide का समय "लगभग" है)।
+- Ref-2 (07-10-2026 04:40:03 IST, outer-face screenshot): SAT# 16.52 · MAR 10.53 · JUP 26.24 ·
+  VEN# 13.59 · MER 13.56 · SUN 19.28 · MOO 03.39 · ASC 28.01 — exact; RAH/KET में ~0.6′
+  (उनका mean-node model swisseph से थोड़ा अलग; sign/degree ठीक)।
+- check: `scripts/bnn-calib/transit-check.mjs` — **20/20 PASS**।

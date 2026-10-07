@@ -58,7 +58,7 @@ describe('BNN Phase 1 — module API surfaces', () => {
   })
 
   it('stubs throw with their phase until implemented', () => {
-    // Phase 6 (dasha) is implemented — the remaining stub is Phase 7 transit.
-    expect(() => transit.computeTransitSnapshot()).toThrow(/Phase 7/)
+    // Phase 7 (transit) is implemented — the remaining stub is Phase 7b (PCP).
+    expect(() => transit.computePcpWindows()).toThrow(/Phase 7b/)
   })
 })
