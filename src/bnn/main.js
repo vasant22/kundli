@@ -17,6 +17,7 @@ import { computeBhavaChalit, findExchanges } from './kp.js'
 import { computeDashaTree, fmtDMY } from './dasha.js'
 import { computeTransitSnapshot } from './transit.js'
 import { buildPrintSheet } from './print.js'
+import { buildAllChartSvg, downloadAllChartPng } from './allchart.js'
 import { ageYMD, buildBhavaTables, buildBnnChart, buildDashaTables, buildPlanetTables, exchangeLabel, planetCode, weekdayEN } from './render.js'
 import { mybapujiStripHTML } from '../mybapuji-strip.js'
 
@@ -470,14 +471,19 @@ function showReport(values, scroll) {
     applyTransitInput()
   })
 
-  // Print / PDF (Phase 7 add-on) — builds the hidden A4 sheet and opens the
-  // browser's print dialog; see src/bnn/print.js + the @media print styles.
-  const printRow = document.createElement('div')
-  printRow.className = 'bnn-print-row'
+  // Actions live at the BOTTOM of the page (user request 2026-10-07b):
+  // 🖨️ print/PDF (src/bnn/print.js) + 📄 All Chart PNG (src/bnn/allchart.js).
+  const actionsRow = document.createElement('div')
+  actionsRow.className = 'bnn-actions-row'
   const printBtn = document.createElement('button')
   printBtn.type = 'button'
+  printBtn.className = 'bnn-print-btn'
   printBtn.textContent = t('bnn.print')
-  printRow.append(printBtn)
+  const allBtn = document.createElement('button')
+  allBtn.type = 'button'
+  allBtn.className = 'bnn-allchart-btn'
+  allBtn.textContent = t('bnn.allChart')
+  actionsRow.append(printBtn, allBtn)
   printBtn.addEventListener('click', async () => {
     document.getElementById('bnn-print')?.remove()
     document.body.append(buildPrintSheet(values))
@@ -488,6 +494,13 @@ function showReport(values, scroll) {
       if (typeof window.print === 'function') window.print()
     } catch {
       /* test environments */
+    }
+  })
+  allBtn.addEventListener('click', async () => {
+    try {
+      await downloadAllChartPng(buildAllChartSvg(values), values.name)
+    } catch (err) {
+      console.error('All Chart export failed:', err)
     }
   })
 
@@ -503,8 +516,14 @@ function showReport(values, scroll) {
   const paintTables = () => {
     const mode = values.bnnMode === 'BP' ? 'BP' : 'AP'
     const sections = [
-      buildBhavaTables(values.bnn, mode),
-      buildPlanetTables(values.bnn, mode),
+      buildBhavaTables(values.bnn, mode, {
+        active: values.bnnBhavaTab,
+        onTab: (k) => { values.bnnBhavaTab = k },
+      }),
+      buildPlanetTables(values.bnn, mode, {
+        active: values.bnnPlanetTab,
+        onTab: (k) => { values.bnnPlanetTab = k },
+      }),
     ]
     if (values.bnnDasha) sections.push(buildDashaTables(values.bnnDasha))
     tablesBox.replaceChildren(...sections)
@@ -534,7 +553,7 @@ function showReport(values, scroll) {
     paintTables()
   })
 
-  card.append(exchangeBox, chartBox, toggleBar, modeBar, transitRow, printRow, tablesBox)
+  card.append(exchangeBox, chartBox, toggleBar, modeBar, transitRow, tablesBox, actionsRow)
   output.append(card)
   paint()
   paintTables()

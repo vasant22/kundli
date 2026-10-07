@@ -656,3 +656,16 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
   scale; बाक़ी सब blocks exactly: MER 22-05-1988 ✓ …)। `dasha.js` bhukthiList अब यही structure देता है।
 - Tests **456 → 462 ✓**; headless `--print-to-pdf` से पूरा 5-page output जाँचा ✓; dist ≈ 3.3 MiB (2 images +).
 - **जवाब**: बाक़ी phases = 7b PCP (Windows के समय) · 8 Verification (और कुंडलियाँ) · 9 Final launch।
+
+### 2026-10-07 — BNN corrections-6: बड़े charts + लग्न-डंडे (तिरछे) + All Chart PNG + buttons bottom में
+- **चार्ट बड़े**: स्क्रीन पर chart-box 420 → **620px** (दोनों styles — ग्रह आराम से पढ़े जाते हैं);
+  print/PDF में चार्ट **94mm → 122mm** (brochure वाली पढ़ने की दिक्कत हल)।
+- **लग्न-चिह्न** (user का annotated sample): लग्न वाले खाने के **ऊपर-दाएँ कोने पर दो समानांतर तिरछी
+  लकीरें** — पहले वाले आड़े डंडे हटा दिए।
+- **Action buttons अब page के bottom में** (सारी तालिकाओं के बाद): [🖨️ प्रिंट / PDF] + नया
+  **[📄 ऑल चार्ट (PNG)]**।
+- **ऑल चार्ट (`src/bnn/allchart.js`)**: click पर wide PNG (1680×1080, 2× scale) — बाएँ वही चार्ट जो
+  user देख रहा है (style + गोचर ring सहित), दाएँ **जो दो tabs अभी खुले हैं** (भाव + ग्रह — tab बदलते
+  ही export में भी वही; tab keys main.js के values.bnnBhavaTab/bnnPlanetTab में दर्ज होती हैं), नीचे
+  **चल रही दशा-भुक्ति-अंतर** strip। SVG → canvas → PNG download; headless में पूरा output देखा ✓।
+- Tests **462 → 466 ✓**; live deploy ✓।

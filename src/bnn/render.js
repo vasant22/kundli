@@ -345,20 +345,24 @@ export function buildSouthBnn(bnn, meta = {}, transit = null) {
     svg.append(group)
   }
 
-  // Lagna mark (user request 2026-10-07): two short horizontal bars at the
-  // top-left inside edge of the ascendant's cell — the lagua reads at a
-  // glance (in addition to the "ASC …" text).
+  // Lagna mark (user request 2026-10-07b): two short parallel DIAGONAL lines
+  // across the top-right corner of the ascendant's cell (the user's annotated
+  // sample) — the lagna reads at a glance.
   {
     const [lagnaCol, lagnaRow] = S_CELLS[ascRashi]
     const marks = el('g', { class: 'lagna-mark' })
-    const x0 = lagnaCol * C + 7
-    const y0 = lagnaRow * C + 8
-    for (const dy of [0, 6]) {
-      marks.append(el('line', {
-        x1: x0, y1: y0 + dy, x2: x0 + C * 0.3, y2: y0 + dy,
-        stroke: '#5a3410', 'stroke-width': 2.4, 'stroke-linecap': 'round',
-      }))
-    }
+    const rx = (lagnaCol + 1) * C // cell right edge
+    const ty = lagnaRow * C // cell top edge
+    const d = 24 // corner cut length
+    const off = 3.6 // gap between the two parallel lines
+    marks.append(el('line', {
+      x1: rx - d, y1: ty + 1, x2: rx - 1, y2: ty + d,
+      stroke: '#5a3410', 'stroke-width': 2.2, 'stroke-linecap': 'round',
+    }))
+    marks.append(el('line', {
+      x1: rx - d - off, y1: ty + 1 + off, x2: rx - 1 - off, y2: ty + d + off,
+      stroke: '#5a3410', 'stroke-width': 2.2, 'stroke-linecap': 'round',
+    }))
     svg.append(marks)
   }
 
@@ -505,7 +509,7 @@ const B_ORDER = Array.from({ length: 12 }, (_, i) => i + 1)
 const bLabel = (n) => `B${String(n).padStart(2, '0')}`
 
 /** BHAVA COMBINATION table (tabs: 1-5-9 · 1-5-7-9 · BRSSS · SPECIAL). */
-export function buildBhavaTables(bnn, mode) {
+export function buildBhavaTables(bnn, mode, opts = {}) {
   const { planets, cusps } = bnn
   const bc = bhavaCombinations(planets, cusps, mode)
   const sp = specialTables(planets, cusps, mode)
@@ -559,7 +563,7 @@ export function buildBhavaTables(bnn, mode) {
   }
 
   const views = { '159': listView('list159', max9), '1579': listView('list1579', max7), brsss: brsssView, special: specialView }
-  let active = '159'
+  let active = views[opts.active] ? opts.active : '159'
   const bar = tabBar(
     [
       { key: '159', label: '1-5-9' },
@@ -569,6 +573,7 @@ export function buildBhavaTables(bnn, mode) {
     ],
     (k) => {
       active = k
+      opts.onTab?.(k)
       render()
     }
   )
@@ -583,7 +588,7 @@ export function buildBhavaTables(bnn, mode) {
 }
 
 /** PLANET COMBINATION table (tabs: 1-5-7-9 · 1-5-9 · SPECIAL · PRSSS). */
-export function buildPlanetTables(bnn, mode) {
+export function buildPlanetTables(bnn, mode, opts = {}) {
   const { planets, cusps } = bnn
   const pc = planetCombinations(planets, mode, { cusps })
   const sp = specialTables(planets, cusps, mode)
@@ -652,7 +657,7 @@ export function buildPlanetTables(bnn, mode) {
   }
 
   const views = { '1579': listView('list1579', max7), '159': listView('list159', max9), special: specialView, prsss: prsssView }
-  let active = '1579'
+  let active = views[opts.active] ? opts.active : '1579'
   const bar = tabBar(
     [
       { key: '1579', label: '1-5-7-9' },
@@ -662,6 +667,7 @@ export function buildPlanetTables(bnn, mode) {
     ],
     (k) => {
       active = k
+      opts.onTab?.(k)
       render()
     }
   )

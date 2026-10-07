@@ -34,6 +34,7 @@ const STRINGS = {
     'bnn.transitNow': 'अभी',
     'bnn.transitPlace': 'गोचर स्थान',
     'bnn.print': '🖨️ प्रिंट / PDF बनाएँ',
+    'bnn.allChart': '📄 ऑल चार्ट (PNG)',
 
     // मुख्य साइट (MyBapuji) की ऊपरी पट्टी
     'mb.home': 'होम',
@@ -228,6 +229,7 @@ const STRINGS = {
     'bnn.transitNow': 'Now',
     'bnn.transitPlace': 'Transit place',
     'bnn.print': '🖨️ Print / Save PDF',
+    'bnn.allChart': '📄 All Chart (PNG)',
 
     // MyBapuji main-site strip
     'mb.home': 'Home',

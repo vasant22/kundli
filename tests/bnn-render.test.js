@@ -111,16 +111,20 @@ describe('BNN Phase 2b — chart drawing', () => {
     expect(weekdayEN(1980, 1, 22)).toBe('TUESDAY')
   })
 
-  it('south chart: the lagna cell carries the two-bar mark', () => {
+  it('south chart: the lagna cell carries the double-diagonal corner mark', () => {
     const svg = buildBnnChart(BNN, { style: 'south', meta: META })
     const mark = svg.querySelector('.lagna-mark')
     expect(mark).toBeTruthy()
-    expect(mark.querySelectorAll('line').length).toBe(2)
-    // Leo (asc) sits at col 3 / row 2 → the bars start inside that cell
-    const x1 = Number(mark.querySelector('line').getAttribute('x1'))
-    const y1 = Number(mark.querySelector('line').getAttribute('y1'))
-    expect(x1).toBeGreaterThan(270)
-    expect(y1).toBeGreaterThan(180)
+    const lines = [...mark.querySelectorAll('line')]
+    expect(lines.length).toBe(2)
+    // Leo (asc) sits at col 3 / row 2 → the diagonals cut its TOP-RIGHT corner
+    for (const line of lines) {
+      const [x1, y1, x2, y2] = ['x1', 'y1', 'x2', 'y2'].map((a) => Number(line.getAttribute(a)))
+      expect(x2 - x1).toBeGreaterThan(15) // a diagonal, not a horizontal bar
+      expect(y2 - y1).toBeGreaterThan(15)
+      expect(x1).toBeGreaterThan(320) // near the right edge of the cell (270..360)
+      expect(y1).toBeLessThan(190) // near the top edge (180..270)
+    }
   })
 
   it('north chart: house blocks stay clear of the centre panel', () => {

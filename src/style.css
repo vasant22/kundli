@@ -1129,7 +1129,7 @@ details.manual[open] summary {
   display: none;
 }
 .bnn-card .chart-box {
-  max-width: 420px;
+  max-width: 620px;
   margin-inline: auto;
 }
 
@@ -1258,7 +1258,7 @@ details.manual[open] summary {
   #bnn-print .bp-detail-row { display: grid; grid-template-columns: 105px 1fr 84px 1fr; gap: 1px 6px; font-size: 10.5px; }
   #bnn-print .bp-dl { color: #6b5b3a; }
   #bnn-print .bp-dv { font-weight: 600; }
-  #bnn-print .bp-chart svg { width: 94mm; max-width: 100%; display: block; margin: 2px auto 0; }
+  #bnn-print .bp-chart svg { width: 122mm; max-width: 100%; display: block; margin: 2px auto 0; }
   #bnn-print .bp-note { text-align: center; font-size: 10px; color: #6b5b3a; margin: 2px 0 0; }
   #bnn-print .bp-table { border-collapse: collapse; width: 100%; margin: 4px 0 9px; }
   #bnn-print .bp-table th, #bnn-print .bp-table td { border: 1px solid #cbb98d; padding: 1.5px 4px; font-size: 9.5px; text-align: center; }
@@ -1272,8 +1272,8 @@ details.manual[open] summary {
   #bnn-print .bp-foot-sub { font-size: 9px; color: #6b5b3a; }
   #bnn-print .bp-page { padding-bottom: 4px; }
 }
-.bnn-print-row { display: flex; gap: 0.5rem; margin: 0.6rem 0 0.2rem; }
-.bnn-print-row button {
+.bnn-actions-row { display: flex; gap: 0.6rem; flex-wrap: wrap; margin: 0.9rem 0 0.3rem; }
+.bnn-actions-row button {
   font: inherit;
   font-size: 0.9rem;
   padding: 0.35rem 1.1rem;
@@ -1283,5 +1283,7 @@ details.manual[open] summary {
   border-radius: 8px;
   cursor: pointer;
 }
-.bnn-print-row button:hover { background: #256428; }
+.bnn-actions-row button:hover { background: #256428; }
+.bnn-actions-row .bnn-allchart-btn { background: #b0470a; border-color: #b0470a; }
+.bnn-actions-row .bnn-allchart-btn:hover { background: #8f3a08; }
 .bnn-dasha-table tr.row-blank td { color: #b9ac8e; }
