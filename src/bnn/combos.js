@@ -13,7 +13,7 @@
 //   they land on; entries sorted by percentage (closeness) descending.
 // Spec: docs/bnn-guide.txt. Reference checks: scripts/bnn-calib/combos-check.mjs
 import { findExchanges } from './kp.js'
-import { planetToBhavaPercent, planetToPlanetPercent } from './percent.js'
+import { planetToBhavaPercent, planetToBhavaPlainPercent, planetToPlanetPercent } from './percent.js'
 
 const norm = (x) => ((x % 360) + 360) % 360
 
@@ -170,19 +170,33 @@ export function astronomyPartners(planets, mode = 'AP') {
 // ---------------------------------------------------------------------------
 // Bhava combination rows (B-01 … B-12)
 // ---------------------------------------------------------------------------
-const bhavaMembership = (cusps) => {
+
+/** The bhava (1–12) containing a longitude, from the cusp ranges. */
+export function bhavaIndexOf(lon, cusps) {
   const list = cusps.map((c) => c.longitude)
-  return (lon) => {
-    for (let i = 0; i < 12; i++) {
-      let a = list[i]
-      let b = list[(i + 1) % 12]
-      if (b <= a) b += 360
-      let x = lon
-      if (x < a) x += 360
-      if (x >= a && x < b) return i + 1
-    }
-    return 12
+  for (let i = 0; i < 12; i++) {
+    let a = list[i]
+    let b = list[(i + 1) % 12]
+    if (b <= a) b += 360
+    let x = lon
+    if (x < a) x += 360
+    if (x >= a && x < b) return i + 1
   }
+  return 12
+}
+
+/**
+ * The old face's row-label suffix: { bhava, value } — the planet's closeness
+ * to its own bhava in the plain form (no 0.942 factor). Natal position used
+ * in both modes.
+ */
+export function labelSuffix(lon, cusps) {
+  const b = bhavaIndexOf(lon, cusps)
+  const a = cusps[b - 1].longitude
+  const c = cusps[b % 12].longitude
+  const d = norm(lon - a)
+  const w = norm(c - a) || 360
+  return { bhava: b, value: Math.round(planetToBhavaPlainPercent(d, w)) }
 }
 
 /**
@@ -194,7 +208,7 @@ const bhavaMembership = (cusps) => {
 export function bhavaCombinations(planets, cusps, mode = 'AP') {
   const seats = seatPositions(planets, mode)
   const cuspList = cusps.map((c) => c.longitude)
-  const bhavaOf = bhavaMembership(cusps)
+  const bhavaOf = (lon) => bhavaIndexOf(lon, cusps)
 
   // Precompute entries for every bhava: planets + landed aspects.
   const perBhava = Array.from({ length: 13 }, () => [])

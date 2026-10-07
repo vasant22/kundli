@@ -17,3 +17,13 @@ export function planetToPlanetPercent(d) {
 export function planetToBhavaPercent(d, width) {
   return 100 * (1 - d / (PERCENT_SETTINGS.p2bWidthFactor * width))
 }
+
+/**
+ * The old face's row-label suffix (e.g. "JUP#-91"): the planet's closeness to
+ * its own bhava WITHOUT the 0.942 factor — 100 × (1 − d / W). Verified 9/9
+ * against the user's screenshots (JUP 91, SUN 18, MOO 95, MAR 69, MER 15,
+ * VEN 95, SAT 27, RAH 20, KET 20). Used in the display only.
+ */
+export function planetToBhavaPlainPercent(d, width) {
+  return 100 * (1 - d / width)
+}

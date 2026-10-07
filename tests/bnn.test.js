@@ -7,10 +7,11 @@ import { beforeAll, describe, expect, it, vi } from 'vitest'
 
 vi.mock('../src/astro.js', () => ({
   initEphemeris: vi.fn(async () => ({})),
+  RASHI_LORDS: ['mars', 'venus', 'mercury', 'moon', 'sun', 'mercury', 'venus', 'mars', 'jupiter', 'saturn', 'saturn', 'jupiter'],
 }))
 
 vi.mock('../src/bnn/kp.js', () => {
-  const cusp = (n, rashi, deg) => ({ n, rashi, degInSign: deg })
+  const cusp = (n, rashi, deg) => ({ n, rashi, degInSign: deg, longitude: rashi * 30 + deg })
   return {
     findExchanges: vi.fn(() => [['mercury', 'saturn']]),
     computeBhavaChalit: vi.fn(() => ({
@@ -22,15 +23,15 @@ vi.mock('../src/bnn/kp.js', () => {
         cusp(9, 0, 11.5167), cusp(10, 1, 12.8667), cusp(11, 2, 13.6), cusp(12, 3, 13.6333),
       ],
       planets: [
-        { key: 'sun', rashi: 9, degInSign: 8.15, retro: false },
-        { key: 'moon', rashi: 11, degInSign: 12.5, retro: false, nakshatra: 26, pada: 3 },
-        { key: 'mars', rashi: 4, degInSign: 21.5, retro: true },
-        { key: 'mercury', rashi: 9, degInSign: 8.9833, retro: false },
-        { key: 'jupiter', rashi: 4, degInSign: 15.5, retro: true },
-        { key: 'venus', rashi: 10, degInSign: 14.3, retro: false },
-        { key: 'saturn', rashi: 5, degInSign: 3.2, retro: true },
-        { key: 'rahu', rashi: 4, degInSign: 7.1667, retro: true },
-        { key: 'ketu', rashi: 10, degInSign: 7.1667, retro: true },
+        { key: 'sun', rashi: 9, degInSign: 8.15, retro: false, longitude: 278.15 },
+        { key: 'moon', rashi: 11, degInSign: 12.5, retro: false, longitude: 342.5, nakshatra: 26, pada: 3 },
+        { key: 'mars', rashi: 4, degInSign: 21.5, retro: true, longitude: 141.5 },
+        { key: 'mercury', rashi: 9, degInSign: 8.9833, retro: false, longitude: 278.9833 },
+        { key: 'jupiter', rashi: 4, degInSign: 15.5, retro: true, longitude: 135.5 },
+        { key: 'venus', rashi: 10, degInSign: 14.3, retro: false, longitude: 314.3 },
+        { key: 'saturn', rashi: 5, degInSign: 3.2, retro: true, longitude: 153.2 },
+        { key: 'rahu', rashi: 4, degInSign: 7.1667, retro: true, longitude: 127.1667 },
+        { key: 'ketu', rashi: 10, degInSign: 7.1667, retro: true, longitude: 307.1667 },
       ],
       tithiIndex: 6,
       yogaIndex: 20,
@@ -121,11 +122,11 @@ describe('BNN page — chart (Phase 2b)', () => {
     expect(svg.textContent).toContain('MAR# 21.30') // मंगल# सिंह में
     expect(svg.textContent).toContain('ASC 12.53')
     expect(svg.textContent).toContain('UTTARA BHADRAPADA - 3')
-    expect($('.bnn-exchange-box').textContent).toBe('MERCURY<>SATURN')
+    expect($('.bnn-exchange-box').textContent).toContain('MERCURY<>SATURN')
   })
 
   it('switches the chart style with the toggle', () => {
-    const buttons = document.querySelectorAll('.chart-toggle button')
+    const buttons = document.querySelectorAll('.chart-toggle:not(.bnn-mode-toggle) button')
     expect(buttons.length).toBe(2)
     buttons[0].click() // उत्तर भारतीय
     expect($('#bnn-output svg').getAttribute('data-chart')).toBe('north')
@@ -133,5 +134,27 @@ describe('BNN page — chart (Phase 2b)', () => {
     buttons[1].click() // दक्षिण भारतीय
     expect($('#bnn-output svg').getAttribute('data-chart')).toBe('south')
     expect(buttons[1].classList.contains('active')).toBe(true)
+  })
+
+  it('renders the combination tables (Phase 5)', () => {
+    expect(document.querySelectorAll('.bnn-table').length).toBe(2)
+    const pt = document.querySelector('.bnn-planet-table')
+    expect(pt.textContent).toContain('1-5-7-9')
+    expect(pt.textContent).toContain('PRSSS')
+    expect(pt.textContent).toContain('JUP#')
+    expect(pt.textContent).toContain('ASTRONOMY')
+    const bt = document.querySelector('.bnn-bhava-table')
+    expect(bt.textContent).toContain('B01')
+    expect(bt.textContent).toContain('BRSSS')
+    expect(bt.textContent).toContain('Director')
+  })
+
+  it('BP / AP mode toggle re-renders the tables', () => {
+    const modeButtons = document.querySelectorAll('.bnn-mode-toggle button')
+    expect(modeButtons.length).toBe(2)
+    modeButtons[0].click() // BP
+    expect(document.querySelector('.bnn-planet-table').closest('.bnn-section').textContent).toContain('NATAL — BP')
+    modeButtons[1].click() // AP
+    expect(document.querySelector('.bnn-planet-table').closest('.bnn-section').textContent).toContain('NATAL — AP')
   })
 })

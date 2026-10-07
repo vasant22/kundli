@@ -26,6 +26,9 @@ const STRINGS = {
     'bnn.noteBody': 'भावचलित (KP New) गणना और चार्ट अगले चरणों में जुड़ेंगे।',
     'bnn.calculating': '⏳ BNN चार्ट की गणना हो रही है…',
     'bnn.calcError': 'गणना इंजन लोड नहीं हो सका — थोड़ी देर बाद दोबारा कोशिश करें।',
+    'bnn.bp': 'परिवर्तन से पहले (BP)',
+    'bnn.ap': 'परिवर्तन के बाद (AP)',
+    'bnn.legend': '🔵 मुख्य ग्रह — जीवन भर असर · 🟢 20%+ — अपनी दशा-भुक्ति में असर · 🟠 20% से कम — कमज़ोर · 🩷 Astronomy — आगे बढ़ने पर पहले मिलने वाला ग्रह',
 
     // मुख्य साइट (MyBapuji) की ऊपरी पट्टी
     'mb.home': 'होम',
@@ -212,6 +215,9 @@ const STRINGS = {
     'bnn.noteBody': 'The KP New bhava-chalit calculation and charts arrive in the next phases.',
     'bnn.calculating': '⏳ Computing the BNN chart…',
     'bnn.calcError': 'The calculation engine could not load — please try again in a moment.',
+    'bnn.bp': 'Before parivartana (BP)',
+    'bnn.ap': 'After parivartana (AP)',
+    'bnn.legend': '🔵 main planet — lifelong · 🟢 20%+ — acts in its dasha · 🟠 below 20% — weak · 🩷 Astronomy — first planet met ahead',
 
     // MyBapuji main-site strip
     'mb.home': 'Home',

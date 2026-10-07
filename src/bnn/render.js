@@ -7,7 +7,10 @@
 // Two styles: south (fixed rashi grid) + north (diamond houses).
 // Spec: docs/bnn-guide.txt → Phase 2; layout reference: old software outer
 // face (screenshots; see docs/bnn-calib-findings.md §5).
-import { GRAHAS } from '../i18n.js'
+import { GRAHAS, t } from '../i18n.js'
+import { astronomyPartners, bhavaCombinations, labelSuffix, planetCombinations } from './combos.js'
+import { computeBrsss, computePrsss } from './prsss.js'
+import { entryColour, specialTables } from './special.js'
 
 const NS = 'http://www.w3.org/2000/svg'
 const SIZE = 360 // svg viewBox is 0 0 360 360; CSS scales it responsively
@@ -292,4 +295,133 @@ export function buildNorthBnn(bnn, meta = {}) {
 export function buildBnnChart(bnn, opts = {}) {
   const style = opts.style === 'north' ? 'north' : 'south'
   return style === 'north' ? buildNorthBnn(bnn, opts.meta) : buildSouthBnn(bnn, opts.meta)
+}
+
+// ---------------------------------------------------------------------------
+// Combination tables (Phase 5). Rendered in the old face's style (English
+// codes + rounded percentages) with the R17 colour legend; the row label
+// carries the closeness-to-own-bhava suffix (labelSuffix).
+// ---------------------------------------------------------------------------
+const ENT_CLASS = { blue: 'ent-blue', green: 'ent-green', orange: 'ent-orange' }
+const hashOf = (key, retro) => (retro && key !== 'rahu' && key !== 'ketu' ? '#' : '')
+const rowLabelText = (p, cusps) => `${CODE[p.key]}${hashOf(p.key, p.retro)}-${labelSuffix(p.longitude, cusps).value}`
+const entText = (e) =>
+  e.type === 'planet'
+    ? `${CODE[e.key]}${hashOf(e.key, e.natalRetro)}-${Math.round(e.percent)}`
+    : `${e.label}-${Math.round(e.percent)}`
+const entClass = (e, i) => ENT_CLASS[entryColour(e.percent, i === 0, e.type === 'planet' ? e.key : null)]
+
+function el2(tag, cls, text) {
+  const node = document.createElement(tag)
+  if (cls) node.className = cls
+  if (text !== undefined) node.textContent = text
+  return node
+}
+
+function entCell(e, i) {
+  const td = el2('td')
+  if (e) {
+    td.textContent = entText(e)
+    td.className = entClass(e, i)
+  }
+  return td
+}
+
+function legendLine() {
+  return el2('p', 'bnn-legend', t('bnn.legend'))
+}
+
+const PLANET_ORDER = ['jupiter', 'sun', 'moon', 'mars', 'mercury', 'venus', 'saturn', 'rahu', 'ketu']
+
+/** PLANET COMBINATION table (columns: 1-5-7-9 · 1-5-9 · SPECIAL · PRSSS · ASTRONOMY). */
+export function buildPlanetTables(bnn, mode) {
+  const { planets, cusps } = bnn
+  const pc = planetCombinations(planets, mode)
+  const sp = specialTables(planets, cusps, mode)
+  const astro = astronomyPartners(planets, mode)
+  const byKey = Object.fromEntries(planets.map((p) => [p.key, p]))
+
+  const section = el2('div', 'bnn-section')
+  section.append(el2('h3', 'bnn-table-title', `PLANET COMBINATION — NATAL — ${mode}`))
+
+  const max7 = Math.max(...PLANET_ORDER.map((k) => pc[k].list1579.length))
+  const max9 = Math.max(...PLANET_ORDER.map((k) => pc[k].list159.length))
+
+  const table = el2('table', 'bnn-table bnn-planet-table')
+  const thead = document.createElement('thead')
+  const hrow = document.createElement('tr')
+  hrow.append(el2('th', null, ''), el2('th', null, '1-5-7-9'), el2('th', null, '1-5-9'), el2('th', null, 'SPECIAL'))
+  const prsssTh = el2('th', null, 'PRSSS')
+  prsssTh.colSpan = 5
+  hrow.append(prsssTh, el2('th', null, 'ASTRONOMY'))
+  thead.append(hrow)
+  table.append(thead)
+
+  const tbody = document.createElement('tbody')
+  for (const key of PLANET_ORDER) {
+    const p = byKey[key]
+    const row = document.createElement('tr')
+    row.append(el2('td', 'row-label', rowLabelText(p, cusps)))
+    const l7 = pc[key].list1579
+    const l9 = pc[key].list159
+    for (let i = 0; i < max7; i++) row.append(entCell(l7[i], i))
+    for (let i = 0; i < max9; i++) row.append(entCell(l9[i], i))
+    const r = sp.rows[key]
+    const spec = el2('td', 'special')
+    spec.append(
+      el2('div', null, `Lord ${r.owns.length ? r.owns.join(',') : '—'}`),
+      el2('div', null, `${String(r.sitsAt).padStart(2, '0')} → ${r.gives.length ? r.gives.join(',') : '—'}`),
+      el2('div', null, `★ ${CODE[r.starLord]}-${r.starAt}${r.starGives.length ? ' → ' + r.starGives.join(',') : ''}`)
+    )
+    row.append(spec)
+    for (const link of computePrsss(p.longitude)) row.append(el2('td', null, CODE[link]))
+    const ast = el2('td', 'ent-pink', astro[key] ? CODE[astro[key]] : '—')
+    row.append(ast)
+    tbody.append(row)
+  }
+  table.append(tbody)
+  section.append(table, legendLine())
+  return section
+}
+
+/** BHAVA COMBINATION table (columns: 1-5-9 · 1-5-7-9 · BRSSS · SPECIAL). */
+export function buildBhavaTables(bnn, mode) {
+  const { planets, cusps } = bnn
+  const bc = bhavaCombinations(planets, cusps, mode)
+  const sp = specialTables(planets, cusps, mode)
+
+  const section = el2('div', 'bnn-section')
+  section.append(el2('h3', 'bnn-table-title', `BHAVA COMBINATION — NATAL — ${mode}`))
+
+  const max9 = Math.max(...Array.from({ length: 12 }, (_, i) => bc[i + 1].list159.length))
+  const max7 = Math.max(...Array.from({ length: 12 }, (_, i) => bc[i + 1].list1579.length))
+
+  const table = el2('table', 'bnn-table bnn-bhava-table')
+  const thead = document.createElement('thead')
+  const hrow = document.createElement('tr')
+  hrow.append(el2('th', null, ''), el2('th', null, '1-5-9'), el2('th', null, '1-5-7-9'))
+  const brTh = el2('th', null, 'BRSSS')
+  brTh.colSpan = 5
+  hrow.append(brTh, el2('th', null, 'SPECIAL'))
+  thead.append(hrow)
+  table.append(thead)
+
+  const tbody = document.createElement('tbody')
+  for (let n = 1; n <= 12; n++) {
+    const row = document.createElement('tr')
+    row.append(el2('td', 'row-label', `B${String(n).padStart(2, '0')}`))
+    for (let i = 0; i < max9; i++) row.append(entCell(bc[n].list159[i], i))
+    for (let i = 0; i < max7; i++) row.append(entCell(bc[n].list1579[i], i))
+    for (const link of computeBrsss(cusps[n - 1].longitude)) row.append(el2('td', null, CODE[link]))
+    const spec = el2('td', 'special')
+    spec.append(
+      el2('div', null, `Director: ${CODE[sp.directors[n]]}`),
+      el2('div', null, `IN STAR OF A: ${sp.inStarOf[n].length ? sp.inStarOf[n].map((k) => CODE[k]).join(', ') : '—'}`)
+    )
+    row.append(spec)
+    tbody.append(row)
+  }
+  table.append(tbody)
+  section.append(table, legendLine())
+  return section
 }

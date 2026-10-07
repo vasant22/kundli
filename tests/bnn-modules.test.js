@@ -27,9 +27,12 @@ describe('BNN Phase 1 — module API surfaces', () => {
       combos.bhavaCombinations,
       combos.astronomyPartner,
       combos.aspectPoints,
+      combos.labelSuffix,
+      combos.bhavaIndexOf,
       percent.planetToPlanetPercent,
       percent.planetToBhavaPercent,
-      special.computeLordship,
+      special.specialTables,
+      special.starLordOf,
       special.entryColour,
       dasha.computeDashaTree,
       transit.computeTransitSnapshot,
@@ -39,6 +42,8 @@ describe('BNN Phase 1 — module API surfaces', () => {
       render.cuspText,
       render.exchangeLabel,
       render.ageYMD,
+      render.buildPlanetTables,
+      render.buildBhavaTables,
     ]
     for (const fn of fns) expect(typeof fn).toBe('function')
   })

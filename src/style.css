@@ -1132,3 +1132,48 @@ details.manual[open] summary {
   max-width: 420px;
   margin-inline: auto;
 }
+
+/* BNN संयोजन तालिकाएँ (Phase 5) */
+.bnn-section {
+  margin: 0.7rem 0 1.3rem;
+  overflow-x: auto;
+}
+.bnn-table-title {
+  margin: 0.5rem 0 0.35rem;
+  font-size: 0.95rem;
+  color: #7a2e00;
+}
+.bnn-table {
+  border-collapse: collapse;
+  font-size: 0.78rem;
+}
+.bnn-table th,
+.bnn-table td {
+  border: 1px solid #cbb98d;
+  padding: 0.18rem 0.4rem;
+  text-align: center;
+  white-space: nowrap;
+}
+.bnn-table thead th {
+  background: #edf6d9;
+  font-weight: 600;
+}
+.bnn-table td.row-label {
+  font-weight: 700;
+  color: #b3261e;
+  background: #faf6ea;
+}
+.bnn-table td.special {
+  text-align: left;
+  font-size: 0.7rem;
+  color: #4a3a20;
+}
+.ent-blue { color: #1565c0; font-weight: 600; }
+.ent-green { color: #2e7d32; font-weight: 600; }
+.ent-orange { color: #ef6c00; font-weight: 600; }
+.ent-pink { color: #8e24aa; font-weight: 600; }
+.bnn-legend {
+  font-size: 0.75rem;
+  color: #6b5b3a;
+  margin: 0.3rem 0 0.2rem;
+}

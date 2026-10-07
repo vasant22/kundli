@@ -14,7 +14,7 @@ import { validateBirth } from '../birthvalidate.js'
 import { wallTimeToUtc } from '../timeutil.js'
 import { initEphemeris } from '../astro.js'
 import { computeBhavaChalit, findExchanges } from './kp.js'
-import { ageYMD, buildBnnChart, exchangeLabel, weekdayEN } from './render.js'
+import { ageYMD, buildBhavaTables, buildBnnChart, buildPlanetTables, exchangeLabel, weekdayEN } from './render.js'
 import { mybapujiStripHTML } from '../mybapuji-strip.js'
 
 // Where the public source code lives (same repo as the other pages).
@@ -333,6 +333,7 @@ function buildBnnMeta(values) {
     dateTimeText: `${pad(Number(values.day))}-${pad(Number(values.month))}-${values.year} - ${pad(Number(values.hour))}:${pad(Number(values.minute))}:${pad(values.second === '' ? 0 : Number(values.second))}`,
     weekday: weekdayEN(Number(values.year), Number(values.month), Number(values.day)),
     ageText: `AGE : ${age.y}Y-${age.m}M-${age.d}D${gender}`,
+    ageY: age.y,
     nakText: `${NAKSHATRAS[moon.nakshatra - 1].en.toUpperCase()} - ${moon.pada}`,
     tithiText: `${bnn.tithiIndex <= 15 ? 'SHUKLA' : 'KRISHNA'} - ${TITHIS[bnn.tithiIndex - 1].en.toUpperCase()}`,
     yogaText: `${YOGAS[bnn.yogaIndex - 1].en.toUpperCase()} YOGA`,
@@ -368,6 +369,19 @@ function showReport(values, scroll) {
   southBtn.textContent = t('chart.south')
   toggleBar.append(northBtn, southBtn)
 
+  const modeBar = document.createElement('div')
+  modeBar.className = 'chart-toggle bnn-mode-toggle'
+  const bpBtn = document.createElement('button')
+  bpBtn.type = 'button'
+  bpBtn.textContent = t('bnn.bp')
+  const apBtn = document.createElement('button')
+  apBtn.type = 'button'
+  apBtn.textContent = t('bnn.ap')
+  modeBar.append(bpBtn, apBtn)
+
+  const tablesBox = document.createElement('div')
+  tablesBox.className = 'bnn-tables'
+
   const paint = () => {
     const style = values.bnnStyle === 'north' ? 'north' : 'south'
     chartBox.replaceChildren(buildBnnChart(values.bnn, { style, meta: values.bnnMeta }))
@@ -376,6 +390,22 @@ function showReport(values, scroll) {
     northBtn.setAttribute('aria-pressed', String(style === 'north'))
     southBtn.setAttribute('aria-pressed', String(style === 'south'))
   }
+
+  const paintTables = () => {
+    const mode = values.bnnMode === 'BP' ? 'BP' : 'AP'
+    tablesBox.replaceChildren(
+      buildPlanetTables(values.bnn, mode),
+      buildBhavaTables(values.bnn, mode)
+    )
+    if (pairs.length > 0) {
+      exchangeBox.textContent = `${exchangeLabel(pairs)} — ${mode === 'AP' ? 'AFTER' : 'BEFORE'} PARIVARDHANAI (${mode})`
+    }
+    bpBtn.classList.toggle('active', mode === 'BP')
+    apBtn.classList.toggle('active', mode === 'AP')
+    bpBtn.setAttribute('aria-pressed', String(mode === 'BP'))
+    apBtn.setAttribute('aria-pressed', String(mode === 'AP'))
+  }
+
   northBtn.addEventListener('click', () => {
     values.bnnStyle = 'north'
     paint()
@@ -384,10 +414,19 @@ function showReport(values, scroll) {
     values.bnnStyle = 'south'
     paint()
   })
+  bpBtn.addEventListener('click', () => {
+    values.bnnMode = 'BP'
+    paintTables()
+  })
+  apBtn.addEventListener('click', () => {
+    values.bnnMode = 'AP'
+    paintTables()
+  })
 
-  card.append(exchangeBox, chartBox, toggleBar)
+  card.append(exchangeBox, chartBox, toggleBar, modeBar, tablesBox)
   output.append(card)
   paint()
+  paintTables()
 
   // scrollIntoView is not available in every environment (e.g. test runners)
   if (scroll && typeof output.scrollIntoView === 'function') {
@@ -533,6 +572,7 @@ async function submitForm() {
     values.bnn = computeBhavaChalit(swe, values.converted.utc, coords)
     values.bnnMeta = buildBnnMeta(values)
     values.bnnStyle = 'south'
+    values.bnnMode = values.bnnMeta.ageY >= 30 ? 'AP' : 'BP' // guide: default AP when 30+
     if (lastValues === values) showReport(values, true)
   } catch (err) {
     console.error('BNN calculation failed:', err)
