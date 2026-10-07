@@ -128,11 +128,22 @@ export function planetCombination(planetKey, seats) {
   return entries
 }
 
-/** All nine planet combinations for a mode. */
+/**
+ * All nine planet combinations for a mode. Returns per planet
+ * { list159, list1579 } — 1579 is the full list (zones 1-5-7-9);
+ * 159 keeps only the 1-5-9-zone members (7th-zone members drop, aspects stay).
+ * (159/1579 split verified against the user's software screenshots.)
+ */
 export function planetCombinations(planets, mode = 'AP') {
   const seats = seatPositions(planets, mode)
   const out = {}
-  for (const p of planets) out[p.key] = planetCombination(p.key, seats)
+  for (const p of planets) {
+    const full = planetCombination(p.key, seats)
+    out[p.key] = {
+      list1579: full,
+      list159: full.filter((e) => e.type === 'aspect' || e.zone !== 7),
+    }
+  }
   return out
 }
 

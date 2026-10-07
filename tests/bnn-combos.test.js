@@ -28,7 +28,7 @@ describe('BNN Phase 4 — rule examples (guide कक्षा)', () => {
     // The guide lists the planet members; verified aspect entries (R5) may be
     // added silently by the engine, so compare the planet members here.
     const planetsOnly = (list) => list.filter((e) => e.type === 'planet').map((e) => e.key)
-    expect(planetsOnly(combosOf(planets, 'BP').jupiter)).toEqual(['sun', 'moon', 'rahu', 'saturn', 'venus'])
+    expect(planetsOnly(combosOf(planets, 'BP').jupiter.list1579)).toEqual(['sun', 'moon', 'rahu', 'saturn', 'venus'])
   })
 
   it('(b) retrograde Jupiter Taurus 2° → VEN, KET, MER (Rahu skipped in a 7th zone)', () => {
@@ -36,12 +36,12 @@ describe('BNN Phase 4 — rule examples (guide कक्षा)', () => {
       P('jupiter', 32, true), P('ketu', 20), P('mars', 290), P('moon', 241),
       P('saturn', 214), P('rahu', 200), P('mercury', 130), P('venus', 151), P('sun', 165),
     ]
-    expect(seq(combosOf(planets, 'BP').jupiter)).toEqual(['venus', 'ketu', 'mercury'])
+    expect(seq(combosOf(planets, 'BP').jupiter.list1579)).toEqual(['venus', 'ketu', 'mercury'])
   })
 
   it('(c) direct Sun Cancer 12° → MOO, RAH', () => {
     const planets = [P('sun', 102), P('rahu', 122), P('mars', 144), P('moon', 301)]
-    expect(seq(combosOf(planets, 'BP').sun)).toEqual(['moon', 'rahu'])
+    expect(seq(combosOf(planets, 'BP').sun.list1579)).toEqual(['moon', 'rahu'])
   })
 
   it('parivartana (R6): AP swaps the pair seats, BP keeps natal places', () => {
@@ -63,10 +63,10 @@ describe('BNN Phase 4 — rule examples (guide कक्षा)', () => {
       P('venus', 320), // 31.5° behind the point → outside
       P('saturn', 353), // 1.5° ahead of the point (≈ behind window edge) → included
     ]
-    const j = seq(combosOf(planets, 'BP').jupiter)
+    const j = seq(combosOf(planets, 'BP').jupiter.list1579)
     expect(j).toContain('mar8')
-    expect(seq(combosOf(planets, 'BP').venus)).not.toContain('mar8')
-    expect(seq(combosOf(planets, 'BP').saturn)).toContain('mar8')
+    expect(seq(combosOf(planets, 'BP').venus.list1579)).not.toContain('mar8')
+    expect(seq(combosOf(planets, 'BP').saturn.list1579)).toContain('mar8')
   })
 })
 
@@ -130,6 +130,18 @@ const BP_ASTRO = {
   jupiter: 'rahu', sun: 'mercury', moon: 'rahu', mars: 'jupiter', mercury: 'ketu',
   venus: 'moon', saturn: 'mars', rahu: 'moon', ketu: 'mercury',
 }
+// 159-column (drops 7th-zone members) — verified from the user's screenshots
+// (2026-10-07, later message).
+const BP_PLANETS_159 = {
+  jupiter: ['rahu'],
+  mars: ['jupiter', 'rahu'],
+  venus: ['moon'],
+  saturn: ['mars', 'jupiter', 'rahu'],
+  moon: ['mar8', 'rahu'],
+  sun: ['mercury', 'ketu'],
+  rahu: ['moon'],
+  ketu: ['mercury', 'sun'],
+}
 
 let swe
 beforeAll(async () => {
@@ -141,12 +153,12 @@ describe('BNN Phase 4 — reference chart (AP = guide, BP = software)', () => {
     const k = computeBhavaChalit(swe, BIRTH.utc, BIRTH.place)
     const pc = combosOf(k.planets, 'AP')
     for (const [key, want] of Object.entries(AP_PLANETS)) {
-      expect(seq(pc[key]), key).toEqual(want)
+      expect(seq(pc[key].list1579), key).toEqual(want)
     }
     // A few percentages (fitted constants; ±2 tolerance reported in the check)
     const pct = (list, key) => list.find((e) => e.type === 'planet' && e.key === key)?.percent
-    expect(Math.abs(pct(pc.jupiter, 'venus') - 93)).toBeLessThan(2.5)
-    expect(Math.abs(pct(pc.moon, 'rahu') - 19)).toBeLessThan(2.5)
+    expect(Math.abs(pct(pc.jupiter.list1579, 'venus') - 93)).toBeLessThan(2.5)
+    expect(Math.abs(pct(pc.moon.list1579, 'rahu') - 19)).toBeLessThan(2.5)
   })
 
   it('AP bhava rows (1-5-7-9) match the guide', () => {
@@ -161,7 +173,10 @@ describe('BNN Phase 4 — reference chart (AP = guide, BP = software)', () => {
     const k = computeBhavaChalit(swe, BIRTH.utc, BIRTH.place)
     const pc = combosOf(k.planets, 'BP')
     for (const [key, want] of Object.entries(BP_PLANETS)) {
-      expect(seq(pc[key]), key).toEqual(want)
+      expect(seq(pc[key].list1579), key).toEqual(want)
+    }
+    for (const [key, want] of Object.entries(BP_PLANETS_159)) {
+      expect(seq(pc[key].list159), `${key} (159)`).toEqual(want)
     }
   })
 

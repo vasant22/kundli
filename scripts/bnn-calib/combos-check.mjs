@@ -60,11 +60,11 @@ for (const mode of ['AP', 'BP']) {
   console.log(`===== ${mode} — PLANETS =====`)
   const pc = planetCombinations(planets, mode)
   for (const p of planets) {
-    console.log(`  ${CODE[p.key].padEnd(4)} ${pc[p.key].map(lab).join(' | ')}`)
+    console.log(`  ${CODE[p.key].padEnd(4)} ${pc[p.key].list1579.map(lab).join(' | ')}`)
   }
   const wantP = mode === 'AP' ? AP_PLANETS : BP_PLANETS
   for (const p of planets) {
-    const got = seq(pc[p.key])
+    const got = seq(pc[p.key].list1579)
     const want = wantP[p.key]
     const strictWant = want.filter((w) => w !== null)
     if (JSON.stringify(got) === JSON.stringify(strictWant)) { pass++; }
@@ -99,5 +99,21 @@ for (const mode of ['AP', 'BP']) {
     }
   }
 }
+// ---- planet 159-column (later user screenshots; drops 7th-zone members) ----
+{
+  console.log('===== BP — PLANET list159 (screenshots) =====')
+  const pc = planetCombinations(planets, 'BP')
+  const want = {
+    jupiter: ['rahu'], mars: ['jupiter', 'rahu'], venus: ['moon'],
+    saturn: ['mars', 'jupiter', 'rahu'], moon: ['mar8', 'rahu'],
+    sun: ['mercury', 'ketu'], rahu: ['moon'], ketu: ['mercury', 'sun'],
+  }
+  for (const [key, w] of Object.entries(want)) {
+    const got = seq(pc[key].list159)
+    if (JSON.stringify(got) === JSON.stringify(w)) { pass++; console.log(`  ✅ 159 ${key}: ${got.join(', ')}`) }
+    else { fail++; console.log(`  ❌ 159 ${key}: got [${got.join(', ')}] want [${w.join(', ')}]`) }
+  }
+}
 console.log(`\nTOTAL: ${pass} PASS / ${fail} FAIL`)
+
 process.exit(0)
