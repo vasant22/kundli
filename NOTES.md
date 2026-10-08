@@ -765,3 +765,8 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - नतीजे — पुराना चार्ट: MAR4-**71**, MAR8-**65**, **SAT3-13, SAT10-6** चारों **exact** (SAT3/SAT10 = guide के पुराने "अभी मेल नहीं खाते" open items, अब हल)। Gudiya: MAR4 हटा ✓, MAR8 4→**27** (guru 28, Δ1 शेष), SAT3-**72** ✓, SAT10-**82** ✓।
 - Files: `percent.js` (+`aspectToBhavaPercent`, `aspectSpanDeg:30`) · `combos.js` (aspect loop) · `tests/bnn-combos.test.js` (2 नए: synthetic 30°-span + guide values) · `tests/bnn-modules.test.js` · नया check script। **टेस्ट 479 ✓**।
 - बाक़ी: Gudiya MAR8 का ±1 (हम 27, guru 28 — rounding/time-स्तर; असली software पर दोबारा देखकर confirm करना)। ध्यान: user की screenshot-A हमारे app के **10:45:00** वाले run जैसी है (birth time 10:45:50 है), check इसलिए 10:45:50 पर।
+- **push हो गया (live)** — user ने "अपना software update कर दो" कहा; CI run 37733347742 ✓ (aspect fix LIVE)।
+
+### 2026-10-08 — BNN: स्पेशल ट्रांज़िट section अब अपने पूरे घेरे में + बड़े अक्षर (user request 11:07)
+- user: पेज के bottom का Special Transit मिल-जुला व छोटे अक्षरों में लग रहा था → पूरे section (title→results) को अपना बॉर्डर-बॉक्स दिया: `1.5px #d9a95f`, radius 14, हल्का क्रीम bg `#fffcf4`, padding; अक्षर बड़े — title 0.95→**1.05**, intro 0.85→**0.95** (गहरा रंग #5c4a24), rows 0.85→**0.92**, chips 0.82→**0.88**, TRANSIT-chip 0.85→**0.9**, st-table 0.78→**0.82**।
+- जाँच: headless-Chrome preview (desktop 900 + mobile 430) — घेरा पूरा section घेरता है, अलग दिखता है ✓।

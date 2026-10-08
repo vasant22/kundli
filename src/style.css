@@ -1296,22 +1296,29 @@ details.manual[open] summary {
   vertical-align: -1px;
 }
 
-/* स्पेशल ट्रांज़िट (legacy PCP) — page के bottom पर (2026-10-07) */
-.bnn-st-section { margin-top: 1rem; }
-.bnn-st-intro { font-size: 0.85rem; color: #6b5b3a; margin: 0.25rem 0 0.6rem; }
-.bnn-st-controls { display: flex; flex-direction: column; gap: 0.45rem; margin-bottom: 0.7rem; }
-.bnn-st-row { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; font-size: 0.85rem; }
+/* स्पेशल ट्रांज़िट (legacy PCP) — page के bottom पर (2026-10-07; अलग घेरा + बड़े अक्षर 2026-10-08) */
+.bnn-st-section {
+  margin: 1.5rem 0 1.4rem;
+  border: 1.5px solid #d9a95f;
+  border-radius: 14px;
+  background: #fffcf4;
+  padding: 0.85rem 1.05rem 0.7rem;
+}
+.bnn-st-section .bnn-table-title { font-size: 1.05rem; }
+.bnn-st-intro { font-size: 0.95rem; color: #5c4a24; margin: 0.3rem 0 0.7rem; line-height: 1.55; }
+.bnn-st-controls { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.75rem; }
+.bnn-st-row { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; font-size: 0.92rem; }
 .bnn-st-label { color: #7a2e00; font-weight: 600; }
 .bnn-st-radios { display: inline-flex; gap: 0.3rem; flex-wrap: wrap; }
 .bnn-st-chip {
   font: inherit;
-  padding: 0.12rem 0.6rem;
+  padding: 0.14rem 0.62rem;
   border: 1px solid #e8730c;
   background: #fff;
   color: #b0470a;
   border-radius: 14px;
   cursor: pointer;
-  font-size: 0.82rem;
+  font-size: 0.88rem;
 }
 .bnn-st-chip.active { background: #e8730c; border-color: #e8730c; color: #fff; font-weight: 600; }
 .bnn-st-date {
@@ -1350,16 +1357,17 @@ details.manual[open] summary {
   border: 1px solid #9ccc9f;
   color: #1b5e20;
   font-weight: 700;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   padding: 0.15rem 0.7rem;
   border-radius: 6px;
   margin-bottom: 0.35rem;
 }
+.bnn-st-table { font-size: 0.82rem; }
 .bnn-st-table td, .bnn-st-table th { padding: 0.22rem 0.55rem; }
 .bnn-st-table tr.pair-a td { background: #fff8e1; }
 .bnn-st-table tr.pair-b td { background: #f2f9ee; }
 .bnn-st-table td.st-label { font-weight: 700; color: #b3261e; }
-.bnn-st-empty { font-size: 0.85rem; color: #6b5b3a; margin: 0.3rem 0; }
+.bnn-st-empty { font-size: 0.92rem; color: #5c4a24; margin: 0.3rem 0; }
 .bnn-st-sheet { display: none; }
 @media print {
   body.bnn-st-printing > *:not(#bnn-st-print) { display: none !important; }
