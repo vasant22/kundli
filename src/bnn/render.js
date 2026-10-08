@@ -508,8 +508,20 @@ function el2(tag, cls, text) {
 function entCell(e, i) {
   const td = el2('td')
   if (e) {
-    td.textContent = entText(e)
     td.className = entClass(e, i)
+    const text = entText(e)
+    // विशेष दृष्टि वाले अंक (4 · 8 · 3 · 10) को अलग span में रखते हैं ताकि
+    // वही टिमटिमा सके — बाक़ी अक्षर, रंग व background वैसे ही (user 2026-10-08)
+    const m = e.type === 'aspect' ? /^([A-Z]+)(\d+)(-\d+)$/.exec(text) : null
+    if (m) {
+      td.append(
+        document.createTextNode(m[1]),
+        el2('span', 'drishti-digit', m[2]),
+        document.createTextNode(m[3])
+      )
+    } else {
+      td.textContent = text
+    }
   }
   return td
 }

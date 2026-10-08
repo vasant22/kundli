@@ -1172,6 +1172,29 @@ details.manual[open] summary {
 .ent-green { color: #2e7d32; font-weight: 600; }
 .ent-orange { color: #ef6c00; font-weight: 600; }
 .ent-pink { color: #8e24aa; font-weight: 600; }
+/* विशेष दृष्टि का अंक (4 · 8 · 3 · 10) — आराम से मुख्य रंग (blue/green/orange)
+   में ही रहता है; टिमटिमाते क्षण में सुनहरे रंग + चमक उठता है (user, 2026-10-08) */
+.bnn-table .drishti-digit {
+  font-weight: 700;
+  animation: drishti-green 1.5s ease-in-out infinite;
+}
+.bnn-table .ent-blue .drishti-digit { animation-name: drishti-blue; }
+.bnn-table .ent-orange .drishti-digit { animation-name: drishti-orange; }
+@keyframes drishti-green {
+  0%, 100% { color: #2e7d32; text-shadow: 0 0 0 rgba(255, 166, 0, 0); }
+  50% { color: #ffb300; text-shadow: 0 0 6px rgba(255, 166, 0, .95), 0 0 12px rgba(255, 200, 60, .8), 0 0 18px rgba(255, 215, 110, .45); }
+}
+@keyframes drishti-orange {
+  0%, 100% { color: #ef6c00; text-shadow: 0 0 0 rgba(255, 166, 0, 0); }
+  50% { color: #ffb300; text-shadow: 0 0 6px rgba(255, 166, 0, .95), 0 0 12px rgba(255, 200, 60, .8), 0 0 18px rgba(255, 215, 110, .45); }
+}
+@keyframes drishti-blue {
+  0%, 100% { color: #1565c0; text-shadow: 0 0 0 rgba(255, 166, 0, 0); }
+  50% { color: #ffb300; text-shadow: 0 0 6px rgba(255, 166, 0, .95), 0 0 12px rgba(255, 200, 60, .8), 0 0 18px rgba(255, 215, 110, .45); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bnn-table .drishti-digit { animation: none; }
+}
 /* गोचर (Phase 7) */
 .bnn-transit-row {
   display: flex;

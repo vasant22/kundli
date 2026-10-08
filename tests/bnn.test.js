@@ -336,4 +336,17 @@ describe('BNN page — chart (Phase 2b)', () => {
       expect(s.querySelectorAll('tr')[1].querySelector('.row-label').textContent.slice(0, 3)).toBe('JUP')
     })
   })
+
+  it('दृष्टि अंक (4 · 8 · 3 · 10) shimmer span — only aspect entries carry .drishti-digit', () => {
+    const sections = document.querySelectorAll('.bnn-section')
+    sections[0].querySelectorAll('.bnn-tabs button')[1].click() // bhava → 1-5-7-9
+    sections[1].querySelectorAll('.bnn-tabs button')[0].click() // planet → 1-5-7-9
+    const digitsOf = (sec) => [...sec.querySelectorAll('.drishti-digit')].map((el) => el.textContent)
+    // every wrapped digit must be one of the four दृष्टि numbers
+    for (const sec of [sections[0], sections[1]]) {
+      for (const d of digitsOf(sec)) expect(['4', '8', '3', '10']).toContain(d)
+    }
+    expect(digitsOf(sections[0]).sort()).toEqual(['10', '3', '4', '8']) // SAT10, SAT3, MAR8, MAR4
+    expect(digitsOf(sections[1]).sort()).toEqual(['3', '8']) // VEN-row SAT3 · MOO-row MAR8
+  })
 })
