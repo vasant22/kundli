@@ -20,6 +20,9 @@ const RED = '#c62828'
 const INK = '#3a2410'
 const ACC = '#a94f05'
 const TRANSIT_RED = '#700000' // transit ring text (old-software colour)
+const TRANSIT_ASC = '#1565c0' // transit-ring LAGNA — distinct colour (user, 2026-10-08)
+const GRID_INK = '#5a3410' // chart box / grid line colour
+const GRID_W = 1.4 // grid line width — the lagna corner marks reuse both
 const RING_MARGIN = 64 // extra viewBox space around the chart for the transit ring
 
 // South-Indian fixed layout: rashi index (0 = Aries) → [col, row] in the 4×4 grid.
@@ -314,7 +317,7 @@ function drawTransitRing(svg, bnn, transit, style) {
         x = g.u
         y = 371 + i * 11.5
       }
-      ring.append(textNode(x, y, text, { size: 10, weight: 600, anchor, fill: TRANSIT_RED }))
+      ring.append(textNode(x, y, text, { size: 10, weight: 600, anchor, fill: p.key === 'asc' ? TRANSIT_ASC : TRANSIT_RED }))
     })
   }
   svg.append(ring)
@@ -338,7 +341,7 @@ export function buildSouthBnn(bnn, meta = {}, transit = null) {
     'aria-label': 'BNN lagna chart (south Indian style)',
   })
 
-  const grid = el('g', { stroke: '#5a3410', 'stroke-width': 1.4, fill: 'none' })
+  const grid = el('g', { stroke: GRID_INK, 'stroke-width': GRID_W, fill: 'none' })
   grid.append(el('rect', { x: 0, y: 0, width: S, height: S }))
   for (const k of [1, 2, 3]) {
     grid.append(el('line', { x1: k * C, y1: 0, x2: k * C, y2: C }))
@@ -375,24 +378,23 @@ export function buildSouthBnn(bnn, meta = {}, transit = null) {
     svg.append(group)
   }
 
-  // Lagna mark (user request 2026-10-07b): two short parallel DIAGONAL lines
-  // across the top-right corner of the ascendant's cell (the user's annotated
-  // sample) — the lagna reads at a glance.
+  // Lagna mark (user request 2026-10-07b; redrawn 2026-10-08): two parallel
+  // DIAGONAL lines across the top-right corner of the ascendant's cell — each
+  // runs border-to-border (endpoints exactly on the cell's top edge and right
+  // edge) with the same colour and stroke width as the grid box itself, so it
+  // blends with the box (user: the first version looked hand-drawn — different
+  // thickness and the inner line floated off the border).
   {
     const [lagnaCol, lagnaRow] = S_CELLS[ascRashi]
     const marks = el('g', { class: 'lagna-mark' })
     const rx = (lagnaCol + 1) * C // cell right edge
     const ty = lagnaRow * C // cell top edge
-    const d = 24 // corner cut length
-    const off = 3.6 // gap between the two parallel lines
-    marks.append(el('line', {
-      x1: rx - d, y1: ty + 1, x2: rx - 1, y2: ty + d,
-      stroke: '#5a3410', 'stroke-width': 2.2, 'stroke-linecap': 'round',
-    }))
-    marks.append(el('line', {
-      x1: rx - d - off, y1: ty + 1 + off, x2: rx - 1 - off, y2: ty + d + off,
-      stroke: '#5a3410', 'stroke-width': 2.2, 'stroke-linecap': 'round',
-    }))
+    for (const d of [22, 30]) {
+      marks.append(el('line', {
+        x1: rx - d, y1: ty, x2: rx, y2: ty + d,
+        stroke: GRID_INK, 'stroke-width': GRID_W,
+      }))
+    }
     svg.append(marks)
   }
 
@@ -422,7 +424,7 @@ export function buildNorthBnn(bnn, meta = {}, transit = null) {
     'aria-label': 'BNN lagna chart (north Indian style)',
   })
 
-  const lines = el('g', { stroke: '#5a3410', 'stroke-width': 1.4, fill: 'none' })
+  const lines = el('g', { stroke: GRID_INK, 'stroke-width': GRID_W, fill: 'none' })
   lines.append(el('rect', { x: 0, y: 0, width: S, height: S }))
   lines.append(el('line', { x1: 0, y1: 0, x2: S, y2: S }))
   lines.append(el('line', { x1: S, y1: 0, x2: 0, y2: S }))

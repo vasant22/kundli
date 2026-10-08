@@ -125,13 +125,19 @@ describe('BNN Phase 2b — chart drawing', () => {
     const lines = [...mark.querySelectorAll('line')]
     expect(lines.length).toBe(2)
     // Leo (asc) sits at col 3 / row 2 → the diagonals cut its TOP-RIGHT corner
+    const ds = []
     for (const line of lines) {
       const [x1, y1, x2, y2] = ['x1', 'y1', 'x2', 'y2'].map((a) => Number(line.getAttribute(a)))
-      expect(x2 - x1).toBeGreaterThan(15) // a diagonal, not a horizontal bar
-      expect(y2 - y1).toBeGreaterThan(15)
-      expect(x1).toBeGreaterThan(320) // near the right edge of the cell (270..360)
-      expect(y1).toBeLessThan(190) // near the top edge (180..270)
+      expect(x2 - x1).toBe(y2 - y1) // 45°, parallel to each other
+      ds.push(x2 - x1)
+      expect(y1).toBe(180) // starts exactly ON the cell's top edge (border-to-border)
+      expect(x2).toBe(360) // ends exactly ON the cell's right edge
+      // same colour + thickness as the grid box itself (user, 2026-10-08)
+      expect(line.getAttribute('stroke')).toBe('#5a3410')
+      expect(line.getAttribute('stroke-width')).toBe('1.4')
+      expect(line.getAttribute('stroke-linecap')).toBeNull() // no round caps
     }
+    expect(ds.sort((a, b) => a - b)).toEqual([22, 30])
   })
 
   it('north chart: house blocks stay clear of the centre panel', () => {
@@ -150,6 +156,10 @@ describe('BNN Phase 2b — chart drawing', () => {
     expect(south.textContent).toContain('SAT# 16.52')
     expect(south.textContent).toContain('VEN# 13.59')
     expect(south.textContent).toContain('ASC 28.01')
+    // the transit LAGNA stands out in its own colour (user, 2026-10-08)
+    const ring = [...south.querySelector('.transit-ring').querySelectorAll('text')].map((t) => ({ text: t.textContent, fill: t.getAttribute('fill') }))
+    expect(ring.find((r) => r.text.startsWith('ASC')).fill).toBe('#1565c0')
+    expect(ring.find((r) => r.text.startsWith('SAT')).fill).toBe('#700000')
     const north = buildBnnChart(BNN, { style: 'north', meta: META, transit: TRANSIT })
     expect(north.textContent).toContain('SAT# 16.52')
     expect(north.textContent).toContain('MAR 10.53')

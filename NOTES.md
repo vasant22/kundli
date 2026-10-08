@@ -775,3 +775,8 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - user: BNN नियम — गुरु = जीव कारक (लड़की की कुंडली में **वीनस**), लग्न जैसा अध्ययन → **Planet Combination की चारों tabs (1-5-7-9 · 1-5-9 · SPECIAL · PRSSS) में लड़की = Venus top, Jupiter 6वें स्थान पर** (दोनों की जगह बदली); लड़के = पहले जैसा। साझा helper `planetRowOrder(gender)` (render.js) — screen + print + allchart PNG तीनों जगह लगा।
 - legend: planet table के नीचे 5वाँ item — progression-partner column के रंग (#8e24aa) का डॉट + **'प्रगति का प्रथम ग्रह' / 'Progression first planet'**।
 - tests: +2 (planetRowOrder unit + female DOM flow) — **481 ✓**। headless preview (desktop+mobile) में VEN-top व 5-item legend जाँचा ✓।
+
+### 2026-10-08 — BNN: गोचर-ring में लग्न नीला + दक्षिणी चार्ट के लग्न-डंडे box से match (user request 13:47)
+- (1) गोचर (transit ring) में **ASC / लग्न अब अलग रंग — नीला #1565c0**; बाक़ी गोचर-ग्रह पहले जैसे dark red (#700000)। लग्न पहचान में आता है। दोनों शैलियों में (shared drawTransitRing)।
+- (2) दक्षिणी चार्ट के लग्न-cell के **दो तिरछे डंडे दोबारा खींचे**: अब box वाला ही **रंग (#5a3410) व मोटाई (1.4)**, दोनों **parallel** और **border-to-border** (सिरे ठीक cell की top व right edge पर — पहले अंदर वाली डंडी border से अलग/मोटी थी और round-cap था); d = 22/30।
+- tests update: lagna-mark invariants (endpoints बिल्कुल border पर, stroke/width = grid) + transit ASC fill नीला — **481 ✓**; headless chart-preview से visual जाँच ✓।
