@@ -752,3 +752,16 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 
 ### 2026-10-07 — PCP: पाँचों ग्रहों के leads मिले + engine update (validation 27/51)
 - feeds: चंद्र 2.44/8.29 · गुरु 0.17/5.4 · शनि 0.89/10.75 · राहु 14.42/10.4 · केतु 13.94 (गु/श)। बाक़ी = वक्री-टुकड़ों की structure। findings §16।
+
+### 2026-10-07 — BNN का GSC submit हो गया + mybapuji.com के 403 मुद्दे पर काम (user request)
+- **kundli property** (URL-prefix "https://kundli.mybapuji.com/"): `/bnn/` पर URL Inspection → **Request indexing ✓** ("URL was added to a priority crawl queue"); `sitemap.xml` **resubmit ✓** (row: Submitted Oct 7 · Success; अगली read पर /bnn/ के साथ discovered 3→4)।
+- पेज पहले से तैयार था (index,follow + sitemap में /bnn/ + चारों pages के nav links — corrections-8); सिर्फ़ GSC submit बाक़ी था — अब पूरा। → BNN का launch-side SEO काम शेष नहीं।
+- साथ में: **mybapuji.com (मुख्य साइट) के "Blocked due to 403" (3,378 पेज) पर GSC VALIDATE FIX चालू** — पूरी जाँच/रिपोर्ट: `mybapuji-audit/gsc-403-and-bnn-2026-10-07.md`।
+
+### 2026-10-08 — BNN दृष्टि-% की गुत्थी हल (Gudiya चार्ट जाँच) — `combos.js` fix + tests
+- user (screenshots): नया चार्ट **"gudiya"** (08-11-1991 10:45:50, Raisen) पर **B01 का MAR4 (3 vs 0)** और **B05 का MAR8 (4 vs 28)** guru-software से मेल नहीं खा रहा था।
+- **जाँच `scripts/bnn-calib/gudiya-check.mjs`** (special-check जैसा; AP+BP): पकड़ा कि गड़बड़ी `combos.js` के **भाव-पंक्ति के aspect loop** में — वह दृष्टि-बिंदु का % ग्रह वाले सूत्र `100×(1 − d/(0.942×W))` से गिन रहा था।
+- **सही नियम (दो चार्ट से verified)**: दृष्टि-बिंदु की closeness = **100×(1 − d/30)** — fixed 30° span; और **d ≥ 30° हो तो entry दिखती ही नहीं** (B01 का MAR4-फ़ैंटम ख़त्म; पहले "MAR4--3" जैसा ऋणात्मक बन रहा था)।
+- नतीजे — पुराना चार्ट: MAR4-**71**, MAR8-**65**, **SAT3-13, SAT10-6** चारों **exact** (SAT3/SAT10 = guide के पुराने "अभी मेल नहीं खाते" open items, अब हल)। Gudiya: MAR4 हटा ✓, MAR8 4→**27** (guru 28, Δ1 शेष), SAT3-**72** ✓, SAT10-**82** ✓।
+- Files: `percent.js` (+`aspectToBhavaPercent`, `aspectSpanDeg:30`) · `combos.js` (aspect loop) · `tests/bnn-combos.test.js` (2 नए: synthetic 30°-span + guide values) · `tests/bnn-modules.test.js` · नया check script। **टेस्ट 479 ✓**।
+- बाक़ी: Gudiya MAR8 का ±1 (हम 27, guru 28 — rounding/time-स्तर; असली software पर दोबारा देखकर confirm करना)। ध्यान: user की screenshot-A हमारे app के **10:45:00** वाले run जैसी है (birth time 10:45:50 है), check इसलिए 10:45:50 पर।

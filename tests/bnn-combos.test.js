@@ -69,6 +69,23 @@ describe('BNN Phase 4 — rule examples (guide कक्षा)', () => {
     expect(seq(combosOf(planets, 'BP').venus.list1579)).not.toContain('mar8')
     expect(seq(combosOf(planets, 'BP').saturn.list1579)).toContain('mar8')
   })
+
+  it('bhava-row aspects: fixed 30° span — p = 100×(1−d/30), dropped at d ≥ 30° (Gudiya, 2026-10-08)', () => {
+    // Cusps shaped so bhava 2 is 35° wide: [0, 25, 60, 90, …]
+    const cusps = [0, 25, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((longitude) => ({ longitude }))
+    const rows = (lon) => bhavaCombinations([P('mars', lon)], cusps, 'AP')
+    const aspect = (bc, n, label) => bc[n].list1579.find((e) => e.type === 'aspect' && e.label === label)
+    // Mars 350°: MAR4 point 80° → bhava 3 [60,90), d = 20 → 100×(1−20/30) = 33.3
+    //            MAR8 point 200° → bhava 7 [180,210), d = 20 → 33.3
+    const kept = rows(350)
+    expect(Math.round(aspect(kept, 3, 'MAR4').percent)).toBe(33)
+    expect(Math.round(aspect(kept, 7, 'MAR8').percent)).toBe(33)
+    // Mars 327°: MAR4 point 57° → bhava 2 [25,60), d = 32 ≥ 30° → not listed anywhere
+    const dropped = rows(327)
+    for (let n = 1; n <= 12; n++) {
+      expect(dropped[n].list1579.some((e) => e.type === 'aspect' && e.label === 'MAR4'), `B${n}`).toBe(false)
+    }
+  })
 })
 
 // ---------------------------------------------------------------------------
@@ -170,6 +187,18 @@ describe('BNN Phase 4 — reference chart (AP = guide, BP = software)', () => {
     for (let n = 1; n <= 12; n++) {
       expect(seq(bc[n].list1579), `B${n}`).toEqual(AP_BHAVA[n])
     }
+  })
+
+  it('AP bhava-row aspect percentages match the guide (fixed 30° span)', () => {
+    const k = computeBhavaChalit(swe, BIRTH.utc, BIRTH.place)
+    const bc = bhavaCombinations(k.planets, k.cusps, 'AP')
+    const asp = (n, label) => bc[n].list1579.find((e) => e.type === 'aspect' && e.label === label)
+    expect(Math.round(asp(4, 'MAR4').percent)).toBe(71)
+    expect(Math.round(asp(8, 'MAR8').percent)).toBe(65)
+    // SAT3-13 / SAT10-6 were the guide's open "does not fit yet" items — the
+    // fixed span (Gudiya check, 2026-10-08) reproduces them exactly.
+    expect(Math.round(asp(7, 'SAT3').percent)).toBe(13)
+    expect(Math.round(asp(2, 'SAT10').percent)).toBe(6)
   })
 
   it('BP planet combinations match the software screenshots', () => {

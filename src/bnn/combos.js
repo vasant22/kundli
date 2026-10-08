@@ -10,14 +10,16 @@
 // The bhava rows (R12/13 area, Phase 5 tables) are provided here too:
 //   row B-n lists planets in bhavas n, n+4, n+8 (list159) plus n+6 (list1579,
 //   Ra/Ke skipped there); aspect entries appear only in the row of the bhava
-//   they land on; entries sorted by percentage (closeness) descending.
+//   they land on (percent = fixed 30° span, 100×(1−d/30); a point ≥30° past the
+//   cusp is not listed — Gudiya calibration, 2026-10-08); entries sorted by
+//   percentage (closeness) descending.
 // Plus the guru's "returned degree" catch (user, 2026-10-07): a planet of a
 // parivartana pair also counts planets sitting just behind its seat degree in
 // the reverse direction — this is what puts SUN-97 in SAT's AP row / MER's BP
 // row in the old software (see COMBO_SETTINGS.returnedCatchDeg).
 // Spec: docs/bnn-guide.txt. Reference checks: scripts/bnn-calib/combos-check.mjs
 import { findExchanges } from './kp.js'
-import { planetToBhavaPercent, planetToBhavaPlainPercent, planetToPlanetPercent } from './percent.js'
+import { aspectToBhavaPercent, planetToBhavaPercent, planetToBhavaPlainPercent, planetToPlanetPercent } from './percent.js'
 
 const norm = (x) => ((x % 360) + 360) % 360
 
@@ -255,8 +257,9 @@ export function labelSuffix(lon, cusps) {
 /**
  * Rows for both tabs. Returns { [n]: { list159, list1579 } } — each list is
  * ordered by closeness (percentage) descending. Aspect entries appear only in
- * the row of the bhava they land on; in list1579 Ra/Ke in the n+6 bhava are
- * skipped.
+ * the row of the bhava they land on (fixed 30° span; a point ≥30° past the
+ * cusp is not listed — guru, 2026-10-08); in list1579 Ra/Ke in the n+6 bhava
+ * are skipped.
  */
 export function bhavaCombinations(planets, cusps, mode = 'AP') {
   const seats = seatPositions(planets, mode)
@@ -281,13 +284,17 @@ export function bhavaCombinations(planets, cusps, mode = 'AP') {
     for (const ap of aspectPoints(caster)) {
       const b = bhavaOf(ap.point)
       const d = norm(ap.point - cuspList[b - 1])
-      const w = norm(cuspList[b % 12] - cuspList[b - 1]) || 360
+      // Guru rule (2026-10-08, Gudiya check): the aspect is listed only while
+      // the point sits within the fixed 30° span past the cusp; its percent is
+      // 100×(1 − d/30) — NOT the planet width form. Points further out (like
+      // B01's MAR4, d≈33°) are dropped instead of showing a negative percent.
+      if (d >= 30) continue
       perBhava[b].push({
         type: 'aspect',
         label: ap.label,
         from: ap.from,
         distance: d,
-        percent: planetToBhavaPercent(d, w),
+        percent: aspectToBhavaPercent(d),
       })
     }
   }

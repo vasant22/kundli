@@ -31,6 +31,7 @@ describe('BNN Phase 1 — module API surfaces', () => {
       combos.bhavaIndexOf,
       percent.planetToPlanetPercent,
       percent.planetToBhavaPercent,
+      percent.aspectToBhavaPercent,
       special.specialTables,
       special.starLordOf,
       special.entryColour,
@@ -49,7 +50,7 @@ describe('BNN Phase 1 — module API surfaces', () => {
   })
 
   it('carries the guide constants in settings', () => {
-    expect(percent.PERCENT_SETTINGS).toEqual({ p2pBase: 96.65, p2pPerDegree: 3.147, p2bWidthFactor: 0.942 })
+    expect(percent.PERCENT_SETTINGS).toEqual({ p2pBase: 96.65, p2pPerDegree: 3.147, p2bWidthFactor: 0.942, aspectSpanDeg: 30 })
     expect(dasha.DASHA_SETTINGS.bhukthiYearDays).toBe(366)
     expect(dasha.DASHA_SETTINGS.useDeltaT).toBe(true)
     expect(dasha.DASHA_SETTINGS.balanceYearDays).toBe(365.25)
