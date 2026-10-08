@@ -518,7 +518,7 @@ const th = (text) => el2('th', null, text)
 // Table legends (user 2026-10-07d): colored dots + short labels only —
 // brown = row item (bhava / centric planet), blue = main planet, green =
 // upagraha (≥20 %), orange = weak (अल्प बलशाली ग्रह).
-const LG_DOT = { brown: '#b3261e', blue: '#1565c0', green: '#2e7d32', orange: '#ef6c00' }
+const LG_DOT = { brown: '#b3261e', blue: '#1565c0', green: '#2e7d32', orange: '#ef6c00', prog: '#8e24aa' }
 function legendLine(items) {
   const p = el2('p', 'bnn-legend')
   items.forEach(([dot, key], i) => {
@@ -553,6 +553,13 @@ function tabBar(defs, onSelect) {
 }
 
 const PLANET_ORDER = ['jupiter', 'sun', 'moon', 'mars', 'mercury', 'venus', 'saturn', 'rahu', 'ketu']
+// BNN: Jupiter = जीव कारक (studied like the lagna). In a FEMALE chart Venus
+// holds that place (user, 2026-10-08) — the two swap rows in the four PLANET
+// COMBINATION tabs; the rest of the order stays as-is.
+const PLANET_ORDER_FEMALE = ['venus', 'sun', 'moon', 'mars', 'mercury', 'jupiter', 'saturn', 'rahu', 'ketu']
+export function planetRowOrder(gender) {
+  return String(gender || '').toLowerCase() === 'female' ? PLANET_ORDER_FEMALE : PLANET_ORDER
+}
 const B_ORDER = Array.from({ length: 12 }, (_, i) => i + 1)
 const bLabel = (n) => `B${String(n).padStart(2, '0')}`
 
@@ -643,6 +650,7 @@ export function buildBhavaTables(bnn, mode, opts = {}) {
 /** PLANET COMBINATION table (tabs: 1-5-7-9 · 1-5-9 · SPECIAL · PRSSS). */
 export function buildPlanetTables(bnn, mode, opts = {}) {
   const { planets, cusps } = bnn
+  const order = planetRowOrder(opts.gender)
   const pc = planetCombinations(planets, mode, { cusps })
   const sp = specialTables(planets, cusps, mode)
   const astro = astronomyPartners(planets, mode)
@@ -653,8 +661,8 @@ export function buildPlanetTables(bnn, mode, opts = {}) {
   section.append(el2('h3', 'bnn-table-title', `PLANET COMBINATION — NATAL — ${mode}`))
   const content = el2('div', 'bnn-tab-content')
 
-  const max7 = Math.max(...PLANET_ORDER.map((k) => pc[k].list1579.length))
-  const max9 = Math.max(...PLANET_ORDER.map((k) => pc[k].list159.length))
+  const max7 = Math.max(...order.map((k) => pc[k].list1579.length))
+  const max9 = Math.max(...order.map((k) => pc[k].list159.length))
 
   const listView = (key, max) => () => {
     // Fixed frame (user, 2026-10-07): seven combination columns + the
@@ -665,7 +673,7 @@ export function buildPlanetTables(bnn, mode, opts = {}) {
     const hr = document.createElement('tr')
     for (let i = 0; i < cols + 2; i++) hr.append(th('')) // label + combos + progression (no header labels)
     tbl.append(hr)
-    for (const pkey of PLANET_ORDER) {
+    for (const pkey of order) {
       const p = byKey[pkey]
       const row = document.createElement('tr')
       row.append(el2('td', 'row-label', rowLabel(p, seats[pkey].lon, cusps)))
@@ -684,7 +692,7 @@ export function buildPlanetTables(bnn, mode, opts = {}) {
     const hr = document.createElement('tr')
     hr.append(th(''), th('Lord'), th('sits → gives'), th('STAR'), th('LORDSHIP'))
     tbl.append(hr)
-    for (const pkey of PLANET_ORDER) {
+    for (const pkey of order) {
       const p = byKey[pkey]
       const r = sp.rows[pkey]
       const row = document.createElement('tr')
@@ -699,7 +707,7 @@ export function buildPlanetTables(bnn, mode, opts = {}) {
   }
   const prsssView = () => {
     const tbl = el2('table', 'bnn-table bnn-planet-table')
-    for (const pkey of PLANET_ORDER) {
+    for (const pkey of order) {
       const p = byKey[pkey]
       const row = document.createElement('tr')
       row.append(el2('td', 'row-label', rowLabel(p, seats[pkey].lon, cusps)))
@@ -735,6 +743,7 @@ export function buildPlanetTables(bnn, mode, opts = {}) {
     ['blue', 'bnn.lg.main'],
     ['green', 'bnn.lg.sub'],
     ['orange', 'bnn.lg.weak'],
+    ['prog', 'bnn.lg.prog'],
   ]))
   return section
 }

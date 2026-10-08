@@ -770,3 +770,8 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 ### 2026-10-08 — BNN: स्पेशल ट्रांज़िट section अब अपने पूरे घेरे में + बड़े अक्षर (user request 11:07)
 - user: पेज के bottom का Special Transit मिल-जुला व छोटे अक्षरों में लग रहा था → पूरे section (title→results) को अपना बॉर्डर-बॉक्स दिया: `1.5px #d9a95f`, radius 14, हल्का क्रीम bg `#fffcf4`, padding; अक्षर बड़े — title 0.95→**1.05**, intro 0.85→**0.95** (गहरा रंग #5c4a24), rows 0.85→**0.92**, chips 0.82→**0.88**, TRANSIT-chip 0.85→**0.9**, st-table 0.78→**0.82**।
 - जाँच: headless-Chrome preview (desktop 900 + mobile 430) — घेरा पूरा section घेरता है, अलग दिखता है ✓।
+
+### 2026-10-08 — BNN: लड़की की कुंडली में Venus top (PLANET-tabs) + progression-legend (user request 13:06)
+- user: BNN नियम — गुरु = जीव कारक (लड़की की कुंडली में **वीनस**), लग्न जैसा अध्ययन → **Planet Combination की चारों tabs (1-5-7-9 · 1-5-9 · SPECIAL · PRSSS) में लड़की = Venus top, Jupiter 6वें स्थान पर** (दोनों की जगह बदली); लड़के = पहले जैसा। साझा helper `planetRowOrder(gender)` (render.js) — screen + print + allchart PNG तीनों जगह लगा।
+- legend: planet table के नीचे 5वाँ item — progression-partner column के रंग (#8e24aa) का डॉट + **'प्रगति का प्रथम ग्रह' / 'Progression first planet'**।
+- tests: +2 (planetRowOrder unit + female DOM flow) — **481 ✓**। headless preview (desktop+mobile) में VEN-top व 5-item legend जाँचा ✓।

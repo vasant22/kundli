@@ -525,6 +525,7 @@ function showReport(values, scroll) {
       buildPlanetTables(values.bnn, mode, {
         active: values.bnnPlanetTab,
         onTab: (k) => { values.bnnPlanetTab = k },
+        gender: values.gender,
       }),
     ]
     if (values.bnnDasha) sections.push(buildDashaTables(values.bnnDasha))

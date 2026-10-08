@@ -8,11 +8,10 @@ import { findExchanges } from './kp.js'
 import { astronomyPartners, bhavaCombinations, labelSuffix, planetCombinations, seatPositions } from './combos.js'
 import { computeBrsss, computePrsss } from './prsss.js'
 import { specialTables } from './special.js'
-import { buildBnnChart, planetCode } from './render.js'
+import { buildBnnChart, planetCode, planetRowOrder } from './render.js'
 import { fmtDMY } from './dasha.js'
 
 const NS = 'http://www.w3.org/2000/svg'
-const PLANET_ORDER = ['jupiter', 'sun', 'moon', 'mars', 'mercury', 'venus', 'saturn', 'rahu', 'ketu']
 const HASH = (key, retro) => (retro && key !== 'rahu' && key !== 'ketu' ? '#' : '')
 const INK = '#3a2410'
 const RED = '#b3261e'
@@ -72,6 +71,7 @@ const entColor = (e, i, saturnRule) => {
 export function buildAllChartSvg(values) {
   const { bnn, bnnDasha, bnnMeta } = values
   const mode = values.bnnMode === 'BP' ? 'BP' : 'AP'
+  const order = planetRowOrder(values.gender)
   const bhavaTab = values.bnnBhavaTab || '159'
   const planetTab = values.bnnPlanetTab || '1579'
   const pairs = findExchanges(bnn.planets)
@@ -163,7 +163,7 @@ export function buildAllChartSvg(values) {
   const pc = planetCombinations(bnn.planets, mode, { cusps: bnn.cusps })
   if (planetTab === 'prsss') {
     const rows = []
-    for (const pkey of PLANET_ORDER) {
+    for (const pkey of order) {
       rows.push([{ t: suffixOf(pkey), bold: true, color: RED, align: 'left', fill: '#faf6ea' },
         ...computePrsss(byKey[pkey].longitude).map((k) => ({ t: planetCode(k), bold: true }))])
     }
@@ -175,7 +175,7 @@ export function buildAllChartSvg(values) {
       { t: 'LORDSHIP', bold: true, fill: '#f7ecd5' }, { t: 'STAR', bold: true, fill: '#f7ecd5' },
       { t: 'LORDSHIP', bold: true, fill: '#f7ecd5' },
     ]]
-    for (const pkey of PLANET_ORDER) {
+    for (const pkey of order) {
       const r = sp.rows[pkey]
       rows.push([
         { t: suffixOf(pkey), bold: true, color: RED, fill: '#faf6ea' },
@@ -188,10 +188,10 @@ export function buildAllChartSvg(values) {
     ty = tableBlock(svg, RX, ty, { title: `PLANET — SPECIAL — ${mode}`, colWidths: [112, 80, 140, 108, 120], rows })
   } else {
     const key = planetTab === '159' ? 'list159' : 'list1579'
-    const maxLen = Math.max(...PLANET_ORDER.map((k) => pc[k][key].length))
+    const maxLen = Math.max(...order.map((k) => pc[k][key].length))
     const astro = astronomyPartners(bnn.planets, mode)
     const rows = []
-    for (const pkey of PLANET_ORDER) {
+    for (const pkey of order) {
       const cells = [{ t: suffixOf(pkey), bold: true, color: RED, align: 'left', fill: '#faf6ea' }]
       pc[pkey][key].forEach((e, i) => cells.push({ t: entText(e), color: entColor(e, i), bold: true }))
       while (cells.length < 1 + maxLen) cells.push({ t: '' })

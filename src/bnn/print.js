@@ -11,10 +11,9 @@ import { findExchanges } from './kp.js'
 import { astronomyPartners, bhavaCombinations, labelSuffix, planetCombinations, seatPositions } from './combos.js'
 import { computeBrsss, computePrsss } from './prsss.js'
 import { specialTables } from './special.js'
-import { buildBnnChart, planetCode } from './render.js'
+import { buildBnnChart, planetCode, planetRowOrder } from './render.js'
 import { bhukthiList, fmtDMY } from './dasha.js'
 
-const PLANET_ORDER = ['jupiter', 'sun', 'moon', 'mars', 'mercury', 'venus', 'saturn', 'rahu', 'ketu']
 const RASHI_EN = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces']
 const HASH = (key, retro) => (retro && key !== 'rahu' && key !== 'ketu' ? '#' : '')
 const ageT = (a) => `${a.y}Y-${a.m}M-${a.d}D`
@@ -58,6 +57,7 @@ const footer = () => {
 export function buildPrintSheet(values) {
   const { bnn, bnnMeta, bnnDasha } = values
   const mode = values.bnnMode === 'BP' ? 'BP' : 'AP'
+  const order = planetRowOrder(values.gender)
   const pairs = findExchanges(bnn.planets)
   const birth = { year: Number(values.year), month: Number(values.month), day: Number(values.day) }
   const moon = bnn.planets.find((p) => p.key === 'moon')
@@ -157,7 +157,7 @@ export function buildPrintSheet(values) {
   {
     const maxLen = Math.max(...Object.values(pc).map((v) => v.list1579.length))
     const rows = []
-    for (const pkey of PLANET_ORDER) {
+    for (const pkey of order) {
       const list = pc[pkey].list1579
       const cells = [el('td', 'bp-lab', `${planetCode(pkey)}${HASH(pkey, byKey[pkey].retro)}-${labelSuffix(seats[pkey].lon, bnn.cusps).value}`)]
       for (let i = 0; i < maxLen; i++) cells.push(list[i] ? entCell(list[i], i) : el('td', null, ''))
@@ -187,7 +187,7 @@ export function buildPrintSheet(values) {
   p2.append(heading(`PLANET — SPECIAL — ${mode}`))
   {
     const rows = []
-    for (const pkey of PLANET_ORDER) {
+    for (const pkey of order) {
       const r = sp.rows[pkey]
       rows.push([
         el('td', 'bp-lab', `${planetCode(pkey)}${HASH(pkey, byKey[pkey].retro)}-${labelSuffix(seats[pkey].lon, bnn.cusps).value}`),
@@ -207,7 +207,7 @@ export function buildPrintSheet(values) {
   p3.append(heading('PRSSS (P · R · S · S · S)'))
   {
     const rows = []
-    for (const pkey of PLANET_ORDER) {
+    for (const pkey of order) {
       const links = computePrsss(byKey[pkey].longitude)
       rows.push([el('td', 'bp-lab', `${planetCode(pkey)}${HASH(pkey, byKey[pkey].retro)}`), ...links.map((k) => el('td', null, planetCode(k)))])
     }

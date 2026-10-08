@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 // tests/bnn-render.test.js — BNN chart drawing (Phase 2b).
 import { describe, expect, it } from 'vitest'
-import { ageYMD, buildBnnChart, cuspText, degDot, exchangeLabel, planetText, weekdayEN } from '../src/bnn/render.js'
+import { ageYMD, buildBnnChart, cuspText, degDot, exchangeLabel, planetRowOrder, planetText, weekdayEN } from '../src/bnn/render.js'
 
 // The reference chart's values (docs/bnn-guide.txt भाग 5).
 const CUSPS = [
@@ -65,6 +65,13 @@ describe('BNN Phase 2b — chart drawing', () => {
     expect(planetText({ key: 'sun', retro: false, degInSign: 8.15 })).toBe('SUN 08.09')
     expect(cuspText({ n: 9, degInSign: 11.5167 })).toBe('09 11.31')
     expect(exchangeLabel([['mercury', 'saturn']])).toBe('MERCURY<>SATURN')
+  })
+
+  it('planet row order: female swaps Jupiter ⇄ Venus (BNN jeeva karaka — user, 2026-10-08)', () => {
+    expect(planetRowOrder('male')).toEqual(['jupiter', 'sun', 'moon', 'mars', 'mercury', 'venus', 'saturn', 'rahu', 'ketu'])
+    expect(planetRowOrder('female')).toEqual(['venus', 'sun', 'moon', 'mars', 'mercury', 'jupiter', 'saturn', 'rahu', 'ketu'])
+    expect(planetRowOrder(undefined)).toEqual(planetRowOrder('male'))
+    expect(planetRowOrder('')).toEqual(planetRowOrder('male'))
   })
 
   it('south chart: 12 rashi cells, red cusps, planets, ASC + centre panel', () => {

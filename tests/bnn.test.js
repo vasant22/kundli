@@ -247,11 +247,14 @@ describe('BNN page — chart (Phase 2b)', () => {
     expect(sections[1].textContent).not.toContain('ASTRONOMY')
     expect(sections[0].querySelectorAll('.bnn-tabs button').length).toBe(4)
     expect(sections[1].querySelectorAll('.bnn-tabs button').length).toBe(4)
-    // legends (user 2026-10-07d): 4 dots — bhava label brown, the rest short
+    // legends (user 2026-10-07d; progression dot added 2026-10-08): bhava = 4 dots,
+    // planet = 5 dots — the last one = the progression partner colour
     expect(sections[0].textContent).toContain('अल्प बलशाली ग्रह')
     expect(sections[0].textContent).toContain('उपग्रह')
+    expect(sections[0].querySelectorAll('.lg-dot').length).toBe(4)
     expect(sections[1].textContent).toContain('केन्द्रीय ग्रह')
-    expect(sections[1].querySelectorAll('.lg-dot').length).toBe(4)
+    expect(sections[1].textContent).toContain('प्रगति का प्रथम ग्रह')
+    expect(sections[1].querySelectorAll('.lg-dot').length).toBe(5)
     // Vimshottari (Phase 6)
     expect(sections[2].textContent).toContain('VIMSHOTTARI')
     expect(sections[2].textContent).toContain('SAT')
@@ -305,5 +308,32 @@ describe('BNN page — chart (Phase 2b)', () => {
     expect(document.querySelector('.bnn-planet-table').closest('.bnn-section').textContent).toContain('NATAL — BP')
     modeButtons[1].click() // AP
     expect(document.querySelector('.bnn-planet-table').closest('.bnn-section').textContent).toContain('NATAL — AP')
+  })
+
+  it('female chart: Venus takes the top planet row (Jupiter ⇄ Venus), legend gets the progression dot', async () => {
+    document.querySelector('input[name="gender"][value="female"]').checked = true
+    document.querySelector('input[name="gender"][value="male"]').checked = false
+    $('#bnn-form').dispatchEvent(new Event('submit', { cancelable: true }))
+    await vi.waitFor(() => {
+      const s1 = document.querySelectorAll('.bnn-section')[1]
+      s1.querySelectorAll('.bnn-tabs button')[0].click() // 1-5-7-9
+      expect(s1.querySelectorAll('tr')[1].querySelector('.row-label').textContent.slice(0, 3)).toBe('VEN')
+    })
+    const s1 = document.querySelectorAll('.bnn-section')[1]
+    const labels = Array.from(s1.querySelectorAll('tr td.row-label')).map((td) => td.textContent.slice(0, 3))
+    expect(labels).toEqual(['VEN', 'SUN', 'MOO', 'MAR', 'MER', 'JUP', 'SAT', 'RAH', 'KET'])
+    expect(s1.querySelectorAll('.lg-dot').length).toBe(5)
+    const progDot = s1.querySelectorAll('.lg-dot')[4]
+    const bg = progDot.style.background || progDot.style.backgroundColor || ''
+    expect(/8e24aa|142, ?36, ?170/i.test(bg)).toBe(true)
+    // restore the male chart for any later assertions
+    document.querySelector('input[name="gender"][value="male"]').checked = true
+    document.querySelector('input[name="gender"][value="female"]').checked = false
+    $('#bnn-form').dispatchEvent(new Event('submit', { cancelable: true }))
+    await vi.waitFor(() => {
+      const s = document.querySelectorAll('.bnn-section')[1]
+      s.querySelectorAll('.bnn-tabs button')[0].click()
+      expect(s.querySelectorAll('tr')[1].querySelector('.row-label').textContent.slice(0, 3)).toBe('JUP')
+    })
   })
 })

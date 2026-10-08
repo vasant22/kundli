@@ -40,6 +40,7 @@ const STRINGS = {
     'bnn.lg.main': 'मुख्य ग्रह',
     'bnn.lg.sub': 'उपग्रह',
     'bnn.lg.weak': 'अल्प बलशाली ग्रह',
+    'bnn.lg.prog': 'प्रगति का प्रथम ग्रह',
 
     // स्पेशल ट्रांज़िट (legacy PCP) — page के bottom पर
     'st.title': '🌟 स्पेशल ट्रांज़िट (Special Transit)',
@@ -256,6 +257,7 @@ const STRINGS = {
     'bnn.lg.main': 'Main planet',
     'bnn.lg.sub': 'Sub planet',
     'bnn.lg.weak': 'Weak planet',
+    'bnn.lg.prog': 'Progression first planet',
 
     // Special Transit (legacy PCP) — bottom of the page
     'st.title': '🌟 Special Transit (PCP)',
