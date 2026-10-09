@@ -1,9 +1,12 @@
 // pcp-check.mjs — Special Transit engine vs the legacy software's tables.
 // All captured from the legacy software on 2026-10-07 (owner's screenshots);
 // settings: Saturn Guru · 1579 · 07-01-2026 → 07-06-2031 (Mars case wider).
-// Leads per (birth × transit) — see findings §15; run: node scripts/bnn-calib/pcp-check.mjs
+// The SATURN-b 159 wide case captured 2026-10-09 (same chart, 09-10-2026 →
+// 09-10-2048). Dates compared in the legacy display form: date(crossing+12h)
+// IST (range-clipped edges show the range date).
+// Run: node scripts/bnn-calib/pcp-check.mjs
 import SwissEph from 'swisseph-wasm'
-import { computeRowsForPlanet, stepFor, preRollFor } from '../../src/bnn/pcp.js'
+import { computeRowsForPlanet, stepFor, preRollFor, midFor, leadFor } from '../../src/bnn/pcp.js'
 
 const swe = new SwissEph()
 await swe.initSwissEph()
@@ -22,11 +25,13 @@ function makeLonAt(key) {
   }
 }
 
+const SHIFT = 12 * 3600 * 1000
 const fmtIST = (ms) => {
   const d = new Date(ms + 5.5 * 3600 * 1000)
   const p = (n) => String(n).padStart(2, '0')
   return `${p(d.getUTCDate())}-${p(d.getUTCMonth() + 1)}-${d.getUTCFullYear()}`
 }
+const dispIST = (ms, clipped) => fmtIST(clipped ? ms : ms + SHIFT)
 const t = (y, m, d) => Date.UTC(y, m - 1, d)
 const dayDiff = (a, b) => {
   const [da, ma, ya] = a.split('-').map(Number)
@@ -101,13 +106,36 @@ const CASES = [
     },
   },
   {
-    name: 'SATURN', zSign: 5, zDeg: 3.2137, leads: { jupiter: 10.75, saturn: 0.89 },
+    // Leads now come from the engine tables (jup×sat 10.7635, sat×sat 10.667);
+    // Saturn dips open at X = natal + 0.7° (dipX), no +10°40′ rows.
+    name: 'SATURN (1579)', zSign: 5, zDeg: 3.2137, dipX: 0.7,
     tStart: R[0], tEnd: R[1],
     expected: {
       jupiter: [['SAT-1', '13-10-2027', '08-02-2028'], ['SAT-1', '14-05-2028', '17-08-2028']],
       saturn: [
         ['SAT-7', '07-01-2026', '30-01-2026'], ['SAT-5', '23-05-2029', '07-09-2029'],
         ['SAT-5', '19-01-2030', '21-05-2030'],
+      ],
+    },
+  },
+  {
+    // 2026-10-09 owner's screens: Saturn · 159 · 09-10-2026 → 09-10-2048.
+    // Matched EXACTLY (all visible rows); dates via the +12h display rule.
+    name: 'SATURN-159 (2026-10-09)', zSign: 5, zDeg: 3.2137, dipX: 0.7, exact: true,
+    tStart: Date.UTC(2026, 9, 8, 18, 30, 0),
+    tEnd: Date.UTC(2048, 9, 9, 18, 29, 59),
+    expected: {
+      jupiter: [
+        ['SAT-1', '13-10-2027', '08-02-2028'], ['SAT-1', '14-05-2028', '17-08-2028'],
+        ['SAT-9', '29-01-2032', '31-03-2032'], ['SAT-5', '10-06-2032', '25-07-2032'],
+        ['SAT-9', '18-09-2032', '22-11-2032'], ['SAT-5', '22-07-2035', '10-09-2035'],
+        ['SAT-5', '09-03-2036', '04-05-2036'], ['SAT-1', '27-09-2039', '01-12-2039'],
+        ['SAT-1', '30-01-2040', '20-03-2040'],
+      ],
+      saturn: [
+        ['SAT-5', '23-05-2029', '07-09-2029'], ['SAT-5', '19-01-2030', '21-05-2030'],
+        ['SAT-1', '22-08-2038', '12-12-2038'], ['SAT-1', '09-01-2039', '08-03-2039'],
+        ['SAT-1', '25-05-2039', '25-08-2039'],
       ],
     },
   },
@@ -143,16 +171,21 @@ for (const c of CASES) {
   console.log(`\n===== ${c.name} =====`)
   for (const key of ['jupiter', 'saturn']) {
     const lonAt = makeLonAt(key)
-    const rows = computeRowsForPlanet(lonAt, c.tStart, c.tEnd, c.zSign, c.zDeg, '1579', {
+    const mode = c.name.includes('159') ? '159' : '1579'
+    const leadDeg = c.leads ? c.leads[key] : leadFor('saturn', key)
+    const rows = computeRowsForPlanet(lonAt, c.tStart, c.tEnd, c.zSign, c.zDeg, mode, {
       stepMs: stepFor(key),
       preRollMs: preRollFor(key),
-      leadDeg: c.leads[key],
+      leadDeg,
+      midDeg: midFor(key),
+      dipX: c.dipX ?? null,
     })
     const prefix = (c.expected.jupiter[0] || c.expected.saturn[0] || ['X'])[0].split('-')[0]
-    const got = rows.map((r) => ({ label: `${prefix}-${r.k}`, start: fmtIST(r.startMs), end: fmtIST(r.endMs) }))
+    const got = rows.map((r) => ({ label: `${prefix}-${r.k}`, start: dispIST(r.startMs, r.clippedStart), end: dispIST(r.endMs, r.clippedEnd) }))
     const exp = c.expected[key] || []
     for (const w of exp) {
-      const g = got.find((x) => x.label === w[0] && dayDiff(x.start, w[1]) <= 1 && dayDiff(x.end, w[2]) <= 1)
+      const tol = c.exact ? 0 : 1
+      const g = got.find((x) => x.label === w[0] && dayDiff(x.start, w[1]) <= tol && dayDiff(x.end, w[2]) <= tol)
       if (g) {
         pass++
         console.log(`   ✅ ${w[0]} ${w[1]} -> ${w[2]}`)

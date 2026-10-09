@@ -28,6 +28,10 @@ const CONST_NAME = {
 }
 
 const pad = (n) => String(n).padStart(2, '0')
+// Legacy date display: the shown date = date(crossing + 12h) — the old
+// software's day runs noon→noon, so a crossing after noon shows on the
+// next day. Verified against the legacy screens (2026-10-09).
+const PCP_DATE_SHIFT_MS = 12 * 3600 * 1000
 const dateMsToWall = (ms, zone) => {
   try {
     const parts = new Intl.DateTimeFormat('en-GB', {
@@ -203,11 +207,15 @@ export function buildSpecialTransitSection(values, opts) {
       p.segments.forEach((seg, si) => {
         const pairCls = si % 2 === 0 ? 'pair-a' : 'pair-b'
         const label = `${birthCode}-${seg.k}`
-        for (const [aspect, ms] of [['Start', seg.startMs], ['End', seg.endMs]]) {
+        for (const [aspect, ms, clipped] of [
+          ['Start', seg.startMs, seg.clippedStart],
+          ['End', seg.endMs, seg.clippedEnd],
+        ]) {
           const tr = document.createElement('tr')
           tr.className = pairCls
           const retroFlag = seg.flags ? seg.flags[aspect === 'Start' ? 0 : 1] : 'F'
-          tr.append(el('td', 'st-label', label), el('td', null, dateMsToWall(ms, values.bnnZone)), el('td', null, aspect), el('td', null, retroFlag))
+          const shown = clipped ? ms : ms + PCP_DATE_SHIFT_MS
+          tr.append(el('td', 'st-label', label), el('td', null, dateMsToWall(shown, values.bnnZone)), el('td', null, aspect), el('td', null, retroFlag))
           table.append(tr)
         }
       })

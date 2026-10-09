@@ -20,6 +20,16 @@
 //    when the retro leg passes that line, else at station-R (when the station
 //    sits between +1° and +10°40′); closes at the rv = −1° crossing downward,
 //    else at station-D.
+//    Per-birth override (decoded 2026-10-09, Saturn 159 tables): for
+//    BIRTH = Saturn the dip line is  X ≈ +3.9° past the natal degree (rv space;
+//    display-fit window [3.881, 3.933] — implemented as zDeg + 0.7 = 3.9137
+//    for the reference chart, alternatives untested): station-R opens the dip
+//    when it sits at/below X, else the dip opens at the X crossing — and if X
+//    is never reached there is NO dip row (Saturn's +10°40′ crossings are not
+//    rows).
+//  • Rise row: a station-D with (startLine ≤ rvD < +1°) opens a row that
+//    closes at the next +1° crossing (the climb-back rows; e.g. SAT-5
+//    19-01-2030 → 21-05-2030).
 //  • Labels: "<CODE>-k" — k = position of N's sign counted from the frame
 //    sign in the segment's direction of motion: forward for direct passes,
 //    backward for retro dips (guide R18). k must be in the mode's set
@@ -30,6 +40,8 @@
 // PCP_SETTINGS keeps the margins configurable: end margins matched the legacy
 // output (+1°) across charts; the start margin showed chart-to-chart
 // differences in the legacy data (documented — to refine with the guru).
+// The −1° mid line is per transit planet (Jupiter's crossings run ~0.02°
+// deeper on the legacy screens; Saturn uses the plain −1°).
 //
 // Spec: docs/bnn-guide.txt (Phase 7b) · findings §9–§12. Pure engine (no DOM);
 // ephemeris access is injected via `lonAt(tMs) → { lon, speed } | null`.
@@ -45,7 +57,7 @@ export const PCP_SETTINGS = Object.freeze({
 // Per-planet start leads (degrees BEFORE the natal degree where the direct pass
 // begins) — decoded from the legacy software's tables 2026-10-07:
 //   मंगल 5° · शुक्र 6° · सूर्य 3.86° · बुध 0.15° · चंद्र 2.44° (गुरु-गोचर)
-//   गुरु 0.17° · शनि 0.89° · राहु 14.42° · केतु 13.94° (गुरु-गोचर)
+//   गुरु 0.17° · शनि 10°40′ (10.667°, 2026-10-09 decode) · राहु 14.42° · केतु 13.94°
 // कुछ leads गोचर-ग्रह के हिसाब से भी अलग दिखे (चंद्र: शनि-गोचर 8.29°) —
 // इसलिए मान दो स्तरों में: पहले (birth × transit), फिर (birth) का default।
 export const PCP_LEADS = Object.freeze({
@@ -55,7 +67,7 @@ export const PCP_LEADS = Object.freeze({
   mercury: 0.15,
   jupiter: 0.17,
   venus: 6,
-  saturn: 0.89,
+  saturn: 10.667,
   rahu: 14.42,
   ketu: 13.94,
 })
@@ -64,7 +76,7 @@ const PCP_LEADS_BY_TRANSIT = Object.freeze({
   mars: { saturn: 5 },
   moon: { saturn: 8.29 },
   jupiter: { saturn: 5.36 },
-  saturn: { jupiter: 10.75 },
+  saturn: { jupiter: 10.72 },
   rahu: { saturn: 10.4 },
 })
 
@@ -74,6 +86,17 @@ export function leadFor(key, transitKey) {
   }
   return PCP_LEADS[key] ?? PCP_SETTINGS.startDeg * -1
 }
+
+// Per-transit −1° mid line (2026-10-09): Jupiter's −1° crossings show ~0.02°
+// deeper on the legacy screens than ours (display-day fit); Saturn uses −1°.
+export const PCP_MID_BY_TRANSIT = Object.freeze({ jupiter: -1.02 })
+export function midFor(key) {
+  return PCP_MID_BY_TRANSIT[key] ?? PCP_SETTINGS.midDeg
+}
+
+// Dip-open X per BIRTH planet: Saturn's dips open at X = zDeg + 0.7 (rv space;
+// see header comment — exact form open, equals +3.9137 for the reference chart).
+export const PCP_DIP_X = Object.freeze({ saturn: 0.7 })
 
 export const PCP_POSITION_SETS = Object.freeze({
   1579: [1, 5, 7, 9],
@@ -167,11 +190,14 @@ function bisectSpeed(lonAt, lo, hi, dirDown) {
 // ---------------------------------------------------------------------------
 // Events for one frame
 // ---------------------------------------------------------------------------
-// Types: A (rv=−5↑), B (rv=+1↑), E (rv=+10°40′↓), F (rv=−1↓),
-//        C (station retrograde, carries `rv`), D (station direct).
+// Types: A (rv=startLine↑), B (rv=+1↑), E (rv=dipLine↓ — +10°40′ default,
+//        zDeg+0.7 for Saturn), F (rv=midDeg↓ — −1 default / −1.02 Jupiter),
+//        C (station retrograde, carries `rv`), D (station direct, carries `rv`).
 export function collectEvents(lonAt, samples, rv, frameSign, zDeg, opts = {}) {
   const S = PCP_SETTINGS
   const startLine = opts.startLine ?? S.startDeg
+  const dipLine = opts.dipLine ?? S.dipStartDeg
+  const midDeg = opts.midDeg ?? S.midDeg
   const events = []
   for (let i = 1; i < samples.length; i++) {
     const s0 = samples[i - 1]
@@ -185,7 +211,9 @@ export function collectEvents(lonAt, samples, rv, frameSign, zDeg, opts = {}) {
       const r = lonAt(t)
       events.push({ t, type: 'C', rv: r ? rvNear(r.lon, frameSign, zDeg) : undefined })
     } else if (s0.speed < 0 && s1.speed >= 0) {
-      events.push({ t: bisectSpeed(lonAt, s0.t, s1.t, false), type: 'D' })
+      const t = bisectSpeed(lonAt, s0.t, s1.t, false)
+      const r = lonAt(t)
+      events.push({ t, type: 'D', rv: r ? rvNear(r.lon, frameSign, zDeg) : undefined })
     }
 
     // rv crossings (shortest-path fractions; refine with bisection)
@@ -197,8 +225,8 @@ export function collectEvents(lonAt, samples, rv, frameSign, zDeg, opts = {}) {
     }
     chk('A', startLine, +1)
     chk('B', S.endDeg, +1)
-    chk('E', S.dipStartDeg, -1)
-    chk('F', S.midDeg, -1)
+    chk('E', dipLine, -1)
+    chk('F', midDeg, -1)
   }
   return events.sort((x, y) => x.t - y.t)
 }
@@ -206,8 +234,11 @@ export function collectEvents(lonAt, samples, rv, frameSign, zDeg, opts = {}) {
 // ---------------------------------------------------------------------------
 // Assembly (per frame) + label filter
 // ---------------------------------------------------------------------------
-export function assembleSegments(events) {
+export function assembleSegments(events, opts = {}) {
   const S = PCP_SETTINGS
+  const startLine = opts.startLine ?? S.startDeg
+  const dipLine = opts.dipLine ?? S.dipStartDeg
+  const midDeg = opts.midDeg ?? S.midDeg
   const out = []
   let open = null
   const close = (e, evt) => {
@@ -220,17 +251,24 @@ export function assembleSegments(events) {
     } else if (e.type === 'E') {
       if (!open) open = { kind: 'dip', startMs: e.t, startEvent: 'E' }
     } else if (e.type === 'B') {
-      if (open && open.kind === 'dir') close(e, 'B')
+      if (open && (open.kind === 'dir' || open.kind === 'rise')) close(e, 'B')
     } else if (e.type === 'F') {
       if (open) close(e, 'F')
     } else if (e.type === 'C') {
-      if (open && open.kind === 'dir' && typeof e.rv === 'number' && e.rv < S.midDeg) {
+      if (open && open.kind === 'dir' && typeof e.rv === 'number' && e.rv < midDeg) {
         close(e, 'C')
-      } else if (!open && typeof e.rv === 'number' && e.rv > S.endDeg && e.rv <= S.dipStartDeg) {
+      } else if (!open && typeof e.rv === 'number' && e.rv > S.endDeg && e.rv <= dipLine) {
         open = { kind: 'dip', startMs: e.t, startEvent: 'C' }
       }
     } else if (e.type === 'D') {
-      if (open && open.kind === 'dip') close(e, 'D')
+      if (open && open.kind === 'dip') {
+        close(e, 'D')
+      } else if (!open && typeof e.rv === 'number' && e.rv < S.endDeg && e.rv >= startLine) {
+        // Rise row: after the station-D the planet climbs back to the +1° line
+        // without first re-crossing the start line (an A crossing would make
+        // the normal direct row instead).
+        open = { kind: 'rise', startMs: e.t, startEvent: 'D' }
+      }
     }
   }
   return out
@@ -246,14 +284,16 @@ export function computeRowsForPlanet(lonAt, tStartMs, tEndMs, zSign, zDeg, mode,
   const preRoll = opts.preRollMs ?? 900 * 24 * 3600 * 1000
   // Per-planet start lead: start line = −lead (crossed upward).
   const startLine = -(opts.leadDeg ?? leadFor(opts.planetKey))
+  const midDeg = opts.midDeg ?? PCP_SETTINGS.midDeg
+  const dipLine = opts.dipX != null ? zDeg + opts.dipX : PCP_SETTINGS.dipStartDeg
   const t0 = tStartMs - preRoll
   const samples = samplePlanet(lonAt, t0, tEndMs, stepMs)
   const rows = []
   for (const F of frameSigns(zSign)) {
     const rv = rvSeries(samples, F, zDeg)
-    const events = collectEvents(lonAt, samples, rv, F, zDeg, { startLine })
-    for (const seg of assembleSegments(events)) {
-      const k = seg.kind === 'dir' ? fwdCount(F, zSign) : backCount(F, zSign)
+    const events = collectEvents(lonAt, samples, rv, F, zDeg, { startLine, dipLine, midDeg })
+    for (const seg of assembleSegments(events, { startLine, dipLine, midDeg })) {
+      const k = seg.kind === 'dip' ? backCount(F, zSign) : fwdCount(F, zSign)
       if (!set.includes(k)) continue
       if (seg.endMs < tStartMs || seg.startMs > tEndMs) continue
       rows.push({
@@ -304,10 +344,13 @@ export function computeSpecialTransit(lonAtFor, opts) {
     const lonAt = lonAtFor(key)
     if (!lonAt) continue
     const leadDeg = opts.leadDeg ?? leadFor(birthKey, key)
+    const dipX = birthKey && PCP_DIP_X[birthKey] != null ? PCP_DIP_X[birthKey] : null
     const segments = computeRowsForPlanet(lonAt, tStartMs, tEndMs, zSign, zDeg, mode, {
       stepMs: stepFor(key),
       preRollMs: preRollFor(key),
       leadDeg,
+      midDeg: midFor(key),
+      dipX,
     })
     out.push({ key, planet: planetCode(key), segments })
   }

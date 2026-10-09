@@ -201,3 +201,33 @@ Scripts: `scripts/bnn-calib/` · दोबारा चलाएँ: `node scrip
   - (पहले से: मंगल 5, शुक्र 6, सूर्य 3.86, बुध 0.15)
 - Engine में (birth × transit) table के रूप में लगाया; **validation अब 27/51 PASS** (मंगल 15/15; सूर्य 2/4; शुक्र 2/4; चंद्र 4/9; गुरु 2/4; शनि 2/5; राहु 0/7; केतु 0/4)।
 - बाक़ी FAIL = सब "वक्री/station-टुकड़ों" की structure (जैसे RAH-1 = [−23.55→station], KET-5 = [x→station]-प्रकार) — इसका rule अगला काम।
+
+## 17) 🎯 Saturn · 159 · लंबी-range decode — वक्री-हिन्ट से नए नियम (2026-10-09)
+- Owner: "सिर्फ वक्री ग्रह के लिए combination उल्टी दिशा में count होता है" + नए screenshots:
+  **Saturn · 159 · 09-10-2026 → 09-10-2048** (पहली बार इतनी लंबी range; पहले की सारी calibration
+  2026-2031 थी)। साथ में हमारा live output — row-by-row मिलाया।
+- **हर visible row अब exact: 14/14** (जुपिटर 9 + शनि 5)। पहले जो गड़बड़ियाँ थीं: (a) दोनों tables में
+  **[D→B] climb-back rows पूरी तरह ग़ायब** थीं; (b) शनि×शनि का lead 0.89 था (ग़लत — असल में 10°40′);
+  (c) शनि की dips +10°40′ पर खुल रही थीं (असल में X-line पर); (d) 7-8 rows में तारीख़ें 1 दिन खिसकी थीं
+  (display-convention)।
+- **नए decoded नियम (सब code में)**:
+  1. **Lead (शनि-जन्म)**: शनि×शनि = **10°40′ = 10.667**; शनि×गुरु = **10.72** (display-fit; safe
+     window ≈ [10.708, 10.731] — boundary पर टिका, guru-confirm आगे)।
+  2. **Rise rows [D→B]**: station-D पर अगर `−lead ≤ rvD < +1` → नई row खुलती है जो अगले +1° crossing पर
+     बंद होती है (उदा. SAT-5 19-01-2030→21-05-2030, SAT-1 14-05-2028→17-08-2028)। rvD < −lead → वही
+     पुराना A-crossing row बनता है (SAT-5 09-03-2036); rvD ≥ +1 → कुछ नहीं।
+  3. **शनि की dips का X-line**: शनि के dips +10°40′ से नहीं खुलतीं — **rv ≈ +3.9** (fit [3.881, 3.933];
+     code में `zDeg + 0.7` = 3.9137 — form अभी open) से खुलती हैं। station-R, X से नीचे हो → station पर;
+     X तक न पहुँचे → **कोई dip row नहीं** (शनि 2030/2040 के +10°40′-crossings बिलकुल नहीं दिखते ✓)।
+  4. **−1° mid line per transit**: गुरु **−1.02**, शनि −1.00 (display-fit — q1/q9 ends exact बैठते हैं)।
+  5. **Display convention**: दिखने वाली तारीख़ = **crossing + 12h** की IST तारीख़ (noon-to-noon "दिन");
+     range-edge clipped row = edge की तारीख़। इससे 09-09→10-09, 20-05→21-05 जैसी 8 rows exact हुईं।
+- Files: `src/bnn/pcp.js` (leads + rise + dipX + midFor + opts) · `src/bnn/pcp-ui.js` (+12h display,
+  clipped edges) · `tests/bnn-pcp.test.js` (+4) · `scripts/bnn-calib/pcp-check.mjs` (नया case
+  SATURN-159 अब **14/14 exact**)।
+- **Score: 47/65 PASS** — मंगल 15/15 · शनि 5/5 · शनि-159 14/14 · सूर्य 2/4 · शुक्र 2/4 · चंद्र 4/9 ·
+  गुरु-b 3/4 · राहु 1/7 · केतु 1/4।
+- **बाक़ी खुले (अगली session)**: (a) सूर्य/चंद्र के "D-से-शुरू" rows जो rvD << start-line होते हुए भी
+  [D→B] बनते हैं पर शनि/मंगल में नहीं बनते (per-chart condition अभी नहीं मिली); चंद्र का rv≈−27.14
+  X-row; शुक्र का "E-छिपा" व्यवहार (v1 station-से शुरू, E पर नहीं)। (b) Mercury/राहु/केतु की dip-structures
+  (राहु 6 rows, केतु 2 rows बाक़ी)। (c) 159 vs 1579 dip-अपवाद (Mercury-2029)। (d) बाक़ी lead-combos।

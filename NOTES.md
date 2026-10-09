@@ -785,3 +785,17 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - user: sample देखकर — "तीसरे number का option B सुंदर है — apply कर दो"; साथ में शर्त: चमक **सिर्फ़ अंकों (4·8·3·10) पर**, background/मुख्य रंग वैसे ही रहें।
 - लागू: `render.js` entCell — aspect entries (MAR4/MAR8/SAT3/SAT10) में अंक `<span class="drishti-digit">` में; `style.css` — हर 1.5s टिमटिमाती सुनहरी चमक (per main colour: drishti-green/orange/blue keyframes), reduced-motion fallback। बाक़ी tables/print/PNG अछूते।
 - test +1 (digit spans सिर्फ़ 4·8·3·10, सिर्फ़ aspect cells पर) — **482 ✓**; headless still (कुछ अंक चमक-क्षण में freeze करके) से visually जाँचा ✓।
+
+### 2026-10-09 — BNN PCP: 🎯 Saturn·159 लंबी-range पूरा decode — 14/14 rows exact
+- user: वक्री-hint ("सिर्फ़ वक्री ग्रह के लिए combination उल्टी दिशा में count") + नए screenshots
+  (Saturn · 159 · 09-10-2026 → 09-10-2048) बनाम हमारा live output (10:06/10:08 वाले)।
+- **पहली बार row-by-row exact मिलान: गुरु 9/9 + शनि 5/5 = 14/14** (पहले: [D→B] rows ग़ायब,
+  शनि×शनि lead 0.89 ग़लत, शनि dips +10°40′ पर खुल रही थीं, 8 rows 1-दिन खिसकी)।
+- **नए नियम code में**: (1) **rise rows [D→B]** (`−lead ≤ rvD < +1` → अगले +1° तक); (2) शनि leads:
+  ×शनि **10.667**, ×गुरु **10.72**; (3) शनि dips अब **X ≈ +3.9 (zDeg+0.7)** पर — +10°40′-dips बंद;
+  (4) गुरु **−1.02** mid line; (5) **display = crossing + 12h** की IST तारीख़ (clipped = edge)।
+- Files: `src/bnn/pcp.js` · `src/bnn/pcp-ui.js` · `tests/bnn-pcp.test.js` (+4) · `scripts/bnn-calib/pcp-check.mjs`
+  (नया SATURN-159 case); **tests 486 ✓** · **pcp-check score 27/51 → 47/65** (मंगल 15/15 · शनि 5/5 ·
+  शनि-159 14/14)। ब्यौरा: `docs/bnn-calib-findings.md` §17 · `docs/pcp-research.md` v0.95।
+- बाक़ी (अगले दौर): सूर्य/चंद्र के "D-से-शुरू" rows · राहु/केतु/बुध की structures (user से उनकी १५९
+  tables माँगी) · 159-vs-1579 dip-अपवाद। **deploy: push origin main (CI)।**

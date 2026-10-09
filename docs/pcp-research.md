@@ -1,5 +1,6 @@
 # PCP / “Special Transit” — Research Log & Open Items
-**Status: v0.9 (built & live) — research continues.** Updated: 2026-10-07.
+**Status: v0.95 (built & live) — research continues.** Updated: 2026-10-09.
+(2026-10-09: Saturn-159 लंबी-range decode — rise rows, शनि-X-dip, display-convention; score 27/51 → 47/65। ब्यौरा: findings §17।)
 (यह दस्तावेज़ PCP/Special Transit पर हुई सारी research का एक-जगह ब्यौरा है — भविष्य के काम के लिए।)
 
 ## 0) कहाँ क्या है
@@ -26,11 +27,19 @@
    - `[station-R → station-D]` (VEN-9, Mercury-2029),
    - `[station-D → +1]` rise-rows (SUN-7 2026, चंद्र 15-07-2030),
    - और `[x → station]` प्रकार (RAH-1 [−23.5° → station], KET rows) — **यही अभी अधूरा हिस्सा है।**
+8. **Rise rows [D→B]** (2026-10-09 decode): station-D पर अगर `−lead ≤ rvD < +1` → नई row
+   [D → अगला +1° crossing]। rvD < −lead हो → वही पुराना A-crossing row बनता है; rvD ≥ +1 → कुछ नहीं।
+9. **शनि-जन्म (birth=Saturn)**: leads शनि×शनि = 10.667, शनि×गुरु = 10.72; शनि की dips +10°40′ पर नहीं
+   — **X-line ≈ rv +3.9** (code: zDeg+0.7) पर खुलती हैं; X तक न पहुँचें → कोई dip row नहीं।
+10. **Display convention** (2026-10-09): दिखने वाली तारीख़ = crossing + 12h की IST तारीख़ (noon-to-noon
+   दिन); range-edge = edge की तारीख़। −1° mid line गुरु के लिए −1.02, शनि −1.00 (display-fit)।
 
 ## 2) अब तक की validation (legacy से मिलान)
 - **मंगल (1579, 07-10-2026→07-01-2040): 15/15 ✅ पूरा perfect** (गुरु 9 + शनि 6)।
-- पूरा स्कोर: **27/51** — सूर्य 2/4 · शुक्र 2/4 · चंद्र 4/9 · गुरु 2/4 · शनि 2/5 · राहु 0/7 · केतु 0/4।
-- बाक़ी FAIL पंक्तियाँ = सब retro/station-टुकड़ों की structure (§1.7 का अधूरा हिस्सा)।
+- **शनि (1579, 2026-2031): 5/5 ✅** (2026-10-09 को 2/5 → 5/5)।
+- **शनि-159 (09-10-2026→09-10-2048, owner के screens): 14/14 ✅ exact** (सारे visible rows)।
+- नया पूरा स्कोर: **47/65** — सूर्य 2/4 · शुक्र 2/4 · चंद्र 4/9 · गुरु-b 3/4 · राहु 1/7 · केतु 1/4।
+- बाक़ी FAIL पंक्तियाँ = सूर्य/चंद्र के "D-से-शुरू" rows + राहु/केतु की station-टुकड़े + बाक़ी leads।
 
 ## 3) Reference tables (जो legacy से capture हुईं — source of truth)
 | चार्ट (selected ग्रह) | Settings | Rows (legacy) | कहाँ |
@@ -46,8 +55,11 @@
 (सब expectations `scripts/bnn-calib/pcp-check.mjs` में भी दर्ज हैं।)
 
 ## 4) अगले काम (future)
-1. **Retro/station-टुकड़ों का rule** — बाक़ी failed rows से decode करना (RAH/KET + सूर्य-चंद्र की कुछ rows सबसे अच्छे samples)।
-2. **बाक़ी lead-combos** भरना (सूर्य×शनि, बुध×शनि, शुक्र×शनि, केतु×शनि; गुरु×शनि के 5.4 vs 7.4 की पुष्टि) — ज़रूरत हो तो owner से एक-दो और tables।
+1. **सूर्य/चंद्र के "D-से-शुरू" rows** — rvD << start-line होते हुए भी [D→B] क्यों (शनि/मंगल में नहीं) —
+   per-chart condition ढूँढना; साथ में चंद्र का rv≈−27.14 वाला X-row और शुक्र का "E-छिपा" व्यवहार।
+2. **Mercury/राहु/केतु की dip-structures** — owner से उनकी 159 tables (लंबी range) माँगना — सबसे
+   ज़्यादा बाक़ी rows वहीं हैं (राहु 6, केतु 2, केतु-b sat ...)।
 3. **159 vs 1579 का dip-अपवाद** (Mercury-2029) — खुला।
-4. हर सुधार के बाद: `pcp-check` चलाएँ (लक्ष्य: सारे 51 ✅), tests, फिर commit+deploy।
-5. जब भी काम शुरू करें: पहले **यह दस्तावेज़ + findings §9–§16 + `pcp-check.mjs`** पढ़ें।
+4. **शनि×गुरु lead (10.72) और शनि-X (3.9137) की guru/डेटा-पुष्टि** — एक-दो और charts से।
+5. हर सुधार के बाद: `pcp-check` चलाएँ (लक्ष्य: सारे 65 ✅), tests, फिर commit+deploy।
+6. जब भी काम शुरू करें: पहले **यह दस्तावेज़ + findings §9–§17 + `pcp-check.mjs`** पढ़ें।
