@@ -832,5 +832,5 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - **(2) Live city-सुझाव (autocomplete)**: शहर-नाम लिखते ही (250ms debounce) नीचे सुझाव-सूची; click या ↑/↓+Enter से चयन; 30-query cache + out-of-order guard; खोजें-बटन जस का तस। **नोट: Open-Meteo एक अक्षर से खोज नहीं करती** (जाँचा) — पहले अक्षर पर नया संकेत `search.moreLetters` ("एक और अक्षर लिखें"), दूसरे अक्षर से सुझाव।
 - **(3) शनि-गुरु साथ-साथ**: जब ठीक 2 चार्ट-तालिकाएँ हों (शनि-गुरु / राहु-केतु) → `.bnn-st-pair` flex 50/50 — डेस्कटॉप बाजू-बाजू, मोबाइल नीचे-ऊपर; 1579+159 दोनों।
 - जाँच: tests **486 → 490 ✓** (hour-note · suggestions+keyboard · race · pair); headless shots (घंटा-संकेत · pair desktop+mobile · पूरा /bnn/) + **side-panel browser में live API-जाँच** (b→संकेत; be/bu→सुझाव; चयन ✓)। `npm run build` ✓।
-- फ़ाइलें: `src/bnn/main.js` · `pcp-ui.js` · `style.css` · `i18n.js` · `geocode.js` (comment) · `tests/bnn.test.js`। Token: wallet 4196 → ≈3241 (Δ ≈ 955)।
+- फ़ाइलें: `src/bnn/main.js` · `pcp-ui.js` · `style.css` · `i18n.js` · `geocode.js` (comment) · `tests/bnn.test.js`। Token: wallet 4196 → ≈2800 (Δ ≈ 1400; इसमें side-panel browser-जाँच + screenshots भी शामिल)।
 - बाक़ी: user ने कहा "फिर आगे कुछ नए बदलाव बताऊँगा" — प्रतीक्षा; चाहें तो यही सुविधाएँ मुख्य कुंडली/मिलान पेजों पर भी लगाई जा सकती हैं।
