@@ -6,7 +6,7 @@
 // IST (range-clipped edges show the range date).
 // Run: node scripts/bnn-calib/pcp-check.mjs
 import SwissEph from 'swisseph-wasm'
-import { computeRowsForPlanet, stepFor, preRollFor, midFor, leadFor } from '../../src/bnn/pcp.js'
+import { computeRowsForPlanet, stepFor, preRollFor, midFor, leadFor, PCP_COPEN_MIN, PCP_DEEP_A, PCP_FIRE_FLOOR, PCP_FIRE_CEIL, PCP_NO_RISE_BAND } from '../../src/bnn/pcp.js'
 
 const swe = new SwissEph()
 await swe.initSwissEph()
@@ -69,7 +69,7 @@ const CASES = [
     },
   },
   {
-    name: 'VENUS', zSign: 10, zDeg: 14.2986, leads: { jupiter: 6, saturn: 6 },
+    name: 'VENUS', birth: 'venus', zSign: 10, zDeg: 14.2986, dipX: 12.9, leads: { jupiter: 6.2, saturn: 6.2 },
     tStart: R[0], tEnd: R[1],
     expected: {
       jupiter: [
@@ -80,7 +80,7 @@ const CASES = [
     },
   },
   {
-    name: 'MOON', zSign: 11, zDeg: 12.512, leads: { jupiter: 2.44, saturn: 8.29 },
+    name: 'MOON', birth: 'moon', zSign: 11, zDeg: 12.512, dipX: 11.188, leads: { jupiter: 2.44, saturn: 8.29 },
     tStart: R[0], tEnd: R[1],
     expected: {
       jupiter: [
@@ -226,6 +226,50 @@ const CASES = [
       ],
     },
   },
+  {
+    // 2026-10-10 owner's screens: Moon · 159 · 09-10-2026 → 09-10-2048.
+    name: 'MOON (159)', birth: 'moon', zSign: 11, zDeg: 12.512, dipX: 11.188,
+    tStart: Date.UTC(2026, 9, 8, 18, 30, 0),
+    tEnd: Date.UTC(2048, 9, 9, 18, 29, 59),
+    expected: {
+      jupiter: [
+        ['MOO-5', '13-12-2026', '13-04-2027'], ['MOO-5', '08-11-2029', '14-03-2030'],
+        ['MOO-5', '15-07-2030', '28-11-2030'], ['MOO-9', '15-04-2031', '16-08-2031'],
+        ['MOO-1', '25-01-2034', '30-05-2034'], ['MOO-1', '03-08-2034', '27-10-2034'],
+        ['MOO-1', '29-11-2034', '17-01-2035'], ['MOO-9', '06-07-2037', '16-11-2037'],
+        ['MOO-9', '16-03-2038', '20-07-2038'],
+      ],
+      saturn: [
+        ['MOO-1', '09-10-2026', '11-12-2026'], ['MOO-1', '10-08-2027', '24-12-2027'],
+        ['MOO-9', '24-06-2033', '02-11-2033'], ['MOO-9', '16-03-2034', '16-11-2034'],
+        ['MOO-9', '30-03-2035', '24-07-2035'], ['MOO-5', '30-11-2035', '13-04-2036'],
+        ['MOO-5', '04-02-2037', '27-04-2037'], ['MOO-5', '05-11-2042', '26-02-2043'],
+        ['MOO-5', '16-07-2043', '09-03-2044'],
+      ],
+    },
+  },
+  {
+    // 2026-10-10 owner's screens: Venus · 159 · 09-10-2026 → 09-10-2048.
+    name: 'VENUS (159)', birth: 'venus', zSign: 10, zDeg: 14.2986, dipX: 12.9,
+    tStart: Date.UTC(2026, 9, 8, 18, 30, 0),
+    tEnd: Date.UTC(2048, 9, 9, 18, 29, 59),
+    expected: {
+      jupiter: [
+        ['VEN-5', '06-10-2029', '08-11-2029'], ['VEN-9', '14-03-2030', '15-07-2030'],
+        ['VEN-1', '29-04-2033', '26-06-2033'], ['VEN-1', '19-12-2033', '25-01-2034'],
+        ['VEN-1', '27-10-2034', '29-11-2034'], ['VEN-9', '05-06-2037', '06-07-2037'],
+        ['VEN-5', '16-11-2037', '16-03-2038'], ['VEN-5', '20-09-2041', '24-10-2041'],
+        ['VEN-9', '18-03-2042', '19-07-2042'],
+      ],
+      saturn: [
+        ['VEN-9', '04-08-2032', '19-10-2032'], ['VEN-9', '21-04-2033', '24-06-2033'],
+        ['VEN-5', '02-11-2033', '16-03-2034'], ['VEN-5', '16-11-2034', '23-03-2035'],
+        ['VEN-5', '24-03-2035', '30-03-2035'], ['VEN-5', '05-12-2041', '14-02-2042'],
+        ['VEN-5', '31-08-2042', '05-11-2042'], ['VEN-9', '26-02-2043', '16-07-2043'],
+        ['VEN-9', '09-03-2044', '27-07-2044'],
+      ],
+    },
+  },
 ]
 
 let pass = 0
@@ -236,12 +280,18 @@ for (const c of CASES) {
     const lonAt = makeLonAt(key)
     const mode = c.name.includes('159') ? '159' : '1579'
     const leadDeg = c.leads ? c.leads[key] : leadFor(c.birth ?? 'saturn', key)
+    const b = c.birth ?? 'saturn'
     const rows = computeRowsForPlanet(lonAt, c.tStart, c.tEnd, c.zSign, c.zDeg, mode, {
       stepMs: stepFor(key),
       preRollMs: preRollFor(key),
       leadDeg,
       midDeg: midFor(key),
       dipX: c.dipX ?? null,
+      cOpenMin: PCP_COPEN_MIN[b] != null ? PCP_COPEN_MIN[b] : null,
+      deepA: PCP_DEEP_A[b] != null ? PCP_DEEP_A[b] : null,
+      fireFloor: PCP_FIRE_FLOOR[b] != null ? PCP_FIRE_FLOOR[b] : null,
+      fireCeil: PCP_FIRE_CEIL[b] != null ? PCP_FIRE_CEIL[b] : null,
+      riseBand: PCP_NO_RISE_BAND[b] ? false : null,
     })
     const prefix = (c.expected.jupiter[0] || c.expected.saturn[0] || ['X'])[0].split('-')[0]
     const got = rows.map((r) => ({ label: `${prefix}-${r.k}`, start: dispIST(r.startMs, r.clippedStart), end: dispIST(r.endMs, r.clippedEnd) }))

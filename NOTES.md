@@ -818,3 +818,10 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - **बुध 18/18 · सूर्य 13/13 (±1)** — pcp-check **81/91 → 114/122** (मंगल/शनि/राहु/केतु/बुध/सूर्य सब हरे;
   बाक़ी 8 = शुक्र 2 · चंद्र 4 · गुरु-b 1 · सूर्य का एक ±2 outlier)। tests 486 ✓। findings §19 · research v1.1।
 - deploy: push origin main (CI)।
+
+### 2026-10-10 — BNN PCP: 🎯 चंद्र-शुक्र (159 · 2026→2048) decode — check 151/158
+- user के screenshots: चंद्र की दोनों tables + शुक्र की दोनों tables (सर + हमारा)।
+- **नए नियम (`pcp.js`)**: शुक्र lead **6.2 / X +27.2**; चंद्र **C-open [+7°,+23.7°] · deep-A −27.15° ·
+  fire-floor −25.5° (band नहीं)**। नए opts: cOpenMin/deepA/fireFloor/fireCeil/riseBand।
+- **चंद्र 18/18 · शुक्र 16/18 (±1)** — pcp-check **114/122 → 151/158** (सब ग्रह हरे; बाक़ी 7 = शुक्र-2035
+  split 2 · सूर्य ±2 · पुराने चंद्र legacy 3 · गुरु-b 1)। tests 486 ✓। findings §20 · research v1.2।

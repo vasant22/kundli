@@ -66,7 +66,7 @@ export const PCP_LEADS = Object.freeze({
   mars: 5,
   mercury: -0.15,
   jupiter: 0.17,
-  venus: 6,
+  venus: 6.2,
   saturn: 10.667,
   rahu: 23.75,
   ketu: 27.3,
@@ -98,7 +98,15 @@ export function midFor(key) {
 // Dip-open X offset per BIRTH planet (added to the natal degree, rv space):
 // Saturn 0.7 (X = 3.9137, 2026-10-09) · Rahu/Ketu 0.133 (X = 7.30, 2026-10-10
 // decode — rs3 [19-10-2028→05-01-2029] fit; exact form open).
-export const PCP_DIP_X = Object.freeze({ saturn: 0.7, rahu: 0.193, ketu: 0.133, mercury: 18.16, sun: -8.364 })
+export const PCP_DIP_X = Object.freeze({ saturn: 0.7, rahu: 0.193, ketu: 0.133, mercury: 18.16, sun: -8.364, venus: 12.9, moon: 11.188 })
+
+// Moon also opens rows at a deep A-line (rv −27.15° upward) and its station-R
+// C-open needs rvC >= +7° (decoded 2026-10-10).
+export const PCP_COPEN_MIN = Object.freeze({ moon: 7 })
+export const PCP_FIRE_FLOOR = Object.freeze({ moon: -25.5 })
+export const PCP_FIRE_CEIL = Object.freeze({ moon: 0.99 })
+export const PCP_NO_RISE_BAND = Object.freeze({ moon: true })
+export const PCP_DEEP_A = Object.freeze({ moon: -27.15 })
 
 // Rise rows that sit below the start line only qualify when the whole climb
 // (station-D → +1°) falls in this window (decoded 2026-10-10: keep 127d/136d;
@@ -233,6 +241,7 @@ export function collectEvents(lonAt, samples, rv, frameSign, zDeg, opts = {}) {
       }
     }
     chk('A', startLine, +1)
+    if (opts.deepA != null) chk('A2', opts.deepA, +1)
     chk('B', S.endDeg, +1)
     chk('E', dipLine, -1)
     chk('F', midDeg, -1)
@@ -251,7 +260,7 @@ export function assembleSegments(events, opts = {}) {
   const out = []
   let open = null
   const close = (e, evt) => {
-    if (open.kind === 'rise' && typeof open.rvD === 'number' && open.rvD < startLine) {
+    if (open.kind === 'rise' && typeof open.rvD === 'number' && open.rvD < startLine && opts.riseBand !== false) {
       const spanMs = e.t - open.startMs
       if (spanMs <= RISE_SPAN_MIN_MS || spanMs >= RISE_SPAN_MAX_MS) {
         // Short climb from below the start line: fall back to the A-crossing row.
@@ -266,8 +275,8 @@ export function assembleSegments(events, opts = {}) {
     open = null
   }
   for (const e of events) {
-    if (e.type === 'A') {
-      if (!open) open = { kind: 'dir', startMs: e.t, startEvent: 'A' }
+    if (e.type === 'A' || e.type === 'A2') {
+      if (!open) open = { kind: 'dir', startMs: e.t, startEvent: e.type }
       else if (open.kind === 'rise' && typeof open.rvD === 'number' && open.rvD < startLine && open.pendingA == null) {
         open.pendingA = e.t
       }
@@ -280,7 +289,7 @@ export function assembleSegments(events, opts = {}) {
     } else if (e.type === 'C') {
       if (open && (open.kind === 'dir' || open.kind === 'rise') && typeof e.rv === 'number' && e.rv < midDeg) {
         close(e, 'C')
-      } else if (!open && typeof e.rv === 'number' && e.rv > S.endDeg && e.rv <= dipLine) {
+      } else if (!open && typeof e.rv === 'number' && e.rv > S.endDeg && e.rv <= dipLine && e.rv >= (opts.cOpenMin ?? -Infinity)) {
         open = { kind: 'dip', startMs: e.t, startEvent: 'C' }
       }
     } else if (e.type === 'D') {
@@ -288,7 +297,7 @@ export function assembleSegments(events, opts = {}) {
         // Deep dips close at station-D; shallow ones (bottom below +1°) stay
         // open and close at the next +1° crossing instead (e.g. SUN 2031).
         if (typeof e.rv === 'number' && e.rv >= S.endDeg) close(e, 'D')
-      } else if (!open && typeof e.rv === 'number' && e.rv < S.endDeg && (e.rv >= startLine || (e.rv >= -20 && e.rv <= -17))) {
+      } else if (!open && typeof e.rv === 'number' && e.rv < S.endDeg && (e.rv >= startLine || (e.rv >= (opts.fireFloor ?? -20) && e.rv <= (opts.fireCeil ?? -17)))) {
         // Rise row: after the station-D the planet climbs back to the +1° line
         // without first re-crossing the start line (an A crossing would make
         // the normal direct row instead). Stations below the start line open a
@@ -313,13 +322,18 @@ export function computeRowsForPlanet(lonAt, tStartMs, tEndMs, zSign, zDeg, mode,
   const startLine = -(opts.leadDeg ?? leadFor(opts.planetKey))
   const midDeg = opts.midDeg ?? PCP_SETTINGS.midDeg
   const dipLine = opts.dipX != null ? zDeg + opts.dipX : PCP_SETTINGS.dipStartDeg
+  const deepA = opts.deepA ?? null
+  const cOpenMin = opts.cOpenMin ?? null
+  const fireFloor = opts.fireFloor ?? null
+  const fireCeil = opts.fireCeil ?? null
+  const riseBand = opts.riseBand ?? null
   const t0 = tStartMs - preRoll
   const samples = samplePlanet(lonAt, t0, tEndMs, stepMs)
   const rows = []
   for (const F of frameSigns(zSign)) {
     const rv = rvSeries(samples, F, zDeg)
-    const events = collectEvents(lonAt, samples, rv, F, zDeg, { startLine, dipLine, midDeg })
-    for (const seg of assembleSegments(events, { startLine, dipLine, midDeg, luminary: opts.luminary })) {
+    const events = collectEvents(lonAt, samples, rv, F, zDeg, { startLine, dipLine, midDeg, deepA })
+    for (const seg of assembleSegments(events, { startLine, dipLine, midDeg, luminary: opts.luminary, cOpenMin, fireFloor, fireCeil, riseBand })) {
       const k = seg.kind === 'dip' ? backCount(F, zSign) : fwdCount(F, zSign)
       if (!set.includes(k)) continue
       if (seg.endMs < tStartMs || seg.startMs > tEndMs) continue
@@ -379,6 +393,11 @@ export function computeSpecialTransit(lonAtFor, opts) {
       midDeg: midFor(key),
       dipX,
       luminary: birthKey === 'sun' || birthKey === 'moon',
+      cOpenMin: birthKey && PCP_COPEN_MIN[birthKey] != null ? PCP_COPEN_MIN[birthKey] : null,
+      deepA: birthKey && PCP_DEEP_A[birthKey] != null ? PCP_DEEP_A[birthKey] : null,
+      fireFloor: birthKey && PCP_FIRE_FLOOR[birthKey] != null ? PCP_FIRE_FLOOR[birthKey] : null,
+      fireCeil: birthKey && PCP_FIRE_CEIL[birthKey] != null ? PCP_FIRE_CEIL[birthKey] : null,
+      riseBand: birthKey && PCP_NO_RISE_BAND[birthKey] ? false : null,
     })
     out.push({ key, planet: planetCode(key), segments })
   }
