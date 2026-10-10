@@ -128,6 +128,7 @@ const STRINGS = {
 
     'search.busy': 'खोजा जा रहा है…',
     'search.enterName': 'पहले जगह का नाम लिखें।',
+    'search.moreLetters': 'एक और अक्षर लिखें — फिर सुझाव दिखेंगे।',
     'search.none': 'यह जगह नहीं मिली — नाम थोड़ा और साफ़ लिखकर फिर कोशिश करें।',
     'search.error': 'खोज पूरी नहीं हो सकी (इंटरनेट या सेवा की दिक़्क़त)। नीचे हाथ से विवरण भर सकते हैं।',
     'search.selected': 'चुना गया',
@@ -345,6 +346,7 @@ const STRINGS = {
 
     'search.busy': 'Searching…',
     'search.enterName': 'Type a place name first.',
+    'search.moreLetters': 'Type one more letter — suggestions will appear.',
     'search.none': 'Place not found — try a clearer name.',
     'search.error': 'Search could not complete (network or service issue). You can fill details manually below.',
     'search.selected': 'Selected',

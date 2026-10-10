@@ -1,7 +1,7 @@
 // geocode.js — birth-place lookup via Open-Meteo Geocoding (free, no API key).
 // Docs: https://open-meteo.com/en/docs/geocoding-api
-// Called only on an explicit user action (Search button / Enter), never per
-// keystroke — keep it polite to the free service.
+// Callers keep it polite to the free service: explicit searches (Search
+// button / Enter) plus debounced, cached live suggestions while typing.
 
 const ENDPOINT = 'https://geocoding-api.open-meteo.com/v1/search'
 const TIMEOUT_MS = 10000

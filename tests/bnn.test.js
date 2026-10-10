@@ -6,9 +6,18 @@
 import { beforeAll, describe, expect, it, vi } from 'vitest'
 
 vi.mock('../src/astro.js', () => ({
-  initEphemeris: vi.fn(async () => ({})),
+  // नक़ली swe: स्पेशल ट्रांज़िट के F/R flags के लिए काफ़ी (pcp-ui).
+  initEphemeris: vi.fn(async () => ({
+    julday: () => 2451545,
+    deltat: () => 0,
+    calc_ut: () => [123.4, 0, 0, 1], // lon / lat / dist / speed (speed>0 = सीधा)
+  })),
   RASHI_LORDS: ['mars', 'venus', 'mercury', 'moon', 'sun', 'mercury', 'venus', 'mars', 'jupiter', 'saturn', 'saturn', 'jupiter'],
 }))
+
+vi.mock('../src/geocode.js', () => ({ searchPlace: vi.fn(async () => []) }))
+
+vi.mock('../src/bnn/pcp.js', () => ({ computeSpecialTransit: vi.fn(() => []) }))
 
 vi.mock('../src/bnn/kp.js', () => {
   const cusp = (n, rashi, deg) => ({ n, rashi, degInSign: deg, longitude: rashi * 30 + deg })
@@ -348,5 +357,117 @@ describe('BNN page — chart (Phase 2b)', () => {
     }
     expect(digitsOf(sections[0]).sort()).toEqual(['10', '3', '4', '8']) // SAT10, SAT3, MAR8, MAR4
     expect(digitsOf(sections[1]).sort()).toEqual(['3', '8']) // VEN-row SAT3 · MOO-row MAR8
+  })
+})
+
+describe('BNN — form व UI सुधार (user 2026-10-10)', () => {
+  it('घंटा बॉक्स के नीचे 12-घंटे वाला संकेत दिखता है (20 → "(8 pm)")', () => {
+    const input = $('#f-hour')
+    const note = $('#hour-note')
+    expect(note).toBeTruthy()
+    expect(note.hidden).toBe(true)
+    input.value = '20'
+    input.dispatchEvent(new Event('input'))
+    expect(note.hidden).toBe(false)
+    expect(note.textContent).toBe('(8 pm)')
+    input.value = '7'
+    input.dispatchEvent(new Event('input'))
+    expect(note.textContent).toBe('(7 am)')
+    input.value = '0'
+    input.dispatchEvent(new Event('input'))
+    expect(note.textContent).toBe('(12 am)')
+    input.value = '12'
+    input.dispatchEvent(new Event('input'))
+    expect(note.textContent).toBe('(12 pm)')
+    input.value = '23'
+    input.dispatchEvent(new Event('input'))
+    expect(note.textContent).toBe('(11 pm)')
+    // ख़ाली या ग़लत मान पर संकेत छिप जाता है
+    input.value = ''
+    input.dispatchEvent(new Event('input'))
+    expect(note.hidden).toBe(true)
+    input.value = '25'
+    input.dispatchEvent(new Event('input'))
+    expect(note.hidden).toBe(true)
+    input.value = ''
+    input.dispatchEvent(new Event('input'))
+  })
+
+  it('दूसरे अक्षर से सुझाव आते हैं (एक अक्षर पर हल्का संकेत); ↓ और Enter से चुनाव होता है', async () => {
+    const { searchPlace } = await import('../src/geocode.js')
+    const betul = { name: 'Betūl', admin1: 'Madhya Pradesh', country: 'India', latitude: 21.9, longitude: 77.9, timezone: 'Asia/Kolkata' }
+    const bhopal = { name: 'Bhopal', admin1: 'Madhya Pradesh', country: 'India', latitude: 23.25, longitude: 77.4, timezone: 'Asia/Kolkata' }
+    searchPlace.mockResolvedValueOnce([betul, bhopal])
+    const input = $('#f-place')
+    // एक अक्षर: Open-Meteo एक अक्षर से खोज नहीं करती — हल्का संकेत दिखता है, कॉल नहीं जाती
+    input.value = 'b'
+    input.dispatchEvent(new Event('input'))
+    await vi.waitFor(() => expect($('#search-note').textContent).toContain('एक और अक्षर'))
+    expect(searchPlace).not.toHaveBeenCalledWith('b', 8)
+    expect($('#results').hidden).toBe(true)
+    // दूसरा अक्षर जोड़ते ही सुझाव आ जाते हैं
+    input.value = 'be'
+    input.dispatchEvent(new Event('input'))
+    await vi.waitFor(() => expect(searchPlace).toHaveBeenCalledWith('be', 8))
+    await vi.waitFor(() => expect(document.querySelectorAll('#results .result-item').length).toBe(2))
+    expect($('#results').hidden).toBe(false)
+    expect(document.querySelector('#results .result-item').textContent).toBe('Betūl, Madhya Pradesh, India')
+    // ↓ पहला सुझाव highlight करता है, Enter उसे चुन लेता है
+    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true, cancelable: true }))
+    expect(document.querySelector('#results .result-item').classList.contains('active')).toBe(true)
+    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }))
+    expect($('#results').hidden).toBe(true)
+    expect($('#place-confirm').hidden).toBe(false)
+    expect($('#place-confirm').textContent).toContain('Betūl')
+  })
+
+  it('उल्टे-सीधे जवाब (race) में पुराना नतीजा नहीं दिखता', async () => {
+    const { searchPlace } = await import('../src/geocode.js')
+    const deferred = () => {
+      let resolve
+      const promise = new Promise((r) => { resolve = r })
+      return { promise, resolve }
+    }
+    const d1 = deferred()
+    const d2 = deferred()
+    searchPlace.mockImplementationOnce(() => d1.promise).mockImplementationOnce(() => d2.promise)
+    const input = $('#f-place')
+    input.value = 'ja'
+    input.dispatchEvent(new Event('input'))
+    await vi.waitFor(() => expect(searchPlace).toHaveBeenCalledWith('ja', 8))
+    input.value = 'jai'
+    input.dispatchEvent(new Event('input'))
+    await vi.waitFor(() => expect(searchPlace).toHaveBeenCalledWith('jai', 8))
+    // नया जवाब पहले आता है और दिखता है, पुराना बाद में आकर उसे नहीं बिगाड़ता
+    d2.resolve([{ name: 'Betul-NEW', admin1: '', country: '', latitude: 1, longitude: 2, timezone: 'TZ' }])
+    await vi.waitFor(() => expect(document.querySelector('#results .result-item').textContent).toBe('Betul-NEW'))
+    d1.resolve([{ name: 'Betul-OLD', admin1: '', country: '', latitude: 1, longitude: 2, timezone: 'TZ' }])
+    await new Promise((r) => setTimeout(r, 20))
+    expect(document.querySelector('#results .result-item').textContent).toBe('Betul-NEW')
+    input.value = ''
+    input.dispatchEvent(new Event('input'))
+  })
+
+  it('दो चार्ट-तालिकाएँ (गुरु + शनि) साथ-साथ बनती हैं, अकेली तालिका नहीं', async () => {
+    const { computeSpecialTransit } = await import('../src/bnn/pcp.js')
+    const seg = (k) => ({ k, startMs: Date.UTC(2026, 0, 10, 6), endMs: Date.UTC(2026, 0, 12, 6) })
+    computeSpecialTransit.mockImplementationOnce(() => [
+      { key: 'jupiter', planet: 'JUP', segments: [seg(3), seg(5)] },
+      { key: 'saturn', planet: 'SAT', segments: [seg(9)] },
+    ])
+    document.querySelector('.bnn-st-find').click()
+    await vi.waitFor(() => expect(document.querySelectorAll('.bnn-st-tablewrap').length).toBe(2))
+    const results = document.querySelector('.bnn-st-results')
+    expect(results.classList.contains('bnn-st-pair')).toBe(true)
+    const titles = [...results.querySelectorAll('.bnn-st-title')].map((n) => n.textContent)
+    expect(titles[0]).toContain('TRANSIT JUP')
+    expect(titles[1]).toContain('TRANSIT SAT')
+    // अकेली तालिका वाली स्थिति में बाजू-बाजू लेआउट नहीं लगता
+    computeSpecialTransit.mockImplementationOnce(() => [
+      { key: 'jupiter', planet: 'JUP', segments: [seg(3)] },
+    ])
+    document.querySelector('.bnn-st-find').click()
+    await vi.waitFor(() => expect(document.querySelectorAll('.bnn-st-tablewrap').length).toBe(1))
+    expect(document.querySelector('.bnn-st-results').classList.contains('bnn-st-pair')).toBe(false)
   })
 })

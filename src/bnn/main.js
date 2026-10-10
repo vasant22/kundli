@@ -97,6 +97,7 @@ app.innerHTML = mybapujiStripHTML() + `
             <div class="mini">
               <label for="f-hour" data-i18n="time.hour"></label>
               <input id="f-hour" type="number" inputmode="numeric" min="0" max="23" placeholder="0–23" />
+              <p class="hour-note" id="hour-note" hidden></p>
             </div>
             <div class="mini">
               <label for="f-minute" data-i18n="time.minute"></label>
@@ -176,6 +177,8 @@ const placeInput = document.querySelector('#f-place')
 const resultsBox = document.querySelector('#results')
 const placeConfirm = document.querySelector('#place-confirm')
 const manualBox = document.querySelector('#manual-box')
+const hourInput = document.querySelector('#f-hour')
+const hourNote = document.querySelector('#hour-note')
 
 let lastValues = null // last successfully validated form values
 let lastErrors = {} // last validation errors (re-rendered on language switch)
@@ -183,6 +186,10 @@ let selectedPlace = null // picked search result: {name, admin1, country, latitu
 let lastResults = [] // current search results
 let lastNoteKey = null // key of the shown search note (for language switching)
 let lastSearch = { at: 0, query: '' } // cooldown so rapid repeats don't hit the free API
+let suggestTimer = null // debounce while typing in the place field (live suggestions)
+let suggestSeq = 0 // latest-request-wins guard (out-of-order responses are dropped)
+let activeIdx = -1 // keyboard-highlighted suggestion (↑/↓ + Enter)
+const suggestCache = new Map() // query → results; saves repeats on the free geocoding API
 
 const toInt = (s) => (s === '' ? NaN : Number(s))
 
@@ -267,6 +274,20 @@ function resolveCoordinates(values) {
     return { latitude: values.selectedPlace.latitude, longitude: values.selectedPlace.longitude }
   }
   return null
+}
+
+// The birth hour is typed in 24-hour form (e.g. 20); under the box we show the
+// same time in the easy 12-hour form — "(8 pm)" — as it is typed
+// (user request 2026-10-10).
+function updateHourNote() {
+  const raw = hourInput.value.trim()
+  const h = raw === '' ? NaN : Number(raw)
+  const ok = Number.isInteger(h) && h >= 0 && h <= 23
+  hourNote.hidden = !ok
+  if (ok) {
+    const h12 = h % 12 === 0 ? 12 : h % 12
+    hourNote.textContent = `(${h12} ${h < 12 ? 'am' : 'pm'})`
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -590,6 +611,9 @@ langToggle.addEventListener('click', () => {
   applyLanguage()
 })
 
+// जन्म-घंटा बदलते ही 12-घंटे वाला संकेत ताज़ा हो जाए (user 2026-10-10)
+hourInput.addEventListener('input', updateHourNote)
+
 function setNote(key) {
   lastNoteKey = key
   searchNote.hidden = !key
@@ -600,23 +624,37 @@ function displayName(place) {
   return [place.name, place.admin1, place.country].filter(Boolean).join(', ')
 }
 
+function selectPlace(place) {
+  selectedPlace = place
+  activeIdx = -1
+  setNote(null)
+  renderConfirm()
+  resultsBox.hidden = true // hide the suggestion list once picked
+}
+
 function renderResults() {
   resultsBox.replaceChildren()
   resultsBox.hidden = lastResults.length === 0
-  lastResults.forEach((place) => {
+  lastResults.forEach((place, i) => {
     const item = document.createElement('button')
     item.type = 'button'
-    item.className = 'result-item' + (place === selectedPlace ? ' selected' : '')
+    item.className =
+      'result-item' +
+      (place === selectedPlace ? ' selected' : '') +
+      (i === activeIdx ? ' active' : '')
     item.textContent = displayName(place)
-    item.addEventListener('click', () => {
-      selectedPlace = place
-      setNote(null)
-      renderConfirm()
-      renderResults()
-      resultsBox.hidden = true // hide the suggestion list once picked
-    })
+    item.addEventListener('click', () => selectPlace(place))
     resultsBox.append(item)
   })
+}
+
+// Keyboard highlight for the suggestion list (↑/↓ wrap around).
+function setActive(idx) {
+  if (lastResults.length === 0) return
+  activeIdx = (idx + lastResults.length) % lastResults.length
+  renderResults()
+  const el = resultsBox.children[activeIdx]
+  if (el && typeof el.scrollIntoView === 'function') el.scrollIntoView({ block: 'nearest' })
 }
 
 function renderConfirm() {
@@ -634,47 +672,142 @@ async function runSearch() {
     setNote('search.enterName')
     return
   }
+  if (query.length < 2) {
+    setNote('search.moreLetters')
+    return
+  }
 
   // Small cooldown between identical searches — polite to the free API.
   const now = Date.now()
   if (query === lastSearch.query && now - lastSearch.at < 300) return
   lastSearch = { at: now, query }
 
+  const seq = ++suggestSeq
   searchBtn.disabled = true
   setNote('search.busy')
   try {
-    lastResults = await searchPlace(query, 8)
-    if (lastResults.length === 0) {
-      resultsBox.hidden = true
-      setNote('search.none')
-    } else {
-      setNote(null)
-      renderResults()
+    const res = await fetchSuggestions(query)
+    if (seq === suggestSeq && placeInput.value.trim() === query) {
+      lastResults = res
+      activeIdx = -1
+      if (res.length === 0) {
+        resultsBox.hidden = true
+        setNote('search.none')
+      } else {
+        setNote(null)
+        renderResults()
+      }
     }
   } catch (err) {
     console.error(err)
-    resultsBox.hidden = true
-    setNote('search.error')
+    if (seq === suggestSeq) {
+      resultsBox.hidden = true
+      setNote('search.error')
+    }
   } finally {
     searchBtn.disabled = false
   }
 }
 
+// Cached geocoding lookup — typing asks the free API less often.
+async function fetchSuggestions(query) {
+  if (suggestCache.has(query)) return suggestCache.get(query)
+  const res = await searchPlace(query, 8)
+  suggestCache.set(query, res)
+  if (suggestCache.size > 30) suggestCache.delete(suggestCache.keys().next().value)
+  return res
+}
+
+// Live suggestions while typing (debounced). Failures stay quiet — the खोजें
+// button shows a message when the service is really down.
+function suggestFor(query) {
+  const seq = ++suggestSeq
+  fetchSuggestions(query)
+    .then((res) => {
+      if (seq !== suggestSeq) return // a newer keystroke won the race
+      if (placeInput.value.trim() !== query) return // the field has moved on
+      lastResults = res
+      activeIdx = -1
+      if (res.length === 0) {
+        resultsBox.hidden = true
+      } else {
+        setNote(null)
+        renderResults()
+      }
+    })
+    .catch((err) => {
+      console.error(err)
+    })
+}
+
 searchBtn.addEventListener('click', runSearch)
 
-// Enter in the place field runs the search (instead of submitting the form).
-placeInput.addEventListener('keydown', (event) => {
-  if (event.key === 'Enter') {
-    event.preventDefault()
-    runSearch()
-  }
-})
-
-// Editing the place text invalidates a previously picked place.
+// Live suggestions while typing, after a short pause (the geocoding service
+// needs two letters; single letters get a gentle hint). Editing also
+// invalidates a previously picked place.
 placeInput.addEventListener('input', () => {
   if (selectedPlace) {
     selectedPlace = null
     renderConfirm()
+  }
+  const query = placeInput.value.trim()
+  clearTimeout(suggestTimer)
+  activeIdx = -1
+  setNote(null)
+  if (!query) {
+    lastResults = []
+    resultsBox.hidden = true
+    return
+  }
+  if (suggestCache.has(query)) {
+    lastResults = suggestCache.get(query)
+    if (lastResults.length === 0) {
+      resultsBox.hidden = true
+    } else {
+      renderResults()
+    }
+    return
+  }
+  suggestTimer = setTimeout(() => {
+    if (query.length < 2) {
+      // Open-Meteo returns nothing for a single letter — show a gentle nudge
+      // instead of a dead pause (suggestions start from the second letter).
+      lastResults = []
+      resultsBox.hidden = true
+      setNote('search.moreLetters')
+      return
+    }
+    suggestFor(query)
+  }, 250)
+})
+
+// ↑/↓ highlight a suggestion; Enter picks the highlighted city (or runs the
+// search when nothing is highlighted); Escape closes the list.
+placeInput.addEventListener('keydown', (event) => {
+  const listOpen = !resultsBox.hidden && lastResults.length > 0
+  if (listOpen && event.key === 'ArrowDown') {
+    event.preventDefault()
+    setActive(activeIdx + 1)
+    return
+  }
+  if (listOpen && event.key === 'ArrowUp') {
+    event.preventDefault()
+    setActive(activeIdx - 1)
+    return
+  }
+  if (listOpen && event.key === 'Escape') {
+    event.preventDefault()
+    resultsBox.hidden = true
+    activeIdx = -1
+    return
+  }
+  if (event.key === 'Enter') {
+    event.preventDefault()
+    if (listOpen && activeIdx >= 0) {
+      selectPlace(lastResults[activeIdx])
+      return
+    }
+    runSearch()
   }
 })
 
@@ -765,6 +898,8 @@ function applyBirthPrefill(parsed) {
   } else if (parsed.place) {
     setVal('f-place', parsed.place)
   }
+
+  updateHourNote() // a prefilled hour shows its 12-hour hint right away
 }
 
 // ---------------------------------------------------------------------------

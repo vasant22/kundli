@@ -187,15 +187,20 @@ export function buildSpecialTransitSection(values, opts) {
   section.append(results)
 
   const renderRows = (st) => {
-    if (!st) return
+    if (!st) {
+      results.classList.remove('bnn-st-pair')
+      return
+    }
     const birthCode = CODE[values.stBirth || 'sun']
     results.replaceChildren()
     let any = false
+    let wrapCount = 0
     for (const p of st) {
       if (!p.segments || p.segments.length === 0) {
         continue
       }
       any = true
+      wrapCount += 1
       const wrap = el('div', 'bnn-st-tablewrap')
       wrap.append(el('div', 'bnn-st-title', `TRANSIT ${p.planet} (${HI_NAME[p.key]})`))
       const table = el('table', 'bnn-table bnn-st-table')
@@ -222,6 +227,8 @@ export function buildSpecialTransitSection(values, opts) {
       wrap.append(table)
       results.append(wrap)
     }
+    // दो चार्ट-तालिकाएँ (शनि-गुरु / राहु-केतु जैसी जोड़ी) एक-दूसरे के बाजू में — user request 2026-10-10
+    results.classList.toggle('bnn-st-pair', wrapCount === 2)
     if (!any) {
       results.append(el('p', 'bnn-st-empty', t('st.none')))
     }
@@ -251,6 +258,7 @@ export function buildSpecialTransitSection(values, opts) {
     if (!(tStartMs < tEndMs)) return
 
     findBtn.disabled = true
+    results.classList.remove('bnn-st-pair')
     results.replaceChildren(el('p', 'bnn-st-empty', t('st.computing')))
     // let the "computing" paint first
     setTimeout(() => {
@@ -277,6 +285,7 @@ export function buildSpecialTransitSection(values, opts) {
         renderRows(st)
       } catch (err) {
         console.error('Special Transit failed:', err)
+        results.classList.remove('bnn-st-pair')
         results.replaceChildren(el('p', 'bnn-st-empty', t('st.none')))
       } finally {
         findBtn.disabled = false

@@ -452,6 +452,15 @@ select:focus {
   color: var(--muted);
 }
 
+/* जन्म-समय: घंटा बॉक्स के नीचे सीधा 12-घंटे वाला संकेत, जैसे 20 → "(8 pm)" (user 2026-10-10) */
+.hour-note {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #b0470a;
+  line-height: 1.3;
+}
+
 .radio-row {
   display: flex;
   flex-wrap: wrap;
@@ -590,7 +599,8 @@ button.primary:hover {
   cursor: pointer;
 }
 
-.result-item:hover {
+.result-item:hover,
+.result-item.active {
   background: var(--saffron-soft);
 }
 
@@ -1373,6 +1383,17 @@ details.manual[open] summary {
   cursor: pointer;
 }
 .bnn-st-results { margin-top: 0.4rem; }
+/* दो चार्ट-तालिकाएँ (शनि-गुरु / राहु-केतु) साथ-साथ — user request 2026-10-10 */
+.bnn-st-results.bnn-st-pair {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.25rem 1rem;
+}
+.bnn-st-results.bnn-st-pair .bnn-st-tablewrap {
+  flex: 1 1 calc(50% - 1rem);
+  min-width: 235px;
+}
 .bnn-st-tablewrap { margin: 0.6rem 0 1rem; overflow-x: auto; }
 .bnn-st-title {
   display: inline-block;
