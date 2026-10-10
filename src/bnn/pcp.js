@@ -68,8 +68,8 @@ export const PCP_LEADS = Object.freeze({
   jupiter: 0.17,
   venus: 6,
   saturn: 10.667,
-  rahu: 14.42,
-  ketu: 13.94,
+  rahu: 23.75,
+  ketu: 27.3,
 })
 
 const PCP_LEADS_BY_TRANSIT = Object.freeze({
@@ -77,7 +77,8 @@ const PCP_LEADS_BY_TRANSIT = Object.freeze({
   moon: { saturn: 8.29 },
   jupiter: { saturn: 5.36 },
   saturn: { jupiter: 10.72 },
-  rahu: { saturn: 10.4 },
+  rahu: { jupiter: 23.75, saturn: 23.65 },
+  ketu: { jupiter: 27.2, saturn: 27.3 },
 })
 
 export function leadFor(key, transitKey) {
@@ -94,9 +95,10 @@ export function midFor(key) {
   return PCP_MID_BY_TRANSIT[key] ?? PCP_SETTINGS.midDeg
 }
 
-// Dip-open X per BIRTH planet: Saturn's dips open at X = zDeg + 0.7 (rv space;
-// see header comment — exact form open, equals +3.9137 for the reference chart).
-export const PCP_DIP_X = Object.freeze({ saturn: 0.7 })
+// Dip-open X offset per BIRTH planet (added to the natal degree, rv space):
+// Saturn 0.7 (X = 3.9137, 2026-10-09) · Rahu/Ketu 0.133 (X = 7.30, 2026-10-10
+// decode — rs3 [19-10-2028→05-01-2029] fit; exact form open).
+export const PCP_DIP_X = Object.freeze({ saturn: 0.7, rahu: 0.193, ketu: 0.133 })
 
 export const PCP_POSITION_SETS = Object.freeze({
   1579: [1, 5, 7, 9],
@@ -255,7 +257,7 @@ export function assembleSegments(events, opts = {}) {
     } else if (e.type === 'F') {
       if (open) close(e, 'F')
     } else if (e.type === 'C') {
-      if (open && open.kind === 'dir' && typeof e.rv === 'number' && e.rv < midDeg) {
+      if (open && (open.kind === 'dir' || open.kind === 'rise') && typeof e.rv === 'number' && e.rv < midDeg) {
         close(e, 'C')
       } else if (!open && typeof e.rv === 'number' && e.rv > S.endDeg && e.rv <= dipLine) {
         open = { kind: 'dip', startMs: e.t, startEvent: 'C' }

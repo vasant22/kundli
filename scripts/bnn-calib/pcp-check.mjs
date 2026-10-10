@@ -108,7 +108,7 @@ const CASES = [
   {
     // Leads now come from the engine tables (jup×sat 10.7635, sat×sat 10.667);
     // Saturn dips open at X = natal + 0.7° (dipX), no +10°40′ rows.
-    name: 'SATURN (1579)', zSign: 5, zDeg: 3.2137, dipX: 0.7,
+    name: 'SATURN (1579)', birth: 'saturn', zSign: 5, zDeg: 3.2137, dipX: 0.7,
     tStart: R[0], tEnd: R[1],
     expected: {
       jupiter: [['SAT-1', '13-10-2027', '08-02-2028'], ['SAT-1', '14-05-2028', '17-08-2028']],
@@ -121,7 +121,7 @@ const CASES = [
   {
     // 2026-10-09 owner's screens: Saturn · 159 · 09-10-2026 → 09-10-2048.
     // Matched EXACTLY (all visible rows); dates via the +12h display rule.
-    name: 'SATURN-159 (2026-10-09)', zSign: 5, zDeg: 3.2137, dipX: 0.7, exact: true,
+    name: 'SATURN-159 (2026-10-09)', birth: 'saturn', zSign: 5, zDeg: 3.2137, dipX: 0.7, exact: true,
     tStart: Date.UTC(2026, 9, 8, 18, 30, 0),
     tEnd: Date.UTC(2048, 9, 9, 18, 29, 59),
     expected: {
@@ -140,27 +140,48 @@ const CASES = [
     },
   },
   {
-    name: 'RAHU', zSign: 4, zDeg: 7.167, leads: { jupiter: 14.42, saturn: 10.4 },
-    tStart: R[0], tEnd: R[1],
+    // 2026-10-10 owner's screens: Rahu · 159 · 09-10-2026 → 09-10-2048.
+    // ±1-day display tolerance (their station/noon-boundary jitter).
+    name: 'RAHU (159)', birth: 'rahu', zSign: 4, zDeg: 7.167, dipX: 0.193,
+    tStart: Date.UTC(2026, 9, 8, 18, 30, 0),
+    tEnd: Date.UTC(2048, 9, 9, 18, 29, 59),
     expected: {
       jupiter: [
-        ['RAH-1', '05-08-2026', '13-12-2026'], ['RAH-1', '13-04-2027', '07-08-2027'],
-        ['RAH-9', '28-11-2030', '16-04-2031'],
+        ['RAH-1', '09-10-2026', '13-12-2026'], ['RAH-1', '13-04-2027', '07-08-2027'],
+        ['RAH-9', '28-11-2030', '15-04-2031'], ['RAH-9', '16-08-2031', '27-11-2031'],
+        ['RAH-5', '30-05-2034', '03-08-2034'], ['RAH-5', '17-01-2035', '10-05-2035'],
+        ['RAH-1', '20-07-2038', '10-01-2039'], ['RAH-1', '18-04-2039', '21-07-2039'],
+        ['RAH-9', '13-11-2042', '26-03-2043'],
       ],
       saturn: [
-        ['RAH-5', '19-04-2026', '27-07-2026'], ['RAH-5', '11-12-2026', '10-08-2027'],
-        ['RAH-5', '24-12-2027', '02-05-2028'], ['RAH-9', '19-10-2028', '06-01-2029'],
+        ['RAH-5', '11-12-2026', '10-08-2027'], ['RAH-5', '24-12-2027', '02-05-2028'],
+        ['RAH-9', '19-10-2028', '05-01-2029'], ['RAH-1', '24-07-2035', '30-11-2035'],
+        ['RAH-1', '13-04-2036', '23-11-2036'], ['RAH-1', '13-12-2036', '04-02-2037'],
+        ['RAH-1', '27-04-2037', '30-07-2037'], ['RAH-9', '10-01-2045', '21-03-2045'],
+        ['RAH-9', '09-10-2045', '02-04-2046'],
       ],
     },
   },
   {
-    name: 'KETU', zSign: 10, zDeg: 7.167, leads: { jupiter: 13.94, saturn: 13.94 },
-    tStart: R[0], tEnd: R[1],
+    // 2026-10-10 owner's screens: Ketu · 159 · 09-10-2026 → 09-10-2048.
+    name: 'KETU (159)', birth: 'ketu', zSign: 10, zDeg: 7.167, dipX: 0.133,
+    tStart: Date.UTC(2026, 9, 8, 18, 30, 0),
+    tEnd: Date.UTC(2048, 9, 9, 18, 29, 59),
     expected: {
       jupiter: [
-        ['KET-5', '30-09-2028', '11-02-2029'], ['KET-5', '14-06-2029', '06-10-2029'],
+        ['KET-5', '14-09-2028', '10-02-2029'], ['KET-5', '14-06-2029', '06-10-2029'],
+        ['KET-1', '21-12-2032', '29-04-2033'], ['KET-1', '26-06-2033', '09-09-2033'],
+        ['KET-1', '23-10-2033', '19-12-2033'], ['KET-9', '28-05-2036', '14-10-2036'],
+        ['KET-9', '09-02-2037', '05-06-2037'], ['KET-5', '29-08-2040', '14-03-2041'],
+        ['KET-5', '18-06-2041', '20-09-2041'],
       ],
-      saturn: [['KET-9', '07-07-2030', '21-09-2030']],
+      saturn: [
+        ['KET-9', '06-07-2030', '21-09-2030'], ['KET-9', '25-03-2031', '05-10-2031'],
+        ['KET-9', '16-02-2032', '04-08-2032'], ['KET-5', '19-10-2032', '13-02-2033'],
+        ['KET-9', '02-03-2033', '21-04-2033'], ['KET-5', '11-10-2039', '21-01-2040'],
+        ['KET-5', '07-06-2040', '02-02-2041'], ['KET-5', '20-06-2041', '05-12-2041'],
+        ['KET-9', '14-02-2042', '03-06-2042'],
+      ],
     },
   },
 ]
@@ -172,7 +193,7 @@ for (const c of CASES) {
   for (const key of ['jupiter', 'saturn']) {
     const lonAt = makeLonAt(key)
     const mode = c.name.includes('159') ? '159' : '1579'
-    const leadDeg = c.leads ? c.leads[key] : leadFor('saturn', key)
+    const leadDeg = c.leads ? c.leads[key] : leadFor(c.birth ?? 'saturn', key)
     const rows = computeRowsForPlanet(lonAt, c.tStart, c.tEnd, c.zSign, c.zDeg, mode, {
       stepMs: stepFor(key),
       preRollMs: preRollFor(key),

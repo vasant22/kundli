@@ -799,3 +799,13 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
   शनि-159 14/14)। ब्यौरा: `docs/bnn-calib-findings.md` §17 · `docs/pcp-research.md` v0.95।
 - बाक़ी (अगले दौर): सूर्य/चंद्र के "D-से-शुरू" rows · राहु/केतु/बुध की structures (user से उनकी १५९
   tables माँगी) · 159-vs-1579 dip-अपवाद। **deploy: push origin main (CI)।**
+
+### 2026-10-10 — BNN PCP: 🎯 राहु-केतु (159 · 09-10-2026→09-10-2048) decode — check 81/91
+- user के screenshots (सर का software + हमारा): राहु/केतु की जुपिटर+शनि tables, same settings।
+- **नए नियम (`pcp.js`)**: leads — **राहु 23.75 (×गुरु) / 23.65 (×शनि)**, **केतु 27.2 / 27.3** (पुराने
+  14.42/13.94 station-D-मान थे, ग़लत थे); **X-line** राहु **+7.36** / केतु +7.30; **rise row अब [D→C] भी
+  बंद** होती है (rv_C < −1°)। बाक़ी ढाँचा वही।
+- **राहु 18/18 · केतु 18/18 rows मिलीं** (19 exact; बाक़ी ±1 दिन = सर के software की display-jitter —
+  उनकी ही दो captures में वही crossing अलग दिन)। `pcp-check` अब **81/91** (मंगल 15/15 · शनि 5/5 ·
+  शनि-159 14/14 · राहु/केतु 18/18+18/18 सहित)। tests 486 ✓। ब्यौरा findings §18 · research v1.0।
+- बाक़ी: सूर्य/चंद्र/बुध की tables (user देगा)। deploy: push origin main।
