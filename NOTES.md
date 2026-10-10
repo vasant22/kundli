@@ -809,3 +809,12 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
   उनकी ही दो captures में वही crossing अलग दिन)। `pcp-check` अब **81/91** (मंगल 15/15 · शनि 5/5 ·
   शनि-159 14/14 · राहु/केतु 18/18+18/18 सहित)। tests 486 ✓। ब्यौरा findings §18 · research v1.0।
 - बाक़ी: सूर्य/चंद्र/बुध की tables (user देगा)। deploy: push origin main।
+
+### 2026-10-10 — BNN PCP: 🎯 बुध-सूर्य (159 · 2026→2048) decode — check 114/122
+- user के screenshots: बुध की दोनों tables + सूर्य की दोनों tables (सर + हमारा), same settings।
+- **नए नियम (`pcp.js`)**: बुध line **+0.15°/X≈+27.15°**; सूर्य lead **4.05°/X≈−0.2°**; **rise-window**
+  (126.5–137.5 दिन, rvD ≥ −20° — इसके बाहर sub-startLine rises अपने A-row रूप में); shallow dip close
+  अब station-D के बाद **+1** पर भी।
+- **बुध 18/18 · सूर्य 13/13 (±1)** — pcp-check **81/91 → 114/122** (मंगल/शनि/राहु/केतु/बुध/सूर्य सब हरे;
+  बाक़ी 8 = शुक्र 2 · चंद्र 4 · गुरु-b 1 · सूर्य का एक ±2 outlier)। tests 486 ✓। findings §19 · research v1.1।
+- deploy: push origin main (CI)।

@@ -164,5 +164,7 @@ describe('pcp engine — rise rows & Saturn dip X', () => {
     expect(leadFor('saturn', 'saturn')).toBe(10.667)
     expect(midFor('jupiter')).toBe(-1.02)
     expect(midFor('saturn')).toBe(-1)
+    expect(PCP_LEADS.mercury).toBe(-0.15)
+    expect(PCP_LEADS.sun).toBe(4.05)
   })
 })
