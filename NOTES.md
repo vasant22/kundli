@@ -834,3 +834,9 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - जाँच: tests **486 → 490 ✓** (hour-note · suggestions+keyboard · race · pair); headless shots (घंटा-संकेत · pair desktop+mobile · पूरा /bnn/) + **side-panel browser में live API-जाँच** (b→संकेत; be/bu→सुझाव; चयन ✓)। `npm run build` ✓।
 - फ़ाइलें: `src/bnn/main.js` · `pcp-ui.js` · `style.css` · `i18n.js` · `geocode.js` (comment) · `tests/bnn.test.js`। Token: wallet 4196 → ≈2800 (Δ ≈ 1400; इसमें side-panel browser-जाँच + screenshots भी शामिल)।
 - बाक़ी: user ने कहा "फिर आगे कुछ नए बदलाव बताऊँगा" — प्रतीक्षा; चाहें तो यही सुविधाएँ मुख्य कुंडली/मिलान पेजों पर भी लगाई जा सकती हैं।
+
+### 2026-10-11 — समय-क्षेत्र अब अपने-आप (user request)
+- `src/tzauto.js` (नया): manual भाग में अक्षांश-देशांतर भरते ही Open-Meteo (timezone=auto) से समय क्षेत्र अपने-आप भरता है — तीनों forms: कुंडली · मिलान · BNN। सुरक्षा: यूज़र का ख़ुद भरा हुआ कभी नहीं छीना जाता; नेटवर्क न मिले तो चुपचाप छोड़ता है (पुराना ख़ुद-भरने वाला तरीक़ा वैसे ही चलता है)।
+- i18n: `tz.auto.*` नए keys + `manual.hint` अद्यतन; `footer.privacy` व README "Privacy" में Open-Meteo-लुकअप का ज़िक्र।
+- Tests: +12 → **502** (नया `tests/tzauto.test.js` + तीनों pages के integration tests)। TZ=UTC ✓, build ✓, real-Chromium (Playwright) जाँच ✓ (21.4833/78.25 → Asia/Kolkata)। Deploy: commit `4ac5351` — Actions ✓, live।
+- ख़र्च: wallet 3837 (17:20) → ~2274 (18:10 IST)।
