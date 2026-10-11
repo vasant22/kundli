@@ -54,8 +54,8 @@ npm test       # test suite
 
 ## Privacy
 
-- All calculations run in the visitor's browser. Nothing is stored or sent — no analytics, no trackers, no cookies, no external scripts.
-- The only network request is the optional **Open-Meteo** place search, and only when you press “Search / खोजें”.
+- All calculations run in the visitor's browser. Nothing is stored — no analytics, no trackers, no cookies, no external scripts.
+- Network requests go only to the free **Open-Meteo** service: the optional place search (button + live suggestions while typing), and — when coordinates are typed manually — a small lookup that fills the **time zone** automatically.
 
 ## Accuracy & known differences
 

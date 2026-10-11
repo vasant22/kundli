@@ -137,7 +137,10 @@ const STRINGS = {
     'manual.lat': 'अक्षांश (latitude)',
     'manual.lon': 'देशांतर (longitude)',
     'manual.tz': 'समय क्षेत्र',
-    'manual.hint': 'समय क्षेत्र: IANA नाम (जैसे Asia/Kolkata) या UTC offset (जैसे +05:30)।',
+    'manual.hint': 'समय क्षेत्र: अक्षांश-देशांतर भरते ही अपने-आप भर जाता है — चाहें तो ख़ुद भी लिख सकते हैं (जैसे Asia/Kolkata या +05:30)।',
+    'tz.auto.searching': 'समय क्षेत्र ढूँढा जा रहा है…',
+    'tz.auto.filled': 'समय क्षेत्र निर्देशांकों से अपने-आप भर गया — ज़रूरत हो तो बदल दीजिए।',
+    'tz.auto.notfound': 'समय क्षेत्र अपने-आप नहीं मिला — कृपया ख़ुद भर दीजिए (जैसे +05:30)।',
 
     'err.gender': 'कृपया लिंग चुनें।',
     'err.dateRequired': 'जन्म तिथि पूरी भरें — दिन, महीना और साल।',
@@ -203,7 +206,7 @@ const STRINGS = {
     'msg.copied': '✓ कॉपी हो गया',
     'msg.copyFailed': 'कॉपी नहीं हो सका',
     'msg.pngFailed': 'PNG नहीं बन सकी — फिर कोशिश करें।',
-    'footer.privacy': '🔒 निजता: जन्म-विवरण आपके ब्राउज़र में ही रहता है — कहीं भेजा या सेव नहीं होता।',
+    'footer.privacy': '🔒 निजता: जन्म-विवरण आपके ब्राउज़र में ही रहता है — ऐप कुछ सेव नहीं करता; जगह-खोज व समय-क्षेत्र लुकअप के लिए केवल Open-Meteo से संपर्क होता है।',
     'footer.poweredBy': 'गणना इंजन: ',
     'footer.source': 'सोर्स कोड (GitHub)',
 
@@ -355,7 +358,10 @@ const STRINGS = {
     'manual.lat': 'Latitude',
     'manual.lon': 'Longitude',
     'manual.tz': 'Time zone',
-    'manual.hint': 'Time zone: IANA name (e.g. Asia/Kolkata) or UTC offset (e.g. +05:30).',
+    'manual.hint': 'Time zone: fills automatically from latitude/longitude — you can also type it (e.g. Asia/Kolkata or +05:30).',
+    'tz.auto.searching': 'Finding the time zone…',
+    'tz.auto.filled': 'Time zone filled from the coordinates — change it if needed.',
+    'tz.auto.notfound': 'Could not find the time zone automatically — please enter it (e.g. +05:30).',
 
     'err.gender': 'Please choose a gender.',
     'err.dateRequired': 'Fill the full birth date — day, month and year.',
@@ -421,7 +427,7 @@ const STRINGS = {
     'msg.copied': '✓ Copied',
     'msg.copyFailed': 'Could not copy',
     'msg.pngFailed': 'PNG could not be created — please try again.',
-    'footer.privacy': '🔒 Privacy: your birth details stay in your browser — never sent or stored anywhere.',
+    'footer.privacy': '🔒 Privacy: your birth details stay in your browser — the app stores nothing; only Open-Meteo is contacted (place search & time-zone lookup).',
     'footer.poweredBy': 'Powered by ',
     'footer.source': 'Source code (GitHub)',
 

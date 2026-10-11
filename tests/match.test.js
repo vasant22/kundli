@@ -247,3 +247,32 @@ describe('Phase 5 — full match report', () => {
     expect(copied).toContain('कुल योग: 28 / 36')
   })
 })
+
+// ---------------------------------------------------------------------------
+// समय-क्षेत्र अपने-आप (अक्षांश-देशांतर → Open-Meteo) — user request 2026-10-11
+// ---------------------------------------------------------------------------
+describe('अक्षांश-देशांतर से समय-क्षेत्र अपने-आप (मिलान)', () => {
+  it('लड़के के निर्देशांक भरते ही #b-tz भर जाता है', async () => {
+    for (const sel of ['#b-place', '#b-tz', '#b-lat', '#b-lon']) {
+      const el = document.querySelector(sel)
+      if (!el) continue
+      el.value = ''
+      el.dispatchEvent(new Event('input', { bubbles: true }))
+    }
+    const mock = vi.fn(async () => ({ ok: true, json: async () => ({ timezone: 'Asia/Kolkata' }) }))
+    vi.stubGlobal('fetch', mock)
+
+    const lat = document.querySelector('#b-lat')
+    const lon = document.querySelector('#b-lon')
+    lat.value = '21.4833'
+    lat.dispatchEvent(new Event('input', { bubbles: true }))
+    lon.value = '78.25'
+    lon.dispatchEvent(new Event('input', { bubbles: true }))
+
+    await vi.waitFor(
+      () => expect(document.querySelector('#b-tz').value).toBe('Asia/Kolkata'),
+      { timeout: 2500 },
+    )
+    expect(document.querySelector('#b-tz-auto-note').hidden).toBe(false)
+  })
+})

@@ -16,6 +16,7 @@ import { computeAshtakoot } from './ashtakoot.js'
 import { checkMangalDosha, mangalPairNotes } from './mangaldosha.js'
 import { buildScorecardSvg } from './matchcard.js'
 import { mybapujiStripHTML } from './mybapuji-strip.js'
+import { attachTimezoneAutofill } from './tzauto.js'
 
 // Where the public source code lives (same repo as the main page).
 const SOURCE_URL = 'https://github.com/vasant22/kundli'
@@ -110,6 +111,7 @@ function personFieldsHtml(p) {
           </div>
         </div>
         <p class="note" data-i18n="manual.hint"></p>
+        <p class="note" id="${id('tz-auto-note')}" aria-live="polite" hidden></p>
         <p class="err" id="${id('err-manual')}" aria-live="polite"></p>
       </details>
       <p class="note credit">Geocoding by <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo.com</a></p>
@@ -369,6 +371,25 @@ function setupSearch(p) {
     placeConfirm: document.getElementById(`${p}-place-confirm`),
   }
   st.dom = dom
+
+  // अक्षांश-देशांतर भरते ही समय-क्षेत्र अपने-आप (Open-Meteo — देखें src/tzauto.js)।
+  const tzNote = document.getElementById(`${p}-tz-auto-note`)
+  attachTimezoneAutofill({
+    latEl: document.getElementById(`${p}-lat`),
+    lonEl: document.getElementById(`${p}-lon`),
+    tzEl: document.getElementById(`${p}-tz`),
+    onState(state) {
+      tzNote.hidden = !state
+      tzNote.classList.toggle('ok', state === 'filled')
+      if (state) {
+        tzNote.dataset.i18n = `tz.auto.${state}`
+        tzNote.textContent = t(`tz.auto.${state}`)
+      } else {
+        tzNote.removeAttribute('data-i18n')
+        tzNote.textContent = ''
+      }
+    },
+  })
 
   const setNote = (key) => {
     st.lastNoteKey = key

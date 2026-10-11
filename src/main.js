@@ -9,6 +9,7 @@ import { formatUtcOffset, parseUtcOffset, wallTimeToUtc } from './timeutil.js'
 import { computeKundli, initEphemeris, navamsaKundli, computeVimshottari } from './astro.js'
 import { buildNorthChart, buildSouthChart } from './charts.js'
 import { mybapujiStripHTML } from './mybapuji-strip.js'
+import { attachTimezoneAutofill } from './tzauto.js'
 
 // Where the public source code lives — confirmed/adjusted when the GitHub
 // repo is created (deploy phase).
@@ -126,6 +127,7 @@ app.innerHTML = mybapujiStripHTML() + `
               </div>
             </div>
             <p class="note" data-i18n="manual.hint"></p>
+            <p class="note" id="tz-auto-note" aria-live="polite" hidden></p>
             <p class="err" id="err-manual" aria-live="polite"></p>
           </details>
           <p class="note credit">Geocoding by <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo.com</a></p>
@@ -166,6 +168,25 @@ let selectedPlace = null // place picked from search results: {name, admin1, cou
 let lastResults = [] // current search results (array of places)
 let lastNoteKey = null // key of the currently shown search note (for language switching)
 let lastSearch = { at: 0, query: '' } // tiny cooldown so rapid repeats don't hit the free API
+
+// अक्षांश-देशांतर भरते ही समय-क्षेत्र अपने-आप (Open-Meteo — देखें src/tzauto.js)।
+const tzAutoNote = document.querySelector('#tz-auto-note')
+attachTimezoneAutofill({
+  latEl: document.querySelector('#f-lat'),
+  lonEl: document.querySelector('#f-lon'),
+  tzEl: document.querySelector('#f-tz'),
+  onState(state) {
+    tzAutoNote.hidden = !state
+    tzAutoNote.classList.toggle('ok', state === 'filled')
+    if (state) {
+      tzAutoNote.dataset.i18n = `tz.auto.${state}`
+      tzAutoNote.textContent = t(`tz.auto.${state}`)
+    } else {
+      tzAutoNote.removeAttribute('data-i18n')
+      tzAutoNote.textContent = ''
+    }
+  },
+})
 
 // ---------------------------------------------------------------------------
 // Helpers

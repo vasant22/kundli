@@ -562,3 +562,35 @@ describe('Phase 14 — corrections & additions (D9, Chalit, Dasha, PDF)', () => 
     expect(document.querySelector('.footer-credit-line')).toBeTruthy()
   })
 })
+
+// ---------------------------------------------------------------------------
+// समय-क्षेत्र अपने-आप (अक्षांश-देशांतर → Open-Meteo) — user request 2026-10-11
+// ---------------------------------------------------------------------------
+describe('अक्षांश-देशांतर से समय-क्षेत्र अपने-आप', () => {
+  it('दोनों निर्देशांक भरते ही #f-tz भर जाता है और note दिखता है', async () => {
+    // साफ़ शुरुआत — पुरानी values हटाओ (event के साथ, ताकि page की state भी साफ़ हो)
+    for (const sel of ['#f-place', '#f-tz', '#f-lat', '#f-lon']) {
+      const el = document.querySelector(sel)
+      el.value = ''
+      el.dispatchEvent(new Event('input', { bubbles: true }))
+    }
+    const mock = vi.fn(async () => ({ ok: true, json: async () => ({ timezone: 'Asia/Kolkata' }) }))
+    vi.stubGlobal('fetch', mock)
+
+    const lat = document.querySelector('#f-lat')
+    const lon = document.querySelector('#f-lon')
+    lat.value = '21.4833'
+    lat.dispatchEvent(new Event('input', { bubbles: true }))
+    lon.value = '78.25'
+    lon.dispatchEvent(new Event('input', { bubbles: true }))
+
+    await vi.waitFor(
+      () => expect(document.querySelector('#f-tz').value).toBe('Asia/Kolkata'),
+      { timeout: 2500 },
+    )
+    const note = document.querySelector('#tz-auto-note')
+    expect(note.hidden).toBe(false)
+    expect(note.textContent.length).toBeGreaterThan(0)
+    expect(mock).toHaveBeenCalled()
+  })
+})

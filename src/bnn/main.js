@@ -22,6 +22,7 @@ import { buildPrintSheet } from './print.js'
 import { buildAllChartSvg, downloadAllChartPng } from './allchart.js'
 import { ageYMD, buildBhavaTables, buildBnnChart, buildDashaTables, buildPlanetTables, exchangeLabel, planetCode, weekdayEN } from './render.js'
 import { mybapujiStripHTML } from '../mybapuji-strip.js'
+import { attachTimezoneAutofill } from '../tzauto.js'
 
 // Where the public source code lives (same repo as the other pages).
 const SOURCE_URL = 'https://github.com/vasant22/kundli'
@@ -144,6 +145,7 @@ app.innerHTML = mybapujiStripHTML() + `
               </div>
             </div>
             <p class="note" data-i18n="manual.hint"></p>
+            <p class="note" id="tz-auto-note" aria-live="polite" hidden></p>
             <p class="err" id="err-manual" aria-live="polite"></p>
           </details>
           <p class="note credit">Geocoding by <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo.com</a></p>
@@ -186,6 +188,25 @@ let selectedPlace = null // picked search result: {name, admin1, country, latitu
 let lastResults = [] // current search results
 let lastNoteKey = null // key of the shown search note (for language switching)
 let lastSearch = { at: 0, query: '' } // cooldown so rapid repeats don't hit the free API
+
+// अक्षांश-देशांतर भरते ही समय-क्षेत्र अपने-आप (Open-Meteo — देखें src/tzauto.js)।
+const tzAutoNote = document.querySelector('#tz-auto-note')
+attachTimezoneAutofill({
+  latEl: document.querySelector('#f-lat'),
+  lonEl: document.querySelector('#f-lon'),
+  tzEl: document.querySelector('#f-tz'),
+  onState(state) {
+    tzAutoNote.hidden = !state
+    tzAutoNote.classList.toggle('ok', state === 'filled')
+    if (state) {
+      tzAutoNote.dataset.i18n = `tz.auto.${state}`
+      tzAutoNote.textContent = t(`tz.auto.${state}`)
+    } else {
+      tzAutoNote.removeAttribute('data-i18n')
+      tzAutoNote.textContent = ''
+    }
+  },
+})
 let suggestTimer = null // debounce while typing in the place field (live suggestions)
 let suggestSeq = 0 // latest-request-wins guard (out-of-order responses are dropped)
 let activeIdx = -1 // keyboard-highlighted suggestion (↑/↓ + Enter)
