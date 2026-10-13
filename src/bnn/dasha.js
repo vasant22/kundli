@@ -10,8 +10,10 @@
 //    (year = 365.25 days; month fraction = yearDays/12; days rounded).
 //  • Mahadasha end dates by whole calendar years (each end = previous + the
 //    lord's full years, calendar-wise).
-//  • Bhukthi length = round(dasha_years × 366 × bhukthi_years / 120) days;
-//    the LAST bhukthi ends exactly on the mahadasha end.
+//  • Bhukthi length = floor(dasha_years × 366 × bhukthi_years / 120) days — the old
+//    software's integer division (user 2026-10-13: the MER-dasha chain matches to the
+//    day; round() matched only its integer-safe rows); the LAST bhukthi ends exactly
+//    on the mahadasha end.
 //  • Andhiram length = floor(bhukthi_length × andhiram_years / 120) days;
 //    the LAST andhiram ends exactly on the bhukthi end. (The guide says
 //    "~364-day year within 1 day"; re-fit against the reference: the
@@ -126,7 +128,7 @@ export function bhukthiList(maha, birth, settings = DASHA_SETTINGS) {
   let start = parseISO(maha.startISO)
   const end = parseISO(maha.endISO)
   const lordIdx = ORDER.indexOf(maha.lord)
-  const nominal = (lord) => Math.round((YEARS[maha.lord] * settings.bhukthiYearDays * YEARS[lord]) / 120)
+  const nominal = (lord) => Math.floor((YEARS[maha.lord] * settings.bhukthiYearDays * YEARS[lord]) / 120)
   // Partial (first) mahadasha: distribute the overhang over the elapsed lead.
   let overhang = 0
   {
@@ -165,7 +167,7 @@ export function bhukthiList(maha, birth, settings = DASHA_SETTINGS) {
  */
 export function andhiramList(mahaLord, bhukthi, birth, settings = DASHA_SETTINGS) {
   const b0 = birthYMD(birth)
-  const bhukthiLen = Math.round((YEARS[mahaLord] * settings.bhukthiYearDays * YEARS[bhukthi.lord]) / 120)
+  const bhukthiLen = Math.floor((YEARS[mahaLord] * settings.bhukthiYearDays * YEARS[bhukthi.lord]) / 120)
   const rows = []
   let start = parseISO(bhukthi.startISO)
   const end = parseISO(bhukthi.endISO)
