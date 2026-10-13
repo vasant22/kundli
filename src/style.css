@@ -1320,6 +1320,32 @@ details.manual[open] summary {
 .bnn-actions-row .bnn-allchart-btn { background: #b0470a; border-color: #b0470a; }
 .bnn-actions-row .bnn-allchart-btn:hover { background: #8f3a08; }
 .bnn-dasha-table tr.row-blank td { color: #b9ac8e; }
+
+/* दशा/भुक्ति/अंतर का manual चयन (user 2026-10-13 — Windows app जैसा) */
+.bnn-dasha-note {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  font-size: 0.78rem;
+  color: #6b5b3a;
+  margin: 0 0 0.35rem;
+}
+.bnn-dasha-note .bnn-dasha-back {
+  font-size: 0.75rem;
+  padding: 0.1rem 0.55rem;
+  border: 1px solid #c9a227;
+  background: #fffaf0;
+  color: #8a6210;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.bnn-dasha-note .bnn-dasha-back:hover { background: #fff3d6; }
+.bnn-dasha-table tr.row-pickable { cursor: pointer; }
+.bnn-dasha-table tr.row-pickable:hover td { background: #f6f9ff; }
+.bnn-dasha-table tr.row-pickable:focus-visible { outline: 2px solid #1d4ed8; outline-offset: -2px; }
+.bnn-dasha-table tr.row-picked td { background: #e8effc; }
+.bnn-dasha-table tr.row-picked td.dasha-lord { background: #dbe6fb; }
 .bnn-legend .lg-dot {
   display: inline-block;
   width: 11px;

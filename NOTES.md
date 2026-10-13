@@ -840,3 +840,11 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - i18n: `tz.auto.*` नए keys + `manual.hint` अद्यतन; `footer.privacy` व README "Privacy" में Open-Meteo-लुकअप का ज़िक्र।
 - Tests: +12 → **502** (नया `tests/tzauto.test.js` + तीनों pages के integration tests)। TZ=UTC ✓, build ✓, real-Chromium (Playwright) जाँच ✓ (21.4833/78.25 → Asia/Kolkata)। Deploy: commit `4ac5351` — Actions ✓, live।
 - ख़र्च: wallet 3837 (17:20) → ~2274 (18:10 IST)।
+
+### 2026-10-13 — दशा/भुक्ति/अंतर-लंबाई round → floor (`47048bd`) + website पर manual चयन
+- **floor (commit `47048bd`, 07:50):** भुक्ति/अंतर की लंबाई अब `floor(...)` (पुराने software की integer-division)। user के sir-software screenshot (MER दशा → SUN भुक्ति) की अंतर-तारीख़ें floor से हूबहू; round से हर पंक्ति +1 दिन। `src/bnn/dasha.js`; tests 502 ✓ · dasha-check 27/27 ✓। (यह commit अब website-side feature के साथ push होगा।)
+- **manual चयन — website पर भी (user 2026-10-13, "app जैसा"):** `/bnn/` के VIMSHOTTARI भाग में अब हाथ से चलना:
+  - **engine:** `computeDashaTree` पूरा पेड़ देता है — हर महादशा पर `bhukthis` (9) और हर (गैर-खाली) भुक्ति पर `andhirams` (9); `running.*` वही objects (print/All-chart में कोई बदलाव नहीं)। आधी पहली दशा की खाली पंक्तियों पर `andhirams = []`।
+  - **UI (`render.js → buildDashaTables`):** किसी भी दशा-पंक्ति पर क्लिक → उसकी भुक्तियाँ; किसी भुक्ति पर क्लिक → उसके अंतर; ऊपर नोट-पंक्ति (`SUN महादशा — किसी भुक्ति पर क्लिक करने पर…`) + **↺ चल रही पर लौटें** बटन; चुनी पंक्ति हल्की नीली, चल रही पंक्ति पीली (दोनों एक साथ भी)। कीबोर्ड: Tab + Enter/Space। i18n keys `bnn.dashaPickMaha/PickBhukti/AllAndhiram/Back` (hi+en)। CSS `.bnn-dasha-note/.row-pickable/.row-picked`।
+  - जाँच: tests **502 → 504 ✓** (engine-पेड़ test + page click-flow test) · combos 59/59 · special 69/69 · transit 20/20 · dasha 27/27 · **pcp 151/158** (वैसा ही) · `npm run build` ✓ · headless Chromium (CDP) से तीनों view के shots: दशा (पीली पंक्ति) · SUN की भुक्तियाँ + ↺ · SUN→VEN के अंतर — कोई console error नहीं।
+  - Windows app का engine दोबारा build (`bnn-kundli-windows`: `node build/build.mjs`) — tree का नया रूप app में भी; entry.js का अपना attach-loop वैसा ही (नतीजा समान), नई .exe की ज़रूरत नहीं।

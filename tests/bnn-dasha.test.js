@@ -73,6 +73,29 @@ describe('BNN Phase 6 — dasha / bhukthi / andhiram', () => {
     expect(none.running.mahaIndex).toBe(-1)
   })
 
+  it('पूरा पेड़ मिलता है — हर महादशा की 9 भुक्तियाँ, हर भुक्ति के 9 अंतर (manual चयन, user 2026-10-13)', () => {
+    const tree = computeDashaTree(swe, k.jd, BIRTH, { now: NOW })
+    for (const maha of tree.mahadashas) {
+      expect(maha.bhukthis).toHaveLength(9)
+      expect(maha.bhukthis[8].endISO).toBe(maha.endISO) // आख़िरी भुक्ति = महादशा का अंत
+      for (const bhukthi of maha.bhukthis) {
+        if (bhukthi.blank) {
+          expect(bhukthi.andhirams).toEqual([]) // आधी दशा की बीती पंक्तियाँ खाली
+          continue
+        }
+        expect(bhukthi.andhirams).toHaveLength(9)
+        expect(bhukthi.andhirams[8].endISO).toBe(bhukthi.endISO) // आख़िरी अंतर = भुक्ति का अंत
+      }
+    }
+    // चल रही पंक्तियाँ वही objects हैं जो पेड़ में लगे हैं (print/All-chart अछूते)
+    expect(tree.mahadashas[3].bhukthis).toBe(tree.running.bhukthis)
+    expect(tree.mahadashas[3].bhukthis[7].andhirams).toBe(tree.running.andhirams)
+    // बाहर से जुड़ी भुक्ति (SUN दशा) भी किसी भी पंक्ति से निकलती है
+    expect(tree.mahadashas[4].bhukthis.map((b) => b.lord)).toEqual([
+      'sun', 'moon', 'mars', 'rahu', 'jupiter', 'saturn', 'mercury', 'ketu', 'venus',
+    ])
+  })
+
   it('dashaBalance: Uttara Bhadrapada-3 → Saturn, ~5.92 years left', () => {
     const b = dashaBalance(342.51216) // the ΔT Moon longitude
     expect(b.lord).toBe('saturn')

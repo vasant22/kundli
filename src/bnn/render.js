@@ -764,45 +764,121 @@ export function buildPlanetTables(bnn, mode, opts = {}) {
 
 // ---------------------------------------------------------------------------
 // Vimshottari tables (Phase 6): DHASA (nine end dates + age), BHUKTHI (of the
-// running dasha), ANDHIRAM (of the running bhukthi). The running row is
+// running dasha), ANDHIRAM (of the running bhukthi). The running row stays
 // tinted. Values come from dasha.js (computed in main.js with the ephemeris).
 // ---------------------------------------------------------------------------
 const ageText = (a) => `${a.y}Y-${a.m}M-${a.d}D`
 
 /** DHASA / BHUKTHI / ANDHIRAM tables (tabs). */
+/**
+ * DHASA / BHUKTHI / ANDHIRAM tables (tabs) — manual walk-down, exactly like the
+ * Windows app (user 2026-10-13): click any dasha row → its nine bhukthis; click
+ * any bhukti row → its nine andhirams. The yellow row keeps showing what runs
+ * today and "↺" brings the view back to that running chain.
+ */
 export function buildDashaTables(dasha) {
   const section = el2('div', 'bnn-section')
   section.append(el2('h3', 'bnn-table-title', 'VIMSHOTTARI — DHASA / BHUKTHI / ANDHIRAM'))
+  const note = el2('div', 'bnn-dasha-note')
   const content = el2('div', 'bnn-tab-content')
 
-  const listTable = (rows, runningIdx) => {
+  // null = follow the running chain; a number = the row picked by hand.
+  let pickMaha = null
+  let pickBhukti = null
+  let active = 'dhasa'
+
+  const mahaOf = () => {
+    const i = pickMaha === null ? dasha.running.mahaIndex : pickMaha
+    return i >= 0 && dasha.mahadashas[i] ? dasha.mahadashas[i] : null
+  }
+  const bhuktiOf = () => {
+    const maha = mahaOf()
+    if (!maha || !maha.bhukthis) return null
+    const i = pickBhukti === null ? (pickMaha === null ? dasha.running.bhukthiIndex : -1) : pickBhukti
+    return i >= 0 && maha.bhukthis[i] ? maha.bhukthis[i] : null
+  }
+
+  const listTable = (rows, runningIdx, pickedIdx, onPick) => {
     const tbl = el2('table', 'bnn-table bnn-dasha-table')
     rows.forEach((r, i) => {
       const row = document.createElement('tr')
-      if (i === runningIdx) row.className = 'row-running'
-      if (r.blank) {
-        row.className = `${row.className} row-blank`.trim()
-        row.append(el2('td', 'dasha-lord', CODE[r.lord]), el2('td'), el2('td'))
-      } else {
-        row.append(el2('td', 'dasha-lord', CODE[r.lord]))
-        row.append(el2('td', null, fmtDMY(r.endISO)))
-        row.append(el2('td', null, ageText(r.age)))
+      let cls = i === runningIdx ? 'row-running' : ''
+      if (i === pickedIdx) cls = `${cls} row-picked`.trim()
+      if (onPick && !r.blank) {
+        cls = `${cls} row-pickable`.trim()
+        row.tabIndex = 0
+        row.addEventListener('click', () => onPick(i))
+        row.addEventListener('keydown', (ev) => {
+          if (ev.key === 'Enter' || ev.key === ' ') {
+            ev.preventDefault()
+            onPick(i)
+          }
+        })
       }
+      if (cls) row.className = cls
+      row.append(el2('td', 'dasha-lord', CODE[r.lord]))
+      row.append(el2('td', null, r.blank ? '' : fmtDMY(r.endISO)))
+      row.append(el2('td', null, r.blank ? '' : ageText(r.age)))
       tbl.append(row)
     })
     return tbl
   }
-  const empty = () => {
-    const p = el2('p', 'bnn-legend', '—')
-    return p
+  const empty = () => el2('p', 'bnn-legend', '—')
+
+  const openBhukthis = (i) => {
+    pickMaha = i
+    pickBhukti = null
+    active = 'bhukthi'
+    render()
+  }
+  const openAndhirams = (i) => {
+    pickBhukti = i
+    active = 'andhiram'
+    render()
+  }
+  const backToRunning = () => {
+    pickMaha = null
+    pickBhukti = null
+    render()
   }
 
   const views = {
-    dhasa: () => listTable(dasha.mahadashas, dasha.running.mahaIndex),
-    bhukthi: () => (dasha.running.bhukthis ? listTable(dasha.running.bhukthis, dasha.running.bhukthiIndex) : empty()),
-    andhiram: () => (dasha.running.andhirams ? listTable(dasha.running.andhirams, dasha.running.andhiramIndex) : empty()),
+    dhasa: () => listTable(dasha.mahadashas, dasha.running.mahaIndex, pickMaha, openBhukthis),
+    bhukthi: () => {
+      const maha = mahaOf()
+      if (!maha || !maha.bhukthis) return empty()
+      const onRunning = maha === dasha.mahadashas[dasha.running.mahaIndex]
+      return listTable(maha.bhukthis, onRunning ? dasha.running.bhukthiIndex : -1, pickBhukti, openAndhirams)
+    },
+    andhiram: () => {
+      const bhukti = bhuktiOf()
+      if (!bhukti || !bhukti.andhirams || bhukti.andhirams.length === 0) return empty()
+      const onRunning = bhukti === (dasha.running.bhukthis ? dasha.running.bhukthis[dasha.running.bhukthiIndex] : null)
+      return listTable(bhukti.andhirams, onRunning ? dasha.running.andhiramIndex : -1, null, null)
+    },
   }
-  let active = 'dhasa'
+
+  const noteText = () => {
+    const maha = mahaOf()
+    if (active === 'andhiram') {
+      const bhukti = bhuktiOf()
+      return maha && bhukti ? `${CODE[maha.lord]} → ${CODE[bhukti.lord]} · ${t('bnn.dashaAllAndhiram')}` : ''
+    }
+    if (active === 'bhukthi') return maha ? `${CODE[maha.lord]} ${t('bnn.dashaPickBhukti')}` : ''
+    return t('bnn.dashaPickMaha')
+  }
+  const paintNote = () => {
+    note.replaceChildren(el2('span', null, noteText()))
+    if (pickMaha !== null || pickBhukti !== null) {
+      const btn = document.createElement('button')
+      btn.type = 'button'
+      btn.className = 'bnn-dasha-back'
+      btn.textContent = t('bnn.dashaBack')
+      btn.addEventListener('click', backToRunning)
+      note.append(btn)
+    }
+  }
+
   const bar = tabBar(
     [
       { key: 'dhasa', label: 'DHASA' },
@@ -816,9 +892,10 @@ export function buildDashaTables(dasha) {
   )
   const render = () => {
     content.replaceChildren(views[active]())
+    paintNote()
     bar.setActive(active)
   }
-  section.append(bar.bar, content)
+  section.append(bar.bar, note, content)
   render()
   section.append(el2('p', 'bnn-legend', t('bnn.dashaNote')))
   return section

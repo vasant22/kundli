@@ -116,7 +116,7 @@ export function mahadashaList(balance, birth, settings = DASHA_SETTINGS) {
 
 /**
  * The nine bhukthis inside a mahadasha (sequence starts from the maha lord).
- * Length = round(Y × 366 × b / 120) days; the last one ends on the maha end.
+ * Length = floor(Y × 366 × b / 120) days; the last one ends on the maha end.
  * The FIRST mahadasha is partial (it began before birth): its earlier bhukthis
  * are returned as `blank` rows and the first visible one keeps only its
  * remaining part — the old software's print shows exactly this shape
@@ -197,8 +197,11 @@ const todayYMD = () => {
 }
 
 /**
- * Full tree for the BNN page: balance + mahadashas + (for the running maha)
- * the bhukthis + (for the running bhukthi) the andhirams.
+ * Full tree for the BNN page: balance + nine mahadashas. Every mahadasha
+ * carries its nine `bhukthis` and every (non-blank) bhukthi its nine
+ * `andhirams`, so the page can walk the tree by hand (user 2026-10-13, same
+ * behaviour as the Windows app). `running` keeps pointing at the rows running
+ * today — print / all-chart keep reading exactly what they read before.
  * @param swe — initialised SwissEph instance
  * @param jd — birth julian day (UT)
  * @param birth — { year, month, day } (local calendar date)
@@ -213,6 +216,13 @@ export function computeDashaTree(swe, jd, birth, opts = {}) {
 
   const balance = dashaBalance(moonLon, settings)
   const mahadashas = mahadashaList(balance, birth, settings)
+  for (const maha of mahadashas) {
+    maha.bhukthis = bhukthiList(maha, birth, settings)
+    for (const bhukthi of maha.bhukthis) {
+      // पहली (आधी) महादशा की बीती हुई पंक्तियाँ खाली हैं — उनके अंतर नहीं।
+      bhukthi.andhirams = bhukthi.blank ? [] : andhiramList(maha.lord, bhukthi, birth, settings)
+    }
+  }
   const now = opts.now || todayYMD()
   const mahaIndex = runningIndex(mahadashas, now)
   let bhukthis = null
@@ -220,10 +230,10 @@ export function computeDashaTree(swe, jd, birth, opts = {}) {
   let bhukthiIndex = -1
   let andhiramIndex = -1
   if (mahaIndex >= 0) {
-    bhukthis = bhukthiList(mahadashas[mahaIndex], birth, settings)
+    bhukthis = mahadashas[mahaIndex].bhukthis
     bhukthiIndex = runningIndex(bhukthis, now)
     if (bhukthiIndex >= 0) {
-      andhirams = andhiramList(mahadashas[mahaIndex].lord, bhukthis[bhukthiIndex], birth, settings)
+      andhirams = bhukthis[bhukthiIndex].andhirams
       andhiramIndex = runningIndex(andhirams, now)
     }
   }

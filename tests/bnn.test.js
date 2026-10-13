@@ -66,6 +66,23 @@ vi.mock('../src/bnn/dasha.js', () => {
     { lord: 'ketu', startISO: '2026-05-30', endISO: '2026-07-29', age: { y: 46, m: 6, d: 7 } },
     { lord: 'venus', startISO: '2026-07-29', endISO: '2027-01-17', age: { y: 46, m: 11, d: 26 } },
   ]
+  // manual चयन (user 2026-10-13, app जैसा): हर महादशा पर उसकी भुक्तियाँ,
+  // हर मिली भुक्ति पर उसके अंतर — चल रही चेन वही objects हैं।
+  rows[7].andhirams = an // चल रही (MER) भुक्ति
+  const kids = {
+    venus: rows,
+    sun: [
+      {
+        lord: 'sun', startISO: '2013-04-26', endISO: '2013-08-26', age: { y: 33, m: 7, d: 4 },
+        andhirams: [
+          { lord: 'sun', startISO: '2013-04-26', endISO: '2013-06-15', age: { y: 33, m: 4, d: 24 } },
+          { lord: 'moon', startISO: '2013-06-15', endISO: '2013-08-26', age: { y: 33, m: 7, d: 4 } },
+        ],
+      },
+      { lord: 'moon', startISO: '2013-08-26', endISO: '2014-01-26', age: { y: 34, m: 0, d: 4 }, andhirams: [] },
+    ],
+  }
+  const withKids = (m) => ({ ...m, bhukthis: kids[m.lord] || [] })
   return {
     computeDashaTree: vi.fn(() => ({
       moonLon: 342.5, nakshatra: 26, lord: 'saturn', balance: { y: 5, m: 11, d: 1 },
@@ -74,7 +91,7 @@ vi.mock('../src/bnn/dasha.js', () => {
         { lord: 'venus', startISO: '2009-12-23', endISO: '2029-12-23', age: { y: 49, m: 11, d: 1 } },
         maha('sun', '2035-12-23'), maha('moon', '2045-12-23'), maha('mars', '2052-12-23'),
         maha('rahu', '2070-12-23'), maha('jupiter', '2086-12-23'),
-      ],
+      ].map(withKids),
       running: { mahaIndex: 3, bhukthiIndex: 7, andhiramIndex: 2, bhukthis: rows, andhirams: an },
     })),
     fmtDMY: (isoStr) => {
@@ -288,6 +305,52 @@ describe('BNN page — chart (Phase 2b)', () => {
     const svg = $('#bnn-output svg')
     expect(svg.textContent).toContain('VEN DHASA: 23-12-2009 -> 23-12-2029')
     expect(svg.textContent).toContain('MER BHUKTI: 04-01-2026 -> 06-11-2028')
+  })
+
+  it('किसी दशा/भुक्ति पर क्लिक से manual चयन + ↺ से चल रही पर वापसी (user 2026-10-13)', async () => {
+    $('#bnn-form').dispatchEvent(new Event('submit', { cancelable: true }))
+    const sec = () => document.querySelectorAll('.bnn-section')[2]
+    const tabs = () => sec().querySelectorAll('.bnn-tabs button')
+    const dRows = () => sec().querySelectorAll('.bnn-dasha-table tr')
+    await vi.waitFor(() => expect(sec().textContent).toContain('VIMSHOTTARI'))
+    await vi.waitFor(() => expect(sec().querySelector('.bnn-dasha-note')).toBeTruthy())
+    // शुरू में: नोट में चयन का संकेत, कोई ↺ बटन नहीं, पीली पंक्ति चल रही दशा पर
+    expect(sec().querySelector('.bnn-dasha-note').textContent).toContain('किसी दशा-पंक्ति पर क्लिक')
+    expect(sec().querySelector('.bnn-dasha-back')).toBeNull()
+    expect(dRows()[3].classList.contains('row-running')).toBe(true)
+    // दशा-पंक्ति पर क्लिक → उसकी भुक्तियाँ (SUN महादशा), पीली पंक्ति हट जाती है
+    dRows()[4].click()
+    expect(tabs()[1].classList.contains('active')).toBe(true)
+    expect(sec().textContent).toContain('SUN')
+    expect(sec().textContent).toContain('26-08-2013')
+    expect(sec().textContent).not.toContain('26-04-2013') // चल रही VEN सूची नहीं
+    expect(sec().querySelector('.bnn-dasha-note').textContent).toContain('किसी भुक्ति पर क्लिक')
+    expect(sec().querySelector('.bnn-dasha-back').textContent).toContain('लौटें')
+    // भुक्ति-पंक्ति पर क्लिक → उसके अंतर
+    dRows()[0].click()
+    expect(tabs()[2].classList.contains('active')).toBe(true)
+    expect(sec().querySelector('.bnn-dasha-note').textContent).toContain('SUN → SUN')
+    expect(sec().textContent).toContain('15-06-2013')
+    // ↺ → चल रही चेन वापस: VEN महादशा चुनी हुई, MER भुक्ति पीली
+    sec().querySelector('.bnn-dasha-back').click()
+    expect(sec().querySelector('.bnn-dasha-back')).toBeNull()
+    tabs()[0].click()
+    expect(dRows()[4].classList.contains('row-picked')).toBe(false)
+    expect(dRows()[3].classList.contains('row-running')).toBe(true)
+    tabs()[1].click()
+    expect(dRows()[7].classList.contains('row-running')).toBe(true)
+    expect(sec().textContent).toContain('26-04-2013')
+    tabs()[2].click()
+    expect(dRows()[2].classList.contains('row-running')).toBe(true)
+    expect(sec().textContent).toContain('30-05-2026')
+    // चुनी हुई पंक्ति पर हल्का चयन-रंग (SUN महादशा दोबारा चुनें)
+    tabs()[0].click()
+    dRows()[4].click()
+    tabs()[0].click()
+    expect(dRows()[4].classList.contains('row-picked')).toBe(true)
+    expect(dRows()[3].classList.contains('row-running')).toBe(true)
+    sec().querySelector('.bnn-dasha-back').click()
+    tabs()[0].click()
   })
 
   it('table tabs switch the view (SPECIAL, PRSSS)', () => {
