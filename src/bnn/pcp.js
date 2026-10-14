@@ -380,13 +380,16 @@ export function groupPlanets(group) {
  */
 export function computeSpecialTransit(lonAtFor, opts) {
   const { tStartMs, tEndMs, zSign, zDeg, mode, group, birthKey } = opts
+  // सुधार-राउंड 12 (user 2026-10-14): 1-5-7-9 / 1-5-9 का चुनाव सिर्फ़ शनि-गुरु समूह पर लागू होता है;
+  // राहु-केतु हमेशा 1-5-9 (नियम R2); 'सभी ग्रह' में हर ग्रह अपने नियम से (ग्रह 1-5-7-9, राहु/केतु 1-5-9)।
+  const modeFor = (key) => (group === 'nodes' ? '159' : group === 'sg' ? mode : ((key === 'rahu' || key === 'ketu') ? '159' : '1579'))
   const out = []
   for (const key of groupPlanets(group)) {
     const lonAt = lonAtFor(key)
     if (!lonAt) continue
     const leadDeg = opts.leadDeg ?? leadFor(birthKey, key)
     const dipX = birthKey && PCP_DIP_X[birthKey] != null ? PCP_DIP_X[birthKey] : null
-    const segments = computeRowsForPlanet(lonAt, tStartMs, tEndMs, zSign, zDeg, mode, {
+    const segments = computeRowsForPlanet(lonAt, tStartMs, tEndMs, zSign, zDeg, modeFor(key), {
       stepMs: stepFor(key),
       preRollMs: preRollFor(key),
       leadDeg,
