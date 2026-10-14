@@ -848,3 +848,10 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
   - **UI (`render.js → buildDashaTables`):** किसी भी दशा-पंक्ति पर क्लिक → उसकी भुक्तियाँ; किसी भुक्ति पर क्लिक → उसके अंतर; ऊपर नोट-पंक्ति (`SUN महादशा — किसी भुक्ति पर क्लिक करने पर…`) + **↺ चल रही पर लौटें** बटन; चुनी पंक्ति हल्की नीली, चल रही पंक्ति पीली (दोनों एक साथ भी)। कीबोर्ड: Tab + Enter/Space। i18n keys `bnn.dashaPickMaha/PickBhukti/AllAndhiram/Back` (hi+en)। CSS `.bnn-dasha-note/.row-pickable/.row-picked`।
   - जाँच: tests **502 → 504 ✓** (engine-पेड़ test + page click-flow test) · combos 59/59 · special 69/69 · transit 20/20 · dasha 27/27 · **pcp 151/158** (वैसा ही) · `npm run build` ✓ · headless Chromium (CDP) से तीनों view के shots: दशा (पीली पंक्ति) · SUN की भुक्तियाँ + ↺ · SUN→VEN के अंतर — कोई console error नहीं।
   - Windows app का engine दोबारा build (`bnn-kundli-windows`: `node build/build.mjs`) — tree का नया रूप app में भी; entry.js का अपना attach-loop वैसा ही (नतीजा समान), नई .exe की ज़रूरत नहीं।
+
+## 2026-10-14 — PCP: All-Planets chain captures (user के screenshots)
+- पहली बार "All Planets" वाली legacy तालिकाएँ capture हुईं (जन्म-सूर्य व जन्म-मंगल, 14-10-2026 → 14-10-2030; screenshots `.openclaw/tmp/bnn-ref/pcp/allplanets-*.png`)।
+- **Chain semantics:** हर नई row-opening उसी क्षण पिछली row को बंद करती है (End = अगली Start, मिनट-सटीक); PLANET label = `<BIRTH>-<गोचरग्रह>` (नताल-वक्री पर #)।
+- **Confirmed openings:** सूर्य rv −4.05° (19-01-2027) · मंगल −5° · शुक्र X +27.2° (26-10-2026) · पहली KET row = range-क्लिप (asli opening ~26-08-2026 = rv +27.2 पर)।
+- **Gap:** बाक़ी birth×transit जोड़ों की openings decode बाक़ी (engine: ketu 0 rows, rahu/venus देर से आ रही हैं) — पूरा ब्यौरा `docs/pcp-research.md` §5।
+- **अगला कदम:** openings decode → `src/bnn/pcp.js` → engine → app में chain display → (user के tokens आने पर)।
