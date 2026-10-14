@@ -63,6 +63,15 @@
 | केतु | वही | गुरु 2 + शनि 1 | pcp/ketu-* |
 (सब expectations `scripts/bnn-calib/pcp-check.mjs` में भी दर्ज हैं।)
 
+## 5) All-planets captures (2026-10-14, user) — chain semantics (नया)
+- Screenshots: `.openclaw/tmp/bnn-ref/pcp/allplanets-{sun,mars}-{1,2}.png` · settings: **All Planets · 14-10-2026 → 14-10-2030** · जन्म-ग्रह = सूर्य और मंगल।
+- **Display = chain:** हर नई row-opening उसी क्षण पिछली row को बंद कर देती है (End और अगली Start एक ही मिनट पर)। PLANET label = `<BIRTH>-<गोचर ग्रह>` (नताल-वक्री पर `#`) — webapp में `k` (1/5/7/9) की जगह।
+- Sun-chain (14-10-26 → 24-01-27): KET 14-10 → VEN 26-10 00:56 → MOO 02-11 04:32 → RAH 30-11 → JUP# 24-12 → MAR# 01-01-27 → SAT# 07-01 → SUN 19-01 → MER 23-01 → … ; (2027-28) MAR# 01-03-27 → SAT# 07-03-27 → [लंबी SAT# जोड़] → 09-09-28 MAR#/SAT# → SUN 21-09-28 → MER 26-09 → MOO 27-09 → KET 30-09 → VEN 25-10 → MOO 01-11 → RAH 29-11-28।
+- Mars-chain (14-10-26 → 09-01-28): RAH 14-10 → VEN 02-12 → JUP# 29-12 → VEN 26-01-27 → RAH 31-01 → MOO 20-02 → RAH 01-04 → VEN 21-05 → … KET 05-09-27 → VEN 05-09 → MOO 16-09 → RAH 26-10 → JUP# 29-11 → MAR# 10-12 → SAT# 17-12 → SUN 01-01-28 → MER 08-01 → KET 09-01-28।
+- **पक्के मिलान (opening event vs engine maths):** सूर्य-opening = rv −4.05 (19-01-2027) ✓ · मंगल (जन्म-मंगल) = rv −5.00 ✓ · शुक्र-opening = rv **+27.2 = X-line** (26-10-2026; §13) ✓ · पहली KET-row = range-start पर clipped (asli opening ~26-08-2026 = [Can 8°10′ + 27.2°] पर) ✓।
+- **गैप (next work):** decoded leads/conditions अब तक **गुरु/शनि-गोचर वाली** tables से हैं; all-planets के जोड़े (सूर्य×शुक्र, सूर्य×केतु, सूर्य×राहु…) की opening-lines decode करनी बाक़ी हैं। Engine अभी (जन्म-सूर्य, 2026–2030, group=all): sun 16, moon 213, mars 10 (first 07-2027), mercury 19 (01-2027), jupiter 1 (16-08-2028 ✓), venus 16 (first **02-2027**, चाहिए 10-2026), saturn 1 (2030), rahu 1 (**01-2028**, चाहिए 11-2026), **ketu 0** — यानी इन जोड़ों की openings sir से बहुत देर से/कभी नहीं आ रहीं।
+- **Chain display app में अभी नहीं** — पहले ये openings decode हों, वरना chain गलत rows से बनेगी। (Format वाला हिस्सा राउंड-13 में हो गया: एक merged तालिका, SUN-KET labels, HH:MM।)
+
 ## 4) अगले काम (future)
 1. **शुक्र-2035 का split** ([16-11-2034→23-03-2035] + [24-03-2035→30-03-2035]) — decode बाक़ी; चंद्र के
    deep-fire की चयन-शर्त भी और डेटा से संकरी/साफ़ करनी है।
