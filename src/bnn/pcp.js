@@ -378,8 +378,221 @@ export function groupPlanets(group) {
  * @param {{tStartMs,tEndMs,zSign,zDeg,mode,group}} opts
  * @returns Array<{ key, planet, segments }>
  */
+// ---------------------------------------------------------------------------
+// "All Planets" chain — decoded 2026-10-15 (owner's captures; docs/pcp-research.md §6)
+// ---------------------------------------------------------------------------
+// In the All-Planets mode the table is ONE chain: every row closes exactly when
+// the next opens (End = next Start, minute-exact). Decoded structure:
+//  • Points: for every natal planet P take its frame positions —
+//    P.lon + d for d ∈ {0,120,180,240}° (planets), and d ∈ {0,120,240}° for
+//    Rahu/Ketu (no 7th position for the nodes — R2/R3) → 34 distinct values.
+//  • The traveler = the transiting CHART planet itself; every time it crosses
+//    one of the points, a new row opens (crossings in time order).
+//  • The row's label = the OWNER of the NEXT point in longitude (wraps 360°);
+//    k = that point's add/30 + 1.
+//  • Display time = crossing + C degrees of the traveler:
+//    fitted from the captures — sun ≈ 0.988° (≈ crossing + 24h), mars 0.8°;
+//    C = 4/lead(chart) matches both (sun 4/4.05, mars 4/5) — formula noted as
+//    hypothesis, table PCP_CHAIN_DELAY_DEG is the source of truth (default 1°).
+//  • First visible row clipped to the range edge; last row's End clamped to the
+//    range end (clippedEnd).
+export const PCP_CHAIN_DELAY_DEG = Object.freeze({})
+const PCP_CHAIN_DELAY_DEFAULT = 1.0
+
+export function chainDelayDeg(birthKey) {
+  // fitted 2026-10-15: delay ≈ 1.0° of the traveler on EVERY chart (sun
+  // 0.985–1.00°, mars 0.98–1.01° across 18 events) — i.e. the display = the
+  // moment the traveler reaches (point + 1°), echoing R18's +1° end-line.
+  if (birthKey && PCP_CHAIN_DELAY_DEG[birthKey] != null) return PCP_CHAIN_DELAY_DEG[birthKey]
+  return PCP_CHAIN_DELAY_DEFAULT
+}
+
+/** The 34 chain points (owner, add, longitude) sorted by longitude. */
+export function chainPoints(natalLons) {
+  const out = []
+  for (const [key, lon] of Object.entries(natalLons || {})) {
+    if (typeof lon !== 'number' || !isFinite(lon)) continue
+    const adds = key === 'rahu' || key === 'ketu' ? [0, 120, 240] : [0, 120, 180, 240]
+    for (const add of adds) out.push({ owner: key, add, val: norm(lon + add) })
+  }
+  out.sort((a, b) => a.val - b.val)
+  return out
+}
+
+/** Next point after `val` in longitude order (wraps to the first). */
+export function nextChainPoint(points, val) {
+  for (const p of points) if (p.val > val + 1e-9) return p
+  return points[0]
+}
+
+/** Previous point before `val` in longitude order (wraps to the last). */
+export function prevChainPoint(points, val) {
+  for (let i = points.length - 1; i >= 0; i--) if (points[i].val < val - 1e-9) return points[i]
+  return points[points.length - 1]
+}
+
+function chainStepMs(birthKey) {
+  if (birthKey === 'moon') return 3600e3
+  if (birthKey === 'mercury') return 3 * 3600e3
+  if (birthKey === 'jupiter' || birthKey === 'saturn' || birthKey === 'rahu' || birthKey === 'ketu') return 12 * 3600e3
+  return 6 * 3600e3
+}
+
+/**
+ * The All-Planets chain rows for the chart planet `birthKey` over a range.
+ * @param {(tMs:number)=>({lon:number,speed:number}|null)} travelerLonAt
+ * @param {{tStartMs,tEndMs,natalLons,birthKey}} opts
+ * @returns Array<{ownerKey,k,add,startMs,endMs,clippedStart,clippedEnd,preShifted}>
+ */
+export function computeAllPlanetsChain(travelerLonAt, opts) {
+  const { tStartMs, tEndMs, natalLons, birthKey } = opts
+  const points = chainPoints(natalLons)
+  if (!points.length || !travelerLonAt) return []
+  const C = chainDelayDeg(birthKey)
+  const stepMs = opts.stepMs ?? chainStepMs(birthKey)
+  const pre = opts.preRollMs ?? 420 * 86400000
+  const post = opts.postRollMs ?? 420 * 86400000
+  const t0 = tStartMs - pre
+  const t1 = tEndMs + post
+
+  const at = (t) => { const r = travelerLonAt(t); return r && isFinite(r.lon) ? { lon: r.lon, speed: r.speed ?? 0 } : null }
+  const lonOf = (t) => { const r = at(t); return r ? r.lon : null }
+  const refine = (level, lo, hi, s0) => {
+    for (let i = 0; i < 30; i++) {
+      const mid = (lo + hi) / 2
+      const f = signedDelta(level, lonOf(mid))
+      if ((f < 0 ? -1 : 1) === s0 && f !== 0) lo = mid
+      else hi = mid
+    }
+    return (lo + hi) / 2
+  }
+
+  // collect crossings + stations (time order)
+  const events = []
+  {
+    let prevT = t0
+    let prev = at(t0)
+    if (!prev) return []
+    let prevF = new Map(points.map((p) => [p.val, signedDelta(p.val, prev.lon)]))
+    for (let t = t0 + stepMs; ; t += stepMs) {
+      const tt = Math.min(t, t1)
+      const cur = at(tt)
+      if (cur && prev) {
+        if (prev.speed >= 0 && cur.speed < 0) {
+          let lo = prevT
+          let hi = tt
+          for (let i = 0; i < 30; i++) { const mid = (lo + hi) / 2; const r = at(mid); if (r && r.speed >= 0) lo = mid; else hi = mid }
+          const m = (lo + hi) / 2
+          events.push({ kind: 'station', t: m, lon: at(m).lon, dir: 'R' })
+        } else if (prev.speed < 0 && cur.speed >= 0) {
+          let lo = prevT
+          let hi = tt
+          for (let i = 0; i < 30; i++) { const mid = (lo + hi) / 2; const r = at(mid); if (r && r.speed < 0) lo = mid; else hi = mid }
+          const m = (lo + hi) / 2
+          events.push({ kind: 'station', t: m, lon: at(m).lon, dir: 'D' })
+        }
+        for (const p of points) {
+          const f0 = prevF.get(p.val)
+          const f1 = signedDelta(p.val, cur.lon)
+          if (Math.abs(f1 - f0) < 90) {
+            if (f0 < 0 && f1 >= 0) events.push({ kind: 'cross', t: refine(p.val, prevT, tt, -1), pt: p, fwd: true })
+            else if (f0 > 0 && f1 <= 0) events.push({ kind: 'cross', t: refine(p.val, prevT, tt, 1), pt: p, fwd: false })
+          }
+          prevF.set(p.val, f1)
+        }
+      }
+      prev = cur
+      prevT = tt
+      if (tt >= t1) break
+    }
+  }
+  events.sort((a, b) => a.t - b.t)
+
+  // display time: the moment the traveler reaches (crossing + C° along travel);
+  // null when the traveler turns around before reaching it (the owner's
+  // software shows no row then — e.g. mars 30-12-2026)
+  const reach = (tCross, fwd) => {
+    const l0 = at(tCross).lon
+    const target = norm(l0 + (fwd ? C : -C))
+    let lo = tCross
+    let hi = tCross + 5 * 86400000
+    const ok = (t) => { const f = signedDelta(target, lonOf(t)); return fwd ? f >= 0 : f <= 0 }
+    for (let i = 0; i < 30; i++) {
+      if (ok(hi)) {
+        for (let j = 0; j < 40; j++) {
+          const mid = (lo + hi) / 2
+          if (ok(mid)) hi = mid
+          else lo = mid
+        }
+        return (lo + hi) / 2
+      }
+      lo = hi
+      hi += 5 * 86400000
+      if (i === 29) return null
+    }
+    return null
+  }
+
+  const rows = []
+  let currentLabel = null
+  for (const e of events) {
+    if (e.kind === 'cross') {
+      const ms = reach(e.t, e.fwd)
+      if (ms == null) continue // traveler never reaches point+1° — no row
+      const nx = e.fwd ? nextChainPoint(points, e.pt.val) : prevChainPoint(points, e.pt.val)
+      currentLabel = nx.owner + ':' + nx.add
+      rows.push({ ownerKey: nx.owner, k: Math.round(nx.add / 30) + 1, add: nx.add, startMs: ms, preShifted: true })
+    } else {
+      // station: relabel only when the directed next point changes the row
+      const after = e.dir === 'R' ? prevChainPoint(points, e.lon) : nextChainPoint(points, e.lon)
+      const label = after.owner + ':' + after.add
+      if (label === currentLabel) continue
+      currentLabel = label
+      rows.push({ ownerKey: after.owner, k: Math.round(after.add / 30) + 1, add: after.add, startMs: e.t, preShifted: true })
+    }
+  }
+
+  rows.sort((a, b) => a.startMs - b.startMs)
+  const out = []
+  for (let i = 0; i < rows.length; i++) {
+    const r = rows[i]
+    if (r.startMs > tEndMs) break
+    const nextMs = i + 1 < rows.length ? rows[i + 1].startMs : null
+    if (nextMs != null && nextMs < tStartMs) continue
+    r.endMs = Math.min(nextMs != null ? nextMs : tEndMs, tEndMs)
+    r.clippedStart = r.startMs < tStartMs
+    r.clippedEnd = nextMs != null && nextMs > tEndMs
+    r.startMs = Math.max(r.startMs, tStartMs)
+    out.push(r)
+  }
+  return out
+}
 export function computeSpecialTransit(lonAtFor, opts) {
-  const { tStartMs, tEndMs, zSign, zDeg, mode, group, birthKey } = opts
+  const { tStartMs, tEndMs, zSign, zDeg, mode, group, birthKey, natalLons } = opts
+  // 'सभी ग्रह' (All Planets) = the decoded single CHAIN (2026-10-15) — travel of the
+  // chart planet itself over all natal frame-positions; sg/nodes modes stay as before.
+  if (group === 'all' && birthKey && natalLons) {
+    const traveler = lonAtFor(birthKey)
+    if (traveler) {
+      const rows = computeAllPlanetsChain(traveler, { tStartMs, tEndMs, natalLons, birthKey })
+      const byOwner = new Map()
+      for (const r of rows) {
+        if (!byOwner.has(r.ownerKey)) byOwner.set(r.ownerKey, { key: r.ownerKey, planet: planetCode(r.ownerKey), segments: [] })
+        byOwner.get(r.ownerKey).segments.push({
+          kind: 'chain',
+          k: r.k,
+          add: r.add,
+          ownerKey: r.ownerKey,
+          startMs: r.startMs,
+          endMs: r.endMs,
+          clippedStart: r.clippedStart,
+          clippedEnd: r.clippedEnd,
+          preShifted: true,
+        })
+      }
+      return [...byOwner.values()]
+    }
+  }
   // सुधार-राउंड 12 (user 2026-10-14): 1-5-7-9 / 1-5-9 का चुनाव सिर्फ़ शनि-गुरु समूह पर लागू होता है;
   // राहु-केतु हमेशा 1-5-9 (नियम R2); 'सभी ग्रह' में हर ग्रह अपने नियम से (ग्रह 1-5-7-9, राहु/केतु 1-5-9)।
   const modeFor = (key) => (group === 'nodes' ? '159' : group === 'sg' ? mode : ((key === 'rahu' || key === 'ketu') ? '159' : '1579'))

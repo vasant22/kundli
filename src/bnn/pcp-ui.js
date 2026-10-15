@@ -25,6 +25,7 @@ const CODE = {
 const CONST_NAME = {
   sun: 'SE_SUN', moon: 'SE_MOON', mars: 'SE_MARS', mercury: 'SE_MERCURY',
   jupiter: 'SE_JUPITER', venus: 'SE_VENUS', saturn: 'SE_SATURN',
+  rahu: 'SE_MEAN_NODE', ketu: 'SE_MEAN_NODE',
 }
 
 const pad = (n) => String(n).padStart(2, '0')
@@ -54,7 +55,9 @@ function makeLonAt(swe, key) {
     const jd = swe.julday(d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate(), hour)
     const jdt = jd + swe.deltat(jd) + 0.5 / 86400
     const r = swe.calc_ut(jdt, swe[constName], swe.SEFLG_SWIEPH | swe.SEFLG_SIDEREAL | swe.SEFLG_SPEED)
-    return { lon: r[0], speed: r[3] }
+    let lon = r[0]
+    if (key === 'ketu') lon += 180
+    return { lon: ((lon % 360) + 360) % 360, speed: r[3] }
   }
 }
 
@@ -186,6 +189,45 @@ export function buildSpecialTransitSection(values, opts) {
   const results = el('div', 'bnn-st-results')
   section.append(results)
 
+  const natalRetro = (key) => {
+    if (key === 'rahu' || key === 'ketu') return ''
+    const pl = (values.bnn.planets || []).find((x) => x.key === key)
+    return pl && pl.retro ? '#' : ''
+  }
+  const renderChain = (st) => {
+    // All-Planets = ONE chain, sir's layout: PLANET | DATE | ASPECT | RETRO
+    const birthCode = CODE[values.stBirth || 'sun']
+    const segs = []
+    for (const p of st) for (const seg of p.segments || []) segs.push({ key: p.key, seg })
+    segs.sort((a, b) => a.seg.startMs - b.seg.startMs)
+    if (!segs.length) {
+      results.append(el('p', 'bnn-st-empty', t('st.none')))
+      return
+    }
+    const wrap = el('div', 'bnn-st-tablewrap')
+    wrap.append(el('div', 'bnn-st-title', `TRANSIT ${birthCode} — ${t('st.group.all')}`))
+    const table = el('table', 'bnn-table bnn-st-table')
+    const head = document.createElement('tr')
+    for (const h of ['PLANET', 'DATE', t('st.aspect'), t('st.retro')]) head.append(el('th', null, h))
+    table.append(head)
+    segs.forEach(({ key, seg }, si) => {
+      const pairCls = si % 2 === 0 ? 'pair-a' : 'pair-b'
+      const label = `${birthCode}-${CODE[key] || key}${natalRetro(key)}`
+      for (const [aspect, ms, clipped] of [
+        ['Start', seg.startMs, seg.clippedStart],
+        ['End', seg.endMs, seg.clippedEnd],
+      ]) {
+        const tr = document.createElement('tr')
+        tr.className = pairCls
+        const retroFlag = seg.flags ? seg.flags[aspect === 'Start' ? 0 : 1] : 'F'
+        const shown = clipped || seg.preShifted ? ms : ms + PCP_DATE_SHIFT_MS
+        tr.append(el('td', 'st-label', label), el('td', null, dateMsToWall(shown, values.bnnZone)), el('td', null, aspect), el('td', null, retroFlag))
+        table.append(tr)
+      }
+    })
+    wrap.append(table)
+    results.append(wrap)
+  }
   const renderRows = (st) => {
     if (!st) {
       results.classList.remove('bnn-st-pair')
@@ -193,6 +235,11 @@ export function buildSpecialTransitSection(values, opts) {
     }
     const birthCode = CODE[values.stBirth || 'sun']
     results.replaceChildren()
+    if ((values.stGroup || 'sg') === 'all') {
+      results.classList.remove('bnn-st-pair')
+      renderChain(st)
+      return
+    }
     let any = false
     let wrapCount = 0
     for (const p of st) {
@@ -265,6 +312,8 @@ export function buildSpecialTransitSection(values, opts) {
       try {
         const birth = values.bnn.planets.find((p) => p.key === (values.stBirth || 'sun'))
         const lonAtFor = (key) => makeLonAt(swe, key)
+        const natalLons = {}
+        for (const pl of values.bnn.planets || []) natalLons[pl.key] = pl.longitude
         const st = computeSpecialTransit(lonAtFor, {
           tStartMs,
           tEndMs,
@@ -273,12 +322,16 @@ export function buildSpecialTransitSection(values, opts) {
           mode: values.stMode || '1579',
           group: values.stGroup || 'sg',
           birthKey: values.stBirth || 'sun',
+          natalLons,
         })
-        // attach the F/R flags (speed sign at the event instant)
+        // attach the F/R flags (speed sign at the event instant); chain rows use
+        // the chart planet's direction (sir's convention), classic rows their own
+        const travellerAt = makeLonAt(swe, values.stBirth || 'sun')
         for (const p of st) {
           const lonAt = makeLonAt(swe, p.key)
           for (const seg of p.segments) {
-            seg.flags = [lonAt(seg.startMs).speed < 0 ? 'R' : 'F', lonAt(seg.endMs).speed < 0 ? 'R' : 'F']
+            const at = seg.preShifted ? travellerAt : lonAt
+            seg.flags = [at(seg.startMs).speed < 0 ? 'R' : 'F', at(seg.endMs).speed < 0 ? 'R' : 'F']
           }
         }
         values.stResult = st
