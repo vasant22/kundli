@@ -81,6 +81,7 @@ export function buildSpecialTransitSection(values, opts) {
     b.addEventListener('click', () => {
       values.stGroup = g
       paintGroup()
+      paintMode()
     })
     groupButtons.set(g, b)
     groupBar.append(b)
@@ -138,6 +139,7 @@ export function buildSpecialTransitSection(values, opts) {
       b.classList.toggle('active', on)
       b.setAttribute('aria-pressed', String(on))
     }
+    if (typeof modeWrap !== 'undefined' && modeWrap) modeWrap.hidden = (values.stGroup || 'sg') !== 'sg'
   }
   const startLabel = el('span', 'bnn-st-label', t('st.start'))
   const startInput = document.createElement('input')
@@ -165,7 +167,7 @@ export function buildSpecialTransitSection(values, opts) {
     sheet.id = 'bnn-st-print'
     sheet.append(el('h2', null, t('st.title')))
     const meta = el('p', 'bnn-st-sheet-meta',
-      `${t('st.birth')}: ${HI_NAME[values.stBirth || 'sun']} · ${values.stMode || '1579'} · ${values.stStart} → ${values.stEnd}`)
+      `${t('st.birth')}: ${HI_NAME[values.stBirth || 'sun']}${(values.stGroup || 'sg') === 'sg' ? ' · ' + (values.stMode || '1579') : ''} · ${values.stStart} → ${values.stEnd}`)
     sheet.append(meta)
     sheet.append(results.cloneNode(true))
     document.body.append(sheet)
