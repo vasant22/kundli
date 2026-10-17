@@ -1,0 +1,53 @@
+import{a as e}from"./astro-BrsFnPnW.js";import{A as t,C as n,D as r,E as i,O as a,S as o,T as s,_ as c,g as l,k as u,o as d,t as f,u as p,v as m,w as h,y as g}from"./pages-FBg_a2XP.js";import{t as _}from"./mybapuji-strip-C-N8uBzA.js";import{t as v}from"./geocode-DLqB8puT.js";import{n as y,r as b,t as x}from"./charts-8bLU01EO.js";import{n as S,r as C,t as w}from"./widget-location-Cht_ammo.js";var T=`https://github.com/vasant22/kundli`,E=e=>String(e).padStart(2,`0`),D=e=>String(e??``).replace(/[&<>"']/g,e=>({"&":`&amp;`,"<":`&lt;`,">":`&gt;`,'"':`&quot;`,"'":`&#39;`})[e]);function O(e){if(!Number.isFinite(e))return`—`;let t=Math.floor(e),n=Math.floor((e-t)*60),r=Math.round(((e-t)*60-n)*60);return r===60&&(r=0,n+=1),n===60&&(n=0,t+=1),`${t}°${E(n)}'${E(r)}"`}function k(e){return e.fullNight?r(`panchang.fullNight`):l()===`en`?`upto ${e.endText}`:`${e.endText} तक`}function A(e,t){return!e||!e.length?`—`:e.map((e,n)=>`${D(t(e,n))} — ${D(k(e))}`).join(` · `)}function j(e){return l()===`en`?`From ${e.from} To ${e.to}`:`${e.from} से ${e.to} तक`}var M=(e,t)=>`<div class="pp-row"><div class="pp-label">${D(e)}</div><div class="pp-value">${t}</div></div>`;function N(e,t,n=``){return`<section class="card pp-card"><h2 class="pp-h2">${D(r(e))}</h2>${t}${n}</section>`}function P(e,i,l={}){let{p:d,kundli:f,place:_}=i,v=l.chartStyle||i.chartStyle||`north`,S=[M(r(`panchang.f.tithi`),A(d.tithi.entries,e=>`${a(e.index)} (${n(d.tithi.paksha)})`)),M(r(`panchang.f.nakshatra`),A(d.nakshatra.entries,e=>o(e.index))),M(r(`panchang.f.karana`),A(d.karana.entries,(e,t)=>m(d.karana.numbers[t]))),M(r(`panchang.f.paksha`),D(n(d.tithi.paksha))),M(r(`panchang.f.yoga`),A(d.yoga.entries,e=>t(e.index))),M(r(`panchang.f.vaar`),D(u(d.vaar)))],C=[M(r(`panchang.f.sunrise`),D(d.sunrise??r(`panchang.na`))),M(r(`panchang.f.sunset`),D(d.sunset??r(`panchang.na`))),M(r(`panchang.f.moonSign`),D(h(d.moonSign))),M(r(`panchang.f.moonrise`),D(d.moonrise??r(`panchang.na`))),M(r(`panchang.f.moonset`),D(d.moonset??r(`panchang.na`))),M(r(`panchang.f.ritu`),D(s(d.ritu)))],w=[M(r(`panchang.f.shaka`),`${d.samvat.shaka} · ${D(d.samvat.samvatsara.hi)} / ${D(d.samvat.samvatsara.en)}`),M(r(`panchang.f.vikram`),String(d.samvat.vikram)),M(r(`panchang.f.kali`),String(d.samvat.kali)),M(r(`panchang.f.pravishte`),d.pravishte?String(d.pravishte.value):D(r(`panchang.na`))),M(r(`panchang.f.monthPurnimanta`),D(g(d.months.purnimanta.index,d.months.purnimanta.adhika))),M(r(`panchang.f.monthAmanta`),D(g(d.months.amanta.index,d.months.amanta.adhika))),M(r(`panchang.f.dayDuration`),D(d.dayDuration??r(`panchang.na`)))],T=d.muhurats,k=e=>`${p[e].hi} / ${p[e].en}`,P=T?[M(k(`dushta`),D(T.dushta.map(j).join(`, `))),M(k(`kulika`),D(j(T.kulika))),M(k(`kantaka`),D(j(T.kantaka))),M(k(`rahu`),D(j(T.rahu))),M(k(`kalavela`),D(j(T.kalavela))),M(k(`yamaghanta`),D(j(T.yamaghanta))),M(k(`yamaganda`),D(j(T.yamaganda))),M(k(`gulika`),D(j(T.gulika)))]:[M(`—`,D(r(`panchang.na`)))],F=T?[M(k(`abhijit`),D(j(T.abhijit)))]:[],I=[M(r(`panchang.section.disha`),`${D(d.extras.dishaShoola.hi)} / ${D(d.extras.dishaShoola.en)}`)],L=[M(r(`panchang.f.taraBala`),d.extras.taraBala.map(e=>D(`${e.hi} / ${e.en}`)).join(`, `)),M(r(`panchang.f.chandraBala`),d.extras.chandraBala.map(e=>D(`${e.hi} / ${e.en}`)).join(`, `))],R=``;if(f&&!f.error){let e={dateText:`${E(d.date.day)} ${new Intl.DateTimeFormat(`en-IN`,{month:`short`}).format(new Date(Date.UTC(d.date.year,d.date.month-1,d.date.day)))} ${d.date.year}`,timeText:d.sunrise,placeText:_.name},t=t=>t===`south`?b(f,e):t===`east`?x(f,e):y(f),n=document.createElement(`div`);n.className=`pp-chart-host`,n.id=`pp-chart-host`,R=`
+      <div class="pp-chart-tabs" role="tablist">
+        ${[`north`,`south`,`east`].map(e=>`<button type="button" class="pp-tab${e===v?` active`:``}" data-style="${e}">${D(r(`panchang.chart.${e}`))}</button>`).join(``)}
+      </div>`,i.__chartResolve={build:t,host:n}}let z=``;if(f&&!f.error&&f.planets&&(z=N(`panchang.section.planets`,``,`<div class="pp-table-wrap"><table class="pp-table"><thead>${`<tr><th>${D(r(`panchang.f.graha`))}</th><th>${D(r(`panchang.f.rashi`))}</th><th>${D(r(`panchang.f.degree`))}</th><th>${D(r(`panchang.f.nakshatra`))}</th><th>${D(r(`panchang.f.pada`))}</th></tr>`}</thead><tbody>${f.planets.map(e=>`<tr><td>${D(c(e.key))}${e.retro?` (R)`:``}</td><td>${D(h(e.rashi))}</td><td>${O(e.degInSign)}</td><td>${D(o(e.nakshatra))}</td><td>${e.pada}</td></tr>`).join(``)}</tbody></table></div><p class="note">${D(r(`panchang.planets.modernNote`))}</p>`)),e.innerHTML=[N(`panchang.section.today`,S.join(``)),N(`panchang.section.sunMoon`,C.join(``)),N(`panchang.section.monthYear`,w.join(``)),N(`panchang.section.ashubha`,P.join(``)),N(`panchang.section.shubha`,F.join(``)),N(`panchang.section.disha`,I.join(``)),N(`panchang.section.bala`,L.join(``)),R?`<section class="card pp-card" id="pp-lagna-card"><h2 class="pp-h2">${D(r(`panchang.section.lagna`))}</h2>${R}</section>`:``,z].join(``),i.__chartResolve){let{build:t,host:n}=i.__chartResolve;delete i.__chartResolve;let r=e.querySelector(`.pp-chart-tabs`),a=e=>{n.replaceChildren(t(e)),r?.querySelectorAll(`.pp-tab`).forEach(t=>{t.classList.toggle(`active`,t.dataset.style===e),t.setAttribute(`aria-pressed`,String(t.dataset.style===e))})};r?.querySelectorAll(`.pp-tab`).forEach(e=>{e.addEventListener(`click`,()=>a(e.dataset.style))}),a(v),e.querySelector(`#pp-lagna-card`)?.append(n)}return e}function F(){let t=document.querySelector(`#app`);if(!t)return;let n=new URLSearchParams(window.location.search),a=n.get(`lang`)===`en`?`en`:`hi`;i(a);let o={place:{name:w.name.en,label:w.name,latitude:w.latitude,longitude:w.longitude,timezone:w.timeZone},date:d(w.timeZone),swe:null,last:null};if(n.get(`lat`)&&n.get(`lon`)&&n.get(`tz`)){let e=n.get(`place`)||`${n.get(`lat`)}, ${n.get(`lon`)}`;o.place={name:e,label:{hi:e,en:e},latitude:Number(n.get(`lat`)),longitude:Number(n.get(`lon`)),timezone:n.get(`tz`)}}n.get(`date`)&&(o.date=n.get(`date`)),t.innerHTML=_()+`
+    <div class="wrap">
+      <header class="site-header">
+        <div>
+          <h1 data-i18n="panchang.title"></h1>
+          <p class="sub" data-i18n="panchang.subtitle"></p>
+          <p class="free-badge" data-i18n="panchang.badge"></p>
+          <nav class="site-nav">
+            <a href="${f.kundli}" data-i18n="nav.home"></a>
+            <a href="${f.match}" data-i18n="nav.match"></a>
+            <a href="${f.panchang}" class="active" data-i18n="nav.panchang"></a>
+            <a href="${f.bnn}" data-i18n="nav.bnn"></a>
+          </nav>
+        </div>
+        <button id="lang-toggle" class="lang-toggle" type="button" data-i18n="lang.switchTo"></button>
+      </header>
+
+      <main>
+        <form id="pp-form" class="card" novalidate>
+          <h2 class="form-heading" data-i18n="panchang.title"></h2>
+          <div class="field">
+            <label for="pp-place" data-i18n="panchang.placeLabel"></label>
+            <div class="search-row">
+              <input id="pp-place" type="text" data-i18n-placeholder="panchang.searchPlace" autocomplete="off" />
+              <button type="button" id="pp-search" class="secondary" data-i18n="form.search"></button>
+            </div>
+            <div id="pp-results" class="results"></div>
+            <p class="muted" id="pp-selected"></p>
+          </div>
+          <div class="field">
+            <label for="pp-date" data-i18n="panchang.dateLabel"></label>
+            <input id="pp-date" type="date" />
+          </div>
+          <div class="actions">
+            <button type="submit" id="pp-go" class="primary" data-i18n="panchang.getPanchang"></button>
+          </div>
+          <p class="err" id="pp-err" aria-live="polite"></p>
+        </form>
+
+        <div id="pp-out" class="results" aria-live="polite"></div>
+      </main>
+
+      <footer class="site-footer">
+        <p class="note" data-i18n="footer.privacy"></p>
+        <p class="note footer-credit-line">
+          <span data-i18n="footer.poweredBy"></span><a href="https://www.astro.com/swisseph/" target="_blank" rel="noopener">Swiss Ephemeris</a> (Astrodienst AG) ·
+          <a class="footer-source" href="${T}" target="_blank" rel="noopener" data-i18n="footer.source"></a>
+        </p>
+      </footer>
+    </div>`;let s=()=>{t.querySelectorAll(`[data-i18n]`).forEach(e=>{e.textContent=r(e.dataset.i18n)}),t.querySelectorAll(`[data-i18n-placeholder]`).forEach(e=>{e.placeholder=r(e.dataset.i18nPlaceholder)})};s();let c=e=>t.querySelector(e),u=c(`#pp-place`),p=c(`#pp-results`),m=c(`#pp-selected`),h=c(`#pp-date`),g=c(`#pp-err`),y=c(`#pp-go`);h.value=o.date;let b=()=>{m.textContent=`${r(`search.selected`)}: ${o.place.label?.[l()]??o.place.name}`};b(),c(`#lang-toggle`).addEventListener(`click`,()=>{i(l()===`hi`?`en`:`hi`);let e=c(`#lang-toggle`);if(e.textContent=r(`lang.switchTo`),s(),b(),o.last){let e=c(`#pp-out`).querySelector(`.pp-tab.active`)?.dataset.style;P(c(`#pp-out`),o.last,{chartStyle:e})}});let x=0,E=async()=>{let e=u.value.trim();if(g.textContent=``,!e){g.textContent=r(`search.enterName`);return}let t=Date.now();if(!(t-x<800)){x=t,p.innerHTML=`<p class="muted">${D(r(`search.busy`))}</p>`;try{let t=await v(e);if(!t.length){p.innerHTML=`<p class="muted">${D(r(`search.none`))}</p>`;return}p.innerHTML=``,t.forEach(e=>{let t=document.createElement(`button`);t.type=`button`,t.className=`result-item`,t.textContent=`${e.name}, ${e.admin1}, ${e.country}`,t.addEventListener(`click`,()=>{o.place={name:`${e.name}, ${e.country}`,label:{hi:`${e.name}, ${e.country}`,en:`${e.name}, ${e.country}`},latitude:e.latitude,longitude:e.longitude,timezone:e.timezone},p.innerHTML=``,b(),g.textContent=``}),p.append(t)})}catch(e){console.error(e),p.innerHTML=`<p class="err">${D(r(`search.error`))}</p>`}}};c(`#pp-search`).addEventListener(`click`,E),u.addEventListener(`keydown`,e=>{e.key===`Enter`&&(e.preventDefault(),E())});let O=async()=>{if(g.textContent=``,!/^\d{4}-\d{2}-\d{2}$/.test(h.value)){g.textContent=r(`panchang.errDate`);return}y.disabled=!0;let t=y.textContent;y.textContent=r(`panchang.calculating`);try{o.swe||=await e();let[t,n,i]=h.value.split(`-`).map(Number),a=S(o.swe,{year:t,month:n,day:i,latitude:o.place.latitude,longitude:o.place.longitude,timeZone:o.place.timezone}),s=c(`#pp-out`);if(a.note===`polar`){s.innerHTML=`<p class="note">${D(r(`panchang.na`))}</p>`,o.last=null;return}let l=C(o.swe,a,o.place);o.last={p:a,kundli:l.error?null:l,place:o.place},P(s,o.last)}catch(e){console.error(e),g.textContent=r(`panchang.engineError`)}finally{y.disabled=!1,y.textContent=t?r(`panchang.getPanchang`):y.textContent}};c(`#pp-form`).addEventListener(`submit`,e=>{e.preventDefault(),O()}),O()}typeof document<`u`&&document.querySelector(`#app`)&&F();

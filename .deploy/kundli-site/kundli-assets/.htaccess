@@ -1,0 +1,30 @@
+# /kundli-assets/ — shared app payload for mybapuji.com
+# (कुंडली · कुंडली मिलान · पंचांग · BNN चार्ट). Added 17 Oct 2026.
+#
+# Everything here is static and content-addressed, so it is meant to be cached
+# hard at the browser AND at the Cloudflare edge — that is what keeps these
+# pages off the WordPress server's bandwidth.
+
+<IfModule mod_headers.c>
+  # Hashed bundles: filename changes whenever the content does.
+  <FilesMatch "\.(js|css|png|svg|jpg|webp)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  # Stable filenames — cache long, but not immutable.
+  <FilesMatch "\.(wasm|data|woff2|ttf)$">
+    Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+
+  # The WASM engine must be served as application/wasm or
+  # instantiateStreaming() refuses it and the page hangs on "loading".
+  <FilesMatch "\.wasm$">
+    Header set Content-Type "application/wasm"
+  </FilesMatch>
+</IfModule>
+
+# Nothing in here is dynamic — never hand it to PHP.
+<IfModule mod_rewrite.c>
+  RewriteEngine Off
+</IfModule>
+Options -Indexes -MultiViews

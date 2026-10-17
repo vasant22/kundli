@@ -1,0 +1,169 @@
+<!doctype html>
+<!--
+  ⚠️ यह फ़ाइल सीधे (file:// से) खोलने पर खाली page दिखाएगी — पूरा app JavaScript से बनता है
+  और उसे local server से खोलना पड़ता है। Opening this file directly from disk shows a blank
+  page; the UI is rendered by JavaScript and must be served. Run `npm run dev` and open
+  http://localhost:5173 (or `npm run preview` after a build).
+-->
+<html lang="hi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/kundli-assets/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/kundli-assets/favicon.png" />
+    <meta name="theme-color" content="#e8730c" />
+    <!-- SEO: Google के लिए मुख्य जानकारी — नई सामग्री जोड़ते समय canonical + sitemap.xml भी अपडेट करें -->
+    <meta
+      name="description"
+      content="Free कुंडली बनाएं — जन्म तिथि, समय और जगह से तुरंत जन्मपत्री: लग्न, राशि, नक्षत्र, ग्रह स्थिति, उत्तर-दक्षिण भारतीय चार्ट और PNG डाउनलोड। 100% मुफ़्त, बिना साइन-अप।"
+    />
+    <meta
+      name="keywords"
+      content="free कुंडली, कुंडली बनाएं, जन्म कुंडली, जन्मपत्री, जन्मपत्री बनाएं, ऑनलाइन कुंडली, कुंडली चार्ट, लग्न कुंडली, free kundli, janam kundli in hindi, kundli online in hindi, free janam kundli"
+    />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="canonical" href="https://mybapuji.com/kundli/" />
+    <meta property="og:site_name" content="MyBapuji" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://mybapuji.com/kundli/" />
+    <meta property="og:title" content="Free कुंडली बनाएं — जन्मपत्री / Janam Kundli Online" />
+    <meta
+      property="og:description"
+      content="Free कुंडली / जन्मपत्री — लग्न, राशि, नक्षत्र, ग्रह स्थिति, उत्तर-दक्षिण चार्ट। 100% मुफ़्त, बिना साइन-अप।"
+    />
+    <meta property="og:locale" content="hi_IN" />
+    <title>Free कुंडली बनाएं — जन्मपत्री / Janam Kundli Online</title>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebApplication",
+            "name": "Free कुंडली / जन्मपत्री — ऑनलाइन कुंडली (Janam Kundli)",
+            "alternateName": "Free Kundli / Janam Kundli Online in Hindi",
+            "url": "https://mybapuji.com/kundli/",
+            "applicationCategory": "LifestyleApplication",
+            "operatingSystem": "Web browser (mobile & desktop)",
+            "browserRequirements": "Requires JavaScript",
+            "inLanguage": ["hi-IN", "en"],
+            "isAccessibleForFree": true,
+            "keywords": "free कुंडली, कुंडली बनाएं, जन्म कुंडली, जन्मपत्री, free janam kundli, kundli online in hindi",
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+            "publisher": { "@type": "Organization", "name": "MyBapuji", "url": "https://mybapuji.com/" }
+          },
+          {
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Free कुंडली कैसे बनाएं?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "जन्म तिथि, जन्म समय और जन्म स्थान भरें और 'कुंडली बनाएं' दबाएँ — लग्न, राशि, नक्षत्र, ग्रह स्थिति और उत्तर/दक्षिण भारतीय चार्ट तुरंत दिखते हैं। कोई साइन-अप नहीं।"
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "क्या यह कुंडली टूल मुफ़्त है?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "हाँ — 100% Free। कोई शुल्क या लॉगिन नहीं; जितनी चाहें कुंडलियाँ बनाएँ।"
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "जन्मपत्री में क्या-क्या मिलता है?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "लग्न व राशि, नक्षत्र-चरण, नौ ग्रहों की स्थिति व भाव, वक्री ग्रह, उत्तर/दक्षिण भारतीय चार्ट और विस्तृत ग्रह तालिका — PNG डाउनलोड के साथ।"
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "मेरा जन्म-विवरण कहाँ जाता है?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "कहीं नहीं — पूरी गणना आपके ब्राउज़र में होती है; जन्म-विवरण सेव या कहीं भेजा नहीं जाता।"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
+    <script type="module" crossorigin src="/kundli-assets/js/main-tApT0IRp.js"></script>
+    <link rel="modulepreload" crossorigin href="/kundli-assets/js/astro-BrsFnPnW.js">
+    <link rel="modulepreload" crossorigin href="/kundli-assets/js/pages-FBg_a2XP.js">
+    <link rel="modulepreload" crossorigin href="/kundli-assets/js/mybapuji-strip-C-N8uBzA.js">
+    <link rel="modulepreload" crossorigin href="/kundli-assets/js/geocode-DLqB8puT.js">
+    <link rel="modulepreload" crossorigin href="/kundli-assets/js/tzauto-DF7_Kaz-.js">
+    <link rel="modulepreload" crossorigin href="/kundli-assets/js/birthvalidate-D3N96iQr.js">
+    <link rel="modulepreload" crossorigin href="/kundli-assets/js/charts-8bLU01EO.js">
+    <link rel="stylesheet" crossorigin href="/kundli-assets/js/mybapuji-strip-8H5NMfOD.css">
+  </head>
+  <body>
+    <div id="app"></div>
+    <!-- SEO जानकारी-भाग: Google और नए उपयोगकर्ताओं के लिए (JS के बिना भी दिखता है) -->
+    <section class="seo-info" lang="hi" aria-label="कुंडली के बारे में जानकारी">
+      <div class="seo-box">
+        <h2>Free कुंडली बनाएं — ऑनलाइन जन्मपत्री (Janam Kundli)</h2>
+        <p>
+          यह मुफ़्त कुंडली टूल आपकी जन्म तिथि, जन्म समय और जन्म स्थान से तुरंत जन्मपत्री बनाता है — कोई
+          साइन-अप नहीं, कोई शुल्क नहीं। कुछ ही पलों में आप देख सकते हैं: लग्न और राशि, नक्षत्र व चरण,
+          सभी ग्रहों की स्थिति (भाव, अंश, वक्री/मार्गी), अयनांश, और उत्तर भारतीय व दक्षिण भारतीय दोनों
+          चार्ट। गणना Swiss Ephemeris से लाहिरी अयनांश में होती है और पूरी तरह आपके ब्राउज़र में चलती है —
+          जन्म-विवरण कहीं सेव नहीं होता।
+        </p>
+        <details class="faq-item">
+          <summary>Free कुंडली बनाने के लिए क्या चाहिए?</summary>
+          <p>सिर्फ़ तीन चीज़ें: जन्म तारीख़, जन्म का समय और जन्म का शहर। “कुंडली बनाएं” दबाते ही परिणाम सामने होता है। चाहें तो कुंडली चार्ट PNG में डाउनलोड करें या प्रिंट करें।</p>
+        </details>
+        <details class="faq-item">
+          <summary>क्या यह जन्मपत्री टूल मुफ़्त है?</summary>
+          <p>हाँ — 100% Free। न शुल्क, न लॉगिन। आप जितनी बार चाहें, उतनी कुंडलियाँ बना सकते हैं — किसी भी जन्म तिथि, समय और दुनिया में किसी भी जगह के लिए।</p>
+        </details>
+        <details class="faq-item">
+          <summary>जन्मपत्री में क्या-क्या मिलता है?</summary>
+          <p>लग्न व राशि, नक्षत्र-चरण, नौ ग्रहों की स्थिति और भाव, वक्री ग्रह, अयनांश, उत्तर/दक्षिण भारतीय चार्ट और विस्तृत ग्रह तालिका — साथ में PNG डाउनलोड।</p>
+        </details>
+        <details class="faq-item">
+          <summary>मेरा जन्म-विवरण कहाँ जाता है?</summary>
+          <p>कहीं नहीं — पूरी गणना आपके ब्राउज़र (मोबाइल/कंप्यूटर) में होती है; जन्म-विवरण सर्वर पर सेव या भेजा नहीं जाता।</p>
+        </details>
+      </div>
+      <nav class="seo-links" aria-label="और मुफ़्त टूल">
+        <a href="/kundli-milan/">Free कुंडली मिलान — 36 गुण</a>
+        <a href="/panchang/">Free आज का पंचांग</a>
+      </nav>
+      <!-- किताबें: mybapuji की मुफ़्त ज्योतिष किताबें + Amazon Sponsored (user request — 30 Sep 2026) -->
+      <div class="seo-box">
+        <h2>ज्योतिष संबंधित किताबें मुफ़्त Download करें</h2>
+        <p class="seo-note">mybapuji.com पर हिंदी और English में ज्योतिष की हज़ारों किताबें मुफ़्त PDF में मौजूद हैं — नीचे किसी भी श्रेणी से शुरू करें:</p>
+        <div class="book-grid">
+          <a class="book-card" href="https://mybapuji.com/hindi-pdf-e-book-download-for-free/pdf-jyotish-books-hindi-vedic-astrology-free-download/" target="_blank" rel="noopener"><span class="bc-ic">🔮</span><span class="bc-t">ज्योतिष शास्त्र</span><span class="bc-s">वैदिक ज्योतिष</span></a>
+          <a class="book-card" href="https://mybapuji.com/hindi-pdf-e-book-download-for-free/pdf-kp-astrology-free-download/" target="_blank" rel="noopener"><span class="bc-ic">📗</span><span class="bc-t">KP Astrology — Krishnamurti</span><span class="bc-s">KP पद्धति</span></a>
+          <a class="book-card" href="https://mybapuji.com/hindi-pdf-e-book-download-for-free/pdf-kp-astrology-k-s-krishnamurty-free-download/" target="_blank" rel="noopener"><span class="bc-ic">📕</span><span class="bc-t">KP — K. S. Krishnamurty</span><span class="bc-s">KP पद्धति</span></a>
+          <a class="book-card" href="https://mybapuji.com/hindi-pdf-e-book-download-for-free/pdf-kp-astrology-chandrakant-r-bhatt-free-download/" target="_blank" rel="noopener"><span class="bc-ic">📘</span><span class="bc-t">KP — Chandrakant R. Bhatt</span><span class="bc-s">KP पद्धति</span></a>
+          <a class="book-card" href="https://mybapuji.com/pdf-nadi-astrology-books-free-download/" target="_blank" rel="noopener"><span class="bc-ic">🧭</span><span class="bc-t">नाड़ी ज्योतिष</span><span class="bc-s">नाड़ी रीडिंग</span></a>
+          <a class="book-card" href="https://mybapuji.com/hindi-pdf-e-book-download-for-free/pdf-hasth-rekha-gyan-hindi-free-download/" target="_blank" rel="noopener"><span class="bc-ic">🖐️</span><span class="bc-t">हस्त रेखा ज्ञान</span><span class="bc-s">हस्त रेखा</span></a>
+          <a class="book-card" href="https://mybapuji.com/hindi-pdf-e-book-download-for-free/pdf-book-jyotish-sangrah/" target="_blank" rel="noopener"><span class="bc-ic">📔</span><span class="bc-t">ज्योतिष संग्रह</span><span class="bc-s">संग्रह</span></a>
+        </div>
+        <nav class="seo-links" aria-label="और भी ज्योतिष किताबें">
+          <a href="https://mybapuji.com/hindi-pdf-e-book-download-for-free/" target="_blank" rel="noopener">📚 सभी हिंदी किताबें</a>
+          <a href="https://mybapuji.com/pdf-astrology-books-english-free-download/" target="_blank" rel="noopener">🔤 English ज्योतिष किताबें</a>
+        </nav>
+      </div>
+      <div class="seo-box">
+        <h2><span class="sponsored-tag">Sponsored</span> आपके लिए चुनी किताबें</h2>
+        <div class="book-grid book-grid-amz">
+          <a class="book-card" href="https://www.amazon.in/s?i=stripbooks&k=jyotish%20astrology%20hindi%20books&tag=krishna220af-21" target="_blank" rel="nofollow sponsored noopener"><span class="bc-ic">📿</span><span class="bc-t">ज्योतिष</span></a>
+          <a class="book-card" href="https://www.amazon.in/s?i=stripbooks&k=hindi%20religious%20spiritual%20books&tag=krishna220af-21" target="_blank" rel="nofollow sponsored noopener"><span class="bc-ic">🙏</span><span class="bc-t">धार्मिक किताबें</span></a>
+          <a class="book-card" href="https://www.amazon.in/s?i=stripbooks&k=mantra%20tantra%20hindi%20books&tag=krishna220af-21" target="_blank" rel="nofollow sponsored noopener"><span class="bc-ic">🔱</span><span class="bc-t">मंत्र-तंत्र</span></a>
+          <a class="book-card" href="https://www.amazon.in/s?i=stripbooks&k=vedanta%20hindi%20books&tag=krishna220af-21" target="_blank" rel="nofollow sponsored noopener"><span class="bc-ic">📖</span><span class="bc-t">वेदांत</span></a>
+          <a class="book-card" href="https://www.amazon.in/s?i=stripbooks&k=motivational%20books%20hindi&tag=krishna220af-21" target="_blank" rel="nofollow sponsored noopener"><span class="bc-ic">💡</span><span class="bc-t">प्रेरक किताबें</span></a>
+          <a class="book-card" href="https://www.amazon.in/s?i=stripbooks&k=kundalini%20yoga%20hindi%20books&tag=krishna220af-21" target="_blank" rel="nofollow sponsored noopener"><span class="bc-ic">🧘</span><span class="bc-t">योग</span></a>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>

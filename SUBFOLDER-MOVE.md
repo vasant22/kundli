@@ -61,18 +61,48 @@ public_html/
 - [x] 3 widget HTML files — favicon
 - [x] `index.html` static cross-links (`./match/` → `/kundli-milan/`)
 - [x] `public/sitemap.xml` (4 नए URLs), `public/robots.txt` (नोट सहित), `public/CNAME` **हटाया**
-- [x] Tests के URL assertions (seo / widget / kundli-widget / match-widget / form / widgets-preview)
+- [x] Tests के URL assertions — **504/504 पास**
+- [x] `scripts/build-server-layout.mjs` — dist → server layout + cache headers
+- [x] **DEPLOYED + LIVE** — 6 URLs 200 OK, MIME सही (`application/wasm` ✓)
 
-### 🔲 बाकी
-- [ ] `npm test` — 504 पास होने चाहिए
-- [ ] `scripts/build-server-layout.mjs` — dist → server layout
-- [ ] `.github/workflows/deploy.yml` — Pages की जगह server upload
-- [ ] `.htaccess` (cache headers) + Cloudflare Cache Rule guide
+### 🔲 बाकी (user action)
+- [ ] **Cloudflare Cache Rule** `/kundli-assets/*` (नीचे steps)
+- [ ] **Cloudflare 301** `kundli.mybapuji.com/*` → `mybapuji.com/kundli/*`
 - [ ] WordPress: `autoclaw-home.php` (3 iframes + **postMessage origin allow-list**),
       `autoclaw-kundli-links.php` (4 links), नया mu-plugin `autoclaw-kundli-sitemap.php`
-- [ ] Deploy + live verify (4 pages + 3 widgets + wasm load)
-- [ ] Cloudflare: `kundli.mybapuji.com` → 301 नए URLs पर
 - [ ] GSC में नए 4 URLs submit
+- [ ] GitHub Pages retire (बाद में — जब तक 301 नहीं लगा, subdomain safety net है)
+
+## Deploy ke do (mere) bugs — live pakde gaye, dono fix
+
+1. **Page-level `.htaccess` 404 kar raha tha.** Maine `RewriteCond !-f` + `RewriteRule ^ - [R=404,L]`
+   likha tha; wo *directory* request par bhi 404 karta hai, to `/kundli/` (jiska file
+   `index.html` hai) bhi 404 gaya. Fix: page-level `.htaccess` hata diya — asli
+   `index.html` asli folder mein hai aur parent WordPress `.htaccess` pehle se
+   `!-f` + `!-d` dono guard karta hai. Generator se bhi hata diya.
+2. **`sitemap.xml` ki permission `600` thi** → suPHP user (`my4bap21`) pad hi nahi
+   paa raha tha (403 → 404). Fix: generator ab `chmod -R a+rX` karta hai.
+
+⚠️ **Apache direct test valid nahi hai** is server par — `curl 127.0.0.1:8181 -H 'Host: mybapuji.com'`
+par *existing* `index.php` bhi 404 deta hai (koi bhi normal file nahi milti). asli path
+hamesha nginx → Apache (`proxy_pass 139.59.92.161:8181`) hai. **Hamesha `https://mybapuji.com/...`
+se test karo.** Vhost ka apna error log bhi alag hai: `/usr/local/apache/domlogs/mybapuji.com.error.log`
+(`/usr/local/apache/logs/error_log` mein kuch nahi aata).
+
+## Server load — measured reality
+
+| file | cache-control | cf-cache-status |
+|---|---|---|
+| `/kundli-assets/js/*.js` | `max-age=315360000` (CWP default) | `MISS` → edge me cache |
+| `/kundli-assets/fonts/*.woff2` | `max-age=315360000` | `MISS` → edge me cache |
+| `/kundli-assets/wasm/swisseph.wasm` (549 KB) | `public, max-age=2592000` (humara .htaccess) | `DYNAMIC` |
+| `/kundli-assets/wasm/swisseph.data` (**2.1 MB**) | `public, max-age=2592000` | **`DYNAMIC`** ⚠️ |
+
+`.wasm` / `.data` Cloudflare ki default cacheable-extension list me nahi hain, isliye
+`cf-cache-status: DYNAMIC`. Browser 30 din tak cache karta hai (header set hai), to
+**har naye visitor par sirf ek baar** 2.1 MB aayega — par woh aapke server se.
+Cache Rule lagne ke baad Cloudflare edge absorb kar lega.
+
 
 ## Server load का फ़ैसला
 
