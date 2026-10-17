@@ -126,14 +126,44 @@ async function main() {
   // world-readable comes back as a 403/404. Normalise before shipping.
   execFileSync('chmod', ['-R', 'a+rX', fileURLToPath(STAGE)])
 
+  // ⚠️ macOS tar embeds the LOCAL uid/gid (501/games) plus AppleDouble `._`
+  // files. COPYFILE_DISABLE=1 drops the `._` clutter.
   execFileSync('tar', ['-czf', fileURLToPath(new URL('kundli-site.tar.gz', OUT)),
-                       '-C', fileURLToPath(OUT), 'kundli-site'])
+                       '-C', fileURLToPath(OUT), 'kundli-site'],
+               { env: { ...process.env, COPYFILE_DISABLE: '1' } })
 
   const bytes = await dirSize(STAGE)
   console.log('server layout staged:')
   for (const [, to] of MAP) console.log(`  ${to}`)
   console.log('  kundli-assets/.htaccess  (cache headers — the pages need none)')
   console.log(`total: ${(bytes / 1024 / 1024).toFixed(2)} MB → .deploy/kundli-site.tar.gz`)
+  console.log(`
+⚠️  UPLOAD — do it exactly like this, or you WILL take mybapuji.com down:
+
+  # 1. fetch (into /tmp, never into the docroot)
+  curl -sL -o /tmp/ksite.tgz <raw-url-of-this-tarball>
+
+  # 2. extract with --no-same-owner. The tarball carries the macOS uid 501;
+  #    without this flag the files land as 501:games.
+  rm -rf /tmp/ksite && mkdir -p /tmp/ksite
+  tar xzf /tmp/ksite.tgz --no-same-owner -C /tmp/ksite
+  find /tmp/ksite -name '._*' -delete
+
+  # 3. copy each entry separately into the docroot.  cp -a src/. DEST/ copies
+  #    the source directory's OWN attributes onto DEST — that once reset
+  #    public_html to 501:games and suPHP then returned 500 for the whole
+  #    WordPress site. A per-entry copy leaves public_html untouched.
+  D=/home/my4bap21/public_html
+  for e in /tmp/ksite/kundli-site/*; do cp -a "$e" "$D/"; done
+
+  # 4. ownership + permissions
+  chown -R my4bap21:my4bap21 $D/kundli $D/kundli-milan $D/panchang $D/bnn-chart $D/kundli-assets
+  find $D/kundli $D/kundli-milan $D/panchang $D/bnn-chart $D/kundli-assets \\
+       -type d -exec chmod 755 {} + -o -type f -exec chmod 644 {} +
+
+  # 5. verify public_html itself was NOT touched
+  ls -ld $D    # must read: my4bap21 my4bap21   (never 501 games)
+`)
 }
 
 main()

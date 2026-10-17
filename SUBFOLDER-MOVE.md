@@ -89,6 +89,39 @@ hamesha nginx → Apache (`proxy_pass 139.59.92.161:8181`) hai. **Hamesha `https
 se test karo.** Vhost ka apna error log bhi alag hai: `/usr/local/apache/domlogs/mybapuji.com.error.log`
 (`/usr/local/apache/logs/error_log` mein kuch nahi aata).
 
+## 🔴 INCIDENT — 17 Oct 2026 02:41 — poori website 500 par gayi (fix ho chuki hai)
+
+**Kya hua:** `cp -a /tmp/ksite/kundli-site/. /home/my4bap21/public_html/` — ye ek
+command poori WordPress site ko 500 par le gaya.
+
+**Kyun:** macOS par banaya gaya tarball har file ka **local uid/gid (501:games)**
+store karta hai. `cp -a SRC/. DEST/` sirf contents nahi copy karta — ye source
+directory ki **apni attributes** DEST par bhi apply kar deta hai. Isliye
+`public_html` ka owner `501:games` ho gaya, jabki suPHP user hai `my4bap21`
+(uid 1001). Apache:
+
+```
+SoftException in Application.cpp:560: Directory /home/my4bap21/public_html is not owned by my4bap21
+End of script output before headers: index.php
+```
+
+→ har PHP page 500. Static pages (hamare /kundli/) phir bhi 200 — isliye
+dekhne mein "sirf PHP tuta" laga, par poora WordPress down tha.
+
+**Fix (2 min):** `chown my4bap21:my4bap21 /home/my4bap21/public_html`
+→ homepage 200, `book-download.php?b=…` 302, sab kuch normal.
+
+**Ab kya badla (is dobara na ho):**
+- `build-server-layout.mjs` ab `COPYFILE_DISABLE=1` se tar banata hai (`._` files nahi)
+- uska output **exact server-side steps** print karta hai, `cp -a …/. dest/`
+  chhod kar **per-entry loop** use karte hue
+- verification step: `ls -ld $D` — hamesha `my4bap21 my4bap21` hona chahiye
+- deploy ke baad `find /tmp/ksite ! -user root` se check karna hai
+
+⚠️ **Rule:** is server par koi bhi macOS se bana archive docroot mein `cp -a …/.`
+se NAHI daalna. Ya to `--no-same-owner` ke saath extract karo, ya har entry alag
+se copy karo, aur hamesha `chown -R my4bap21:my4bap21` ke baad verify karo.
+
 ## Server load — measured reality
 
 | file | cache-control | cf-cache-status |
