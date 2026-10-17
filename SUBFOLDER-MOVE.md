@@ -81,7 +81,41 @@ Internal links (menu + strip + cards) से Google खुद खोज ले�
 ⚠️ **नियम:** WordPress site पर कोई भी *नया* mu-plugin तभी upload करो जब वह बिल्कुल trivial हो।
 पहले उसका local copy test करो; और हमेशा तुरंत rollback ready रखो (backup file + "कौन-सी file हटानी है" लिखा हो)।
 
-### 🔲 बाकी (user action)
+### ✅ DONE (17 Oct 2026) — poora move complete
+
+- [x] 4 pages live: /kundli/ /kundli-milan/ /panchang/ /bnn-chart/ (+3 widgets)
+- [x] WordPress menu (5 items) + homepage 3 iframes + site-wide strip → naye URLs
+- [x] **Cloudflare Cache Rule** (`7de0ffde`, phase http_request_cache_settings) —
+      `swisseph.data` (2.1 MB) par `cf-cache-status: HIT` → server bandwidth free
+- [x] **Cloudflare 301** (`decfc393`, phase http_request_dynamic_redirect, 5 rules) —
+      pure redirect matrix verified, query string preserved
+- [x] DNS: `kundli` record = CNAME vasant22.github.io + **Proxied (orange)**
+
+### Cloudflare API ke do notes (agle kaam ke liye)
+
+1. Redirect rule ka shape **`action_parameters.from_value`** hai (singular) —
+   `from_values`/`to_values`/`status_code` sab "unknown field" dete hain.
+   Isi liye pehle API se redirect nahi ban paaya; dashboard se bana, phir API se
+   theek kiya. Ab main ye rules API se manage kar sakta hoon.
+2. Wildcard capture ka placeholder UI mein bhi `*` dikhta hai par woh
+   **substitute nahi hota** (literal `*` chala gaya) — sahi hai **`${1}`**.
+   `preserve_query_string: true` + `${1}` dono saath sahi kaam karte hain
+   (duplication nahi hoti).
+
+### 301 redirect matrix (verified by curl)
+
+| purana | naya |
+|---|---|
+| `/` | `/kundli/` |
+| `/match/` | `/kundli-milan/` |
+| `/panchang/` | `/panchang/` |
+| `/bnn/` | `/bnn-chart/` |
+| `/panchang-widget/` | `/panchang/widget/` |
+| `/widgets/kundli/`, kuch bhi aur | `/kundli/` |
+
+`?name=…&gender=…` wagera query string poori tarah bachti hai (verified).
+
+### 🔲 Baki (optional, user)
 - [ ] **Cloudflare Cache Rule** `/kundli-assets/*` (नीचे steps)
 - [ ] **Cloudflare 301** `kundli.mybapuji.com/*` → `mybapuji.com/kundli/*`
 - [ ] WordPress: `autoclaw-home.php` (3 iframes + **postMessage origin allow-list**),
