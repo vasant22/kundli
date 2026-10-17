@@ -85,22 +85,14 @@ const ASSETS_HTACCESS = `# /kundli-assets/ — shared app payload for mybapuji.c
 Options -Indexes -MultiViews
 `
 
-// The four tool pages are plain static HTML. WordPress's catch-all rewrite must
-// never swallow them, and they must never be cached hard (content changes).
-const PAGE_HTACCESS = `# Static tool page — served straight from disk, never via PHP.
-<IfModule mod_headers.c>
-  Header set Cache-Control "public, max-age=0, must-revalidate"
-  Header set X-Content-Type-Options "nosniff"
-</IfModule>
-
-# If the folder somehow ends up without index.html, don't let WordPress render
-# a 404 page with a 200 status — a missing page must look missing.
-<IfModule mod_rewrite.c>
-  RewriteEngine On
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteRule ^ - [R=404,L]
-</IfModule>
-`
+// NO .htaccess goes next to the tool pages — deliberately.
+//
+// A first attempt shipped one with `RewriteCond !-f` + `RewriteRule ^ - [R=404,L]`
+// to make a missing page look missing. That 404s *directory* requests too, so
+// every tool page (/kundli/ → /kundli/index.html) returned 404 on the live site.
+// Real files inside real directories are already served correctly: the parent
+// WordPress .htaccess guards with both `!-f` and `!-d`, so it never swallows
+// them. Nothing is needed here — and less .htaccess is less risk.
 
 async function dirSize(dir) {
   let total = 0
@@ -128,11 +120,11 @@ async function main() {
     }
   }
 
-  // Cache headers: one .htaccess for the shared folder, one next to each page.
+  // Cache headers for the shared folder only (see the note above about pages).
   await writeFile(new URL('.htaccess', new URL('kundli-assets/', STAGE)), ASSETS_HTACCESS)
-  for (const pageDir of ['kundli', 'kundli-milan', 'panchang', 'bnn-chart']) {
-    await writeFile(new URL('.htaccess', new URL(pageDir + '/', STAGE)), PAGE_HTACCESS)
-  }
+  // WordPress serves these as the suPHP user `my4bap21`; a file that is not
+  // world-readable comes back as a 403/404. Normalise before shipping.
+  execFileSync('chmod', ['-R', 'a+rX', fileURLToPath(STAGE)])
 
   execFileSync('tar', ['-czf', fileURLToPath(new URL('kundli-site.tar.gz', OUT)),
                        '-C', fileURLToPath(OUT), 'kundli-site'])
@@ -140,7 +132,7 @@ async function main() {
   const bytes = await dirSize(STAGE)
   console.log('server layout staged:')
   for (const [, to] of MAP) console.log(`  ${to}`)
-  console.log('  kundli-assets/.htaccess, <page>/.htaccess  (cache headers)')
+  console.log('  kundli-assets/.htaccess  (cache headers — the pages need none)')
   console.log(`total: ${(bytes / 1024 / 1024).toFixed(2)} MB → .deploy/kundli-site.tar.gz`)
 }
 
