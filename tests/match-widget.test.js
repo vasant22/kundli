@@ -55,8 +55,8 @@ describe('buildMatchParams — the link the widget opens', () => {
 
 describe('buildOpenUrl', () => {
   it('opens the matching tool at /match/ (production path)', () => {
-    const url = buildOpenUrl('https://kundli.mybapuji.com/widgets/match/', BOY, GIRL)
-    expect(url.startsWith('https://kundli.mybapuji.com/match/?')).toBe(true)
+    const url = buildOpenUrl('https://mybapuji.com/kundli-milan/widget/', BOY, GIRL)
+    expect(url.startsWith('https://mybapuji.com/kundli-milan/?')).toBe(true)
   })
 
   it('works the same on the dev server', () => {

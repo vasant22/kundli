@@ -1,6 +1,6 @@
 // kundli-widget.js — Homepage Widgets project, Phase 2: the small
 // "Kundli / Birth Chart" input card for the mybapuji.com homepage
-// (served at kundli.mybapuji.com/widgets/kundli/, embedded via an iframe).
+// (served at mybapuji.com/kundli/widget/, embedded via an iframe).
 //
 // This widget does NO calculation. On "कुंडली बनाएँ" it validates the details
 // (exactly the same rules as the full form — src/birthvalidate.js), builds a
@@ -17,6 +17,7 @@ import { t, setLang, getLang } from './i18n.js'
 import { searchPlace } from './geocode.js'
 import { validateBirth } from './birthvalidate.js'
 import { installHeightReporter } from './widget-resize.js'
+import { PAGES } from './pages.js'
 import './fonts.css'
 import './widget.css'
 
@@ -65,12 +66,13 @@ export function buildKundliParams(v, lang = 'hi') {
 }
 
 /**
- * The full URL to open. `href` is the widget page's own location — '../..'
- * resolves to the site root in production (/widgets/kundli/ → kundli.
- * mybapuji.com/) and on the dev server exactly the same way.
+ * The full URL to open. The target comes from PAGES (src/pages.js) instead of
+ * a '../../' hop: the widget page is only one level under its tool now
+ * (/kundli/widget/), so a relative hop would land on the domain root instead
+ * of /kundli/. `href` is still used as the base so the dev server works too.
  */
 export function buildOpenUrl(href, v, lang = 'hi') {
-  const url = new URL('../../', href)
+  const url = new URL(PAGES.kundli, href)
   url.search = buildKundliParams(v, lang).toString()
   return url.toString()
 }

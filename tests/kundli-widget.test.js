@@ -65,8 +65,8 @@ describe('buildKundliParams — the link the widget opens', () => {
 
 describe('buildOpenUrl', () => {
   it('opens the full tool at the site root (production path)', () => {
-    const url = buildOpenUrl('https://kundli.mybapuji.com/widgets/kundli/', FILLED)
-    expect(url.startsWith('https://kundli.mybapuji.com/?')).toBe(true)
+    const url = buildOpenUrl('https://mybapuji.com/kundli/widget/', FILLED)
+    expect(url.startsWith('https://mybapuji.com/kundli/?')).toBe(true)
     expect(new URL(url).searchParams.get('lat')).toBe('25.31668')
   })
 

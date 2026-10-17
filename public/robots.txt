@@ -1,6 +1,17 @@
-# kundli.mybapuji.com — free Kundli / Kundli Matching / Panchang tools (MyBapuji)
-# Widget pages are intentionally allowed to be crawled (they carry noindex meta on purpose).
+# The four free tools on mybapuji.com — कुंडली · कुंडली मिलान · पंचांग · BNN चार्ट.
+#
+# NOTE (17 Oct 2026): these pages moved from kundli.mybapuji.com onto the MAIN
+# domain so their authority counts for mybapuji.com instead of a separate site.
+#
+# This file is a leftover from the old subdomain and is NOT deployed any more —
+# robots.txt is only ever read at a domain root, and mybapuji.com's robots.txt
+# belongs to WordPress/Rank Math. The sitemap line for these 4 URLs is injected
+# there by the mu-plugin autoclaw-kundli-sitemap.php instead.
+#
+# The widget pages (/kundli/widget/, /kundli-milan/widget/, /panchang/widget/)
+# are intentionally crawlable but carry <meta name="robots" content="noindex">
+# on purpose — they are iframe cards, not landing pages.
 User-agent: *
 Allow: /
 
-Sitemap: https://kundli.mybapuji.com/sitemap.xml
+Sitemap: https://mybapuji.com/kundli/sitemap.xml

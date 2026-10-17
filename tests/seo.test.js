@@ -6,10 +6,10 @@ import { describe, expect, it } from 'vitest'
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8')
 
 const PAGES = [
-  { file: 'index.html', title: /Free कुंडली बनाएं/, canonical: 'https://kundli.mybapuji.com/' },
-  { file: 'match/index.html', title: /Free कुंडली मिलान/, canonical: 'https://kundli.mybapuji.com/match/' },
-  { file: 'panchang/index.html', title: /Free पंचांग/, canonical: 'https://kundli.mybapuji.com/panchang/' },
-  { file: 'bnn/index.html', title: /Free BNN चार्ट/, canonical: 'https://kundli.mybapuji.com/bnn/' },
+  { file: 'index.html', title: /Free कुंडली बनाएं/, canonical: 'https://mybapuji.com/kundli/' },
+  { file: 'match/index.html', title: /Free कुंडली मिलान/, canonical: 'https://mybapuji.com/kundli-milan/' },
+  { file: 'panchang/index.html', title: /Free पंचांग/, canonical: 'https://mybapuji.com/panchang/' },
+  { file: 'bnn/index.html', title: /Free BNN चार्ट/, canonical: 'https://mybapuji.com/bnn-chart/' },
 ]
 
 describe('SEO essentials — कुंडली / मिलान / पंचांग / BNN', () => {

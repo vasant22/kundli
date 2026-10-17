@@ -72,7 +72,7 @@ describe('renderWidget', () => {
     expect(html).toContain('मंगलवार, 29 सितंबर 2026')
     expect(html).toContain('तिथि')
     expect(html).toContain('तृतीया / Tritiya')
-    expect(html).toContain('href="https://kundli.mybapuji.com/panchang/"')
+    expect(html).toContain('href="/panchang/"')
     expect(root.querySelectorAll('.pw-row').length).toBe(7)
     expect(root.querySelector('.pw-btn').textContent).toBe('आज का पंचांग')
     // होमपेज पर embed होने पर button नई tab में पूरा पंचांग पेज खोले (iframe के अंदर नहीं)

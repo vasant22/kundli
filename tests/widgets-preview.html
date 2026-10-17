@@ -41,7 +41,7 @@
           /* कार्ड की ऊँचाई अपने-आप — same listener as the WordPress block. */
           (function () {
             var frames = document.querySelectorAll('.acw-grid iframe')
-            function allowed(o) { return o === 'https://kundli.mybapuji.com' || /^http:\/\/localhost(:\d+)?$/.test(o || '') }
+            function allowed(o) { return o === 'https://mybapuji.com' || /^http:\/\/localhost(:\d+)?$/.test(o || '') }
             window.addEventListener('message', function (ev) {
               if (!allowed(ev.origin) || !ev.data || ev.data.type !== 'acw-height') return
               var h = parseInt(ev.data.height, 10)

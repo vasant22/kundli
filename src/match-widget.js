@@ -1,6 +1,6 @@
 // match-widget.js — Homepage Widgets project, Phase 3: the compact
 // "Kundli Matching" card (step 1: boy's details → step 2: girl's details),
-// served at kundli.mybapuji.com/widgets/match/ and embedded via an iframe.
+// served at mybapuji.com/kundli-milan/widget/ and embedded via an iframe.
 //
 // Like the Kundli mini-widget, this card does NO calculation: on
 // "मिलान रिपोर्ट देखें" it validates both sides (the shared rules in
@@ -15,6 +15,7 @@ import { t, setLang, getLang } from './i18n.js'
 import { searchPlace } from './geocode.js'
 import { validateBirth } from './birthvalidate.js'
 import { installHeightReporter } from './widget-resize.js'
+import { PAGES } from './pages.js'
 import './fonts.css'
 import './widget.css'
 
@@ -58,9 +59,13 @@ export function buildMatchParams(boy, girl, lang = 'hi') {
   return params
 }
 
-/** Full URL to open: '../..' + 'match/' = the matching tool (dev + prod). */
+/**
+ * Full URL to open. The target comes from PAGES (src/pages.js) rather than a
+ * '../../match/' hop — the widget now sits one level under its tool
+ * (/kundli-milan/widget/) and the matching page moved to a sibling URL.
+ */
 export function buildOpenUrl(href, boy, girl, lang = 'hi') {
-  const url = new URL('../../match/', href)
+  const url = new URL(PAGES.match, href)
   url.search = buildMatchParams(boy, girl, lang).toString()
   return url.toString()
 }
