@@ -65,6 +65,22 @@ public_html/
 - [x] `scripts/build-server-layout.mjs` — dist → server layout + cache headers
 - [x] **DEPLOYED + LIVE** — 6 URLs 200 OK, MIME सही (`application/wasm` ✓)
 
+### 🔴 INCIDENT 2 — sitemap mu-plugin ne site gira di (fix ho chuka hai)
+
+`autoclaw-kundli-sitemap.php` (naya mu-plugin, robots.txt + sitemap index ke liye) upload karte hi
+**poori WordPress site "critical error" (500)** ho gayi. `php -l` syntax theek tha — runtime fatal
+tha, aur suPHP + Apache error log dono chup rahe (suPHP log sirf "Executing index.php" dikhata hai).
+
+**Fix:** plugin ko hata diya (`/root/autoclaw-kundli-sitemap.php.hold`). Homepage foran 200.
+
+**सीख:** Rank Math/robots को छेड़ने वाला छोटा plugin 4 pages के sitemap से कहीं ज़्यादा जोखिम है।
+**छोड़ दिया** — अब sitemap का काम GSC में direct submit करके होगा
+(`https://mybapuji.com/kundli/sitemap.xml`), जो बिना code-touch सही भी है।
+Internal links (menu + strip + cards) से Google खुद खोज लेगा।
+
+⚠️ **नियम:** WordPress site पर कोई भी *नया* mu-plugin तभी upload करो जब वह बिल्कुल trivial हो।
+पहले उसका local copy test करो; और हमेशा तुरंत rollback ready रखो (backup file + "कौन-सी file हटानी है" लिखा हो)।
+
 ### 🔲 बाकी (user action)
 - [ ] **Cloudflare Cache Rule** `/kundli-assets/*` (नीचे steps)
 - [ ] **Cloudflare 301** `kundli.mybapuji.com/*` → `mybapuji.com/kundli/*`
