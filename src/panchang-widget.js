@@ -1,5 +1,5 @@
 // panchang-widget.js — Phase 7: the small homepage Panchang card, embedded on
-// mybapuji.com via an iframe (served at kundli.mybapuji.com/panchang-widget/).
+// mybapuji.com via an iframe (served at mybapuji.com/panchang/widget/).
 //
 // Design notes:
 // - Runs on the same Swiss Ephemeris WASM core as the full site (cached by the
@@ -19,6 +19,7 @@ import { initEphemeris } from './astro.js'
 import { computePanchang } from './panchang.js'
 import { WIDGET_LOCATION } from './widget-location.js'
 import { todayInZone } from './timeutil.js'
+import { PAGES } from './pages.js'
 import { installHeightReporter } from './widget-resize.js'
 import {
   t, setLang, tithiLabel, nakshatraLabel, yogaLabel, karanaLabel, vaaraLabel,
@@ -27,7 +28,9 @@ import {
 import './fonts.css'
 import './widget.css'
 
-const FULL_PAGE_URL = 'https://kundli.mybapuji.com/panchang/'
+// The full Panchang page this card hands the visitor to in a new tab.
+// Path only (relative to whatever host serves the app) — see src/pages.js.
+const FULL_PAGE_URL = PAGES.panchang
 
 // Re-export for tests / callers that used to import it from here.
 export { todayInZone }

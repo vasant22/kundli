@@ -20,6 +20,7 @@ import {
   lunarMonthLabel, pakshaLabel, rituLabel, rashiLabel, grahaLabel, MUHURAT_NAMES,
 } from './i18n.js'
 import { mybapujiStripHTML } from './mybapuji-strip.js'
+import { PAGES } from './pages.js'
 import './style.css'
 import './panchang.css'
 
@@ -247,10 +248,10 @@ export function bootPage() {
           <p class="sub" data-i18n="panchang.subtitle"></p>
           <p class="free-badge" data-i18n="panchang.badge"></p>
           <nav class="site-nav">
-            <a href="../" data-i18n="nav.home"></a>
-            <a href="../match/" data-i18n="nav.match"></a>
-            <a href="./" class="active" data-i18n="nav.panchang"></a>
-            <a href="../bnn/" data-i18n="nav.bnn"></a>
+            <a href="${PAGES.kundli}" data-i18n="nav.home"></a>
+            <a href="${PAGES.match}" data-i18n="nav.match"></a>
+            <a href="${PAGES.panchang}" class="active" data-i18n="nav.panchang"></a>
+            <a href="${PAGES.bnn}" data-i18n="nav.bnn"></a>
           </nav>
         </div>
         <button id="lang-toggle" class="lang-toggle" type="button" data-i18n="lang.switchTo"></button>

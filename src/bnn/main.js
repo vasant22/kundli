@@ -22,6 +22,7 @@ import { buildPrintSheet } from './print.js'
 import { buildAllChartSvg, downloadAllChartPng } from './allchart.js'
 import { ageYMD, buildBhavaTables, buildBnnChart, buildDashaTables, buildPlanetTables, exchangeLabel, planetCode, weekdayEN } from './render.js'
 import { mybapujiStripHTML } from '../mybapuji-strip.js'
+import { PAGES } from '../pages.js'
 import { attachTimezoneAutofill } from '../tzauto.js'
 
 // Where the public source code lives (same repo as the other pages).
@@ -41,10 +42,10 @@ app.innerHTML = mybapujiStripHTML() + `
         <p class="sub" data-i18n="bnn.subtitle"></p>
         <p class="free-badge" data-i18n="bnn.badge"></p>
         <nav class="site-nav">
-          <a href="../" data-i18n="nav.home"></a>
-          <a href="../match/" data-i18n="nav.match"></a>
-          <a href="../panchang/" data-i18n="nav.panchang"></a>
-          <a href="./" class="active" data-i18n="nav.bnn"></a>
+          <a href="${PAGES.kundli}" data-i18n="nav.home"></a>
+          <a href="${PAGES.match}" data-i18n="nav.match"></a>
+          <a href="${PAGES.panchang}" data-i18n="nav.panchang"></a>
+          <a href="${PAGES.bnn}" class="active" data-i18n="nav.bnn"></a>
         </nav>
       </div>
       <button id="lang-toggle" class="lang-toggle" type="button"></button>

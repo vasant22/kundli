@@ -10,6 +10,7 @@ import { computeKundli, initEphemeris, navamsaKundli, computeVimshottari } from 
 import { buildNorthChart, buildSouthChart } from './charts.js'
 import { mybapujiStripHTML } from './mybapuji-strip.js'
 import { attachTimezoneAutofill } from './tzauto.js'
+import { PAGES, absoluteUrl } from './pages.js'
 
 // Where the public source code lives — confirmed/adjusted when the GitHub
 // repo is created (deploy phase).
@@ -28,10 +29,10 @@ app.innerHTML = mybapujiStripHTML() + `
         <p class="sub" data-i18n="app.subtitle"></p>
         <p class="free-badge" data-i18n="app.badge"></p>
         <nav class="site-nav">
-          <a href="./" class="active" data-i18n="nav.home"></a>
-          <a href="./match/" data-i18n="nav.match"></a>
-          <a href="./panchang/" data-i18n="nav.panchang"></a>
-          <a href="./bnn/" data-i18n="nav.bnn"></a>
+          <a href="${PAGES.kundli}" class="active" data-i18n="nav.home"></a>
+          <a href="${PAGES.match}" data-i18n="nav.match"></a>
+          <a href="${PAGES.panchang}" data-i18n="nav.panchang"></a>
+          <a href="${PAGES.bnn}" data-i18n="nav.bnn"></a>
         </nav>
       </div>
       <button id="lang-toggle" class="lang-toggle" type="button"></button>
@@ -508,10 +509,10 @@ function showSummary(values, scroll) {
     linksSep.className = 'print-links-sep'
     linksSep.textContent = '·'
     const kundliLink = document.createElement('a')
-    kundliLink.href = 'https://kundli.mybapuji.com'
+    kundliLink.href = absoluteUrl(PAGES.kundli)
     kundliLink.target = '_blank'
     kundliLink.rel = 'noopener'
-    kundliLink.textContent = 'kundli.mybapuji.com'
+    kundliLink.textContent = 'mybapuji.com/kundli/'
     printLinks.append(siteLink, linksSep, kundliLink)
     printHead.append(printTitle, printLinks)
     card.append(printHead)
