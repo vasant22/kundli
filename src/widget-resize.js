@@ -9,7 +9,7 @@
 // unit tests.
 //
 // The homepage side listens for these messages (same origin policy is kept:
-// the parent only accepts them from kundli.mybapuji.com).
+// the parent only accepts them from mybapuji.com — see autoclaw-home.php).
 
 export function installHeightReporter(win, doc) {
   win = win || (typeof window !== 'undefined' ? window : undefined)

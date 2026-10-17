@@ -72,7 +72,7 @@ describe('buildOpenUrl', () => {
 
   it('works the same on the dev server', () => {
     const url = buildOpenUrl('http://localhost:5173/widgets/kundli/', FILLED)
-    expect(url.startsWith('http://localhost:5173/?')).toBe(true)
+    expect(url.startsWith('http://localhost:5173/kundli/?')).toBe(true)
   })
 })
 
@@ -173,7 +173,7 @@ describe('the Kundli mini-widget card', () => {
     const [url, target] = openSpy.mock.calls[0]
     expect(target).toBe('_blank')
     const u = new URL(url)
-    expect(u.pathname).toBe('/') // ../.. from /widgets/kundli/ = the full tool
+    expect(u.pathname).toBe('/kundli/') // PAGES.kundli (see src/pages.js)
     expect(u.searchParams.get('name')).toBe('राधा')
     expect(u.searchParams.get('gender')).toBe('female')
     expect(u.searchParams.get('lat')).toBe('25.31668')

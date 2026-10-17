@@ -61,7 +61,7 @@ describe('buildOpenUrl', () => {
 
   it('works the same on the dev server', () => {
     const url = buildOpenUrl('http://localhost:5173/widgets/match/', BOY, GIRL)
-    expect(url.startsWith('http://localhost:5173/match/?')).toBe(true)
+    expect(url.startsWith('http://localhost:5173/kundli-milan/?')).toBe(true)
   })
 })
 
@@ -151,7 +151,7 @@ describe('the Matching mini-widget card', () => {
     const [url, target] = openSpy.mock.calls[0]
     expect(target).toBe('_blank')
     const u = new URL(url)
-    expect(u.pathname).toBe('/match/')
+    expect(u.pathname).toBe('/kundli-milan/')
     expect(u.searchParams.get('b_name')).toBe('राम')
     expect(u.searchParams.get('b_lat')).toBe('25.31668')
     expect(u.searchParams.get('g_name')).toBe('सीता')

@@ -140,11 +140,11 @@ describe('BNN page — shell', () => {
   it('has the site navigation with BNN active', () => {
     const links = document.querySelectorAll('.site-nav a')
     expect(links.length).toBe(4)
-    expect(links[0].getAttribute('href')).toBe('../')
-    expect(links[1].getAttribute('href')).toBe('../match/')
-    expect(links[2].getAttribute('href')).toBe('../panchang/')
+    expect(links[0].getAttribute('href')).toBe('/kundli/')
+    expect(links[1].getAttribute('href')).toBe('/kundli-milan/')
+    expect(links[2].getAttribute('href')).toBe('/panchang/')
     expect(links[3].textContent).toBe('Free BNN चार्ट')
-    expect(links[3].getAttribute('href')).toBe('./')
+    expect(links[3].getAttribute('href')).toBe('/bnn-chart/')
     expect(links[3].classList.contains('active')).toBe(true)
     // MyBapuji मुख्य-साइट पट्टी भी मौजूद
     expect(document.querySelector('.mb-strip .brand').textContent).toContain('MyBapuji')

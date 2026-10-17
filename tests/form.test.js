@@ -555,7 +555,8 @@ describe('Phase 14 — corrections & additions (D9, Chalit, Dasha, PDF)', () => 
     const printLinks = Array.from(printHead.querySelectorAll('.print-links a'))
     expect(printLinks.map((a) => a.textContent)).toEqual(['mybapuji.com', 'mybapuji.com/kundli/'])
     expect(printLinks[0].getAttribute('href')).toBe('https://www.mybapuji.com')
-    expect(printLinks[1].getAttribute('href')).toBe('https://mybapuji.com/kundli/')
+    // absoluteUrl(PAGES.kundli) → origin + '/kundli/' (localhost in jsdom)
+    expect(printLinks[1].getAttribute('href')).toBe(new URL('/kundli/', location.origin).href)
     // App-only lines are marked so the print stylesheet can hide them.
     expect(document.querySelector('h2.summary-title')).toBeTruthy()
     expect(document.querySelector('.summary-note.summary-note-ok')).toBeTruthy()

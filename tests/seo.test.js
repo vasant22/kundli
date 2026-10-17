@@ -22,7 +22,11 @@ describe('SEO essentials — कुंडली / मिलान / पंचा
   it('robots.txt allows crawling and points to the sitemap', () => {
     const robots = read('public/robots.txt')
     expect(robots).toMatch(/User-agent: \*/)
-    expect(robots).toMatch(/Sitemap: https:\/\/kundli\.mybapuji\.com\/sitemap\.xml/)
+    // Since the 17 Oct 2026 subfolder move the sitemap lives on the main domain.
+    // (This file itself is not deployed — WordPress/Rank Math owns robots.txt and
+    // the mu-plugin autoclaw-kundli-sitemap.php injects the line there. It stays
+    // as documentation + a drift guard.)
+    expect(robots).toMatch(/Sitemap: https:\/\/mybapuji\.com\/kundli\/sitemap\.xml/)
   })
 
   it('sitemap.xml lists all four pages', () => {
