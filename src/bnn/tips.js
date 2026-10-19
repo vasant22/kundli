@@ -26,6 +26,8 @@ function styleOnce() {
   s.id = 'bnn-tip-css'
   s.textContent = `
   [data-pl]{cursor:pointer}
+  /* poore text-box par hover (sirf aksharon par nahi) */
+  svg [data-pl]{pointer-events:all}
   #bnnPlTip{position:fixed;z-index:90;background:#fffdf6;border:1px solid #d9a95f;border-radius:8px;
     box-shadow:0 8px 20px rgba(45,28,0,.18);pointer-events:none;opacity:0;transform:translateY(2px);
     transition:opacity .1s ease,transform .1s ease;padding:0}
