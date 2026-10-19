@@ -1,4 +1,4 @@
-import{a as e,n as t,o as n,r}from"./astro-BrsFnPnW.js";import{D as i,E as a,S as o,_ as s,a as c,b as l,g as u,n as d,s as f,t as p,w as m,x as h}from"./pages-FBg_a2XP.js";import{t as g}from"./mybapuji-strip-C-N8uBzA.js";import{t as _}from"./geocode-DLqB8puT.js";import{n as v,t as y}from"./tzauto-DF7_Kaz-.js";import{t as b}from"./birthvalidate-D3N96iQr.js";import{n as x,r as S}from"./charts-8bLU01EO.js";var C=`https://github.com/vasant22/kundli`,w=document.querySelector(`#app`);w.innerHTML=g()+`
+import{a as e,n as t,o as n,r}from"./astro-BrsFnPnW.js";import{D as i,E as a,S as o,_ as s,a as c,b as l,g as u,n as d,s as f,t as p,w as m,x as h}from"./pages-FBg_a2XP.js";import{t as g}from"./mybapuji-strip-BoINb0wv.js";import{t as _}from"./geocode-DLqB8puT.js";import{n as v,t as y}from"./tzauto-DF7_Kaz-.js";import{t as b}from"./birthvalidate-D3N96iQr.js";import{n as x,r as S}from"./charts-8bLU01EO.js";var C=`https://github.com/vasant22/kundli`,w=document.querySelector(`#app`);w.innerHTML=g()+`
   <div class="wrap">
     <header class="site-header">
       <div>
