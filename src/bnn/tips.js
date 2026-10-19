@@ -3,11 +3,11 @@
 //   • planet popup → "STAR - house - LORDSHIP houses" (SPECIAL table values)
 //   • bhava row (B01…B12) → pill with that bhava's lord + its sits → gives
 // Data comes from specialTables(); nothing is recomputed here.
-import { GRAHAS } from '../i18n.js'
 import { planetCode } from './render.js'
 
 const NS = 'http://www.w3.org/2000/svg'
-const CODE = Object.fromEntries(GRAHAS.map((g) => [g.key, g.en.toUpperCase()]))
+// वही छोटे कोड जो तालिकाओं में हैं (SUN/MOO/MAR…) — VENUS नहीं
+const CODE = { sun: 'SUN', moon: 'MOO', mars: 'MAR', mercury: 'MER', jupiter: 'JUP', venus: 'VEN', saturn: 'SAT', rahu: 'RAH', ketu: 'KET' }
 const COLORS = {
   sun: '#1d4ed8', moon: '#1d4ed8', jupiter: '#1d4ed8', venus: '#1d4ed8',
   mars: '#15803d', mercury: '#15803d', saturn: '#c2410c', rahu: '#c2410c', ketu: '#db2777',
