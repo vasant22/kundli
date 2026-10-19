@@ -119,67 +119,78 @@ export function drawChartArrows(svg, plEl, key) {
   const sp = DATA?.special
   const row = sp?.rows?.[key]
   if (!row) return
-  svg.parentElement.querySelectorAll('.bnn-hovln').forEach((n) => n.remove())
+  svg.querySelectorAll('g.bnn-hovln-g').forEach((n) => n.remove())
   document.querySelectorAll('.bnn-hot').forEach((n) => n.classList.remove('bnn-hot'))
   const houses = []
   const sits = num(row.sitsAt)
   if (sits != null) houses.push(sits)
-  ;(row.gives || []).forEach((h) => { const v = Number(h); if (!houses.includes(v)) houses.push(v) })
+  for (const h of row.gives || []) {
+    const v = Number(h)
+    if (!houses.includes(v)) houses.push(v)
+  }
   if (!houses.length) return
-  const host = svg.parentElement
-  if (getComputedStyle(host).position === 'static') host.style.position = 'relative'
-  const br = host.getBoundingClientRect(), sr = svg.getBoundingClientRect()
+  const ctm = svg.getScreenCTM()
+  if (!ctm) return
+  const inv = ctm.inverse()
   const col = COLORS[key] || '#334155'
-  const ov = document.createElementNS(NS, 'svg')
-  ov.setAttribute('class', 'bnn-hovln')
-  ov.setAttribute('width', Math.round(sr.width))
-  ov.setAttribute('height', Math.round(sr.height))
-  ov.style.left = `${sr.left - br.left}px`
-  ov.style.top = `${sr.top - br.top}px`
-  const defs = document.createElementNS(NS, 'defs')
-  const mk = document.createElementNS(NS, 'marker')
-  mk.setAttribute('id', 'bnnArr')
-  mk.setAttribute('viewBox', '0 0 10 10')
-  mk.setAttribute('refX', '9'); mk.setAttribute('refY', '5')
-  mk.setAttribute('markerWidth', '7'); mk.setAttribute('markerHeight', '7')
-  mk.setAttribute('orient', 'auto')
-  const mp = document.createElementNS(NS, 'path')
-  mp.setAttribute('d', 'M0,0 L10,5 L0,10 Z'); mp.setAttribute('fill', col)
-  mk.append(mp); defs.append(mk); ov.append(defs)
+  const toUser = (x, y) => {
+    const p = svg.createSVGPoint()
+    p.x = x; p.y = y
+    return p.matrixTransform(inv)
+  }
+  const center = (node) => {
+    const r = node.getBoundingClientRect()
+    return toUser(r.left + r.width / 2, r.top + r.height / 2)
+  }
+  const g = document.createElementNS(NS, 'g')
+  g.setAttribute('class', 'bnn-hovln-g')
+  g.setAttribute('pointer-events', 'none')
+  const sPt = center(plEl)
   const sRect = plEl.getBoundingClientRect()
-  const sx = sRect.left - sr.left + sRect.width / 2
-  const sy = sRect.top - sr.top + sRect.height / 2
+  const unit = Math.max(Math.abs(inv.a), 1e-6)      // svg user-units per screen px
   for (const el of svg.querySelectorAll('[data-bh]')) {
     const h = Number(el.getAttribute('data-bh'))
     if (!houses.includes(h)) continue
     const tr = el.getBoundingClientRect()
     if (String(h) === String(plEl.getAttribute('data-phouse'))) {
-      const rg = document.createElementNS(NS, 'rect')
-      rg.setAttribute('x', tr.left - sr.left - 3); rg.setAttribute('y', tr.top - sr.top - 2)
-      rg.setAttribute('width', tr.width + 6); rg.setAttribute('height', tr.height + 4)
-      rg.setAttribute('rx', '4'); rg.setAttribute('fill', 'none')
-      rg.setAttribute('stroke', col); rg.setAttribute('stroke-width', '1.6')
-      ov.append(rg); el.classList.add('bnn-hot')
+      const a = toUser(tr.left, tr.top)
+      const b = toUser(tr.right, tr.bottom)
+      const rect = document.createElementNS(NS, 'rect')
+      rect.setAttribute('x', (a.x - 2).toFixed(1)); rect.setAttribute('y', (a.y - 1).toFixed(1))
+      rect.setAttribute('width', (b.x - a.x + 4).toFixed(1)); rect.setAttribute('height', (b.y - a.y + 2).toFixed(1))
+      rect.setAttribute('rx', '3'); rect.setAttribute('fill', 'none')
+      rect.setAttribute('stroke', col); rect.setAttribute('stroke-width', '1.1')
+      g.append(rect)
+      el.classList.add('bnn-hot')
       continue
     }
-    const tx = tr.left - sr.left + tr.width / 2
-    const ty = tr.top - sr.top + tr.height / 2
-    const dx = tx - sx, dy = ty - sy
+    const tPt = center(el)
+    const dx = tPt.x - sPt.x
+    const dy = tPt.y - sPt.y
     const len = Math.hypot(dx, dy) || 1
     const ux = dx / len, uy = dy / len
-    let t1 = Math.min(sRect.width / 2 / (Math.abs(ux) || 1e-6), sRect.height / 2 / (Math.abs(uy) || 1e-6)) + 4
-    let t2 = Math.min(tr.width / 2 / (Math.abs(ux) || 1e-6), tr.height / 2 / (Math.abs(uy) || 1e-6)) + 2
-    if (t1 + t2 + 6 > len) { t1 = len * 0.35; t2 = len * 0.35 }
-    const ln = document.createElementNS(NS, 'line')
-    ln.setAttribute('x1', (sx + ux * t1).toFixed(1)); ln.setAttribute('y1', (sy + uy * t1).toFixed(1))
-    ln.setAttribute('x2', (tx - ux * t2).toFixed(1)); ln.setAttribute('y2', (ty - uy * t2).toFixed(1))
-    ln.setAttribute('stroke', col); ln.setAttribute('stroke-width', '1.8')
-    ln.setAttribute('stroke-linecap', 'round')
-    if (len > 34) ln.setAttribute('marker-end', 'url(#bnnArr)')
-    ov.append(ln)
+    const t1 = (sRect.height / 2) * unit + 2
+    const t2 = (tr.height / 2) * unit + 3
+    const x1 = sPt.x + ux * t1, y1 = sPt.y + uy * t1
+    const x2 = tPt.x - ux * t2, y2 = tPt.y - uy * t2
+    const line = document.createElementNS(NS, 'line')
+    line.setAttribute('x1', x1.toFixed(1)); line.setAttribute('y1', y1.toFixed(1))
+    line.setAttribute('x2', x2.toFixed(1)); line.setAttribute('y2', y2.toFixed(1))
+    line.setAttribute('stroke', col); line.setAttribute('stroke-width', '1.1')
+    line.setAttribute('stroke-linecap', 'round')
+    g.append(line)
+    const ah = 4
+    const head = document.createElementNS(NS, 'polygon')
+    head.setAttribute('points', [
+      `${x2.toFixed(1)},${y2.toFixed(1)}`,
+      `${(x2 - ux * ah - uy * ah * 0.55).toFixed(1)},${(y2 - uy * ah + ux * ah * 0.55).toFixed(1)}`,
+      `${(x2 - ux * ah + uy * ah * 0.55).toFixed(1)},${(y2 - uy * ah - ux * ah * 0.55).toFixed(1)}`,
+    ].join(' '))
+    head.setAttribute('fill', col)
+    g.append(head)
     el.classList.add('bnn-hot')
   }
-  if (ov.childElementCount > 1) host.append(ov)
+  if (g.childElementCount) svg.append(g)
 }
 
 let wired = false
