@@ -60,7 +60,8 @@ function box(id, cls) {
 export function hideTips() {
   document.getElementById('bnnPlTip')?.classList.remove('on')
   document.getElementById('bnnBhTip')?.classList.remove('on')
-  document.querySelectorAll('.bnn-hovln').forEach((n) => n.remove())
+  // पुरानी overlay-svg + नई अंदर वाली <g> — दोनों साफ़
+  document.querySelectorAll('.bnn-hovln, g.bnn-hovln-g').forEach((n) => n.remove())
   document.querySelectorAll('.bnn-hot').forEach((n) => n.classList.remove('bnn-hot'))
 }
 
