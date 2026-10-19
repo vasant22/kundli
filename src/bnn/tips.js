@@ -41,7 +41,10 @@ function styleOnce() {
   #bnnBhTip .bdot{width:7px;height:7px;border-radius:2px;background:#d9a95f;display:inline-block;flex:none}
   #bnnBhTip .bsep{width:1px;height:13px;background:rgba(217,169,95,.45);display:inline-block;margin:0 2px}
   #bnnBhTip .bx{color:#f0d59b;font-weight:700}
-  .bnn-hovln{position:absolute;pointer-events:none;overflow:visible;z-index:6}
+  /* overlay ko page ke .chart-box svg rule (white bg / 100% width / padding) se bachao */
+  .chart-box svg.bnn-hovln,svg.bnn-hovln{position:absolute;display:block;width:auto;height:auto;
+    max-width:none;margin:0;padding:0;background:transparent;border:0;border-radius:0;
+    pointer-events:none;overflow:visible;z-index:6}
   `
   document.head.append(s)
 }
