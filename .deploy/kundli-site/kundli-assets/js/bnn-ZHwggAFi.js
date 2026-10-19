@@ -3,7 +3,7 @@ import{a as e,i as t,t as n}from"./astro-BrsFnPnW.js";import{D as r,E as i,d as 
   /* poore text-box par hover (sirf aksharon par nahi) */
   svg [data-pl]{pointer-events:all}
   #bnnPlTip{position:fixed;z-index:90;background:#fffdf6;border:1px solid #d9a95f;border-radius:8px;
-    box-shadow:0 8px 20px rgba(45,28,0,.18);pointer-events:none;opacity:0;transform:translateY(2px);
+    box-shadow:0 8px 20px rgba(45,28,0,.18);pointer-events:none !important;opacity:0;transform:translateY(2px);
     transition:opacity .1s ease,transform .1s ease;padding:0}
   #bnnPlTip.on{opacity:1;transform:none}
   #bnnPlTip .pt-min{display:block;padding:5px 11px;font-size:13px;font-weight:700;color:#3f3627;
@@ -11,7 +11,7 @@ import{a as e,i as t,t as n}from"./astro-BrsFnPnW.js";import{D as r,E as i,d as 
   [data-lord]{cursor:pointer}
   #bnnBhTip{position:fixed;z-index:91;display:flex;align-items:center;gap:7px;background:#20262f;color:#fff6e2;
     border:1px solid #d9a95f;border-radius:999px;padding:4px 13px 4px 10px;font-size:13px;font-weight:800;
-    letter-spacing:.4px;box-shadow:0 8px 20px rgba(20,12,0,.28);pointer-events:none;opacity:0;
+    letter-spacing:.4px;box-shadow:0 8px 20px rgba(20,12,0,.28);pointer-events:none !important;opacity:0;
     transform:translateY(2px);transition:opacity .1s ease,transform .1s ease;white-space:nowrap}
   #bnnBhTip.on{opacity:1;transform:none}
   #bnnBhTip .bdot{width:7px;height:7px;border-radius:2px;background:#d9a95f;display:inline-block;flex:none}
