@@ -64,16 +64,39 @@ export function hideTips() {
   document.querySelectorAll('.bnn-hot').forEach((n) => n.classList.remove('bnn-hot'))
 }
 
-function place(node, el, preferLeft = true) {
+function place(node, el, side = 'left') {
   const r = el.getBoundingClientRect()
   const tw = node.offsetWidth, th = node.offsetHeight
-  let left = preferLeft ? r.left - tw - 12 : r.right + 12
+  let left, top
+  if (side === 'right') { left = r.right + 12; top = r.top + r.height / 2 - th / 2 }
+  else if (side === 'up') { left = r.left + r.width / 2 - tw / 2; top = r.top - th - 10 }
+  else if (side === 'down') { left = r.left + r.width / 2 - tw / 2; top = r.bottom + 10 }
+  else { left = r.left - tw - 12; top = r.top + r.height / 2 - th / 2 }
   if (left < 8) left = r.right + 12
   if (left + tw > window.innerWidth - 8) left = Math.max(8, r.left - tw - 12)
-  let top = r.top + r.height / 2 - th / 2
   top = Math.max(8, Math.min(top, window.innerHeight - th - 8))
   node.style.left = `${Math.round(left)}px`
   node.style.top = `${Math.round(top)}px`
+}
+
+/** window.__plSide jaise: box hamesha teer ki ulti dishа me (teer/bhav-ank na dhake). */
+function tipSide(el, key) {
+  const svg = el.closest('svg[data-chart]')
+  const row = DATA?.special?.rows?.[key]
+  if (!svg || !row) return 'left'
+  const houses = []
+  const sits = num(row.sitsAt)
+  if (sits != null) houses.push(sits)
+  for (const h of row.gives || []) { const v = Number(h); if (!houses.includes(v)) houses.push(v) }
+  const labels = [...svg.querySelectorAll('[data-bh]')].filter((n) => houses.includes(Number(n.getAttribute('data-bh'))))
+  if (!labels.length) return 'left'
+  let sx = 0, sy = 0
+  for (const n of labels) { const r = n.getBoundingClientRect(); sx += r.left + r.width / 2; sy += r.top + r.height / 2 }
+  const r = el.getBoundingClientRect()
+  const dx = sx / labels.length - (r.left + r.width / 2)
+  const dy = sy / labels.length - (r.top + r.height / 2)
+  if (Math.abs(dx) >= Math.abs(dy)) return dx < 0 ? 'right' : 'left'
+  return dy < 0 ? 'down' : 'up'
 }
 
 /** Planet popup: STAR - house - LORDSHIP (the SPECIAL table's two right cells). */
@@ -94,7 +117,7 @@ export function showPlanetTip(el, key) {
   const t = box('bnnPlTip')
   t.innerHTML = `<span class="pt-min" style="border-left-color:${COLORS[key] || '#334155'}">${inner}</span>`
   t.classList.add('on')
-  place(t, el)
+  place(t, el, tipSide(el, key))
 }
 
 /** Bhava pill: the bhava's LORDSHIP planet + its sits → gives. */
