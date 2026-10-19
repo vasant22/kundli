@@ -107,7 +107,9 @@ describe('BNN Phase 2b — chart drawing', () => {
     // cusp 1 ⇢ house 1 (the lagna sign's region, Leo)
     const h1 = svg.querySelector('[data-house="1"]')
     const texts = [...h1.querySelectorAll('text')].map((t) => t.textContent)
-    expect(texts).toContain('01 12.53')
+    // User 2026-10-19: the NORTH chart labels houses by their RASHI number
+    // (fixed houses, rotating signs) — bhava 1 = lagna sign = Leo = 05.
+    expect(texts).toContain('05 12.53')
     expect(texts).toContain('ASC 12.53')
     expect(svg.textContent).toContain('SHUKLA - SHASHTHI')
   })
@@ -175,4 +177,25 @@ describe('BNN Phase 2b — chart drawing', () => {
     expect(bare.getAttribute('viewBox')).toBe('0 0 360 360')
     expect(bare.querySelector('.exchange-box')).toBeFalsy()
   })
+})
+
+// User 2026-10-19 (hover helpers on /bnn/): every planet label/cell must carry
+// data-pl, every bhava row label data-lord, and the chart's cusp/planet texts
+// must carry data-bh / data-pl + data-house so tips.js can wire the arrows.
+describe('hover metadata (2026-10-19)', () => {
+  it('north chart: cusp rows carry data-bh, planets data-pl + data-house', () => {
+    const svg = buildBnnChart(BNN, { style: 'north', meta: META })
+    const bhs = [...svg.querySelectorAll('[data-bh]')].map((n) => n.getAttribute('data-bh'))
+    expect(bhs.length).toBe(12)
+    const moon = svg.querySelector('[data-pl="moon"]')
+    expect(moon).not.toBeNull()
+    expect(moon.getAttribute('data-phouse')).toBe('8')
+  })
+
+  it('south chart: same metadata, house numbers still shown', () => {
+    const svg = buildBnnChart(BNN, { style: 'south', meta: META })
+    expect(svg.querySelectorAll('[data-bh]').length).toBe(12)
+    expect(svg.querySelector('[data-pl="jupiter"]')).not.toBeNull()
+  })
+
 })

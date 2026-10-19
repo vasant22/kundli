@@ -20,6 +20,8 @@ import { computeTransitSnapshot } from './transit.js'
 import { buildSpecialTransitSection } from './pcp-ui.js'
 import { buildPrintSheet } from './print.js'
 import { buildAllChartSvg, downloadAllChartPng } from './allchart.js'
+import { specialTables } from './special.js'
+import { setTipData, wireTips } from './tips.js'
 import { ageYMD, buildBhavaTables, buildBnnChart, buildDashaTables, buildPlanetTables, exchangeLabel, planetCode, weekdayEN } from './render.js'
 import { mybapujiStripHTML } from '../mybapuji-strip.js'
 import { PAGES } from '../pages.js'
@@ -549,9 +551,19 @@ function showReport(values, scroll) {
     }
   })
 
+  const tipData = () => {
+    const mode = values.bnnMode === 'BP' ? 'BP' : 'AP'
+    setTipData({
+      special: specialTables(values.bnn.planets, values.bnn.cusps, mode),
+      retro: Object.fromEntries(values.bnn.planets.map((p) => [p.key, p.retro])),
+    })
+    wireTips()
+  }
+
   const paint = () => {
     const style = values.bnnStyle === 'north' ? 'north' : 'south'
     chartBox.replaceChildren(buildBnnChart(values.bnn, { style, meta: values.bnnMeta, transit: values.bnnTransit }))
+    tipData()
     northBtn.classList.toggle('active', style === 'north')
     southBtn.classList.toggle('active', style === 'south')
     northBtn.setAttribute('aria-pressed', String(style === 'north'))
@@ -571,6 +583,7 @@ function showReport(values, scroll) {
         gender: values.gender,
       }),
     ]
+    tipData()
     if (values.bnnDasha) sections.push(buildDashaTables(values.bnnDasha))
     // Special Transit (legacy PCP) — bottom of the page, per user request.
     sections.push(buildSpecialTransitSection(values, { getSwe: () => sweRef }))

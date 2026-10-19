@@ -68,13 +68,21 @@ function layoutLines(parent, cx, cy, lines) {
   let y = cy - total / 2
   lines.forEach((line, i) => {
     y += heights[i]
-    parent.append(
-      textNode(cx, y - line.size * 0.3, line.text, {
-        size: line.size,
-        weight: line.weight ?? 400,
-        fill: line.fill,
-      })
-    )
+    const node = textNode(cx, y - line.size * 0.3, line.text, {
+      size: line.size,
+      weight: line.weight ?? 400,
+      fill: line.fill,
+    })
+    if (line.pl) {
+      node.setAttribute('data-pl', line.pl)
+      node.setAttribute('data-phouse', String(line.house ?? ''))
+      node.classList.add('bnn-pl')
+    }
+    if (line.bh) {
+      node.setAttribute('data-bh', String(line.bh))
+      node.classList.add('bnn-bh')
+    }
+    parent.append(node)
   })
 }
 
@@ -220,15 +228,21 @@ function metaLines(meta) {
 
 // Shared per-cell block: red cusp lines first, then entries (planets + the
 // ASC marker) sorted by degree — the old face shows them in that order.
-function cellBlock(cusps, planets, includeAsc, asc) {
-  const block = cusps.map((c) => ({ text: cuspText(c), size: 10, weight: 600, fill: RED }))
-  const entries = planets.map((p) => ({ deg: p.degInSign, text: planetText(p), fill: INK }))
+function cellBlock(cusps, planets, includeAsc, asc, opts = {}) {
+  const rashiNo = opts.rashi && opts.house
+    ? String(((asc.rashi + opts.house - 1) % 12) + 1).padStart(2, '0')
+    : null
+  const block = cusps.map((c) => ({
+    text: rashiNo ? `${rashiNo} ${degDot(c.degInSign)}` : cuspText(c),
+    size: 10, weight: 600, fill: RED, bh: opts.house,
+  }))
+  const entries = planets.map((p) => ({ deg: p.degInSign, text: planetText(p), fill: INK, pl: p.key, house: opts.house }))
   if (includeAsc) {
     entries.push({ deg: asc.degInSign, text: `ASC ${degDot(asc.degInSign)}`, fill: ACC, weight: 600 })
   }
   entries.sort((a, b) => a.deg - b.deg)
   const size = gray(entries.length)
-  for (const e of entries) block.push({ text: e.text, size, weight: e.weight ?? 400, fill: e.fill })
+  for (const e of entries) block.push({ text: e.text, size, weight: e.weight ?? 400, fill: e.fill, pl: e.pl, house: e.house })
   return block
 }
 
@@ -372,7 +386,8 @@ export function buildSouthBnn(bnn, meta = {}, transit = null) {
       cuspsByRashi[rashi],
       bnn.planets.filter((p) => p.rashi === rashi),
       rashi === ascRashi,
-      bnn.ascendant
+      bnn.ascendant,
+      { house: ((rashi - ascRashi + 12) % 12) + 1 }
     )
     if (block.length > 0) layoutLines(group, C / 2, C / 2, block)
     svg.append(group)
@@ -455,7 +470,8 @@ export function buildNorthBnn(bnn, meta = {}, transit = null) {
       cuspsByRegion[house - 1],
       planetsByRegion[house - 1],
       house === 1,
-      bnn.ascendant
+      bnn.ascendant,
+      { house, rashi: true }
     )
     if (block.length > 0) {
       const { cx, cy } = avoidCentrePanel(block, fx * S, fy * S)
@@ -509,6 +525,7 @@ function entCell(e, i) {
   const td = el2('td')
   if (e) {
     td.className = entClass(e, i)
+    if (e.type === 'planet') td.dataset.pl = e.key
     const text = entText(e)
     // विशेष दृष्टि वाले अंक (4 · 8 · 3 · 10) को अलग span में रखते हैं ताकि
     // वही टिमटिमा सके — बाक़ी अक्षर, रंग व background वैसे ही (user 2026-10-08)
@@ -594,7 +611,9 @@ export function buildBhavaTables(bnn, mode, opts = {}) {
     const tbl = el2('table', 'bnn-table bnn-bhava-table')
     for (const n of B_ORDER) {
       const row = document.createElement('tr')
-      row.append(el2('td', 'row-label', bLabel(n)))
+      const blab = el2('td', 'row-label', bLabel(n))
+      blab.dataset.lord = String(n)
+      row.append(blab)
       for (let i = 0; i < max; i++) row.append(entCell(bc[n][key][i], i))
       tbl.append(row)
     }
@@ -604,8 +623,12 @@ export function buildBhavaTables(bnn, mode, opts = {}) {
     const tbl = el2('table', 'bnn-table bnn-bhava-table')
     for (const n of B_ORDER) {
       const row = document.createElement('tr')
-      row.append(el2('td', 'row-label', bLabel(n)))
-      for (const link of computeBrsss(cusps[n - 1].longitude)) row.append(cell(CODE[link]))
+      const blab = el2('td', 'row-label', bLabel(n))
+      blab.dataset.lord = String(n)
+      row.append(blab)
+      for (const link of computeBrsss(cusps[n - 1].longitude)) {
+        const c1 = cell(CODE[link]); c1.dataset.pl = link; row.append(c1)
+      }
       tbl.append(row)
     }
     return tbl
@@ -621,8 +644,12 @@ export function buildBhavaTables(bnn, mode, opts = {}) {
     const ent = (k) => `${CODE[k]}${hashOf(k, retroOf[k])}`
     for (const n of B_ORDER) {
       const row = document.createElement('tr')
-      row.append(el2('td', 'row-label', bLabel(n)))
-      row.append(cell(CODE[sp.lords[n]]))
+      const blab = el2('td', 'row-label', bLabel(n))
+      blab.dataset.lord = String(n)
+      row.append(blab)
+      const lordCell = cell(CODE[sp.lords[n]])
+      lordCell.dataset.pl = sp.lords[n]
+      row.append(lordCell)
       row.append(cell(sp.inBhava[n].length ? sp.inBhava[n].map((e) => `${CODE[e.key]}${hashOf(e.key, e.natalRetro)}`).join(', ') : '—'))
       row.append(cell(sp.inStarOf[n].length ? sp.inStarOf[n].map(ent).join(', ') : '—'))
       row.append(cell(ent(sp.directors[n])))
@@ -690,7 +717,9 @@ export function buildPlanetTables(bnn, mode, opts = {}) {
     for (const pkey of order) {
       const p = byKey[pkey]
       const row = document.createElement('tr')
-      row.append(el2('td', 'row-label', rowLabel(p, seats[pkey].lon, cusps)))
+      const plab = el2('td', 'row-label', rowLabel(p, seats[pkey].lon, cusps))
+      plab.dataset.pl = pkey
+      row.append(plab)
       const list = pc[pkey][key]
       for (let i = 0; i < cols; i++) row.append(entCell(list[i], i))
       const partner = astro[pkey] ? byKey[astro[pkey]] : null
@@ -710,7 +739,9 @@ export function buildPlanetTables(bnn, mode, opts = {}) {
       const p = byKey[pkey]
       const r = sp.rows[pkey]
       const row = document.createElement('tr')
-      row.append(el2('td', 'row-label', rowLabel(p, seats[pkey].lon, cusps)))
+      const plab = el2('td', 'row-label', rowLabel(p, seats[pkey].lon, cusps))
+      plab.dataset.pl = pkey
+      row.append(plab)
       row.append(cell(r.owns.length ? r.owns.join(',') : '—'))
       row.append(cell(`${String(r.sitsAt).padStart(2, '0')} → ${r.gives.length ? r.gives.join(',') : '—'}`))
       row.append(cell(`${CODE[r.starLord]} - ${r.starAt}`))
@@ -724,8 +755,12 @@ export function buildPlanetTables(bnn, mode, opts = {}) {
     for (const pkey of order) {
       const p = byKey[pkey]
       const row = document.createElement('tr')
-      row.append(el2('td', 'row-label', rowLabel(p, seats[pkey].lon, cusps)))
-      for (const link of computePrsss(p.longitude)) row.append(cell(CODE[link]))
+      const plab = el2('td', 'row-label', rowLabel(p, seats[pkey].lon, cusps))
+      plab.dataset.pl = pkey
+      row.append(plab)
+      for (const link of computePrsss(p.longitude)) {
+        const c1 = cell(CODE[link]); c1.dataset.pl = link; row.append(c1)
+      }
       tbl.append(row)
     }
     return tbl
