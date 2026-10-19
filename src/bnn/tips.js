@@ -191,13 +191,21 @@ export function wireTips() {
     const t = e.target
     if (!(t instanceof Element)) return
     const lordCell = t.closest('[data-lord]')
-    if (lordCell) { hideTips(); showBhavaTip(lordCell, Number(lordCell.dataset.lord)); return }
+    if (lordCell) {
+      document.__bnnKey = null
+      hideTips()
+      showBhavaTip(lordCell, Number(lordCell.dataset.lord))
+      return
+    }
     const plEl = t.closest('[data-pl]')
-    if (!plEl) { hideTips(); return }
+    const inChart = t.closest('svg[data-chart]')
+    // चार्ट के अंदर खाली जगह (अक्षरों के बीच) पर आने से कुछ न हटे
+    if (!plEl) { if (!inChart) { document.__bnnKey = null; hideTips() } ; return }
+    if (document.__bnnKey === plEl.dataset.pl && plEl.dataset.pl) return
+    document.__bnnKey = plEl.dataset.pl
     hideTips()
     showPlanetTip(plEl, plEl.dataset.pl)
-    const svg = plEl.closest('svg[data-chart]')
-    if (svg) drawChartArrows(svg, plEl, plEl.dataset.pl)
+    if (inChart) drawChartArrows(inChart, plEl, plEl.dataset.pl)
   })
   document.addEventListener('mouseout', (e) => {
     const t = e.target
@@ -205,6 +213,8 @@ export function wireTips() {
     if (!t.closest('[data-pl],[data-lord]')) return
     const to = e.relatedTarget
     if (to instanceof Element && to.closest('[data-pl],[data-lord]')) return
+    if (to instanceof Element && to.closest('svg[data-chart]')) return   // चार्ट के अंदर ही रहे तो टिका रहे
+    document.__bnnKey = null
     hideTips()
   })
   document.addEventListener('scroll', hideTips, true)
