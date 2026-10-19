@@ -242,15 +242,24 @@ export function wireTips() {
     if (inChart) drawChartArrows(inChart, plEl, plEl.dataset.pl)
   })
   document.addEventListener('mouseout', (e) => {
-    const t = e.target
-    if (!(t instanceof Element)) return
-    if (!t.closest('[data-pl],[data-lord]')) return
-    const to = e.relatedTarget
-    if (to instanceof Element && to.closest('[data-pl],[data-lord]')) return
-    if (to instanceof Element && to.closest('svg[data-chart]')) return   // चार्ट के अंदर ही रहे तो टिका रहे
+    const t = e.target instanceof Element ? e.target : null
+    const to = e.relatedTarget instanceof Element ? e.relatedTarget : null
+    // 1) चार्ट से बाहर निकले → हर हालत में साफ़ (यही कमी थी: खाली जगह से बाहर जाने पर तीर रुके रहते थे)
+    const fromChart = t ? t.closest('svg[data-chart]') : null
+    if (fromChart && !(to && to.closest('svg[data-chart]'))) {
+      document.__bnnKey = null
+      hideTips()
+      return
+    }
+    if (!t || !t.closest('[data-pl],[data-lord]')) return
+    if (to && to.closest('[data-pl],[data-lord]')) return
+    if (to && to.closest('svg[data-chart]')) return   // चार्ट के अंदर ही रहे तो टिका रहे
     document.__bnnKey = null
     hideTips()
   })
+  // विंडो/टैब से बाहर चले जाने पर भी साफ़
+  window.addEventListener('blur', () => { document.__bnnKey = null; hideTips() })
+  document.addEventListener('mouseleave', () => { document.__bnnKey = null; hideTips() })
   document.addEventListener('scroll', hideTips, true)
   window.addEventListener('resize', hideTips)
 }
