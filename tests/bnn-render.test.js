@@ -110,7 +110,8 @@ describe('BNN Phase 2b — chart drawing', () => {
     // User 2026-10-19: the NORTH chart labels houses by their RASHI number
     // (fixed houses, rotating signs) — bhava 1 = lagna sign = Leo = 05.
     expect(texts).toContain('05 12.53')
-    expect(texts).toContain('ASC 12.53')
+    // user 2026-10-19: ASC पंक्ति उत्तर चार्ट में नहीं (राशि+डिग्री पहले से)
+    expect(texts).not.toContain('ASC 12.53')
     expect(svg.textContent).toContain('SHUKLA - SHASHTHI')
   })
 

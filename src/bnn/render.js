@@ -469,7 +469,7 @@ export function buildNorthBnn(bnn, meta = {}, transit = null) {
     const block = cellBlock(
       cuspsByRegion[house - 1],
       planetsByRegion[house - 1],
-      house === 1,
+      false,                      // user 2026-10-19: उत्तर चार्ट में ASC पंक्ति नहीं (राशि-अंक में डिग्री पहले से है)
       bnn.ascendant,
       { house, rashi: true }
     )
