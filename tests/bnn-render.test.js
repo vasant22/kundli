@@ -86,7 +86,7 @@ describe('BNN Phase 2b — chart drawing', () => {
     // Leo cell: cusp first, then entries sorted by degree (ASC included)
     const leo = svg.querySelector('[data-rashi="4"]')
     const texts = [...leo.querySelectorAll('text')].map((t) => t.textContent)
-    expect(texts).toContain('01 12.53')
+    expect(texts).not.toContain('01 12.53')   // user 2026-10-20: लग्न-खाने में '01 …' नहीं
     expect(texts).toContain('RAH 07.10')
     expect(texts).toContain('ASC 12.53')
     expect(texts).toContain('JUP# 15.30')

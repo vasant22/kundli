@@ -238,11 +238,11 @@ function cellBlock(cusps, planets, includeAsc, asc, opts = {}) {
   }))
   const entries = planets.map((p) => ({ deg: p.degInSign, text: planetText(p), fill: INK, pl: p.key, house: opts.house }))
   if (includeAsc) {
-    entries.push({ deg: asc.degInSign, text: `ASC ${degDot(asc.degInSign)}`, fill: ACC, weight: 600 })
+    entries.push({ deg: asc.degInSign, text: `ASC ${degDot(asc.degInSign)}`, fill: ACC, weight: 600, bh: 1 })  // लग्न-खाने का hover-निशाना
   }
   entries.sort((a, b) => a.deg - b.deg)
   const size = gray(entries.length)
-  for (const e of entries) block.push({ text: e.text, size, weight: e.weight ?? 400, fill: e.fill, pl: e.pl, house: e.house })
+  for (const e of entries) block.push({ text: e.text, size, weight: e.weight ?? 400, fill: e.fill, pl: e.pl, house: e.house, bh: e.bh })
   return block
 }
 
@@ -383,7 +383,7 @@ export function buildSouthBnn(bnn, meta = {}, transit = null) {
       transform: `translate(${col * C}, ${row * C})`,
     })
     const block = cellBlock(
-      cuspsByRashi[rashi],
+      cuspsByRashi[rashi].filter((c) => c.n !== 1),   // user 2026-10-20: लग्न-खाने में '01 …' नहीं (ASC ही काफ़ी)
       bnn.planets.filter((p) => p.rashi === rashi),
       rashi === ascRashi,
       bnn.ascendant,
