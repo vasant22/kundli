@@ -26,7 +26,7 @@ function bodyAt(key, ms) {
 const msOf = (dd, mm, yyyy, HH, MM) => Date.UTC(yyyy, mm - 1, dd, HH - 5, MM - 30) // IST
 const near = (x) => ((x % 360) + 540) % 360 - 180
 
-// सर की chain-rows (screenshots: .openclaw-tmp/bnn-ref/pcp/allplanets-{sun,mars}-{1,2}.png)
+// reference chain-rows (screenshots: .openclaw-tmp/bnn-ref/pcp/allplanets-{sun,mars}-{1,2}.png)
 const EV = [
   ['sun', 'ketu', '14-10-2026 07:20'], ['sun', 'venus', '26-10-2026 00:56'], ['sun', 'moon', '02-11-2026 04:32'],
   ['sun', 'rahu', '30-11-2026 04:32'], ['sun', 'jupiter', '24-12-2026 10:56'], ['sun', 'mars', '01-01-2027 15:20'],

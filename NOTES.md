@@ -618,7 +618,7 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
   पहले हमारे पास सिर्फ़ [Director | IN STAR OF A] था।
 - **IN STAR OF A decode** (user ने पूछा था): जिन ग्रहों का **नक्षत्र-स्वामी** भाव के किसी बैठे ग्रह A में
   हो (भाव खाली → A = भाव-स्वामी)। हमारे numbers sir के software से पहले से exactly मेल खाते थे ✓।
-- Verification: `special-check` **45 → 69 ✓** (+12 LORD, +12 PLANETS(A) — sir के screenshot से);
+- Verification: `special-check` **45 → 69 ✓** (+12 LORD, +12 PLANETS(A) — reference output से);
   असली browser render की पूरी 12-row तालिका sir के software से अक्षरशः मेल ✓; tests **451 ✓**।
 - **अगला — Phase 7**: गोचर (transit) + PCP — user की "आगे बढ़ो" पर।
 

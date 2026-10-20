@@ -15,3 +15,6 @@ public/wasm/
 # Editor / OS
 .DS_Store
 .vite/
+
+# local reference captures (proprietary screenshots of other software) — never commit
+.openclaw-tmp/
