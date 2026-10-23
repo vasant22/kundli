@@ -1,6 +1,5 @@
-// combos-check.mjs — BNN Phase 4 PASS/FAIL: combination engine vs the
-// guide's AP tables (भाग 5) and the traditional format's BP screenshots.
-// Run: node scripts/bnn-calib/combos-check.mjs
+// combos-check.mjs — BNN Phase 4 PASS/FAIL: combination engine vs the guide AP tables (भाग 5).
+// BP / 159 columns are printed for inspection only (guarded by tests/bnn-combos.test.js).
 import SwissEph from 'swisseph-wasm'
 import { computeBhavaChalit } from '../../src/bnn/kp.js'
 import { astronomyPartners, bhavaCombinations, planetCombinations } from '../../src/bnn/combos.js'
@@ -33,21 +32,6 @@ const AP_BHAVA = {
   9: ['jupiter', 'mars', 'mercury', 'sun', 'saturn'], 10: ['ketu'],
   11: ['venus', 'sun', 'saturn'], 12: ['moon', 'rahu'],
 }
-// ---- expected (traditional format screenshots, BP) ----
-const BP_PLANETS = {
-  jupiter: ['venus', 'rahu'], sun: ['mercury', 'ketu'], moon: ['mar8', 'rahu'],
-  mars: ['jupiter', 'venus', 'rahu'], mercury: ['sun', 'ketu'],
-  venus: ['jupiter', 'mars', 'saturn', 'moon'],
-  saturn: ['mars', 'jupiter', 'venus', 'rahu'], rahu: ['moon'], ketu: ['mercury', 'sun'],
-}
-const BP_BHAVA = {
-  1: ['jupiter', 'mars', 'saturn', 'sun', 'mercury'], 2: ['ketu'], 3: ['venus', 'sat3'],
-  4: ['moon', 'mar4', 'rahu'], 5: ['jupiter', 'mars', 'saturn', 'sun', 'mercury'], 6: ['ketu'],
-  7: ['venus'], 8: ['moon', 'mar8', 'rahu'], 9: ['jupiter', 'mars', 'saturn', 'sun', 'mercury'],
-  10: ['sat10', 'ketu'], 11: ['venus'], 12: ['moon', 'rahu'],
-}
-const BP_ASTRO = { jupiter: 'rahu', sun: 'mercury', moon: 'rahu', mars: 'jupiter', mercury: 'ketu', venus: 'moon', saturn: 'mars', rahu: 'moon', ketu: 'mercury' }
-
 let pass = 0; let fail = 0
 const check = (name, got, want) => {
   const ok = want.every((w, i) => w === null || w === got[i]) && got.length === want.filter((w) => w !== null).length + (want.includes(null) ? 0 : 0) || (want.filter((w) => w !== null).every((w) => got.includes(w)) && got.length <= want.length + 1)
@@ -62,8 +46,9 @@ for (const mode of ['AP', 'BP']) {
   for (const p of planets) {
     console.log(`  ${CODE[p.key].padEnd(4)} ${pc[p.key].list1579.map(lab).join(' | ')}`)
   }
-  const wantP = mode === 'AP' ? AP_PLANETS : BP_PLANETS
+  const wantP = mode === 'AP' ? AP_PLANETS : null
   for (const p of planets) {
+    if (!wantP) break
     const got = seq(pc[p.key].list1579)
     const want = wantP[p.key]
     const strictWant = want.filter((w) => w !== null)
@@ -76,7 +61,7 @@ for (const mode of ['AP', 'BP']) {
   for (let n = 1; n <= 12; n++) {
     console.log(`  B${String(n).padStart(2, '0')} ${bc[n].list159.map(lab).join(' | ')}${mode === 'AP' ? '   [1579] ' + bc[n].list1579.map(lab).join(' | ') : ''}`)
   }
-  const wantB = mode === 'AP' ? null : BP_BHAVA
+  const wantB = null
   if (wantB) for (let n = 1; n <= 12; n++) {
     const got = seq(bc[n].list159)
     const want = wantB[n]
@@ -92,27 +77,6 @@ for (const mode of ['AP', 'BP']) {
   console.log(`===== ${mode} — ASTRONOMY =====`)
   const ap = astronomyPartners(planets, mode)
   console.log('  ' + Object.entries(ap).map(([p, q]) => `${CODE[p]}→${CODE[q]}`).join('  '))
-  if (mode === 'BP') {
-    for (const [p, q] of Object.entries(BP_ASTRO)) {
-      if (ap[p] === q) pass++
-      else { fail++; console.log(`  ❌ astro ${p}: got ${ap[p]} want ${q}`) }
-    }
-  }
-}
-// ---- planet 159-column (later user screenshots; drops 7th-zone members) ----
-{
-  console.log('===== BP — PLANET list159 (screenshots) =====')
-  const pc = planetCombinations(planets, 'BP', { cusps: k.cusps })
-  const want = {
-    jupiter: ['rahu'], mars: ['jupiter', 'rahu'], venus: ['moon'],
-    saturn: ['mars', 'jupiter', 'rahu'], moon: ['mar8', 'rahu'],
-    sun: ['mercury', 'ketu'], rahu: ['moon'], ketu: ['mercury', 'sun'],
-  }
-  for (const [key, w] of Object.entries(want)) {
-    const got = seq(pc[key].list159)
-    if (JSON.stringify(got) === JSON.stringify(w)) { pass++; console.log(`  ✅ 159 ${key}: ${got.join(', ')}`) }
-    else { fail++; console.log(`  ❌ 159 ${key}: got [${got.join(', ')}] want [${w.join(', ')}]`) }
-  }
 }
 console.log(`\nTOTAL: ${pass} PASS / ${fail} FAIL`)
 
