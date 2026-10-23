@@ -1,5 +1,5 @@
 // tests/bnn-transit.test.js — BNN transit ring (Phase 7).
-// References: 01-10-2026 ≈12:16 IST (guide भाग 5) and the old software's outer
+// References: 01-10-2026 ≈12:16 IST (guide भाग 5) and the traditional format's outer
 // face at 07-10-2026 04:40:03 IST (user screenshot). Calibration: planets &
 // ascendant at UT + ΔT (+0.5 s); ring numbers round to the arcminute.
 import { beforeAll, describe, expect, it } from 'vitest'

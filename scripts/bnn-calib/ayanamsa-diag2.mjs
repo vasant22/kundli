@@ -1,7 +1,7 @@
 // scripts/bnn-calib/ayanamsa-diag2.mjs — BNN Phase 2, step 4 diagnostics.
 // Two more hypotheses for the ±4' cusp-shape residual:
-//  H1: latitude of the old software's "Betul" was slightly different.
-//  H2: the old software computed the cusps with a *sidereal-time* style
+//  H1: latitude of the traditional format's "Betul" was slightly different.
+//  H2: the traditional format computed the cusps with a *sidereal-time* style
 //      convention: RAMC shifted by the ayanamsa (in degrees), effectively
 //      emulated here by shifting the geographic longitude by −ayan×k.
 // Run: node scripts/bnn-calib/ayanamsa-diag2.mjs

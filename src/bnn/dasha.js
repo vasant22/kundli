@@ -2,7 +2,7 @@
 //
 // Guide R14 + calibration (2026-10-07, reference chart 22-01-1980 20:30 बैतूल;
 // see NOTES.md "Phase 6" + scripts/bnn-calib/dasha-check.mjs):
-//  • The old software's dasha runs on the Moon computed at UT + ΔT (+0.5 s —
+//  • the traditional format's dasha runs on the Moon computed at UT + ΔT (+0.5 s —
 //    the same convention as its Placidus cusps; kp.js). With plain UT the
 //    first dasha end is 28-12-1985; with ΔT it is 23-12-1985 — exactly the
 //    reference. All nine mahadasha end dates then match to the day.
@@ -119,7 +119,7 @@ export function mahadashaList(balance, birth, settings = DASHA_SETTINGS) {
  * Length = floor(Y × 366 × b / 120) days; the last one ends on the maha end.
  * The FIRST mahadasha is partial (it began before birth): its earlier bhukthis
  * are returned as `blank` rows and the first visible one keeps only its
- * remaining part — the old software's print shows exactly this shape
+ * remaining part — the traditional format's print shows exactly this shape
  * (sample PDF, user 2026-10-07; the elapsed part is shown as empty rows).
  */
 export function bhukthiList(maha, birth, settings = DASHA_SETTINGS) {

@@ -2,7 +2,7 @@
 // Uses the REAL Swiss Ephemeris WASM in Node (like tests/astro.test.js).
 //
 // Reference chart (docs/bnn-guide.txt भाग 5): 22-01-1980, 20:30, Betul.
-// Exact inputs confirmed from the old software's own screenshots (2026-10-07
+// Exact inputs confirmed from the traditional format's own screenshots (2026-10-07
 // user message; ref no 58): lat 21.4833, lon 78.25, 20:30:00 IST. Its cusps
 // correspond to UT + ΔT — see BNN_SETTINGS.housesAtDeltaT; with that every
 // reference value matches within ~0.9′ (values are whole-arcminute rounded).
@@ -12,9 +12,9 @@ import { BNN_SETTINGS, computeBhavaChalit, findExchanges, tithiIndexOf, yogaInde
 import { cuspText, planetText } from '../src/bnn/render.js'
 
 const BIRTH = {
-  // Exact inputs from the old software (user screenshots, 2026-10-07):
+  // Exact inputs from the traditional format (user screenshots, 2026-10-07):
   utc: { year: 1980, month: 1, day: 22, hour: 15, minute: 0, second: 0 }, // 20:30:00 IST
-  place: { latitude: 21.4833, longitude: 78.25 }, // Betul per the old software
+  place: { latitude: 21.4833, longitude: 78.25 }, // Betul per the traditional format
 }
 
 // Absolute longitudes from the guide's reference values.

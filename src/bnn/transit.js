@@ -3,7 +3,7 @@
 // Guide R15: transit planets grouped by sign with degree.minute (+ '#' for
 // retrograde), and the transit ascendant for a selectable date-time & place.
 //
-// Calibration (2026-10-07, findings §8): the old software computes the transit
+// Calibration (2026-10-07, findings §8): the traditional format computes the transit
 // like its natal chart — planets and the Placidus ascendant at UT + ΔT (+0.5 s
 // fine-tune) — but the OUTER transit numbers are ROUNDED to the arcminute
 // (verified: its "ASC 28.01" at 07-10-2026 04:40:03 IST = our 28°00.9′; the

@@ -1,5 +1,5 @@
 // scripts/bnn-calib/ayanamsa-confirm.mjs — BNN Phase 2a confirmation.
-// Coordinates from the old software itself (user screenshots, 2026-10-07):
+// Coordinates from the traditional format itself (user screenshots, 2026-10-07):
 //   Betul — Latitude 21.4833 N, Longitude 78.25 E; birth 22-01-1980 20:30:00 IST.
 // Finds the residual time offset (expected ≈ +ΔT 1980 ≈ 50.5 s) and prints the
 // final comparison table against the reference values (guide भाग 5).

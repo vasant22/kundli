@@ -1,7 +1,7 @@
 // tests/bnn-prsss.test.js — BNN PRSSS / BRSSS chains (Phase 3).
 // Integration: real WASM on the reference chart (same fixture as bnn-kp).
 // Expected rows: docs/bnn-guide.txt भाग 5. B11 is reported separately — the
-// guide says the old software's B11 does not follow the rule (report only).
+// guide says the traditional format's B11 does not follow the rule (report only).
 import { beforeAll, describe, expect, it } from 'vitest'
 import { initEphemeris } from '../src/astro.js'
 import { computeBhavaChalit } from '../src/bnn/kp.js'

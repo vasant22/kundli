@@ -527,7 +527,7 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 
 ### 2026-10-07 — BNN Phase 2a सत्यापित (user screenshots) (`1486825`)
 - User ने अपने software के 2 screenshots भेजे: details screen में **lat 21.4833 / lon 78.25, जन्म 20:30:00, GMT 5.5** (Ref 58); outer face = हमारा लक्ष्य UI।
-- पहेली हल: बचा offset = **+50.6s = ΔT(1980)** → पुराना software **भाव-संधियाँ UT+ΔT** पर बनाता है। अब: **संधियाँ ≤0.7′, ग्रह ≤0.9′** — पूरा match ✓ (findings §3)।
+- पहेली हल: बचा offset = **+50.6s = ΔT(1980)** → पारंपरिक प्रारूप **भाव-संधियाँ UT+ΔT** पर बनाता है। अब: **संधियाँ ≤0.7′, ग्रह ≤0.9′** — पूरा match ✓ (findings §3)।
 - `kp.js`: `housesAtDeltaT: true` जुड़ा; test fixture exact coords पर; `docs/bnn-calib-findings.md` updated (+UI संदर्भ §5)।
 - Screenshots (private ब्यौरा; repo में नहीं) → `.openclaw/tmp/bnn-ref/`; उनकी tables/transit अंक आगे के phases के test-डेटा।
 - **421 ✓**। Token: इस Phase-2a काम में कुल ≈ 1061 (wallet 25071 → 24010)।
@@ -554,7 +554,7 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - **Aspect नियम की खोज (reference से)**: aspect entries सिर्फ़ तब जुड़ते हैं जब ग्रह उसकी influence zone **[बिंदु −30°, +2°]** में हो (guide के "zone" शब्द का सटीक अर्थ)।
 - **Verification (`scripts/bnn-calib/combos-check.mjs`): 51/51 PASS** — AP planet+bhava (guide भाग 5) · BP planet+bhava list159 + ASTRONOMY (user screenshots) — सब match ✓।
 - **Screenshots-verification (user, 2026-10-07)**: PRSSS 9/9 (छिपा 3rd level भी 'VEN' निकला ✓) · BRSSS 12/12 (B11 = MER,RAH,MER,RAH,RAH — पुरानी "B11 मेल नहीं खाती" शंका हल ✓)।
-- **Report-only खुले मुद्दे**: पुराना software ~1° पीछे बैठे ग्रह को भी जोड़ता है (AP: SAT row में SUN-97; BP: MER row में SUN) — guide कहती है implement न करें, केवल report — वैसा ही रखा।
+- **Report-only खुले मुद्दे**: पारंपरिक प्रारूप ~1° पीछे बैठे ग्रह को भी जोड़ता है (AP: SAT row में SUN-97; BP: MER row में SUN) — guide कहती है implement न करें, केवल report — वैसा ही रखा।
 - **Display order (user, Phase 5 के लिए)**: bhava tabs `[1-5-9 | 1-5-7-9 | BRSSS | SPECIAL]`; planet tabs `[1-5-7-9 | 1-5-9 | SPECIAL | 3-11 | 10 | PRSSS | ASTRONOMY]` — 3-11/10 guide R8 से नहीं बनाएँगे (सॉफ्टवेयर में ख़ाली हैं)।
 - Tests: `tests/bnn-combos.test.js` (10 नए) — कुल **441 ✓**।
 - Token: wallet 23148 → 22319 (Δ ≈ 829; गहरी screenshot-verification)।
@@ -590,17 +590,17 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 
 ### 2026-10-07 — BNN corrections-2: progression column + गुरुजी का परिवर्तन-नियम
 - **Progression planet अब हमेशा 9वें column में** — fixed frame: label + 7 combo slots + progression;
-  1-5-7-9 और 1-5-9 दोनों tabs में एक-सी शक्ल (old software जैसी 9-column)। पहले user ने "8वें",
+  1-5-7-9 और 1-5-9 दोनों tabs में एक-सी शक्ल (traditional format जैसी 9-column)। पहले user ने "8वें",
   फिर "9वें ज़्यादा अच्छा" कहा — वही लागू (arrows-screenshots 06:45/07:09 के मुताबिक)।
 - **SUN-97 का जवाब मिला + लागू (गुरुजी नियम)**: परिवर्तन वाले ग्रह की कुर्सी-डिग्री से **1° के भीतर
   पीछे (उल्टी दिशा)** बैठा ग्रह combination में जुड़ता है → **AP में SAT# row = SUN-97 | KET-8**,
-  **BP में MER row = SUN-97 | KET-8** — दोनों old software से exactly मेल (percent भाव-सूत्र से = 97)।
+  **BP में MER row = SUN-97 | KET-8** — दोनों traditional format से exactly मेल (percent भाव-सूत्र से = 97)।
   `combos.js` → `COMBO_SETTINGS.returnedCatchDeg = 1.0`। (`combos-check`: 59/59 + catch ✅✅)
 - Report-only बाक़ी: BP-1579 MER row के extra cells VEN-37/RAH-15 (159 में SAT10-18) — नियम अभी नहीं मिला।
 - User के browser में labels −1 (पुराना cache) दिख रहा था — live/server सही; hard refresh से ठीक।
 
 ### 2026-10-07 — BNN Phase 6: दशा / भुक्ति / अंतर
-- **दशा-अंशांकन**: पुराना software दशा **UT+ΔT** वाले चंद्र से चलाता है (जैसे भाव-संधियाँ) — इसी से
+- **दशा-अंशांकन**: पारंपरिक प्रारूप दशा **UT+ΔT** वाले चंद्र से चलाता है (जैसे भाव-संधियाँ) — इसी से
   पहली दशा-अंत 23-12-1985 exactly आती है (plain UT: 28-12-1985)। `src/bnn/dasha.js` असली — balance,
   महादशा 9 अंत-तिथियाँ+आयु, भुक्ति (366-दिन) और अंतर (भुक्ति × a/120; आख़िरी = भुक्ति-अंत)।
 - **`scripts/bnn-calib/dasha-check.mjs`: 27/27 PASS** — महादशा 9/9 · भुक्ति 9/9 · अंतर 9/9 (guide भाग 5;
@@ -611,21 +611,21 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - Token: wallet 19593 (session शुरुआत) → 18241; Δ ≈ 1350 (corrections-2 + Phase 6 साथ में)।
 - **अगला — Phase 7**: गोचर (chart के बाहर + गोचर लग्न; reference 30-09-2026) और Phase 7b PCP।
 
-### 2026-10-07 — BNN correction-3: SPECIAL (भाव) tab अब sir के software जैसा
+### 2026-10-07 — BNN correction-3: SPECIAL (भाव) tab अब पारंपरिक तालिका-शैली जैसा
 - User (screenshots 08:01/08:07): भाव-वाले SPECIAL tab की शक्ल बदलनी थी — columns अब: **LORD**
   (भाव का स्वामी) · **PLANETS(A)** (भाव में बैठे ग्रह; cusp के सबसे पास वाला पहले; # = वक्री) ·
   **IN STAR OF A** · **LORDSHIP** (= पहले का "Director" — भाव का फल देने वाला ग्रह)।
   पहले हमारे पास सिर्फ़ [Director | IN STAR OF A] था।
 - **IN STAR OF A decode** (user ने पूछा था): जिन ग्रहों का **नक्षत्र-स्वामी** भाव के किसी बैठे ग्रह A में
-  हो (भाव खाली → A = भाव-स्वामी)। हमारे numbers sir के software से पहले से exactly मेल खाते थे ✓।
+  हो (भाव खाली → A = भाव-स्वामी)। हमारे numbers पारंपरिक तालिका-शैली से पहले से exactly मेल खाते थे ✓।
 - Verification: `special-check` **45 → 69 ✓** (+12 LORD, +12 PLANETS(A) — reference output से);
-  असली browser render की पूरी 12-row तालिका sir के software से अक्षरशः मेल ✓; tests **451 ✓**।
+  असली browser render की पूरी 12-row तालिका पारंपरिक तालिका-शैली से अक्षरशः मेल ✓; tests **451 ✓**।
 - **अगला — Phase 7**: गोचर (transit) + PCP — user की "आगे बढ़ो" पर।
 
 ### 2026-10-07 — BNN correction-4: planet SPECIAL में LORDSHIP अलग column
 - User (screenshot 08:16): planet combination का SPECIAL tab — star के फल वाला हिस्सा पहले
   ★ star cell में मिला हुआ था ("★ VEN-7 → 3,7,10")। अब **अलग columns**: [Lord | sits → gives |
-  **STAR** | **LORDSHIP**] — जैसे JUP: `5,8 | 01 → 1,5 | VEN - 7 | 3,7,10` (sir के software से मेल)।
+  **STAR** | **LORDSHIP**] — जैसे JUP: `5,8 | 01 → 1,5 | VEN - 7 | 3,7,10` (पारंपरिक तालिका-शैली से मेल)।
 - असली browser render से जाँचा ✓; tests **451 ✓**।
 - **अगला — Phase 7**: गोचर (transit) + PCP।
 
@@ -801,17 +801,17 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
   tables माँगी) · 159-vs-1579 dip-अपवाद। **deploy: push origin main (CI)।**
 
 ### 2026-10-10 — BNN PCP: 🎯 राहु-केतु (159 · 09-10-2026→09-10-2048) decode — check 81/91
-- user के screenshots (सर का software + हमारा): राहु/केतु की जुपिटर+शनि tables, same settings।
+- user के screenshots (पारंपरिक तालिका-शैली + हमारा): राहु/केतु की जुपिटर+शनि tables, same settings।
 - **नए नियम (`pcp.js`)**: leads — **राहु 23.75 (×गुरु) / 23.65 (×शनि)**, **केतु 27.2 / 27.3** (पुराने
   14.42/13.94 station-D-मान थे, ग़लत थे); **X-line** राहु **+7.36** / केतु +7.30; **rise row अब [D→C] भी
   बंद** होती है (rv_C < −1°)। बाक़ी ढाँचा वही।
-- **राहु 18/18 · केतु 18/18 rows मिलीं** (19 exact; बाक़ी ±1 दिन = सर के software की display-jitter —
+- **राहु 18/18 · केतु 18/18 rows मिलीं** (19 exact; बाक़ी ±1 दिन = पारंपरिक तालिका-शैली की display-jitter —
   उनकी ही दो captures में वही crossing अलग दिन)। `pcp-check` अब **81/91** (मंगल 15/15 · शनि 5/5 ·
   शनि-159 14/14 · राहु/केतु 18/18+18/18 सहित)। tests 486 ✓। ब्यौरा findings §18 · research v1.0।
 - बाक़ी: सूर्य/चंद्र/बुध की tables (user देगा)। deploy: push origin main।
 
 ### 2026-10-10 — BNN PCP: 🎯 बुध-सूर्य (159 · 2026→2048) decode — check 114/122
-- user के screenshots: बुध की दोनों tables + सूर्य की दोनों tables (सर + हमारा), same settings।
+- user के screenshots: बुध की दोनों tables + सूर्य की दोनों tables (तुलना + हमारा), same settings।
 - **नए नियम (`pcp.js`)**: बुध line **+0.15°/X≈+27.15°**; सूर्य lead **4.05°/X≈−0.2°**; **rise-window**
   (126.5–137.5 दिन, rvD ≥ −20° — इसके बाहर sub-startLine rises अपने A-row रूप में); shallow dip close
   अब station-D के बाद **+1** पर भी।
@@ -820,7 +820,7 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - deploy: push origin main (CI)।
 
 ### 2026-10-10 — BNN PCP: 🎯 चंद्र-शुक्र (159 · 2026→2048) decode — check 151/158
-- user के screenshots: चंद्र की दोनों tables + शुक्र की दोनों tables (सर + हमारा)।
+- user के screenshots: चंद्र की दोनों tables + शुक्र की दोनों tables (तुलना + हमारा)।
 - **नए नियम (`pcp.js`)**: शुक्र lead **6.2 / X +27.2**; चंद्र **C-open [+7°,+23.7°] · deep-A −27.15° ·
   fire-floor −25.5° (band नहीं)**। नए opts: cOpenMin/deepA/fireFloor/fireCeil/riseBand।
 - **चंद्र 18/18 · शुक्र 16/18 (±1)** — pcp-check **114/122 → 151/158** (सब ग्रह हरे; बाक़ी 7 = शुक्र-2035
@@ -842,7 +842,7 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - ख़र्च: wallet 3837 (17:20) → ~2274 (18:10 IST)।
 
 ### 2026-10-13 — दशा/भुक्ति/अंतर-लंबाई round → floor (`47048bd`) + website पर manual चयन
-- **floor (commit `47048bd`, 07:50):** भुक्ति/अंतर की लंबाई अब `floor(...)` (पुराने software की integer-division)। user के sir-software screenshot (MER दशा → SUN भुक्ति) की अंतर-तारीख़ें floor से हूबहू; round से हर पंक्ति +1 दिन। `src/bnn/dasha.js`; tests 502 ✓ · dasha-check 27/27 ✓। (यह commit अब website-side feature के साथ push होगा।)
+- **floor (commit `47048bd`, 07:50):** भुक्ति/अंतर की लंबाई अब `floor(...)` (पारंपरिक प्रारूप की integer-division)। user के the traditional format-software screenshot (MER दशा → SUN भुक्ति) की अंतर-तारीख़ें floor से हूबहू; round से हर पंक्ति +1 दिन। `src/bnn/dasha.js`; tests 502 ✓ · dasha-check 27/27 ✓। (यह commit अब website-side feature के साथ push होगा।)
 - **manual चयन — website पर भी (user 2026-10-13, "app जैसा"):** `/bnn/` के VIMSHOTTARI भाग में अब हाथ से चलना:
   - **engine:** `computeDashaTree` पूरा पेड़ देता है — हर महादशा पर `bhukthis` (9) और हर (गैर-खाली) भुक्ति पर `andhirams` (9); `running.*` वही objects (print/All-chart में कोई बदलाव नहीं)। आधी पहली दशा की खाली पंक्तियों पर `andhirams = []`।
   - **UI (`render.js → buildDashaTables`):** किसी भी दशा-पंक्ति पर क्लिक → उसकी भुक्तियाँ; किसी भुक्ति पर क्लिक → उसके अंतर; ऊपर नोट-पंक्ति (`SUN महादशा — किसी भुक्ति पर क्लिक करने पर…`) + **↺ चल रही पर लौटें** बटन; चुनी पंक्ति हल्की नीली, चल रही पंक्ति पीली (दोनों एक साथ भी)। कीबोर्ड: Tab + Enter/Space। i18n keys `bnn.dashaPickMaha/PickBhukti/AllAndhiram/Back` (hi+en)। CSS `.bnn-dasha-note/.row-pickable/.row-picked`।

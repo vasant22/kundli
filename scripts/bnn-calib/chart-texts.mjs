@@ -1,5 +1,5 @@
 // scripts/bnn-calib/chart-texts.mjs — fine-check the chart DISPLAY texts
-// (truncated arcminutes) against the old software's outer face, and find the
+// (truncated arcminutes) against the traditional format's outer face, and find the
 // smallest house-time fine-tune that makes every cusp display identical.
 // Reference face (user screenshot): 12.53 10.54 11.31 12.52 13.36 13.38 (×2).
 // Run: node scripts/bnn-calib/chart-texts.mjs

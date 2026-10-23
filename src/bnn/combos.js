@@ -16,7 +16,7 @@
 // Plus the guru's "returned degree" catch (user, 2026-10-07): a planet of a
 // parivartana pair also counts planets sitting just behind its seat degree in
 // the reverse direction — this is what puts SUN-97 in SAT's AP row / MER's BP
-// row in the old software (see COMBO_SETTINGS.returnedCatchDeg).
+// row in the traditional format (see COMBO_SETTINGS.returnedCatchDeg).
 // Spec: docs/bnn-guide.txt. Reference checks: scripts/bnn-calib/combos-check.mjs
 import { findExchanges } from './kp.js'
 import { aspectToBhavaPercent, planetToBhavaPercent, planetToBhavaPlainPercent, planetToPlanetPercent } from './percent.js'

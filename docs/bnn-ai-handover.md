@@ -6,7 +6,7 @@
 - **License:** AGPL-3.0 (see `LICENSE`). Ephemeris: Swiss Ephemeris (dual license — keep the credit/attribution).
 - **Audience:** any coding AI tool or developer tasked with porting this tool to a Windows/macOS/Linux desktop application.
 
-> **हिंदी में (छोटा परिचय):** यह दस्तावेज़ BNN चार्ट software (अभी वेब पर — kundli.mybapuji.com/bnn) का पूरा तकनीकी नक्शा है। इसे (और repo `github.com/vasant22/kundli` को, या साथ दी ZIP pack को) किसी भी coding AI tool — Claude, ChatGPT, Cursor, Codex — को देकर कहें: *"Convert this project into an offline desktop application"* (तैयार prompt नीचे Appendix A में है)। सारी गणना का हर नियम, हर स्थिरांक (constant) और सही-ग़लत जाँचने के नमूने (test vectors) यहीं दिए हैं। यह app: भावचलित (KP New) गणना — ayanamsa mode 44, भाव-संधियाँ UT+ΔT+0.5s — और सारे output पुराने software से ~1 कला (arcminute) तक मिलाए हुए हैं (जाँच-बही: `docs/bnn-calib-findings.md`)। किसी भी step के बाद test चलाएँ और Hindi/English में बताएँ।
+> **हिंदी में (छोटा परिचय):** यह दस्तावेज़ BNN चार्ट software (अभी वेब पर — kundli.mybapuji.com/bnn) का पूरा तकनीकी नक्शा है। इसे (और repo `github.com/vasant22/kundli` को, या साथ दी ZIP pack को) किसी भी coding AI tool — Claude, ChatGPT, Cursor, Codex — को देकर कहें: *"Convert this project into an offline desktop application"* (तैयार prompt नीचे Appendix A में है)। सारी गणना का हर नियम, हर स्थिरांक (constant) और सही-ग़लत जाँचने के नमूने (test vectors) यहीं दिए हैं। यह app: भावचलित (KP New) गणना — ayanamsa mode 44, भाव-संधियाँ UT+ΔT+0.5s — और सारे output पारंपरिक प्रारूप से ~1 कला (arcminute) तक मिलाए हुए हैं (जाँच-बही: `docs/bnn-calib-findings.md`)। किसी भी step के बाद test चलाएँ और Hindi/English में बताएँ।
 
 ---
 

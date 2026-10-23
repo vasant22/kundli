@@ -1,5 +1,5 @@
 // combos-check.mjs — BNN Phase 4 PASS/FAIL: combination engine vs the
-// guide's AP tables (भाग 5) and the old software's BP screenshots.
+// guide's AP tables (भाग 5) and the traditional format's BP screenshots.
 // Run: node scripts/bnn-calib/combos-check.mjs
 import SwissEph from 'swisseph-wasm'
 import { computeBhavaChalit } from '../../src/bnn/kp.js'
@@ -33,7 +33,7 @@ const AP_BHAVA = {
   9: ['jupiter', 'mars', 'mercury', 'sun', 'saturn'], 10: ['ketu'],
   11: ['venus', 'sun', 'saturn'], 12: ['moon', 'rahu'],
 }
-// ---- expected (old software screenshots, BP) ----
+// ---- expected (traditional format screenshots, BP) ----
 const BP_PLANETS = {
   jupiter: ['venus', 'rahu'], sun: ['mercury', 'ketu'], moon: ['mar8', 'rahu'],
   mars: ['jupiter', 'venus', 'rahu'], mercury: ['sun', 'ketu'],

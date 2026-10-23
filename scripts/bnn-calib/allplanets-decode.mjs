@@ -1,4 +1,4 @@
-// allplanets-decode.mjs — सर की Special-Transit "All-Planets" chain के openings का research tool.
+// allplanets-decode.mjs — पारंपरिक Special-Transit "All-Planets" chain के openings का research tool.
 //
 // दोनों captured charts (जन्म-सूर्य, जन्म-मंगल) की chain-rows (HH:MM-सहित, screenshots से) पर
 // हर opening के समय गोचर-ग्रह की चाल + चारों frames पर rv निकालता है (nearest branch),

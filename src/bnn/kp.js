@@ -5,7 +5,7 @@
 //    "Lahiri VP285"; value at the reference chart (22-01-1980): 23°35'06".
 //    Only built-in that reproduces the reference within ~1′ (the
 //    KP/Krishnamurti built-ins are 5–7′ away).
-//  • Houses: the old software's bhava cusps equal Placidus computed at
+//  • Houses: the traditional format's bhava cusps equal Placidus computed at
 //    UT + ΔT (+50.6 s for 1980 — matches ΔT exactly). See BNN_SETTINGS
 //    .housesAtDeltaT. With both, every reference value is within ~0.9′.
 //
@@ -19,7 +19,7 @@ import { describeLongitude, RASHI_LORDS } from '../astro.js'
 export const BNN_SETTINGS = Object.freeze({
   // swisseph sidereal-mode id — reference-matched (docs/bnn-calib-findings.md §1–2).
   ayanamsaMode: 44,
-  // The old software's cusps = Placidus at UT + ΔT (findings §3).
+  // the traditional format's cusps = Placidus at UT + ΔT (findings §3).
   housesAtDeltaT: true,
 })
 
@@ -56,7 +56,7 @@ export function computeBhavaChalit(swe, utc, place) {
   const jd = swe.julday(utc.year, utc.month, utc.day, hourDecimal)
   const flags = swe.SEFLG_SWIEPH | swe.SEFLG_SIDEREAL | swe.SEFLG_SPEED
 
-  // Placidus cusps (sidereal). The old software's cusps sit at UT + ΔT plus a
+  // Placidus cusps (sidereal). the traditional format's cusps sit at UT + ΔT plus a
   // ~+0.5 s fine-tune (verified so every displayed arcminute matches its face;
   // docs/bnn-calib-findings.md §3 · scripts/bnn-calib/chart-texts.mjs).
   const jdHouses = BNN_SETTINGS.housesAtDeltaT ? jd + swe.deltat(jd) + 0.5 / 86400 : jd

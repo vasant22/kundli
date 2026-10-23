@@ -1,4 +1,4 @@
-// delay-fit: हर captured event पर (sir-time − crossing-time) → उस समय की असली speed से DEGREES में delay।
+// delay-fit: हर captured event पर (the traditional format-time − crossing-time) → उस समय की असली speed से DEGREES में delay।
 import SwissEph from 'swisseph-wasm'
 import { computeBhavaChalit } from '../../src/bnn/kp.js'
 import { chainPoints, nextChainPoint } from '../../src/bnn/pcp.js'
@@ -30,7 +30,7 @@ const EVS = {
   mars: [['venus', '02-12-2026 11:43'], ['jupiter', '29-12-2026 15:27'], ['venus', '05-09-2027 23:27'], ['moon', '16-09-2027 17:03'], ['rahu', '26-10-2027 23:59'], ['jupiter', '29-11-2027 04:47'], ['mars', '10-12-2027 02:39'], ['saturn', '17-12-2027 21:19'], ['sun', '01-01-2028 22:23'], ['ketu', '09-01-2028 01:25']],
 }
 for (const key of ['sun', 'mars']) {
-  console.log('\n' + key.toUpperCase() + ': pair      sir-time            crossing            delay_h   speed     delay_deg')
+  console.log('\n' + key.toUpperCase() + ': pair      ref-time            crossing            delay_h   speed     delay_deg')
   const lonAt = makeLonAt(key)
   for (const [pair, when] of EVS[key]) {
     const sirMs = msOf(when)

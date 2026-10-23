@@ -1,9 +1,9 @@
 // tests/bnn-combos.test.js — BNN combination engine (Phase 4, rules R1–R7).
 // Part 1: the guide's worked rule examples (pure, no ephemeris).
-// Part 2: the reference chart — AP vs guide भाग 5; BP vs the old software's
+// Part 2: the reference chart — AP vs guide भाग 5; BP vs the traditional format's
 // screenshots (user, 2026-10-07). The guru's parivartana "returned degree"
 // catch (user, 2026-10-07) is implemented: SUN-97 shows in SAT's AP row and
-// MER's BP row. Still open (report-only): the old software's extra mixed-seat
+// MER's BP row. Still open (report-only): the traditional format's extra mixed-seat
 // cells VEN-37 / RAH-15 / SAT10-18 in MER's BP row.
 import { beforeAll, describe, expect, it } from 'vitest'
 import { initEphemeris } from '../src/astro.js'

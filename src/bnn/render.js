@@ -5,7 +5,7 @@
 // marker, the centre panel (name / place / date+weekday / age /
 // nakshatra-pada / tithi / yoga) and the exchange label (MERCURY<>SATURN).
 // Two styles: south (fixed rashi grid) + north (diamond houses).
-// Spec: docs/bnn-guide.txt → Phase 2; layout reference: old software outer
+// Spec: docs/bnn-guide.txt → Phase 2; layout reference: traditional format outer
 // face (screenshots; see docs/bnn-calib-findings.md §5).
 import { GRAHAS, t } from '../i18n.js'
 import { findExchanges } from './kp.js'
@@ -38,7 +38,7 @@ const N_CENTERS = [
   [0.88, 0.75], [0.75, 0.5], [0.88, 0.25], [0.75, 0.12],
 ]
 
-// 3-letter codes like the old software's chart face: "MAR# 21.30".
+// 3-letter codes like the traditional format's chart face: "MAR# 21.30".
 const CODE = {
   sun: 'SUN', moon: 'MOO', mars: 'MAR', mercury: 'MER',
   jupiter: 'JUP', venus: 'VEN', saturn: 'SAT', rahu: 'RAH', ketu: 'KET',

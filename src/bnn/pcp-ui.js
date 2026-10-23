@@ -197,7 +197,7 @@ export function buildSpecialTransitSection(values, opts) {
     return pl && pl.retro ? '#' : ''
   }
   const renderChain = (st) => {
-    // All-Planets = ONE chain, sir's layout: PLANET | DATE | ASPECT | RETRO
+    // All-Planets = ONE chain, the traditional layout: PLANET | DATE | ASPECT | RETRO
     const birthCode = CODE[values.stBirth || 'sun']
     const segs = []
     for (const p of st) for (const seg of p.segments || []) segs.push({ key: p.key, seg })
@@ -327,7 +327,7 @@ export function buildSpecialTransitSection(values, opts) {
           natalLons,
         })
         // attach the F/R flags (speed sign at the event instant); chain rows use
-        // the chart planet's direction (sir's convention), classic rows their own
+        // the chart planet's direction (the established convention), classic rows their own
         const travellerAt = makeLonAt(swe, values.stBirth || 'sun')
         for (const p of st) {
           const lonAt = makeLonAt(swe, p.key)

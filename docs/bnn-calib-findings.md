@@ -24,9 +24,9 @@ Scripts: `scripts/bnn-calib/` · दोबारा चलाएँ: `node scrip
 
 ## 3) ✅ पुष्टि — user के screenshots से (07-10-2026)
 
-पुराने software की details screen से: Betul **latitude 21.4833 / longitude 78.25**, जन्म **20:30:00**, GMT 5.5।
+पारंपरिक प्रारूप की details screen से: Betul **latitude 21.4833 / longitude 78.25**, जन्म **20:30:00**, GMT 5.5।
 इन exact inputs पर बचा हुआ अंतर सिर्फ़ ~50 सेकंड था — जो ठीक **ΔT(1980) = 50.6s** है। यानी
-**पुराना software भाव-संधियाँ UT + ΔT पर बनाता है** (चार्ट मिलान के लिए हमने भी वही settings लगाई)।
+**पारंपरिक प्रारूप भाव-संधियाँ UT + ΔT पर बनाता है** (चार्ट मिलान के लिए हमने भी वही settings लगाई)।
 
 अंतिम मिलान (ΔT लगाकर, delta-t table):
 
@@ -78,7 +78,7 @@ Scripts: `scripts/bnn-calib/` · दोबारा चलाएँ: `node scrip
 - **`ayanamsa-confirm.mjs`** — exact coords पर final verification (§3 की तालिका)
 - `chart-texts.mjs` — चार्ट के display-text (truncated arcminutes) पुराने face से मिलान + +0.5s fine-tune
 
-## 5) UI संदर्भ (old software के screenshots — Phase 2b+ के लिए)
+## 5) UI संदर्भ (traditional format के screenshots — Phase 2b+ के लिए)
 
 - **Left (चार्ट):** दक्षिण-शैली grid; हर राशि cell में लाल "NN dd.mm" (भाव-संधि नंबर + डिग्री.मिनट,
   जैसे "09 11.31") और ग्रह "MOO 12.30" (वक्री पर #); सिंह cell में "ASC 12.53"; grid के बाहर चारों ओर
@@ -107,7 +107,7 @@ Scripts: `scripts/bnn-calib/` · दोबारा चलाएँ: `node scrip
 
 - बदली हुई कुर्सी वाले ग्रह के लिए: उसकी कुर्सी-डिग्री से **1° के भीतर पीछे (उल्टी दिशा)** बैठा
   ग्रह combination में जुड़ता है। यहाँ: सूर्य बुध की डिग्री से 0.83° पीछे → **AP में SAT# row = SUN-97,
-  BP में MER row = SUN-97** — दोनों old software से exactly मेल। प्रतिशत भाव-सूत्र से (97) —
+  BP में MER row = SUN-97** — दोनों traditional format से exactly मेल। प्रतिशत भाव-सूत्र से (97) —
   सीधे ग्रह-सूत्र से 94 आता था; match के लिए भाव-सूत्र। `combos.js` → `COMBO_SETTINGS.returnedCatchDeg = 1.0`।
 - Report-only बाक़ी: BP-1579 MER row के extra cells VEN-37 / RAH-15 (159 में SAT10-18) — नियम नहीं मिला।
 
@@ -187,7 +187,7 @@ Scripts: `scripts/bnn-calib/` · दोबारा चलाएँ: `node scrip
 - **Guru से पूछने वाला सटीक सवाल**: "PCP में हर कुंडली की Start-सीमा क्या होती है (N से कितने अंश पहले)? और वक्री-मोड़ों पर पंक्तियाँ कैसे बँटती हैं?"
 
 ## 15) 🎯 START-LEAD मिल गया — हर ग्रह का तय अंक (owner के hint + चार कुंडलियों से)
-- Owner का hint: "sir ने कुछ degree आगे से starting point ले लिया... end = degree पार करने पर"।
+- Owner का hint: "the traditional format ने कुछ degree आगे से starting point ले लिया... end = degree पार करने पर"।
 - **Verified leads (चुने हुए ग्रह के अनुसार)**:
   - **मंगल = 5.0°** (7 rows) · **शुक्र = 6.0°** (2 rows) · **सूर्य = 3.86°** (2 rows) · **बुध = 0.15°** (5+ rows)
 - Engine में लगाया (`PCP_LEADS`); nई validation: **19/23 PASS** — मंगल 15/15 ✓, सूर्य: SUN-5 ✓ + SUN-9 ✓ (2/4), शुक्र: VEN-7 ✓ + VEN-5-2029 ✓ (2/4)।
@@ -233,7 +233,7 @@ Scripts: `scripts/bnn-calib/` · दोबारा चलाएँ: `node scrip
   (राहु 6 rows, केतु 2 rows बाक़ी)। (c) 159 vs 1579 dip-अपवाद (Mercury-2029)। (d) बाक़ी lead-combos।
 
 ## 18) 🎯 राहु · केतु (159, 09-10-2026 → 09-10-2048) decode (2026-10-10)
-- Owner के screenshots (सर का software + हमारा BNN) — राहु की दोनों tables और केतु की दोनों tables, same settings (Saturn Guru · 159)।
+- Owner के screenshots (पारंपरिक तालिका-शैली + हमारा BNN) — राहु की दोनों tables और केतु की दोनों tables, same settings (Saturn Guru · 159)।
 - **नए decoded नियम (दोनों नोड्स — वक्री-विशेष ढाँचा)**:
   1. **Leads**: राहु ≈ **23.75° (गुरु-गोचर) / 23.65° (शनि-गोचर)**; केतु ≈ **27.2° (गुरु) / 27.3° (शनि)**।
      (पुराने 14.42/13.94 ग़लत थे — वे असल में station-D की rv-मान थीं।)
@@ -243,14 +243,14 @@ Scripts: `scripts/bnn-calib/` · दोबारा चलाएँ: `node scrip
      07-06-2040 → 02-02-2041 (B बीच में नहीं आया)। बाक़ी सारे forms वही ([A→C], [A→B], [A→F], [D→B],
      [C→F], [X→D])।
 - **नतीजा**: **राहु 18/18 और केतु 18/18 rows मिल गईं** — 19 rows exact, बाक़ी ±1 दिन।
-  ⚠️ वे ±1-दिन वाले rows (मुख्यतः station-events व B/F किनारे) = **सर के software की अपनी display-jitter**:
+  ⚠️ वे ±1-दिन वाले rows (मुख्यतः station-events व B/F किनारे) = **पारंपरिक तालिका-शैली की अपनी display-jitter**:
   उन्हीं की पुरानी vs नई captures में वही crossing अलग दिन दिखा (16-04 vs 15-04; 06-01 vs 05-01);
   इसलिए मिलान की exactता वहीं तक है।
 - pcp-check अब **81/91 PASS**: मंगल 15/15 · शनि 5/5 · शनि-159 14/14 · **राहु 18/18 · केतु 18/18**;
   बाक़ी 10 = सूर्य 2/4 · शुक्र 2/4 · चंद्र 4/9 · गुरु-b 3/4 (जो पहले से बाक़ी हैं)।
 
 ## 19) 🎯 बुध · सूर्य (159, 09-10-2026 → 09-10-2048) decode (2026-10-10, दूसरा दौर)
-- Owner के screenshots (सर + हमारा), same settings। **नए decoded नियम:**
+- Owner के screenshots (तुलना + हमारा), same settings। **नए decoded नियम:**
   1. **बुध**: combination-line **+0.15°** (RV-space; यानी direct rows = [+0.15 → +1]; पुराना
      "-0.15 lead" नहीं — row शुरू +0.15 पर होता है)। **X-line ≈ +27.15** (4 samples: 27.11–27.18);
      station-R X से नीचे → station पर, वरना X-crossing पर; प्राय: [C→D]/[C→F]/[X→D]।
@@ -260,12 +260,12 @@ Scripts: `scripts/bnn-calib/` · दोबारा चलाएँ: `node scrip
      station-D → +1° की चढ़ाई **126.5–137.5 दिन** की हो (keep: सूर्य 127d, चंद्र 136d;
      drop: 63/119/125/139/140/168/215/235/283d — बाहर की rows अपने A-crossing रूप में आ जाती हैं)।
      Station rvD ≥ −20° तक ही candidate (m6 −41.8 बाहर)।
-- **नतीजा**: **सूर्य-159 13/13 ±1 ✓** (12 exact + एक [12-12-2038] ±2 जो सर की ही jitter दिखती है) ·
+- **नतीजा**: **सूर्य-159 13/13 ±1 ✓** (12 exact + एक [12-12-2038] ±2 जो पारंपरिक display-jitter दिखती है) ·
   **बुध-159 18/18 ±1 ✓**। pcp-check अब **114/122** (मंगल/शनि/राहु/केतु/बुध/सूर्य सब ✓;
   बाक़ी 8 = शुक्र 2 · चंद्र 4 · गुरु-b 1 · सूर्य का वह ±2 outlier)।
 
 ## 20) 🎯 चंद्र · शुक्र (159, 09-10-2026 → 09-10-2048) decode (2026-10-10, तीसरा दौर)
-- Owner के screenshots (सर + हमारा), same settings। **नए decoded नियम:**
+- Owner के screenshots (तुलना + हमारा), same settings। **नए decoded नियम:**
   1. **शुक्र**: lead ≈ **6.2°**; **X-line ≈ +27.2°** (C-open iff rvC ≤ X; वरना X-cross पर) — इससे पुरानी
      VEN-5 2026 वाली row भी सुधरी। **18 में से 16 rows ±1**; [16-11-2034→23-03-2035] + [24-03-2035→
      30-03-2035] वाला 2035-split अभी merged आता है (decode बाक़ी)।
