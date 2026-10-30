@@ -145,7 +145,9 @@ export function planetCombination(planetKey, seats, opts = {}) {
       type: 'planet',
       key: other.key,
       zone: m.zone,
-      distance: m.key,
+      // राउंड 63 (सर के नए software के 8 चार्ट): क्षेत्र-आरंभ से ठीक पहले (zoneUnderDeg)
+      // बैठे ग्रह का क्रम उसकी वास्तविक दूरी |s| से — 0.07° पीछे वाला 0.15° पीछे वाले से पहले।
+      distance: m.key < 0 ? -m.key : m.key,
       percent: planetToPlanetPercent(Math.max(0, m.key)),
       natalRetro: other.natalRetro,
     })
