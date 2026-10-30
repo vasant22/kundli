@@ -37,7 +37,12 @@ describe('BNN Phase 4 — rule examples (guide कक्षा)', () => {
       P('jupiter', 32, true), P('ketu', 20), P('mars', 290), P('moon', 241),
       P('saturn', 214), P('rahu', 200), P('mercury', 130), P('venus', 151), P('sun', 165),
     ]
-    expect(seq(combosOf(planets, 'BP').jupiter.list1579)).toEqual(['venus', 'ketu', 'mercury'])
+    // कक्षा का उदाहरण सिर्फ़ ग्रह गिनाता है (अध्याय-09; दृष्टियाँ तब चर्चा में नहीं थीं)।
+    // राउंड 62 से वक्री गुरु के अपने पीछे के क्षेत्र में MAR4 (मेष 20°) भी आता है — इसलिए
+    // यहाँ (a) की तरह सिर्फ़ ग्रह मिलाए जाते हैं।
+    const r = combosOf(planets, 'BP').jupiter.list1579
+    expect(r.filter((e) => e.type === 'planet').map((e) => e.key)).toEqual(['venus', 'ketu', 'mercury'])
+    expect(r.filter((e) => e.type === 'aspect').map((e) => e.label)).toEqual(['MAR4'])
   })
 
   it('(c) direct Sun Cancer 12° → MOO, RAH', () => {
@@ -56,18 +61,20 @@ describe('BNN Phase 4 — rule examples (guide कक्षा)', () => {
     expect(ap.sun.lon).toBe(10) // not in the pair — untouched
   })
 
-  it('aspect influence window (R5): included ≤30° ahead / ≤2° behind the point', () => {
+  it('aspect influence window (R5): included ≤30° ahead / ≤1° behind the point (राउंड 62: सर के चार्ट x, y)', () => {
     // Mars retro at Leo 21.5° → MAR8 point at Pisces 21.5° (351.5°).
     const planets = [
       P('mars', 141.5, true),
       P('jupiter', 342.5), // 8.99° ahead of… inside the window → MAR8 included
       P('venus', 320), // 31.5° behind the point → outside
-      P('saturn', 353), // 1.5° ahead of the point (≈ behind window edge) → included
+      P('saturn', 352.3), // 0.8° ahead of the point → included
+      P('sun', 353), // 1.5° ahead → outside (सर: 1.05° और 1.2° बाहर)
     ]
     const j = seq(combosOf(planets, 'BP').jupiter.list1579)
     expect(j).toContain('mar8')
     expect(seq(combosOf(planets, 'BP').venus.list1579)).not.toContain('mar8')
     expect(seq(combosOf(planets, 'BP').saturn.list1579)).toContain('mar8')
+    expect(seq(combosOf(planets, 'BP').sun.list1579)).not.toContain('mar8')
   })
 
   it('bhava-row aspects: fixed 30° span — p = 100×(1−d/30), dropped at d ≥ 30° (Gudiya, 2026-10-08)', () => {

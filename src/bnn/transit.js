@@ -60,3 +60,27 @@ export function computeTransitSnapshot(swe, whenUtc, place) {
 export function computePcpWindows(_ctx, _planetKey, _set, _fromUtc, _toUtc) {
   throw new Error('BNN transit.js: not implemented yet (Phase 7b — docs/bnn-guide.txt)')
 }
+
+// राउंड 61 — गोचर की विशेष दृष्टि (नियम-पुस्तिका अध्याय-32 नियम 39):
+// गोचर के शनि (3री/10वीं) व मंगल (4थी/8वीं) की दृष्टि नेटल ग्रहों पर, वही नियम:
+// बिंदु = L + (n−1)×30, क्षेत्र [बिंदु − 30°, बिंदु + 2°], दिशा सदा सीधी।
+const normT = (x) => ((x % 360) + 360) % 360
+export const TRANSIT_ASPECT_FORWARD_DEG = 2
+export function transitSpecialAspects(transitPlanets, natalPlanets) {
+  const out = []
+  const casters = transitPlanets.filter((p) => p.key === 'mars' || p.key === 'saturn')
+  for (const c of casters) {
+    const list = c.key === 'mars'
+      ? [{ n: 4, label: 'MAR4' }, { n: 8, label: 'MAR8' }]
+      : [{ n: 3, label: 'SAT3' }, { n: 10, label: 'SAT10' }]
+    for (const a of list) {
+      const point = normT(c.longitude + (a.n - 1) * 30)
+      for (const np of natalPlanets) {
+        const rel = normT(point - np.longitude)
+        if (!(rel <= 30 || rel >= 360 - TRANSIT_ASPECT_FORWARD_DEG)) continue
+        out.push({ natalKey: np.key, label: a.label, from: c.key, distance: rel % 30 })
+      }
+    }
+  }
+  return out
+}

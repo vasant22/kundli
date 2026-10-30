@@ -32,6 +32,13 @@ export const COMBO_SETTINGS = Object.freeze({
   // aspect entries) — 100 × (1 − d / (0.942 × W)) — which reproduces the
   // reference 97; the plain planet form would give 94 (reported in the check).
   returnedCatchDeg: 1.0,
+  // विशेष दृष्टि: पाने वाले ग्रह की ओर से पास की ओर की छूट (डिग्री)। मार्गी पाने वाले
+  // के लिए यही notes का "बिंदु से 2° आगे तक" है। config में — अध्याय-32 नियम 42 खुला है।
+  // सर के software: 0.27° शामिल, 1.05° व 1.2° बाहर (चार्ट दीपक, x, y) — notes का 2° यहाँ 1° निकला।
+  aspectForwardDeg: 1.0,
+  // ग्रह-संयोजन: 30° क्षेत्र के बाद की छूट (डिग्री) — सर के software के 8 चार्टों से।
+  zoneOverDeg: 1.0,
+  zoneUnderDeg: 1.0,
 })
 
 // Allowed zone offsets (k−1): k ∈ {1,5,7,9} → {0,4,6,8}; Ra/Ke only {0,4,8}.
@@ -85,10 +92,19 @@ function deltaTo(seat, x) {
  */
 export function memberOf(seat, x) {
   const d = deltaTo(seat, x)
-  const off = Math.floor(d / 30)
   const allowed = isNode(seat.key) ? OFFSETS_NODES : OFFSETS_NORMAL
-  if (!allowed.includes(off)) return null
-  return { zone: off + 1, key: d % 30, delta: d }
+  const off = Math.floor(d / 30)
+  if (allowed.includes(off)) return { zone: off + 1, key: d % 30, delta: d }
+  // राउंड 62: क्षेत्र-सीमा की छूट (सर के software से) — 30° के बाद zoneOverDeg तक,
+  // और क्षेत्र-आरंभ से पहले zoneUnderDeg तक बैठा ग्रह भी उसी क्षेत्र में गिना जाता है।
+  for (const o of allowed) {
+    let s = d - o * 30
+    if (s > 180) s -= 360
+    if (s <= -180) s += 360
+    if (s > 30 && s < 30 + COMBO_SETTINGS.zoneOverDeg) return { zone: o + 1, key: s, delta: d }
+    if (s < 0 && s > -COMBO_SETTINGS.zoneUnderDeg) return { zone: o + 1, key: s, delta: d }
+  }
+  return null
 }
 
 /** Mars 4/8 and Saturn 3/10 aspect points (always counted forward). */
@@ -122,31 +138,40 @@ export function planetCombination(planetKey, seats, opts = {}) {
     const m = memberOf(seat, other.lon)
     if (!m) continue
     if (isNode(other.key) && m.zone === 7) continue // R3
+    // पास की ओर की छूट वाला ग्रह, परिवर्तन वाली सीट पर — उसे गुरु का "returned degree"
+    // नियम (नीचे) अपने प्रतिशत के साथ जोड़ता है।
+    if (m.key < 0 && seat.exchanged) continue
     entries.push({
       type: 'planet',
       key: other.key,
       zone: m.zone,
       distance: m.key,
-      percent: planetToPlanetPercent(m.key),
+      percent: planetToPlanetPercent(Math.max(0, m.key)),
       natalRetro: other.natalRetro,
     })
   }
-  // R5: an aspect enters the list when the planet sits inside the aspect's
-  // influence zone — [point − 30°, point + 2°] (zodiac absolute; from the
-  // planet's side: the point lies between 2° behind and 30° ahead of it).
-  // Order key = distance to the point in the seat's motion direction.
+  // R5 (राउंड 62, Claude 30-10-2026 — सर के software के 5 चार्टों से मिलान):
+  // दृष्टि-बिंदु को एक "आभासी ग्रह" मानें। वह इस ग्रह की सूची में तभी आता है जब
+  // बिंदु इस ग्रह के *अपने पहले* 30° क्षेत्र में हो — क्षेत्र ग्रह की अपनी गति की
+  // दिशा में (मार्गी: आगे; वक्री व राहु-केतु: पीछे; AP में परिवर्तन वाली सीट की
+  // गति)। 5/7/9 क्षेत्र में पड़ा बिंदु नहीं गिना जाता। पास की ओर
+  // aspectForwardDeg तक की छूट (बिंदु ग्रह से इतना पीछे हो तब भी) — क्रम में सबसे पहले।
+  // बिंदु स्वयं सदा सीधा गिना जाता है (aspectPoints) — अध्याय-07 नियम 9 सिर्फ़ दृष्टि
+  // डालने वाले पर लागू है।
   for (const caster of Object.values(seats)) {
     for (const ap of aspectPoints(caster)) {
-      const rel = norm(ap.point - seat.lon)
-      if (!(rel <= 30 || rel >= 358)) continue
-      const ddir = seat.retro ? norm(seat.lon - ap.point) : norm(ap.point - seat.lon)
-      const key = ddir % 30
+      if (ap.from === planetKey) continue
+      const d = deltaTo(seat, ap.point)
+      let key
+      if (d <= 30) key = d
+      else if (d >= 360 - COMBO_SETTINGS.aspectForwardDeg) key = d - 360 // पास की ओर छूट
+      else continue
       entries.push({
         type: 'aspect',
         label: ap.label,
         from: ap.from,
         distance: key,
-        percent: planetToPlanetPercent(key),
+        percent: planetToPlanetPercent(Math.max(0, key)),
       })
     }
   }
