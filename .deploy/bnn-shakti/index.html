@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BNN Shakti — भृगु नंदी नाड़ी कुंडली software (निःशुल्क, ऑनलाइन) | mybapuji.com</title>
+<meta name="description" content="BNN Shakti — भृगु नंदी नाड़ी (BNN) ज्योतिष का निःशुल्क ऑनलाइन software: भावचलित कुंडली, 1-5-9 / 1-5-7-9 संयोजन, SPECIAL, PRSSS, दशा-भुक्ति-अंतर, गोचर चार्ट और स्पेशल ट्रांज़िट। कुंडलियाँ केवल आपके browser में सहेजी जाती हैं।">
+<link rel="canonical" href="https://mybapuji.com/bnn-shakti/">
+<link rel="icon" type="image/png" href="branding/bnn-shakti.png?v=3ab0b389f4">
+<meta property="og:type" content="website">
+<meta property="og:title" content="BNN Shakti — भृगु नंदी नाड़ी कुंडली software (निःशुल्क)">
+<meta property="og:description" content="BNN Shakti — भृगु नंदी नाड़ी (BNN) ज्योतिष का निःशुल्क ऑनलाइन software: भावचलित कुंडली, 1-5-9 / 1-5-7-9 संयोजन, SPECIAL, PRSSS, दशा-भुक्ति-अंतर, गोचर चार्ट और स्पेशल ट्रांज़िट। कुंडलियाँ केवल आपके browser में सहेजी जाती हैं।">
+<meta property="og:url" content="https://mybapuji.com/bnn-shakti/">
+<meta property="og:image" content="https://mybapuji.com/bnn-shakti/branding/bnn-shakti.png?v=3ab0b389f4">
+<link rel="stylesheet" href="style.css?v=d5543385ff">
+</head>
+<body>
+<header class="topbar">
+  <span class="om">🕉</span>
+  <span class="brand"><span data-l="BNN Shakti||BNN Shakti">BNN Shakti</span> <span class="sub" data-l="भृगु नंदी नाड़ी||Bhrigu Nandi Nadi">भृगु नंदी नाड़ी</span></span>
+  <span class="sp"></span>
+  <button class="btn" id="btnPng" data-l="📄 ऑल चार्ट (PNG)||📄 All Charts (PNG)">📄 ऑल चार्ट (PNG)</button>
+  <button class="btn" id="btnPrint" data-l="🖨️ प्रिंट||🖨️ Print">🖨️ प्रिंट</button>
+  <button class="btn" id="btnPdf" data-l="📄 PDF||📄 PDF">📄 PDF</button>
+  <button class="btn" id="btnLang">भाषा: हिंदी</button>
+  <button class="btn" id="btnSettings" data-l="⚙ सेटिंग्स||⚙ Settings">⚙ सेटिंग्स</button>
+</header>
+<div class="shell">
+  <aside class="side">
+    <div class="sTitle" data-l="कुंडली खोजें||Search Kundli">कुंडली खोजें</div>
+    <div class="chips">
+      <button class="chip on" data-f="ref">Ref No</button>
+      <button class="chip" data-f="name" data-l="नाम||Name">नाम</button>
+      <button class="chip" data-f="group" data-l="ग्रुप||Group">ग्रुप</button>
+      <button class="chip" data-f="mobile" data-l="मोबाइल||Mobile">मोबाइल</button>
+    </div>
+    <div class="row"><input id="q" class="inpDark" data-lp="यहाँ लिखकर खोजें…||Type here to search…" placeholder="यहाँ लिखकर खोजें…"><button class="btn small" id="btnSearch">🔍</button></div>
+    <div class="row"><button class="btn small grow" id="btnBrowse" data-l="ब्राउज़…||Browse…">ब्राउज़…</button><button class="btn small grow" id="btnDelList" data-l="🗑 मिटाएँ||🗑 Delete">🗑 मिटाएँ</button></div>
+    <div class="sCount" id="count">कुल कुंडलियाँ: 0</div>
+    <div class="list" id="list"></div>
+    <div class="brandbox" id="brandBox">
+      <img class="brandimg" src="branding/bnn-shakti.png?v=3ab0b389f4" alt="BNN Shakti">
+      <div class="brandfree">BNN Free Software for All</div>
+      <div class="brandmail">info@mybapuji.com</div>
+      <a class="brandweb" href="https://mybapuji.com" target="_blank" rel="noopener">mybapuji.com</a>
+    </div>
+    <div class="row">
+      <button class="btn small grow" id="btnBackup" data-l="⬇️ बैकअप फ़ाइल||⬇️ Backup File">⬇️ बैकअप फ़ाइल</button>
+      <button class="btn small grow" id="btnRestore" data-l="⬆️ बैकअप खोलें||⬆️ Open Backup">⬆️ बैकअप खोलें</button>
+      <input type="file" id="fileIn" accept=".json" hidden>
+    </div>
+  </aside>
+  <main class="main">
+    <div class="mhead">
+      <h1 id="formTitle">नई कुंडली — जन्म विवरण</h1>
+      <span class="pill" data-l="सारी जानकारी एक ही पेज पर ✓||All details on one page ✓">सारी जानकारी एक ही पेज पर ✓</span>
+    </div>
+    <div class="cols">
+      <div>
+        <div class="sec" data-l="व्यक्तिगत जानकारी||Personal Details">व्यक्तिगत जानकारी</div>
+        <div class="f"><label data-l="संदर्भ क्रमांक (स्वतः — 1, 2, 3…)||Reference No. (auto — 1, 2, 3…)">संदर्भ क्रमांक (स्वतः — 1, 2, 3…)</label><input id="fRef" class="inp ro" readonly value="1"></div>
+        <div class="f"><label data-l="नाम (वैकल्पिक)||Name (optional)">नाम (वैकल्पिक)</label><div class="inline"><input id="fName" class="inp" data-lp="जातक का नाम||Native's name" placeholder="जातक का नाम"><button class="ib" id="btnFolder" data-lt="सहेजी कुंडली खोलें||Open saved kundli" title="सहेजी कुंडली खोलें">📁</button></div></div>
+        <div class="f"><label data-l="ग्रुप||Group">ग्रुप</label><div class="inline"><select id="fGroup" class="inp"></select><button class="btn small" id="btnAddGroup" data-l="＋ नया ग्रुप||＋ New Group">＋ नया ग्रुप</button></div></div>
+        <div class="f"><label data-l="लिंग||Gender">लिंग</label>
+          <div class="radios"><label><input type="radio" name="gender" value="पुरुष"> <span data-l="पुरुष||Male">पुरुष</span></label><label><input type="radio" name="gender" value="स्त्री"> <span data-l="स्त्री||Female">स्त्री</span></label></div>
+        </div>
+        <div class="f"><label data-l="मोबाइल नंबर (वैकल्पिक)||Mobile Number (optional)">मोबाइल नंबर (वैकल्पिक)</label><input id="fMobile" class="inp" data-lp="चाहें तो भरें — ज़रूरी नहीं||Fill if you wish — not necessary" placeholder="चाहें तो भरें — ज़रूरी नहीं"></div>
+      </div>
+      <div>
+        <div class="sec" data-l="जन्म का समय और स्थान||Birth Time & Place">जन्म का समय और स्थान</div>
+        <div class="f"><label data-l="जन्म तिथि||Date of Birth">जन्म तिथि</label><input id="fDate" class="inp" inputmode="numeric" data-lp="दिन-महीना-साल — जैसे 18-06-1995||DD-MM-YYYY — e.g. 18-06-1995" placeholder="दिन-महीना-साल — जैसे 18-06-1995"><span class="hint" id="hDate"></span></div>
+        <div class="f"><label data-l="जन्म समय||Time of Birth">जन्म समय</label><div class="inline"><input id="fTime" class="inp" inputmode="numeric" data-lp="घंटा:मिनट (सेकंड वैकल्पिक) — जैसे 14:47 या 14:47:32||HH:MM (seconds optional) — e.g. 14:47 or 14:47:32" placeholder="घंटा:मिनट (सेकंड वैकल्पिक) — जैसे 14:47 या 14:47:32"><span id="hTime12" class="hint12"></span></div><span class="hint" id="hTime"></span></div>
+        <div class="f"><label data-l="देश||Country">देश</label><select id="fCountry" class="inp"></select></div>
+        <div class="f"><label data-l="राज्य||State">राज्य</label><select id="fState" class="inp"></select><input id="fStateTxt" class="inp" style="margin-top:6px" placeholder="State / Province — English" hidden></div>
+        <div class="f"><label data-l="जन्म स्थान||Birth Place">जन्म स्थान</label><div class="inline pwrap"><input id="fPlace" class="inp" autocomplete="off" data-lp="शहर / गाँव — English (जैसे B → Boisar)||City / Village — English (e.g. B → Boisar)" placeholder="शहर / गाँव — English (जैसे B → Boisar)"><button class="ib" id="btnPlace" data-lt="सूची दिखाएँ||Show list" title="सूची दिखाएँ">🔍</button><div id="placeSugg" class="sugg" hidden></div></div>
+        <div class="note" data-l="अंग्रेज़ी अक्षरों में लिखें — जैसे B → Boisar · न मिले तो नाम और अंक ख़ुद भरें||Write in English letters — e.g. B → Boisar · If not found, type name and numbers yourself">अंग्रेज़ी अक्षरों में लिखें — जैसे B → Boisar · न मिले तो नाम और अंक ख़ुद भरें</div></div>
+      </div>
+    </div>
+    <div class="sec wide" data-l="भौगोलिक जानकारी — स्थान चुनने पर अपने-आप भरती है (बदल सकते हैं)||Geographical Info — fills automatically on place selection (editable)">भौगोलिक जानकारी — स्थान चुनने पर अपने-आप भरती है (बदल सकते हैं)</div>
+    <div class="geo">
+      <div class="f"><label data-l="अक्षांश||Latitude">अक्षांश</label><input id="fLat" class="inp" inputmode="decimal"></div>
+      <div class="f"><label data-l="देशांतर||Longitude">देशांतर</label><input id="fLon" class="inp" inputmode="decimal"></div>
+      <div class="f"><label>GMT</label><input id="fGmt" class="inp" inputmode="decimal" value="5.5"></div>
+      <div class="f"><label>DST</label><label class="cklbl"><input type="checkbox" id="fDstChk"> <span data-l="लागू — घड़ी 1 घंटा आगे थी||applied — clock was 1 hour ahead">लागू — घड़ी 1 घंटा आगे थी</span></label></div>
+    </div>
+    <div class="foot">
+      <button class="btn" id="btnNew" data-l="＋ नई कुंडली||＋ New Kundli">＋ नई कुंडली</button>
+      <button class="btn" id="btnSave" data-l="💾 सहेजें||💾 Save">💾 सहेजें</button>
+      <button class="btn" id="btnDelete" data-l="🗑 मिटाएँ||🗑 Delete">🗑 मिटाएँ</button>
+      <span class="okmsg" id="formOk" hidden><span data-l="✅ जन्म विवरण ठीक है — अब कुंडली देखें दबाएँ||✅ Birth details are OK — now press View Kundli">✅ जन्म विवरण ठीक है — अब कुंडली देखें दबाएँ</span></span>
+      <span class="sp"></span>
+      <button class="btn amber big" id="btnShow" data-l="कुंडली देखें →||View Kundli →">कुंडली देखें →</button>
+    </div>
+  </main>
+</div>
+<section id="viewResult" class="result" hidden>
+  <div class="rbar">
+    <button class="btn" id="btnBack" data-l="← वापस||← Back">← वापस</button>
+    <button class="btn" id="btnRPrint" data-l="🖨️ प्रिंट||🖨️ Print">🖨️ प्रिंट</button>
+    <button class="btn" id="btnRPdf" data-l="📄 PDF||📄 PDF">📄 PDF</button>
+    <button class="btn" id="btnRPng" data-l="📄 ऑल चार्ट (PNG)||📄 All Charts (PNG)">📄 ऑल चार्ट (PNG)</button>
+  </div>
+  <div class="rgrid">
+    <div class="rcolL">
+      <div class="card">
+        <div class="ct"><span id="rParivartan" class="pariv-pill">—</span></div>
+        <div id="rChart"></div>
+        <div class="trow">
+          <span class="note tbig"><span data-l="गोचर:||Transit:">गोचर:</span> <b id="rGocharWhen">—</b><span data-l=" · स्थान:|| · Place:"> · स्थान:</span> <b id="rTransitPlace">—</b><span data-l=" · गोचर का लग्न नीला|| · transit Lagna in blue"> · गोचर का लग्न नीला</span></span>
+          <span class="sp"></span>
+          <span class="dtwrap"><input id="gocharTime" class="stDate stBig" type="text" style="width:290px" placeholder="DD-MM-YYYY HH:MM:SS"><button type="button" class="btn small dtcal" data-for="gocharTime">📅</button><input id="gocharTimeP" class="dtpick" type="datetime-local" step="1" tabindex="-1" aria-hidden="true"></span>
+          <button class="btn amber big" id="btnGocharNow" data-l="अभी||Now">अभी</button>
+          <button class="btn big" id="btnTransitMode" data-l="गोचर||Transit">गोचर</button>
+        </div>
+      </div>
+      <div class="card stcard">
+        <div class="ct"><span data-l="🌟 स्पेशल ट्रांज़िट (Special Transit)||🌟 Special Transit">🌟 स्पेशल ट्रांज़िट (Special Transit)</span><span class="sp"></span><button class="btn small" id="btnStPrint" data-l="🖨️ प्रिंट||🖨️ Print">🖨️ प्रिंट</button><button class="btn small" id="btnStPdf" data-l="📄 PDF||📄 PDF">📄 PDF</button></div>
+        <div class="note" style="margin:0 0 6px" data-l="गोचर करते ग्रह जब जन्म-ग्रह के 1-5-7-9 (या 1-5-9) स्थानों से गुज़रते हैं — Start/End तिथियाँ||When transiting planets pass 1-5-7-9 (or 1-5-9) positions of the birth planet — Start/End dates">गोचर करते ग्रह जब जन्म-ग्रह के 1-5-7-9 (या 1-5-9) स्थानों से गुज़रते हैं — Start/End तिथियाँ</div>
+        <div class="tabs" id="rStGroups"><span class="tab" data-g="all" data-l="सभी ग्रह||All Planets">सभी ग्रह</span><span class="tab" data-g="nodes" data-l="राहु-केतु||Rahu-Ketu">राहु-केतु</span><span class="tab on" data-g="sg" data-l="शनि-गुरु||Saturn-Jupiter">शनि-गुरु</span></div>
+        <div class="strow"><span class="stl" data-l="जन्म का ग्रह (मुख्य ग्रह):||Birth Planet (main):">जन्म का ग्रह (मुख्य ग्रह):</span><span class="tabs" style="margin-bottom:0" id="rStBirth"><span class="tab on" data-p="sun" data-l="सूर्य||Sun">सूर्य</span><span class="tab" data-p="moon" data-l="चंद्र||Moon">चंद्र</span><span class="tab" data-p="mars" data-l="मंगल||Mars">मंगल</span><span class="tab" data-p="mercury" data-l="बुध||Mercury">बुध</span><span class="tab" data-p="jupiter" data-l="गुरु||Jupiter">गुरु</span><span class="tab" data-p="venus" data-l="शुक्र||Venus">शुक्र</span><span class="tab" data-p="saturn" data-l="शनि||Saturn">शनि</span><span class="tab" data-p="rahu" data-l="राहु||Rahu">राहु</span><span class="tab" data-p="ketu" data-l="केतु||Ketu">केतु</span></span></div>
+        <div class="strow"><span class="tabs" style="margin-bottom:0" id="rStMode"><span class="tab on" data-m="1579">1-5-7-9</span><span class="tab" data-m="159">1-5-9</span></span>
+          <span class="sp"></span>
+          <span class="stl" data-l="शुरू||Start">शुरू</span><span class="dtwrap"><input id="stStart" class="stDate" type="text" style="width:126px" placeholder="DD-MM-YYYY"><button type="button" class="btn small dtcal" data-for="stStart">📅</button><input id="stStartP" class="dtpick" type="date" tabindex="-1" aria-hidden="true"></span>
+          <span class="stl" data-l="अंत||End">अंत</span><span class="dtwrap"><input id="stEnd" class="stDate" type="text" style="width:126px" placeholder="DD-MM-YYYY"><button type="button" class="btn small dtcal" data-for="stEnd">📅</button><input id="stEndP" class="dtpick" type="date" tabindex="-1" aria-hidden="true"></span>
+          <button class="btn small stFind" id="btnStFind" data-l="खोजें||Find">खोजें</button>
+        </div>
+        <div id="rStResults" class="stres"><div class="note" style="margin:4px 2px" data-l="— खोजें दबाएँ —||— Press Find —">— खोजें दबाएँ —</div></div>
+      </div>
+    </div>
+    <div class="rcolR">
+      <div class="chartctrl ctrlR">
+        <span class="tab" id="tabBp" data-l="परिवर्तन से पहले (BP)||Before Parivartan (BP)">परिवर्तन से पहले (BP)</span><span class="tab on" id="tabAp" data-l="परिवर्तन के बाद (AP)||After Parivartan (AP)">परिवर्तन के बाद (AP)</span><span class="tab" id="tabTr" data-l="गोचर चार्ट||Transit Chart">गोचर चार्ट</span>
+      </div>
+      <div class="card">
+        <div class="ct">BHAVA COMBINATION — <span id="rKindA">NATAL</span> — <span id="rModeA">AP</span></div>
+        <div class="tabs" id="rBhavaTabs"><span class="tab on" data-t="159">1-5-9</span><span class="tab" data-t="1579">1-5-7-9</span><span class="tab" data-t="brsss">BRSSS</span><span class="tab" data-t="special">SPECIAL</span></div>
+        <div class="tbl" id="rBhava"></div>
+      </div>
+      <div class="card">
+        <div class="ct">PLANET COMBINATION — <span id="rKindB">NATAL</span> — <span id="rModeB">AP</span></div>
+        <div class="tabs" id="rPlanetTabs"><span class="tab on" data-t="1579">1-5-7-9</span><span class="tab" data-t="159">1-5-9</span><span class="tab" data-t="special">SPECIAL</span><span class="tab" data-t="prsss">PRSSS</span></div>
+        <div class="tbl" id="rPlanet"></div>
+      </div>
+      <div class="card">
+        <div class="ct">VIMSHOTTARI — DHASA / BHUKTHI / ANDHIRAM</div>
+        <div class="tabs" id="rDashaTabs"><span class="tab on" data-t="maha">DHASA</span><span class="tab" data-t="bhukthi">BHUKTHI</span><span class="tab" data-t="andhiram">ANDHIRAM</span></div>
+        <div class="tbl" id="rDasha"></div>
+      </div>
+    </div>
+  </div>
+</section>
+<div id="settingsModal" class="modalWrap" hidden>
+  <div class="modal">
+    <div class="mtb" data-l="⚙ सेटिंग्स — ज्योतिषी विवरण एवं वरीयताएँ||⚙ Settings — Astrologer Details & Preferences">⚙ सेटिंग्स — ज्योतिषी विवरण एवं वरीयताएँ</div>
+    <div class="mbody">
+      <div>
+        <div class="msec" data-l="🧑‍💼 ज्योतिषी विवरण (प्रिंट/PDF पर छपेगा)||🧑‍💼 Astrologer Details (printed on Print/PDF)">🧑‍💼 ज्योतिषी विवरण (प्रिंट/PDF पर छपेगा)</div>
+        <div class="mrow"><label data-l="स्लोगन||Slogan">स्लोगन</label><input id="stSlogan" class="inp" data-lp="जैसे ॥ श्री गणेशाय नमः ॥||e.g. ॥ Shree Ganeshaya Namah ॥" placeholder="जैसे ॥ श्री गणेशाय नमः ॥"></div>
+        <div class="mrow"><label data-l="नाम||Name">नाम</label><input id="stName" class="inp"></div>
+        <div class="mrow"><label data-l="उपाधि||Title">उपाधि</label><input id="stTitle" class="inp" data-lp="जैसे ज्योतिषाचार्य||e.g. Jyotishacharya" placeholder="जैसे ज्योतिषाचार्य"></div>
+        <div class="mrow"><label data-l="पता — 1||Address — 1">पता — 1</label><input id="stAddr1" class="inp"></div>
+        <div class="mrow"><label data-l="पता — 2||Address — 2">पता — 2</label><input id="stAddr2" class="inp"></div>
+        <div class="mrow"><label data-l="शहर||City">शहर</label><input id="stCity" class="inp"></div>
+        <div class="mrow"><label data-l="पिनकोड||PIN Code">पिनकोड</label><input id="stPin" class="inp"></div>
+        <div class="mrow"><label data-l="फ़ोन||Phone">फ़ोन</label><input id="stPhone" class="inp"></div>
+        <div class="mrow"><label data-l="ई-मेल||Email">ई-मेल</label><input id="stEmail" class="inp"></div>
+        <div class="mrow"><label data-l="वेबसाइट||Website">वेबसाइट</label><input id="stWeb" class="inp"></div>
+      </div>
+      <div>
+        <div class="msec" data-l="📍 डिफ़ॉल्ट स्थान (नई कुंडली में भरा मिलेगा)||📍 Default Place (pre-filled in new kundli)">📍 डिफ़ॉल्ट स्थान (नई कुंडली में भरा मिलेगा)</div>
+        <div class="mrow"><label data-l="स्थान||Place">स्थान</label><input id="stPlace" class="inp"></div>
+        <div class="mrow"><label data-l="राज्य||State">राज्य</label><input id="stState" class="inp"></div>
+        <div class="mrow"><label data-l="अक्षांश / देशांतर||Latitude / Longitude">अक्षांश / देशांतर</label><input id="stLat" class="inp" style="max-width:105px"><input id="stLon" class="inp" style="max-width:105px"></div>
+        <div class="mrow"><label>GMT</label><input id="stGmt" class="inp" style="max-width:105px"><label class="cklbl" style="flex:1"><input type="checkbox" id="stDstChk"> <span data-l="DST लागू||DST applied">DST लागू</span></label></div>
+        <div class="mnote" data-l="शहर-सूची: GeoNames.org (CC BY 4.0) — 6,400+ भारतीय शहर अपने-आप भरते हैं||City list: GeoNames.org (CC BY 4.0) — 6,400+ Indian cities auto-fill">शहर-सूची: GeoNames.org (CC BY 4.0) — 6,400+ भारतीय शहर अपने-आप भरते हैं</div>
+        <div class="mrow"><label data-l="डिफ़ॉल्ट चार्ट||Default Chart">डिफ़ॉल्ट चार्ट</label><span class="tabs" style="margin-bottom:0" id="stChart"><span class="tab on" data-c="north" data-l="उत्तर भारतीय||North Indian">उत्तर भारतीय</span><span class="tab" data-c="south" data-l="दक्षिण भारतीय||South Indian">दक्षिण भारतीय</span></span></div>
+        <div class="mrow"><label data-l="ऑटो बैकअप||Auto Backup">ऑटो बैकअप</label><span class="tabs" style="margin-bottom:0" id="stAutoBk"><span class="tab" data-b="0" data-l="बंद||Off">बंद</span><span class="tab" data-b="1" data-l="हर दिन||Daily">हर दिन</span><span class="tab on" data-b="7" data-l="हर 7 दिन||Every 7 days">हर 7 दिन</span></span><span class="mnote" style="margin:0 0 0 8px" data-l="बैकअप BNN-Kundli फ़ोल्डर के Backup में बनते हैं||Backups go to the Backup folder inside BNN-Kundli folder"></span></div>
+        <div class="msec" style="margin-top:10px" data-l="🕉️ गणना||🕉️ Calculation">🕉️ गणना</div>
+        <div class="mrow"><label data-l="अयनांश||Ayanamsa">अयनांश</label><select id="stAyan" class="inp"><option value="KP_NEW">KP New (BNN — डिफ़ॉल्ट)</option><option value="LAHIRI">लाहिरी 1940</option><option value="KP_OLD">KP Old</option></select></div>
+        <div class="mnote" data-l="BNN चार्ट सदा KP New से बनता है — यह चुनाव आगे के हिस्सों में काम आएगा।||BNN chart is always built with KP New — this choice will be used in later parts.">BNN चार्ट सदा KP New से बनता है — यह चुनाव आगे के हिस्सों में काम आएगा।</div>
+        <div class="msec" style="margin-top:10px" data-l="🔢 संदर्भ क्रमांक||🔢 Reference Number">🔢 संदर्भ क्रमांक</div>
+        <div class="mrow"><label data-l="अगला नंबर||Next Number">अगला नंबर</label><input id="stNext" class="inp" style="max-width:90px"><span class="mnote" data-l="हर नई कुंडली पर +1||+1 on every new kundli">हर नई कुंडली पर +1</span></div>
+        <div class="msec" style="margin-top:10px" data-l="💾 बैकअप और लोगो||💾 Backup & Logo">💾 बैकअप और लोगो</div>
+        <div class="mrow"><button class="btn small" id="stFolder" data-l="📂 डेटा / बैकअप…||📂 Data / Backup…">📂 डेटा / बैकअप…</button><button class="btn small" id="stBackup" data-l="💾 बैकअप बनाएँ…||💾 Make Backup…">💾 बैकअप बनाएँ…</button><button class="btn small" id="stLogoBtn" data-l="🖼️ लोगो चुनें…||🖼️ Choose Logo…">🖼️ लोगो चुनें…</button><button class="btn small" id="stLogoDel" data-l="हटाएँ||Remove">हटाएँ</button><input type="file" id="stLogoFile" accept="image/*" hidden><img id="stLogoImg" class="logoImg" hidden></div>
+        <div class="mnote" data-l="लोगो प्रिंट हेडर में दिखेगा (वैकल्पिक)||Logo shows in print header (optional)">लोगो प्रिंट हेडर में दिखेगा (वैकल्पिक)</div>
+        <div class="msec" style="margin-top:10px" data-l="🖨️ प्रिंट हेडर की झलक||🖨️ Print Header Preview">🖨️ प्रिंट हेडर की झलक</div>
+        <div id="stPreview" class="pprev"></div>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn amber" id="stSave" data-l="✅ सेव करें||✅ Save">✅ सेव करें</button>
+      <button class="btn" id="stClose" data-l="बंद करें||Close">बंद करें</button>
+    </div>
+  </div>
+</div>
+<div id="groupModal" class="modalWrap" hidden>
+  <div class="modal mini openbig">
+    <div class="mtb" data-l="＋ नया ग्रुप||＋ New Group">＋ नया ग्रुप</div>
+    <div class="mbody" style="display:block">
+      <input id="groupName" class="inp" data-lp="ग्रुप का नाम लिखें…||Type a group name…" placeholder="ग्रुप का नाम लिखें…">
+    </div>
+    <div class="mfoot"><button class="btn amber" id="groupSave" data-l="बनाएँ||Create">बनाएँ</button><button class="btn" id="groupClose" data-l="रद्द करें||Cancel">रद्द करें</button></div>
+  </div>
+</div>
+<div id="openModal" class="modalWrap" hidden>
+  <div class="modal openWide">
+    <div class="mtb" data-l="📁 कुंडली खोलें — सूची से चुनें||📁 Open Kundli — pick from the list">📁 कुंडली खोलें — सूची से चुनें</div>
+    <div class="mbody" style="display:block">
+      <input id="openQ" class="inp" data-lp="नाम / क्रमांक / ग्रुप / मोबाइल से छाँटें…||Filter by name / ref / group / mobile…" placeholder="नाम / क्रमांक / ग्रुप / मोबाइल से छाँटें…">
+      <div id="openList" class="openList"></div>
+    </div>
+    <div class="mfoot"><button class="btn" id="openClose" data-l="बंद करें||Close">बंद करें</button></div>
+  </div>
+</div>
+<div id="dataModal" class="modalWrap" hidden>
+  <div class="modal mini">
+    <div class="mtb" data-l="📂 डेटा और बैकअप||📂 Data & Backup">📂 डेटा और बैकअप</div>
+    <div class="mbody" style="display:block">
+      <div class="note" id="dmNoteBrowser" style="margin:0" data-l="सारी कुंडलियाँ इसी कंप्यूटर में सुरक्षित हैं। Windows ऐप में यह बटन सीधे BNN-कुंडली → Data फ़ोल्डर खोलेगा; अभी डेटा ब्राउज़र में सुरक्षित रहता है — सुरक्षा के लिए बैकअप फ़ाइल पेन-ड्राइव में रखें।||All kundlis are safe on this computer. In the Windows app this button will open the BNN-Kundli → Data folder; right now data stays in the browser — for safety keep a backup file on a pen-drive.">सारी कुंडलियाँ इसी कंप्यूटर में सुरक्षित हैं। Windows ऐप में यह बटन सीधे BNN-कुंडली → Data फ़ोल्डर खोलेगा; अभी डेटा ब्राउज़र में सुरक्षित रहता है — सुरक्षा के लिए बैकअप फ़ाइल पेन-ड्राइव में रखें।</div>
+      <div class="note" id="dmNoteDesktop" style="margin:0" hidden data-l="सारी कुंडलियाँ इसी कंप्यूटर के BNN-Kundli फ़ोल्डर में सुरक्षित रहती हैं — नीचे से फ़ोल्डर खोलें, या बैकअप बनाएँ/खोलें।||All kundlis are stored in this computer's BNN-Kundli folder — open the folder below, or make/open a backup.">सारी कुंडलियाँ इसी कंप्यूटर के BNN-Kundli फ़ोल्डर में सुरक्षित रहती हैं — नीचे से फ़ोल्डर खोलें, या बैकअप बनाएँ/खोलें।</div>
+      <div class="dcount" id="dataCount">—</div>
+      <div class="mrow" style="margin-top:8px">
+        <button class="btn small" id="dmFolder" hidden data-l="📂 फ़ोल्डर खोलें||📂 Open Folder">📂 फ़ोल्डर खोलें</button>
+        <button class="btn small amber" id="dmBackup" data-l="💾 बैकअप बनाएँ…||💾 Make Backup…">💾 बैकअप बनाएँ…</button>
+        <button class="btn small" id="dmRestore" data-l="⬆️ बैकअप खोलें…||⬆️ Open Backup…">⬆️ बैकअप खोलें…</button>
+      </div>
+    </div>
+    <div class="mfoot"><button class="btn" id="dataClose" data-l="बंद करें||Close">बंद करें</button></div>
+  </div>
+</div>
+<div class="statusbar" id="status" data-l="॥ श्री गणेशाय नमः ॥ · तैयार||॥ Shree Ganeshaya Namah ॥ · Ready">॥ श्री गणेशाय नमः ॥ · तैयार</div>
+<div id="toast" class="toast" hidden></div>
+<script src="engine/bnn-engine.js?v=732bb4b29a"></script>
+<script src="places.js?v=1e79568096"></script>
+<script src="app.js?v=aa11095f5c"></script>
+</body>
+</html>

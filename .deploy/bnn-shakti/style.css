@@ -1,0 +1,490 @@
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{font-family:"Segoe UI","Nirmala UI","Noto Sans Devanagari","Kohinoor Devanagari",system-ui,sans-serif;background:#faf6ee;color:#3f3627;display:flex;flex-direction:column;min-width:1080px}
+.topbar{height:44px;background:#161a22;color:#f0ead9;display:flex;align-items:center;gap:10px;padding:0 14px;border-bottom:2px solid #d97706;flex:none}
+.om{color:#f5b352;font-size:19.5px}
+.brand{font-weight:700;font-size:16px}
+.brand .sub{font-weight:600;font-size:12.5px;color:#b9b2a2;margin-left:6px}
+.sp{flex:1}
+.btn{height:32px;border-radius:7px;border:1px solid #d8cfc0;background:#fff;color:#3f3627;font-size:13.5px;font-weight:600;padding:0 12px;font-family:inherit;cursor:pointer;white-space:nowrap}
+.btn:hover{background:#f7f1e5}
+.topbar .btn{height:30px;border-color:#3a4150;background:#242a36;color:#e8e4da;font-size:13px;padding:0 11px}
+.topbar .btn:hover{background:#2c3442}
+.btn.amber{background:#d97706;border-color:#d97706;color:#fff}
+.btn.amber:hover{background:#c06a05}
+.btn.big{height:36px;padding:0 22px;font-size:15px}
+.btn.small{height:27px;font-size:12.5px;padding:0 9px}
+.btn.grow{flex:1}
+.shell{flex:1;display:flex;min-height:0}
+.side{width:296px;flex:none;background:#1c212b;color:#e8e4da;padding:14px 12px;display:flex;flex-direction:column;gap:8px;min-height:0}
+.sTitle{font-size:13px;color:#9aa3b5}
+.chips{display:flex;gap:5px;flex-wrap:wrap}
+.chip{font-size:12.5px;border:1px solid #39414f;border-radius:999px;padding:3px 10px;color:#c9d2e2;background:transparent;font-family:inherit;font-weight:600;cursor:pointer}
+.chip.on{background:#d97706;border-color:#d97706;color:#fff}
+.row{display:flex;gap:7px;align-items:center}
+.side .row input{flex:1;min-width:0}
+.inpDark{height:32px;border:1px solid #39414f;background:#12161d;border-radius:8px;padding:0 10px;color:#e8e4da;font-size:13.5px;font-family:inherit;width:100%}
+.inpDark::placeholder{color:#6f7890}
+.sCount{font-size:12.5px;color:#9aa3b5;padding:2px 2px}
+.list{flex:1;overflow:auto;display:flex;flex-direction:column;gap:2px;min-height:60px}
+.li{padding:7px 9px;border-radius:7px;color:#c9d2e2;border-left:3px solid transparent;font-size:13.5px;cursor:pointer}
+.li:hover{background:#232936}
+.li.on{background:#262c38;border-left-color:#d97706;color:#fff;font-weight:700}
+.li .liSub{display:block;font-size:11.5px;color:#9aa3b5;margin-top:2px;font-weight:500}
+.li.on .liSub{color:#c9d2e2}
+.empty{font-size:13px;color:#9aa3b5;padding:10px 4px;line-height:1.7}
+.side .btn{height:28px;border-color:#39414f;background:transparent;color:#c9d2e2;font-size:12.5px}
+.side .btn:hover{background:#232936}
+.side .btn.grow{padding:0 6px}
+.main{flex:1;min-width:0;overflow:auto;padding:16px 20px 14px;background:#faf6ee}
+.mhead{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.mhead h1{font-size:18.5px;color:#3f3627}
+.pill{font-size:13px;background:#fbecd7;color:#8a5a12;border:1px solid #e8cfa6;border-radius:999px;padding:4px 12px;font-weight:600}
+.cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.sec{font-size:14px;font-weight:700;color:#8a6a2f;border-bottom:1px solid #e8dfcf;padding-bottom:6px;margin-bottom:10px}
+.sec.wide{margin-top:16px}
+.f{margin-bottom:11px}
+.f label{display:block;font-size:13.5px;color:#6b6252;margin-bottom:5px}
+.inp{width:100%;height:36px;border:1px solid #cfc6b4;border-radius:8px;padding:0 10px;font-size:15px;color:#2f2a20;background:#fff;font-family:inherit;min-width:0}
+.inp.ro{background:#f2ede2;color:#7a7260}
+.inline{display:flex;gap:8px;align-items:center}
+.inline .inp,.inline select{flex:1}
+.inline select{height:36px;border:1px solid #cfc6b4;border-radius:8px;padding:0 8px;font-size:15px;color:#2f2a20;background:#fff;font-family:inherit;min-width:0}
+.ib{flex:none;width:36px;height:36px;border:1px solid #cfc6b4;border-radius:8px;background:#fff;font-size:16px;cursor:pointer}
+.ib:hover{background:#f7f1e5}
+.radios{display:flex;gap:20px;font-size:15px;color:#3f3627;padding:7px 0}
+.radios label{display:flex;align-items:center;gap:6px;cursor:pointer}
+.hint{display:block;font-size:12px;color:#8a7a5a;margin-top:4px}
+.hint.err{color:#b91c1c;font-weight:600}
+.inp.err{border-color:#dc2626;background:#fff7f7}
+.geo{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.geo .f{margin-bottom:0}
+.note{font-size:12.5px;color:#8a7a5a;margin-top:6px}
+.foot{display:flex;align-items:center;gap:10px;margin-top:18px;padding-top:14px;border-top:1px solid #e8dfcf}
+.statusbar{flex:none;background:#f3ecdf;border-top:1px solid #e4d9c6;padding:6px 14px;font-size:12.5px;color:#6b5a3a}
+.toast{position:fixed;left:50%;bottom:42px;transform:translateX(-50%);background:#161a22;color:#f0ead9;border:1px solid #d97706;border-radius:9px;padding:9px 16px;font-size:14px;max-width:80%;box-shadow:0 10px 30px rgba(0,0,0,.35);z-index:50}
+
+/* ---------- परिणाम दृश्य (कुंडली देखें) ---------- */
+.result{flex:1;min-height:0;overflow:auto;background:#faf6ee;padding:12px 14px}
+.rbar{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.rgrid{display:grid;grid-template-columns:680px minmax(0,1fr);gap:12px;align-items:start}
+.rcolL,.rcolR{display:grid;gap:12px;align-items:start;min-width:0}
+.card{background:#fff;border:1px solid #e8dfcf;border-radius:10px;padding:10px 12px}
+.ct{font-size:13.5px;font-weight:700;color:#8a6a2f;display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
+.tab{font-size:12px;border:1px solid #e0d5c0;border-radius:999px;padding:2px 10px;color:#8a7a5a;background:#fdfbf6;font-weight:600;cursor:pointer}
+.tab.on{background:#d97706;border-color:#d97706;color:#fff}
+.tbl table{width:100%;border-collapse:collapse;font-size:12.5px;color:#3f3627}
+.tbl th{background:#f7f1e5;color:#7a5a22;text-align:left;padding:4px 8px;font-size:12px;font-weight:700;border-bottom:1px solid #e8dfcf}
+.tbl td{padding:4px 8px;border-top:1px solid #f3ecdf;vertical-align:top}
+.tbl tr.cur td{background:#fdf3cd;font-weight:700}
+.tbl i{color:#8a7a5a;font-style:normal;font-size:11.5px}
+.ent{display:inline-block;font-size:11.5px;font-weight:700;border-radius:5px;padding:1px 5px;margin:1px 3px 1px 0;border:1px solid}
+.ent.b{color:#1d4ed8;border-color:#c7d2fe;background:#eef2ff}
+.ent.g{color:#15803d;border-color:#bbe5c8;background:#f0fdf4}
+.ent.o{color:#c2410c;border-color:#fad9b8;background:#fff7ed}
+.nchart{width:640px;max-width:100%;height:auto;display:block;margin:0 auto}
+.south{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:#c9a24a;border:2px solid #c9a24a;border-radius:6px;overflow:hidden;max-width:420px;margin:0 auto}
+.sc{background:#fffdf7;min-height:88px;padding:4px 6px;font-size:12px;color:#7a5a22;font-weight:700}
+.sc b{display:block;font-size:12px;color:#3f3627;font-weight:600;margin-top:2px;line-height:1.5}
+.sc.em{background:#f7f1e5}
+.sc.as{background-image:linear-gradient(to top right,transparent calc(50% - 1px),#b45309 calc(50% - 1px),#b45309 calc(50% + 1px),transparent calc(50% + 1px))}
+.pbox{display:flex;align-items:center;gap:8px;font-size:13.5px;color:#6d2f00;background:#fff;border-color:#e8a13c;font-weight:700}
+.legend{display:flex;gap:12px;font-size:11.5px;color:#6b5a3a;flex-wrap:wrap;margin-top:8px}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}
+.chipj{background:#fff;border:1px solid #ddd0b8;border-radius:999px;padding:3px 10px;font-size:12.5px;color:#6b5a3a;font-weight:600}
+.trow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px}
+.strow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.stl{font-size:12.5px;color:#6b5a3a;font-weight:600}
+.stDate{height:28px;border:1px solid #d8cfc0;border-radius:6px;padding:0 8px;font-size:13px;font-family:inherit;color:#3f3627;background:#fff}
+.stres{display:grid;gap:10px}
+.stbox{border:1px solid #efe6d4;border-radius:8px;padding:8px 10px;background:#fffdf8}
+.stbt{font-size:12.5px;font-weight:700;color:#8a6a2f;margin-bottom:6px}
+.stres table{width:100%;border-collapse:collapse;font-size:12.5px;color:#3f3627}
+.stres th{background:#f7f1e5;color:#7a5a22;text-align:left;padding:3px 7px;font-size:11.5px;font-weight:700;border-bottom:1px solid #e8dfcf}
+.stres td{padding:3px 7px;border-top:1px solid #f3ecdf}
+/* सुझाव dropdown */
+.pwrap{position:relative}
+.sugg{position:absolute;top:100%;left:0;width:calc(100% - 44px);max-height:240px;overflow:auto;background:#fff;border:1px solid #d8cfc0;border-radius:8px;box-shadow:0 10px 24px rgba(60,45,15,.18);z-index:40;margin-top:2px}
+.sItem{padding:6px 10px;font-size:13.5px;color:#3f3627;cursor:pointer;border-bottom:1px solid #f6f0e4}
+.sItem:last-child{border-bottom:0}
+.sItem:hover{background:#fdf3cd}
+.sItem span{color:#8a7a5a;font-size:12px;margin-left:6px}
+.sItem.none{color:#8a7a5a;font-size:12.5px;cursor:default;background:#fdfbf6}
+/* सेटिंग्स विंडो */
+.modalWrap{position:fixed;inset:0;background:rgba(20,15,5,.45);display:flex;align-items:center;justify-content:center;z-index:60}
+.modal{width:1020px;max-width:94vw;max-height:92vh;overflow:auto;background:#faf6ee;border:1px solid #b9b0a0;border-radius:10px;box-shadow:0 24px 60px rgba(30,20,5,.45)}
+.mtb{height:38px;background:#161a22;color:#f0ead9;display:flex;align-items:center;padding:0 14px;font-size:14.5px;border-bottom:2px solid #d97706;font-weight:600}
+.mbody{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;padding:14px 16px}
+.msec{font-size:13px;font-weight:700;color:#8a6a2f;border-bottom:1px solid #e8dfcf;padding-bottom:5px;margin-bottom:8px}
+.mrow{display:flex;align-items:center;gap:7px;margin-bottom:7px;flex-wrap:wrap}
+.mrow label{width:96px;flex:none;text-align:right;font-size:12.5px;color:#6b5a3a}
+.mrow .inp{height:30px;font-size:13.5px;flex:1;min-width:0;width:auto}
+.mnote{font-size:11.5px;color:#8a7a5a}
+.pprev{background:#fffdf8;border:1px dashed #d9b96f;border-radius:8px;padding:8px 10px;text-align:center;font-size:12px;color:#3f3627;min-height:44px}
+.pprev .pl1{font-weight:700;color:#7a4a12}
+.pprev .pl2{font-weight:600;margin-top:2px}
+.pprev .pl3{margin-top:2px;color:#6b5a3a}
+.logoImg{height:30px;border:1px solid #d8cfc0;border-radius:6px;background:#fff}
+.mfoot{display:flex;gap:8px;justify-content:flex-end;padding:0 16px 14px}
+.hint12{font-size:14px;font-weight:700;color:#1d4ed8;min-width:70px;text-align:right}
+/* प्रिंट / PDF */
+#printSheet{display:none;background:#fff;color:#111}
+body.printing #printSheet{display:block;padding:14px 16px;font-size:13px;line-height:1.55}
+body.printing .topbar,body.printing .shell,body.printing .statusbar,body.printing .result,body.printing .toast,body.printing #settingsModal{display:none!important}
+#printSheet .pHead{background:#faf6ee;border:1px solid #e8dfcf;border-radius:8px;padding:8px 10px}
+#printSheet .pSlogan{text-align:center;font-size:16px;font-weight:700;color:#7a4a12}
+#printSheet .pName{text-align:center;font-size:14px;font-weight:700;margin-top:2px}
+#printSheet .pAddr{text-align:center;font-size:12px;color:#444;margin-top:2px}
+#printSheet .pLogo{display:block;margin:6px auto 0;height:44px}
+#printSheet .pMeta{text-align:center;margin:8px 0 4px;font-size:13px;font-weight:600;background:#fffdf8;border:1px solid #eee2cc;border-radius:8px;padding:6px}
+#printSheet .pCharts{display:flex;gap:14px;justify-content:center;align-items:flex-start;margin:8px 0}
+#printSheet .pChart{background:#fffdf8;border:1px solid #e8dfcf;border-radius:8px;padding:8px}
+#printSheet .pChart svg{width:320px;height:auto;display:block}
+#printSheet .pCap{text-align:center;font-size:11.5px;color:#8a6a2f;font-weight:600;margin-top:4px}
+#printSheet .pTables{display:flex;gap:16px;align-items:flex-start;margin-top:8px}
+#printSheet .pCol{flex:1;min-width:0}
+#printSheet .pBlock{margin-bottom:10px}
+#printSheet .pTitle{font-size:15px;letter-spacing:.2px;font-weight:700;color:#8a6a2f;border-bottom:1px solid #e8cfa6;padding-bottom:2px;margin-bottom:4px}
+#printSheet table{width:100%;border-collapse:collapse;font-size:11.5px}
+#printSheet th{background:#f7f1e5;text-align:left;padding:2px 5px;border:1px solid #e2d5ba;font-size:11px}
+#printSheet td{padding:2px 5px;border:1px solid #eee2cc;vertical-align:top}
+#printSheet tr.cur td{background:#fdf3cd;font-weight:700}
+#printSheet .pFoot{margin-top:10px;text-align:center;font-size:11px;color:#777;border-top:1px solid #ddd;padding-top:5px}
+@page{size:A4 landscape;margin:9mm}
+@media print{body{background:#fff!important}body.printing #printSheet{display:block!important}}
+/* ---------- चरण 7: DST चेकबॉक्स · OK-संदेश · खोलें/डेटा विंडो ---------- */
+.cklbl{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.f label.cklbl{display:inline-flex;font-size:14px;color:#3f3627;margin:0;height:36px}
+.mrow label.cklbl{width:auto;text-align:left;flex:1;font-size:13.5px;color:#3f3627}
+.cklbl input{width:16px;height:16px;accent-color:#d97706}
+.okmsg{font-size:13px;color:#15803d;font-weight:700;background:#f0fdf4;border:1px solid #bbe5c8;border-radius:8px;padding:6px 10px}
+.modal.mini{width:560px}
+.openList{max-height:320px;overflow:auto;display:flex;flex-direction:column;gap:3px;margin-top:8px;border:1px solid #efe6d4;border-radius:8px;padding:6px;background:#fffdf8}
+.oitem{padding:7px 9px;border-radius:7px;border:1px solid transparent;cursor:pointer;font-size:13.5px;color:#3f3627}
+.oitem:hover{background:#fdf3cd;border-color:#eed9b0}
+.oitem .og{color:#8a7a5a;font-size:12px;margin-left:6px}
+.empty2{font-size:13px;color:#9aa3b5;padding:10px 4px;text-align:center}
+.dcount{font-size:13.5px;color:#8a6a2f;font-weight:700;margin-top:8px}
+
+/* ---------- सुधार: केंद्र-जानकारी · कॉलम-तालिकाएँ · दृष्टि-effect ---------- */
+.rinfo{text-align:center;margin:2px 0 10px}
+.riname{font-size:14px;font-weight:700;color:#3f3627;line-height:1.5}
+.ridasha{font-size:12.5px;font-weight:600;color:#8a5a12;margin-top:2px}
+.tbl table.coltbl{width:100%;border-collapse:collapse;font-size:13.5px;color:#3f3627;table-layout:fixed}
+.coltbl td{border:1px solid #efe6d4;padding:3px 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:top}
+.coltbl th{border:1px solid #efe6d4;padding:3px 5px;font-size:12.5px;font-weight:700;color:#7a5a22;background:#f9f4e8;text-align:left}
+.coltbl td.rlab{background:#f7f1e5;color:#7a5a22;font-weight:700;text-align:center;width:48px}
+.coltbl td.entc{font-weight:600}
+.coltbl td.ceb{color:#1d4ed8}
+.coltbl td.ceg{color:#15803d}
+.coltbl td.ceo{color:#c2410c}
+.coltbl td.cep{color:#8e24aa}
+.drishti-digit{font-weight:700;animation:drishti-green 1.5s ease-in-out infinite}
+.ceo .drishti-digit{animation-name:drishti-orange}
+.ceb .drishti-digit{animation-name:drishti-blue}
+@keyframes drishti-green{0%,100%{color:#15803d}50%{color:#ffb300;text-shadow:0 0 6px rgba(255,166,0,.95),0 0 12px rgba(255,200,60,.8),0 0 18px rgba(255,215,110,.45)}}
+@keyframes drishti-orange{0%,100%{color:#c2410c}50%{color:#ffb300;text-shadow:0 0 6px rgba(255,166,0,.95),0 0 12px rgba(255,200,60,.8),0 0 18px rgba(255,215,110,.45)}}
+@keyframes drishti-blue{0%,100%{color:#1d4ed8}50%{color:#ffb300;text-shadow:0 0 6px rgba(255,166,0,.95),0 0 12px rgba(255,200,60,.8),0 0 18px rgba(255,215,110,.45)}}
+@media (prefers-reduced-motion: reduce){.drishti-digit{animation:none}}
+/* ---------- BNN Shakti ब्रांडिंग (sidebar) + गोचर-पंक्ति ---------- */
+.brandbox{flex:none;display:flex;flex-direction:column;align-items:center;gap:6px;padding:9px 6px 5px;border-top:1px solid #2a3240}
+.brandimg{width:158px;height:auto;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.brandmail{font-size:12px;font-weight:600;color:#c9d2e2}
+.brandweb{font-size:13px;font-weight:700;color:#fff;background:#d97706;border-radius:999px;padding:4px 14px;text-decoration:none}
+.brandweb:hover{background:#c06a05}
+.note.tbig{font-size:14px}
+.stDate.stBig{height:40px;font-size:15px;padding:0 12px}
+/* ---------- सुधार-राउंड 3: combo tables पास-पास · special transit रंग ---------- */
+.tbl table.coltbl{width:auto;max-width:100%;table-layout:auto}
+.tbl table.coltbl td{min-width:56px}
+.tbl table.coltbl td.rlab{min-width:46px}
+.tbl table.coltbl td.cep{border-left:2px solid #e8dfcf;padding-left:16px;min-width:48px}
+.stcard{background:#fffcf4;border-color:#e8cf9f}
+.btn.stFind{background:#2c7a32;border-color:#2c7a32;color:#fff}
+.btn.stFind:hover{background:#256428}
+.stres{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:10px}
+.stbox{border:1.5px solid #d9a95f;border-radius:12px;padding:8px 10px;background:#fffcf4}
+.sttitle{display:inline-block;background:#e8f5e9;border:1px solid #9ccc9f;color:#1b5e20;font-weight:700;font-size:12.5px;padding:2px 9px;border-radius:6px;margin-bottom:6px}
+.stt{width:100%;border-collapse:collapse;font-size:12.5px;color:#3f3627}
+.stt th{background:#f6efdd;color:#7a5a22;text-align:left;padding:3px 7px;font-size:12px;font-weight:700;border-bottom:1px solid #e8dfcf}
+.stt td{padding:3px 7px;border-top:1px solid #f3ecdf}
+.stt tr.pair-a td{background:#fff8e1}
+.stt tr.pair-b td{background:#f2f9ee}
+.stpair{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.stpair.two>.stbox{flex:1 1 340px;min-width:320px}
+.stt td.stl2{font-weight:700;color:#b3261e}
+.brandfree{margin-top:2px;font-size:11.5px;font-weight:800;letter-spacing:.3px;color:#1f1508;background:linear-gradient(180deg,#f7c66a,#e8a13c);border-radius:8px;padding:3px 12px;text-align:center}
+
+/* ---------- सुधार-राउंड 4: बड़े tabs · बड़ी तालिकाएँ · दशा 2-column ---------- */
+.ct{font-size:15px}
+.tab{font-size:13.5px;padding:3px 12px}
+.tbl table{font-size:14px}
+.tbl th{padding:5px 8px;font-size:13px}
+.tbl td{padding:5px 8px}
+.tbl table.coltbl{font-size:14.5px}
+.tbl table.coltbl th{padding:4px 6px;font-size:13px}
+.tbl table.coltbl td{padding:4px 6px;min-width:64px}
+.tbl table.coltbl td.rlab{min-width:50px}
+.tbl table.coltbl td.cep{padding-left:18px;min-width:52px}
+.sttitle{font-size:13.5px}
+.stt{font-size:14px}
+.stt th{padding:4px 8px;font-size:13px}
+.stt td{padding:4px 8px}
+.stcard .note{font-size:13.5px}
+.stcard .stl{font-size:13.5px}
+.stcard .stDate{height:32px;font-size:14px}
+.dcols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.dcols table{width:100%;border-collapse:collapse}
+
+/* ---------- सुधार-राउंड 5: चार्ट और बड़ा · special-transit fonts · first-page fonts ---------- */
+.rgrid{grid-template-columns:700px minmax(0,1fr)}
+.nchart{width:660px}
+.stres{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.stres table.stt{font-size:15px;table-layout:fixed}
+.stt th{font-size:14px}
+.stt th:nth-child(1){width:29%}
+.stt th:nth-child(2){width:31%}
+.stt th:nth-child(3){width:20%}
+.stt th:nth-child(4){width:20%}
+.sec{font-size:16px}
+.f label{font-size:14.5px}
+.inp{font-size:16px}
+.inline select{font-size:16px}
+.inpDark{font-size:14.5px}
+.hint{font-size:13px}
+.hint12{font-size:15px}
+.note{font-size:13.5px}
+.radios{font-size:15px}
+.pill{font-size:14px}
+.sItem{font-size:14.5px}
+.btn{font-size:14px}
+
+/* ---------- सुधार-राउंड 6: ग्रुप-ब्राउज़िंग ---------- */
+.grpBack{color:#9aa3b5 !important;font-weight:600}
+.grpItem b{color:#f0ead9}
+
+/* ---------- सुधार-राउंड 7: PDF ब्रांड-हेडर ---------- */
+#printSheet .pBrand{display:flex;align-items:center;justify-content:center;gap:10px;margin:0 0 8px;border-bottom:1px solid #e8dfcf;padding-bottom:6px}
+#printSheet .pBrandIcon{width:46px;height:46px;border-radius:9px}
+#printSheet .pBrandName{font-size:17px;font-weight:800;color:#7a4a12;line-height:1.15}
+#printSheet .pBrandSub{font-size:11px;color:#444;margin-top:1px}
+
+/* ---------- सुधार-राउंड 8: PDF का नया landscape ढाँचा ---------- */
+#printSheet table{font-size:12px}
+#printSheet th{font-size:11.5px;padding:3px 6px}
+#printSheet td{padding:3px 6px}
+#printSheet .ppGrid{display:grid;grid-template-columns:47% 1fr;gap:12px;align-items:start}
+#printSheet .ppChartBox svg{width:100%;height:auto;display:block}
+#printSheet .ppLeft .pCap{margin-top:3px}
+#printSheet .pRunBox{border:1.5px solid #d9a95f;background:#fff8e6;border-radius:7px;padding:6px 9px;margin-top:8px}
+#printSheet .pRunTitle{font-weight:800;color:#7a2e00;font-size:11.5px;margin-bottom:3px}
+#printSheet .pRunLine{font-size:10.5px;color:#5c4a24;margin-top:1px}
+
+/* ---------- सुधार-राउंड 9: PDF तालिकाओं में columns ---------- */
+#printSheet table.pcols{width:100%;table-layout:fixed;border-collapse:collapse}
+#printSheet table.pcols td.rlab{width:46px;background:#f7f1e5;color:#b3261e;font-weight:700;text-align:center}
+/* भाग B (राउंड 64): पंक्ति का नाम अब JUP#-90 जैसा है — प्रिंट में पहला कॉलम इतना चौड़ा हो कि अंक न कटे */
+#printSheet table.pcols td.rlab{width:62px;font-size:10.5px;letter-spacing:-.2px}
+#printSheet table.pcols td{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#printSheet td.ceb{color:#1565c0}
+#printSheet td.ceg{color:#2e7d32}
+#printSheet td.ceo{color:#ef6c00}
+#printSheet td.cep{color:#8e24aa}
+#printSheet td.entc{font-weight:600}
+
+/* ---------- सुधार-राउंड 10: चार्ट थोड़ा और बड़ा ---------- */
+.rgrid{grid-template-columns:730px minmax(0,1fr)}
+.nchart{width:690px}
+
+/* ---------- सुधार-राउंड 11: बड़े planet-code + विंशोत्तरी में manual चयन ---------- */
+.dnote{font-size:13.5px;color:#8a6a2f;font-weight:600;margin:1px 2px 7px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.dnote .btn{margin-left:auto}
+.tbl tr.drow{cursor:pointer}
+.tbl tr.drow:hover td{background:#fff3d6}
+.tbl tr.sel td{background:#fbecd7}
+
+/* ---------- सुधार-राउंड 12: तारीख़ dd-mm-yyyy + 📅 + ST चयन-नियम ---------- */
+.dtwrap{position:relative;display:inline-flex;align-items:center;gap:5px}
+.dtcal{height:32px;padding:0 8px;font-size:15px}
+.stBig+.dtcal{height:40px}
+.dtpick{position:absolute;right:36px;bottom:2px;width:1px;height:1px;opacity:0;pointer-events:none;border:0;padding:0}
+
+/* ---------- सुधार-राउंड 13: ST की एक merged तालिका (scroll सहित) ---------- */
+.stbox .stscroll{max-height:520px;overflow:auto}
+
+.pariv-pill{display:inline-block;margin:0 6px 0 0;padding:4px 16px;border-radius:999px;border:2px solid #d9a95f;background:#fff7e6;color:#8a5a12;font-weight:800;font-size:14.5px;animation:parivPulse 2.6s ease-in-out infinite}
+@keyframes parivPulse{0%,100%{border-color:#d9a95f;background:#fff7e6;box-shadow:0 0 0 rgba(76,175,80,0)}50%{border-color:#4caf50;background:#eaf7ea;box-shadow:0 0 7px rgba(76,175,80,.4)}}
+.chartctrl{display:flex;gap:6px;justify-content:center;margin:2px 0 4px}
+
+.pariv-mode{display:inline-block;padding:4px 14px;border-radius:999px;border:1.5px dashed #b08a3e;background:#fdf6e7;color:#7a5a22;font-weight:700;font-size:13.5px}
+.chartctrl .tab{font-size:14px;padding:4px 14px}
+#rChart svg{width:auto;max-width:100%;height:auto;display:block}
+
+/* सुधार-राउंड 22: chart-पंक्ति और transit-पंक्ति कभी कट/छुपें नहीं (wrap + fit) */
+.chartctrl{flex-wrap:wrap}
+.trow{display:flex;flex-wrap:wrap;align-items:center;gap:6px;row-gap:4px}
+.trow .note{flex:1 1 auto;min-width:0;white-space:normal}
+.rgrid{flex-wrap:wrap}
+.rcolL{flex:1 1 560px;min-width:0;max-width:100%}
+.rcolR{flex:1 1 360px;min-width:0;max-width:100%}
+
+/* सुधार-राउंड 23: दाएँ कॉलम की दोनों तालिकाएँ (BHAVA + PLANET) पूरी screen में फ़िट — कुछ कटे नहीं */
+.rcolR .card{padding:7px 9px}
+.rcolR table{font-size:12.5px}
+.rcolR th,.rcolR td{padding:2px 6px;line-height:1.25}
+.rcolL .card{padding:8px 10px}
+.rbar{padding:6px 10px}
+
+/* सुधार-राउंड 25: चार buttons दाएँ कॉलम में BHAVA के ऊपर; चार्ट को पूरी जगह — कोई label न कटे */
+.ctrlR{justify-content:flex-start;margin:0 0 8px}
+#rChart{overflow:visible;text-align:center}
+#rChart svg{max-width:100% !important;height:auto !important;display:inline-block}
+
+/* सुधार-राउंड 27: विंशोत्तरी तालिका — single column, बड़ा font (user) */
+.dcols.one{display:block}
+.dcols table{font-size:15px}
+.dcols td,.dcols th{padding:4px 9px}
+/* स्पेशल ट्रांज़िट के tabs/buttons बड़े */
+#rStGroups .tab,#rStBirth .tab,#rStMode .tab{font-size:15px;padding:5px 14px}
+
+/* सुधार-राउंड 28: कुंडली-खोलें तालिका (पारंपरिक शैली का) + बड़ा search button */
+.openbig{max-width:900px;width:94vw}
+.openTbl{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}
+.openTbl th{background:#f6efdd;color:#7a5a22;text-align:left;padding:5px 9px;font-weight:700;border-bottom:1.5px solid #e0d2b4;position:sticky;top:0}
+.openTbl td{padding:5px 9px;border-bottom:1px solid #f0e8d8;cursor:pointer}
+.openTbl tr:hover td{background:#fff7e2}
+.openTbl .c1{font-weight:700}
+.miniBtn{border:1px solid #c9a24a;background:#fff8e6;color:#7a5a22;border-radius:6px;font-size:12.5px;padding:2px 8px;cursor:pointer;font-weight:700}
+.miniBtn.del{border-color:#c96a4a;color:#a33;background:#fff3ef}
+#btnSearch{font-size:17px;padding:5px 13px}
+
+/* सुधार-राउंड 29: Open-Kundli तालिका बड़ी + fonts बड़े */
+.openbig{max-width:1060px;width:96vw}
+.openTbl{font-size:16.5px}
+.openTbl th{font-size:15px;padding:7px 11px}
+.openTbl td{padding:7px 11px}
+.openbig .inp{font-size:16px;padding:10px 12px}
+
+/* सुधार-राउंड 30: हर screen-size पर आरामदायक behaviour */
+body{min-width:980px}
+.tbl{overflow-x:auto}
+.mbody{max-width:100%;overflow-x:auto}
+@media (max-width:1180px){ .rcolL,.rcolR{flex:1 1 100%} }
+@media (min-width:1900px){ .shell{max-width:1860px;margin:0 auto} }
+@media (min-height:1100px){ .nchart{width:720px} }
+
+/* सुधार-राउंड 31: परिवर्तन न हो → ख़ाली शांत घेरा (pulse बंद) */
+.pariv-pill.nopulse{animation:none;border-color:#e3d2a6;background:#fdfaf3;box-shadow:none;min-width:52px;min-height:22px}
+
+/* सुधार-राउंड 34 (user) */
+.nchart{width:700px}
+
+/* ---------- सुधार-राउंड 35 (user 17-10-2026): North/South के बटन चार्ट के ऊपर से हटे ----------
+   चुनाव अब सिर्फ़ ⚙ सेटिंग्स → "डिफ़ॉल्ट चार्ट" से; बची जगह चार्ट को — दोनों (गोचर सहित)
+   कार्ड की पूरी चौड़ाई लेते हैं, यानी पहले से काफ़ी बड़े। */
+.rgrid{grid-template-columns:clamp(740px,52vw,800px) minmax(0,1fr)}
+/* असली अड़चन: #rChart svg{width:auto} (ID) पुराने .nchart width-नियमों को हरा रहा था —
+   इसीलिए चार्ट 560/620px पर अटका था। अब ID-स्तर पर ही चौड़ाई तय होती है। */
+#rChart svg{width:100% !important;max-width:770px !important;height:auto !important;display:block !important;margin:0 auto}
+
+/* ---------- सुधार-राउंड 37 (user 19-10-2026): ग्रह पर mouse → फल-भावों तक उसी रंग की तीर-रेखाएँ ---------- */
+#rChart{position:relative}
+#rChart text{cursor:default}
+#rChart text.pl{cursor:pointer;pointer-events:all}
+#rChart text.pl:hover{stroke:#ffffff;stroke-width:3px;paint-order:stroke;stroke-linejoin:round}
+#rChart text.bhhot{stroke:#ffffff;stroke-width:3.5px;paint-order:stroke;stroke-linejoin:round}
+#rChart svg.hovln{position:absolute;pointer-events:none;overflow:visible;z-index:6}
+
+/* ---------- सुधार-राउंड 40: छोटा-सा popup — तारा - भाव → फल-भाव (हर ग्रह पर) ---------- */
+[data-pl]{cursor:pointer}
+#plTip{position:fixed;z-index:90;background:#fffdf6;border:1px solid #d9a95f;border-radius:8px;
+  box-shadow:0 8px 20px rgba(45,28,0,.18);pointer-events:none;opacity:0;transform:translateY(2px);
+  transition:opacity .1s ease,transform .1s ease;padding:0}
+#plTip.on{opacity:1;transform:none}
+#plTip .pt-min{display:block;padding:5px 11px;font-size:13px;font-weight:700;color:#3f3627;
+  border-left:4px solid #334155;border-radius:8px;white-space:nowrap;letter-spacing:.2px}
+#plTip .pt-min b{font-weight:800}
+
+/* ---------- सुधार-राउंड 41: भाव-पंक्ति (B01…B12) पर mouse → उस भाव का फलदाता (LORDSHIP) ---------- */
+[data-lord]{cursor:pointer}
+#bhTip{position:fixed;z-index:91;display:flex;align-items:center;gap:7px;background:#20262f;color:#fff6e2;
+  border:1px solid #d9a95f;border-radius:999px;padding:4px 13px 4px 10px;font-size:13px;font-weight:800;
+  letter-spacing:.4px;box-shadow:0 8px 20px rgba(20,12,0,.28);pointer-events:none;opacity:0;
+  transform:translateY(2px);transition:opacity .1s ease,transform .1s ease;white-space:nowrap}
+#bhTip.on{opacity:1;transform:none}
+#bhTip .bdot{width:7px;height:7px;border-radius:2px;background:#d9a95f;display:inline-block;flex:none}
+#bhTip .bsep{width:1px;height:13px;background:rgba(217,169,95,.45);display:inline-block;flex:none;margin:0 2px}
+#bhTip .bx{color:#f0d59b;font-weight:700;letter-spacing:.2px}
+
+/* ---------- राउंड 48: PDF के 6 पेज (कोई chart आधा न कटे) ---------- */
+#printSheet .pPage{page-break-after:always;break-after:page}
+#printSheet .pPage:last-child{page-break-after:auto;break-after:auto}
+#printSheet .pTwoCol{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start}
+#printSheet .pPageTitle{font-weight:800;color:#7a4a12;font-size:15px;margin:0 0 6px}
+#printSheet .pBlock{page-break-inside:avoid;break-inside:avoid}
+#printSheet .ppChartBox{page-break-inside:avoid;break-inside:avoid}
+#printSheet .pChartSingle{max-width:150mm;margin:0 auto}
+#printSheet .pMetaBig{font-size:12.5px;line-height:1.5;margin:8px 0 10px}
+#printSheet .pFootAstro{font-weight:700;color:#7a4a12}
+#printSheet .pFootSep{color:#c9a24a}
+
+/* ---------- राउंड 49: print की बारीकियाँ ---------- */
+#printSheet .pBrandSub a, #printSheet .pFoot a{color:#3a2410 !important;text-decoration:none !important}
+#printSheet .pMetaBox{border:1.5px solid #d9a95f;border-radius:10px;background:#fffdf6;padding:9px 14px;
+  max-width:175mm;margin:6px auto 8px;font-size:13.5px;line-height:1.55;text-align:center;color:#3f3627}
+#printSheet .pMetaBox b{color:#7a4a12}
+#printSheet .pChartSingle{max-width:196mm;margin:0 auto}
+#printSheet .pChartSingle svg{max-height:138mm;width:auto;max-width:100%;display:block;margin:0 auto}
+
+/* राउंड 51: तालिका के ऊपर कौन-सा combination (159 / 1579) */
+#printSheet .pComboTop{font-size:15px;font-weight:800;color:#7a2e00;margin:0 0 3px;letter-spacing:.2px}
+
+/* राउंड 56 — प्रिंट/PDF का आकार दोनों platform पर एक जैसा
+   (पहले ये नियम केवल Mac पर थे; अब साझा — Windows और Mac की PDF एक जैसी बनेगी) */
+#printSheet .pChartSingle{max-width:202mm}
+#printSheet .pChartSingle svg{max-height:146mm}
+#printSheet table{font-size:12px}
+#printSheet th{font-size:11.5px}
+#printSheet .pTitle,#printSheet .pComboTop{font-size:15.5px}
+#printSheet .pCap{font-size:12px}
+#printSheet .pSide{min-width:0}
+#printSheet table.pcols{font-size:11px}
+#printSheet table.pcols th,#printSheet table.pcols td{padding:1px 3px}
+/* राउंड 57: PDF में planet-तालिका (9 कॉलम) को थोड़ी ज़्यादा जगह */
+#printSheet .pTwoCol{grid-template-columns:46% 54%}
+
+/* ---------- राउंड 64 / चरण 1: कुंडली खोलें की खिड़की बड़ी ----------
+   `.mini` (560px) बाक़ी छोटी खिड़कियों में लगा है, इसलिए उसे छुआ नहीं —
+   Open वाली खिड़की को अलग class `openWide` दी है। सारे कॉलम एक साथ,
+   बिना आड़ी scroll; तारीख एक पंक्ति में; लंबी सूची में अंदर ही खड़ी scroll। */
+.modal.openWide{width:1100px;max-width:94vw}
+.openWide .mbody{padding-top:2px}
+.openWide .openList{max-height:65vh;overflow-y:auto;overflow-x:auto}
+.openWide .openTbl{width:100%;border-collapse:collapse}
+.openWide .openTbl th,.openWide .openTbl td{white-space:nowrap}
+/* heading चिपका रहे तो उसके ऊपर कटी पंक्ति न झलके — सूची की ऊपरी padding हटाई */
+.openWide .openList{padding-top:0}
+.openWide .openTbl{margin-top:0}
+/* चिपके heading के ऊपर स्क्रॉल होती पंक्तियाँ न चढ़ें (z-index ज़रूरी) */
+.openWide .openTbl th{z-index:3;background:#f6efdd}
+.openWide .openTbl tr:first-child th:first-child{border-top-left-radius:7px}
+.openWide .openTbl tr:first-child th:last-child{border-top-right-radius:7px}
+/* नाम का कॉलम अकेला लपेट सकता है — इससे तालिका खिड़की से बाहर नहीं जाती */
+.openWide .openTbl th:nth-child(3),.openWide .openTbl td:nth-child(3){white-space:normal;min-width:150px;max-width:320px}
+.openWide .openTbl td.cA{white-space:nowrap}
+.openWide .openTbl td.cA .miniBtn{display:inline-block;vertical-align:middle}
+.openWide .openTbl td.cA .miniBtn + .miniBtn{margin-left:5px}
+
+/* ---------- राउंड 64 / चरण 4.3: गोचर-चार्ट का tab (Transit मोड में चमकता है) ---------- */
+#tabTr.on{background:#7a5a22;border-color:#7a5a22;color:#fff}
+@keyframes trBlink{
+  0%,100%{background:#fff6df;border-color:#e6c887;color:#7a5a22}
+  50%{background:#d97706;border-color:#d97706;color:#fff}
+}
+#tabTr.blink{animation:trBlink 1s ease-in-out infinite}
+@media (prefers-reduced-motion: reduce){
+  #tabTr.blink{animation:none;background:#d97706;border-color:#d97706;color:#fff}
+}
+#btnTransitMode.on{background:#7a5a22;border-color:#7a5a22;color:#fff}
