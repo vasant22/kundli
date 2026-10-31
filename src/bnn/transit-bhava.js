@@ -34,9 +34,11 @@ export function bhavaCombinationsTransit(planets, cusps, mode = 'AP') {
     const w = norm(cuspList[b % 12] - cuspList[b - 1]) || 360
     let dist = d
     let pct = planetToBhavaPercent(d, w)
-    if (pct < 0) {                       // संधि से पीछे → अगला भाव, दूरी ऋणात्मक
+    if (pct < 0) {
+      // संधि से पीछे → अगला भाव। प्रतिशत वही सूत्र, पर दूरी = अगली (नई भाव की) संधि तक,
+      // और चौड़ाई = पुरानी भाव की (सुधार-3: सर के software से — शनि 0.517°/30.03° → 98.2)।
       b = (b % 12) + 1
-      dist = -(w - d)
+      dist = w - d
       pct = planetToBhavaPercent(dist, w)
     }
     perBhava[b].push({

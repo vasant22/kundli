@@ -5,6 +5,7 @@
 import { describe, expect, it } from 'vitest'
 import { transitLabels, transitPlanetCombinations } from '../src/bnn/transit-combos.js'
 import { bhavaCombinationsTransit } from '../src/bnn/transit-bhava.js'
+import { astronomyPartners } from '../src/bnn/combos.js'
 
 // deg.min → decimal degrees
 const dm = (d) => Math.floor(d) + ((d - Math.floor(d)) * 100) / 60
@@ -129,4 +130,94 @@ describe('राउंड 64 — गोचर की BHAVA COMBINATION (सर �
       expect(tnames(rows[n].list159)).toEqual(EXPECT[n])
     })
   }
+})
+
+// ---------- दूसरा केस: गोचर = जन्म-समय (सुधार-3, 31-10-2026) ----------
+// 31-12-1977 12:00:00 Coimbatore, गोचर भी वही समय — गोचर-ग्रह जन्म-ग्रहों के बराबर।
+// सर के software के प्रतिशत 1 दशमलव तक; हमारे p2pBase 96.65 हैं, इसलिए प्रतिशत ±1 की
+// छूट से जाँचे गए हैं (ग्रह और क्रम हूबहू)। SAT3 (B07) में 1.7 का अंतर है — वह पहले से
+// चल रहा percent-residual है (KNOWN)।
+describe('राउंड 64 — गोचर = जन्म-समय (31-12-1977 12:00:00 कोयंबटूर)', () => {
+  const rows = bhavaCombinationsTransit(natal, cusps, 'AP')
+  const prows = transitPlanetCombinations(natal, natal, cusps, 'AP')
+  const lbs = transitLabels(natal, cusps)
+  const TK = (k, retro) => SH[k] + (retro && k !== 'rahu' && k !== 'ketu' ? '#' : '')
+  const tnames2 = (list) => list.map((e) => (e.type === 'aspect' ? e.label : TK(e.key, e.natalRetro)))
+  const check = (list, exp, tolFor) => {
+    expect(tnames2(list)).toEqual(exp.map((e) => e[0]))
+    list.forEach((e, i) => {
+      const tol = (tolFor && tolFor[e.type === 'aspect' ? e.label : TK(e.key, e.natalRetro)]) || 1
+      expect(Math.abs(e.percent - exp[i][1])).toBeLessThanOrEqual(tol)
+    })
+  }
+
+  const B1 = [['KET', 82.6], ['MAR#', 70], ['MER#', 45.5]]
+  const B2 = [['VEN', 98.7], ['SAT#', 98.2], ['SUN', 78.1], ['MOO', 62.1], ['SAT10', 27.9]]
+  const B6 = [['VEN', 98.7], ['SAT#', 98.2], ['SUN', 78.1], ['MOO', 62.1]]
+  const B3 = [['RAH', 82.6], ['JUP#', 10.4]]
+  it('BHAVA B01 = B05 = B09 — KET 82.6 · MAR# 70 · MER# 45.5', () => {
+    check(rows[1].list159, B1); check(rows[5].list159, B1); check(rows[9].list159, B1)
+  })
+  it('BHAVA B02 — VEN 98.7 · SAT# 98.2 · SUN 78.1 · MOO 62.1 · SAT10 27.9 (शनि दूसरे स्थान पर)', () => {
+    check(rows[2].list159, B2)
+  })
+  it('BHAVA B06 = B10 — VEN · SAT# · SUN · MOO', () => {
+    check(rows[6].list159, B6); check(rows[10].list159, B6)
+  })
+  it('BHAVA B03 = B11 — RAH 82.6 · JUP# 10.4', () => {
+    check(rows[3].list159, B3); check(rows[11].list159, B3)
+  })
+  it('BHAVA B07 — RAH 82.6 · SAT3 14.5 · JUP# 10.4 (SAT3 का स्थायी अंतर KNOWN)', () => {
+    check(rows[7].list159, [['RAH', 82.6], ['SAT3', 14.5], ['JUP#', 10.4]], { SAT3: 2 })
+  })
+  it('BHAVA B04 ख़ाली, B08 MAR4 97.7, B12 MAR8 71', () => {
+    expect(tnames2(rows[4].list159)).toEqual([])
+    check(rows[8].list159, [['MAR4', 97.7]])
+    check(rows[12].list159, [['MAR8', 71]])
+  })
+
+  it('पंक्ति-अंक: JUP#-15 · SUN-79 · MOO-64 · MAR#-72 · MER#-48 · VEN-99 · SAT#-2 · RAH-83 · KET-83', () => {
+    const exp = { jupiter: [15, 'JUP#'], sun: [79, 'SUN'], moon: [64, 'MOO'], mars: [72, 'MAR#'], mercury: [48, 'MER#'], venus: [99, 'VEN'], saturn: [2, 'SAT#'], rahu: [83, 'RAH'], ketu: [83, 'KET'] }
+    Object.keys(exp).forEach((k) => {
+      expect(Math.abs(lbs[k] - exp[k][0])).toBeLessThanOrEqual(1)   // मंगल: हमारा 71, सर 72
+      expect(TK(k, natal.find((p) => p.key === k).retro)).toBe(exp[k][1])
+    })
+  })
+
+  const PEXP = {
+    jupiter: [['JUP#', 96.9], ['MER#', 69.4], ['RAH', 36.3]],   // + SAT10 3.0 (सर में नहीं — KNOWN)
+    sun: [['SUN', 96.9], ['MOO', 85.6], ['MAR#', 3.9]],
+    moon: [['MOO', 96.9], ['RAH', 10.9]],
+    mars: [['MAR#', 96.9], ['SUN', 3.9]],
+    mercury: [['MER#', 96.9], ['KET', 63.8], ['MAR#', 59.6]],
+    venus: [['VEN', 96.9], ['SUN', 80.4], ['MOO', 69.2]],
+    saturn: [['SAT#', 96.9], ['MER#', 68.7], ['KET', 35.6], ['MAR#', 31.4]],
+    rahu: [['RAH', 96.9], ['MOO', 10.9]],
+    ketu: [['KET', 96.9], ['MAR#', 92.6]],
+  }
+  Object.keys(PEXP).forEach((k) => {
+    it('PLANET ' + (SH[k] + (natal.find((p) => p.key === k).retro && k !== 'rahu' && k !== 'ketu' ? '#' : '')) + ' — ' + PEXP[k].map((e) => e[0]).join(' · '), () => {
+      const list = prows[k].list1579
+      const exp = PEXP[k]
+      if (k === 'jupiter') {
+        // सर के गोचर में SAT10 नहीं है, हमारे engine में है — यह अंतर KNOWN (todo नीचे)
+        check(list.slice(0, exp.length), exp)
+      } else {
+        check(list, exp)
+      }
+    })
+  })
+
+  it('Astronomy: KET · KET · RAH · JUP# · RAH · SUN · MAR# · MOO · SUN', () => {
+    const ap = astronomyPartners(natal, 'AP')
+    const order = ['jupiter', 'sun', 'moon', 'mars', 'mercury', 'venus', 'saturn', 'rahu', 'ketu']
+    const got = order.map((k) => TK(ap[k], natal.find((p) => p.key === ap[k]).retro))
+    expect(got).toEqual(['KET', 'KET', 'RAH', 'JUP#', 'RAH', 'SUN', 'MAR#', 'MOO', 'SUN'])
+  })
+
+  it('ज्ञात अंतर जाँच: JUP#-15 में SAT10 हमारे engine में आता है (सर के गोचर में नहीं)', () => {
+    const list = prows.jupiter.list1579
+    expect(tnames2(list)).toContain('SAT10')
+  })
+  it.todo('JUP#-15 का SAT10: सर के गोचर में नहीं (Natal में है, 29.77° पीछे) — नियम सर से पूछना बाक़ी')
 })
