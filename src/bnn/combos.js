@@ -36,6 +36,12 @@ export const COMBO_SETTINGS = Object.freeze({
   // के लिए यही notes का "बिंदु से 2° आगे तक" है। config में — अध्याय-32 नियम 42 खुला है।
   // सर के software: 0.27° शामिल, 1.05° व 1.2° बाहर (चार्ट दीपक, x, y) — notes का 2° यहाँ 1° निकला।
   aspectForwardDeg: 1.0,
+  // राउंड 64 — भाव-सीमा का नियम: जिस ग्रह का भाव-प्रतिशत (0.942 वाला) ऋणात्मक हो,
+  // वह BHAVA तालिका में अगले भाव में गिना जाए (प्रतिशत = 100×(1 − |d|/(0.942×W_पुराना)),
+  // |d| = अगली संधि तक की दूरी)। सर की Natal + गोचर BHAVA, Coimbatore 31-12-1977, से पक्का
+  // (शनि सिंह 06.38, 6ठी संधि से 0.52° पहले → भाव 6 में, VEN के बाद 98.2)।
+  // SPECIAL और PLANET तालिकाओं पर यह नियम नहीं लगता।
+  bhavaEdgeRule: true,
   // ग्रह-संयोजन: 30° क्षेत्र के बाद की छूट (डिग्री) — सर के software के 8 चार्टों से।
   zoneOverDeg: 1.0,
   zoneUnderDeg: 1.0,
@@ -296,14 +302,22 @@ export function bhavaCombinations(planets, cusps, mode = 'AP') {
   // Precompute entries for every bhava: planets + landed aspects.
   const perBhava = Array.from({ length: 13 }, () => [])
   for (const other of Object.values(seats)) {
-    const b = bhavaOf(other.lon)
+    let b = bhavaOf(other.lon)
     const d = norm(other.lon - cuspList[b - 1])
     const w = norm(cuspList[b % 12] - cuspList[b - 1]) || 360
+    let dist = d
+    let pct = planetToBhavaPercent(d, w)
+    if (COMBO_SETTINGS.bhavaEdgeRule && pct < 0) {
+      // संधि से पीछे वाला ग्रह अगले भाव में; दूरी नई भाव की संधि तक, चौड़ाई पुरानी भाव की
+      b = (b % 12) + 1
+      dist = w - d
+      pct = planetToBhavaPercent(dist, w)
+    }
     perBhava[b].push({
       type: 'planet',
       key: other.key,
-      distance: d,
-      percent: planetToBhavaPercent(d, w),
+      distance: dist,
+      percent: pct,
       natalRetro: other.natalRetro,
     })
   }
