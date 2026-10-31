@@ -4,6 +4,7 @@
 // यहाँ दी गई डिग्रियाँ "डिग्री.मिनट" रूप में हैं (जैसे 17.02 = 17°02′)।
 import { describe, expect, it } from 'vitest'
 import { transitLabels, transitPlanetCombinations } from '../src/bnn/transit-combos.js'
+import { bhavaCombinationsTransit } from '../src/bnn/transit-bhava.js'
 
 // deg.min → decimal degrees
 const dm = (d) => Math.floor(d) + ((d - Math.floor(d)) * 100) / 60
@@ -99,4 +100,33 @@ describe('राउंड 64 — गोचर की PLANET COMBINATION (सर 
       expect(l159.filter((e) => e.type === 'aspect').length).toBe(rows[k].list1579.filter((e) => e.type === 'aspect').length)
     })
   })
+})
+
+// ---------- BHAVA COMBINATION — TRANSIT (भाग D-क: संधि से पीछे वाला ग्रह अगले भाव में) ----------
+// सर के software की 12 पंक्तियाँ — 12/12 हूबहू (क्रम सहित)। यहाँ '#' गोचर-वक्री से है।
+const SH = { sun: 'SUN', moon: 'MOO', mars: 'MAR', mercury: 'MER', jupiter: 'JUP', venus: 'VEN', saturn: 'SAT', rahu: 'RAH', ketu: 'KET' }
+const tnames = (list) => list.map((e) => (e.type === 'aspect' ? e.label
+  : SH[e.key] + (e.natalRetro && e.key !== 'rahu' && e.key !== 'ketu' ? '#' : '')))
+
+describe('राउंड 64 — गोचर की BHAVA COMBINATION (सर के software से, 12/12)', () => {
+  const rows = bhavaCombinationsTransit(transit, cusps, 'AP')
+  const EXPECT = {
+    1: ['SAT#', 'MAR', 'JUP', 'KET'],
+    2: [],
+    3: ['SAT3', 'VEN#', 'RAH'],
+    4: ['SUN', 'MER#', 'MOO'],
+    5: ['SAT#', 'MAR', 'JUP', 'KET'],
+    6: [],
+    7: ['VEN#', 'RAH'],
+    8: ['SUN', 'MAR4', 'MER#', 'MOO'],
+    9: ['SAT#', 'MAR', 'JUP', 'KET'],
+    10: ['SAT10'],
+    11: ['VEN#', 'RAH'],
+    12: ['SUN', 'MER#', 'MOO', 'MAR8'],
+  }
+  for (let n = 1; n <= 12; n++) {
+    it('B' + String(n).padStart(2, '0') + ' — ' + (EXPECT[n].join(', ') || 'ख़ाली'), () => {
+      expect(tnames(rows[n].list159)).toEqual(EXPECT[n])
+    })
+  }
 })
