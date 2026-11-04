@@ -1391,6 +1391,7 @@
       syncStModeRow();
       var rng = stDateRange();
       $('stStart').value = isoToDMY(rng.s); $('stEnd').value = isoToDMY(rng.e);
+      try { document.dispatchEvent(new Event('bnn:skel')); } catch (e) {}   // ढाँचा ताज़ा (राउंड 65 / 09-ग)
       computeTransitAt(null);
       runSpecial();
       toast(L('✅ कुंडली तैयार — ', '✅ Kundli ready — ') + (rec.name || (L('संदर्भ ', 'Ref ') + rec.ref)));
@@ -2158,18 +2159,15 @@
     // ---------- संदेश + सदा दिखने वाली सहायता-पंक्ति (टास्क 09-ख का बिंदु 2) ----------
     // जिन खानों की नीचे अपनी hint-पंक्ति है (जन्म-तारीख़/समय) वहाँ वही पंक्ति काम करती है:
     // ठीक हालत में सहायता, ग़लती में लाल संदेश, ठीक होते ही सहायता लौट आती है (जगह न उछले)।
+    // ---------- संदेश: सिर्फ़ जिन खानों की अपनी hint-पंक्ति है (जन्म-तारीख़/समय) ----------
+    // बाक़ी खानों (गोचर का dt, स्पेशल-ट्रांज़िट के stStart/stEnd) की पंक्ति तंग है — वहाँ कोई
+    // नया span नहीं बनाते (टास्क 09-ग: बटन/पंक्ति का layout बिलकुल न बदले); संदेश toast में।
     var HELP_ID = el.id === 'fDate' ? 'hDate' : (el.id === 'fTime' ? 'hTime' : '');
     var msgEl = null, flashT = null;
     function msgBox() {
+      if (!HELP_ID) return null;
       if (msgEl && document.body.contains(msgEl)) return msgEl;
-      if (HELP_ID) msgEl = document.getElementById(HELP_ID);
-      if (!msgEl) {
-        msgEl = document.createElement('span');
-        msgEl.className = 'hint mmsg';
-        msgEl.id = (el.id || 'mask') + '-msg';
-        if (el.parentNode) el.parentNode.appendChild(msgEl);
-        try { el.setAttribute('aria-describedby', msgEl.id); } catch (e) { }
-      }
+      msgEl = document.getElementById(HELP_ID);
       return msgEl;
     }
     function setHint(err) {
@@ -2187,7 +2185,8 @@
       el.classList.add('nope');
       clearTimeout(flashT);
       flashT = setTimeout(function () { el.classList.remove('nope'); }, 520);
-      setHint(msg);
+      if (HELP_ID) setHint(msg);
+      else if (typeof toast === 'function') toast(msg);      // पंक्ति में कुछ न जुड़े
       // संदेश बदलने से लेआउट खिसक सकता है — ढाँचा फिर बैठा दो
       setTimeout(function () { try { paintSkel(); } catch (e) {} }, 0);
       return null;
@@ -2340,11 +2339,11 @@
       segs[i] = segs[i].slice(0, -1);
       paint(i, false);
     }
-    // ---------- राउंड 65 / टास्क 09-ख: ढाँचे में अक्षर (कौन-सा हिस्सा क्या है साफ़) ----------
-    // खाने के ऊपर एक हल्का span: भरे अंक पारदर्शी (नीचे खाने के अपने गहरे अंक दिखते हैं) और
-    // बाक़ी जगह ढाँचे के अक्षर — DD-MM-YYYY / HH:MM(SS)। टाइप करते ही अक्षर की जगह अंक आ जाता है।
-    // अक्षर लैटिन ही रखे (देवनागरी अक्षरों की चौड़ाई अंकों से नहीं मिलती — cursor खिसक जाता है);
-    // हिंदी में समझ नीचे की सहायता-पंक्ति से आती है (टास्क 09-ख का बिंदु 1)।
+    // ---------- राउंड 65 / टास्क 09-ग: ढाँचा — खाने के अपने फ़ॉन्ट में, बस आगे की ख़ाली जगह पर ----------
+    // पहले ढाँचा खाने के *ऊपर* पूरा लिखा जाता था (पारदर्शी अंकों वाला); उसके लिए monospace ज़रूरी
+    // था और उससे विभाजक '-' मोटे/लंबे डैश जैसे दिखते थे। अब ढाँचा सिर्फ़ **बाक़ी हिस्सा** है:
+    // जो अंक भर गए वे खाने के अपने अक्षर हैं, और उनके ठीक बाद की ख़ाली जगह पर हल्के अक्षर
+    // (DD-MM-YYYY…) — वही खाने का फ़ॉन्ट, इसलिए विभाजक हूबहू सामान्य हाइफ़न दिखते हैं।
     var TMPL = mode === 'dt' ? ['DD', 'MM', 'YYYY', 'HH', 'MM', 'SS']
       : mode === 'time' ? ['HH', 'MM', 'SS'] : ['DD', 'MM', 'YYYY'];
     var skelEl = document.createElement('span');
@@ -2352,38 +2351,63 @@
     skelEl.setAttribute('aria-hidden', 'true');
     skelEl.style.display = 'none';
     document.body.appendChild(skelEl);
+    var measEl = null;                                   // अक्षरों की चौड़ाई नापने का छिपा span
+    function measWidth(txt) {
+      if (!measEl) { measEl = document.createElement('span'); measEl.style.cssText = 'position:absolute;left:-99999px;top:0;visibility:hidden;white-space:pre'; document.body.appendChild(measEl); }
+      var cs = window.getComputedStyle(el);
+      measEl.style.fontFamily = cs.fontFamily; measEl.style.fontSize = cs.fontSize;
+      measEl.style.fontWeight = cs.fontWeight; measEl.style.fontStyle = cs.fontStyle;
+      measEl.style.letterSpacing = cs.letterSpacing; measEl.style.fontVariantNumeric = cs.fontVariantNumeric;
+      measEl.textContent = txt || '';
+      return measEl.getBoundingClientRect().width;
+    }
+    // खाने के अंदर जो अभी दिख रहा है उसके बाद कौन-सा ढाँचा बाक़ी है
+    function tailText() {
+      var v = String(el.value || '');
+      var tail = '', i, j = 0;
+      for (i = 0; i < W.length; i++) {
+        var sep = i ? SP[i - 1] : '';
+        if (sep) { if (j < v.length) { j++; } else { tail += sep; } }
+        var got = (segs[i] || '').slice(0, W[i]);
+        if (got) { j += got.length; }
+        var rest = (TMPL[i] || '').slice(got.length);
+        if (rest) {
+          tail += rest; j += rest.length;
+        }
+        // ':SS' तभी जब सेकंड शुरू हो या मिनट पूरा भर चुका हो (cursor वहीं पहुँचा है)
+        if (mode === 'time' && i === 1 && !(segs[2] || '') && (segs[1] || '').length < 2) break;
+      }
+      return tail;
+    }
     function placeSkel() {
       if (!document.body.contains(el)) { skelEl.style.display = 'none'; return; }
+      // बाहर से मान बदला हो और घोषणा न मिली हो तो भी ढाँचा ताज़ा रहे
+      sync(); if (tailText() !== skelEl.textContent) skelEl.textContent = tailText();
       var r = el.getBoundingClientRect();
       if (!r.width || !r.height) { skelEl.style.display = 'none'; return; }
       var cs = window.getComputedStyle(el);
+      var pad = (parseFloat(cs.borderLeftWidth) || 0) + (parseFloat(cs.paddingLeft) || 0);
+      var x = r.left + pad + measWidth(el.value) - (el.scrollLeft || 0);
       skelEl.style.display = 'block';
-      skelEl.style.left = (r.left + (parseFloat(cs.borderLeftWidth) || 0) + (parseFloat(cs.paddingLeft) || 0)) + 'px';
+      skelEl.style.left = x + 'px';
       skelEl.style.top = r.top + 'px';
       skelEl.style.height = r.height + 'px';
       skelEl.style.lineHeight = r.height + 'px';
       skelEl.style.fontFamily = cs.fontFamily;
       skelEl.style.fontSize = cs.fontSize;
       skelEl.style.fontWeight = cs.fontWeight;
+      skelEl.style.fontStyle = cs.fontStyle;
       skelEl.style.letterSpacing = cs.letterSpacing;
-      // छोटा सुधार: जो जगह सच में मिली, उससे जो चाहिए थी उसका अंतर जोड़ दो (sub-pixel)
-      var want = r.left + (parseFloat(cs.borderLeftWidth) || 0) + (parseFloat(cs.paddingLeft) || 0);
-      var got = skelEl.getBoundingClientRect().left;
+      skelEl.style.fontVariantNumeric = cs.fontVariantNumeric;
+      // जो जगह सच में मिली, उससे जो चाहिए थी उसका अंतर जोड़ दो (sub-pixel)
+      var want = x, got = skelEl.getBoundingClientRect().left;
       if (Math.abs(want - got) > 0.05) skelEl.style.left = (parseFloat(skelEl.style.left) + (want - got)) + 'px';
     }
     function paintSkel() {
       sync();
-      var html = '', i, k;
-      for (i = 0; i < W.length; i++) {
-        if (i) html += '<i>' + esc(SP[i - 1]) + '</i>';
-        var got = (segs[i] || '').slice(0, W[i]);
-        if (got) html += '<b>' + esc(got) + '</b>';                 // पारदर्शी: अंक खाने से दिखें
-        var rest = (TMPL[i] || '').slice(got.length);
-        if (rest) html += esc(rest);                                 // हल्के अक्षर
-        // ':SS' तभी जब सेकंड शुरू हो या मिनट पूरा भर चुका हो (cursor वहीं पहुँचा है)
-        if (mode === 'time' && i === 1 && !(segs[2] || '') && (segs[1] || '').length < 2) break;
-      }
-      skelEl.innerHTML = html;
+      var tail = tailText();
+      skelEl.textContent = tail;
+      if (!tail) { skelEl.style.display = 'none'; return; }
       placeSkel();
     }
     function arLabel() {
@@ -2394,16 +2418,18 @@
       el.setAttribute('title', fmt);
     }
     function initSkel() {
-      el.classList.add('maskf');          // अंक और अक्षर बराबर चौड़े (ढाँचा हूबहू बैठे)
+      arLabel();
       el.removeAttribute('data-lp');       // पुराना लंबा placeholder हटाओ (ढाँचा अब दिखता है)
       el.placeholder = '';
-      arLabel();
-      if (HELP_ID) { el.setAttribute('aria-describedby', HELP_ID); setHint(''); }   // सहायता-पंक्ति जुड़ी
+      if (HELP_ID) {
+        el.setAttribute('aria-describedby', HELP_ID);   // सहायता-पंक्ति जुड़ी
+        setHint('');
+      }
       paintSkel();
     }
     document.addEventListener('bnn:lang', function () { arLabel(); paintSkel(); if (HELP_ID) setHint(''); });
     document.addEventListener('bnn:skel', function () { paintSkel(); });
-    ['input', 'focus', 'blur', 'keyup', 'click'].forEach(function (ev) { el.addEventListener(ev, paintSkel); });
+    ['input', 'focus', 'blur', 'keyup', 'click', 'dtedit', 'dtsetgood'].forEach(function (ev) { el.addEventListener(ev, paintSkel); });
     window.addEventListener('resize', placeSkel);
     window.addEventListener('scroll', placeSkel, true);
     initSkel();

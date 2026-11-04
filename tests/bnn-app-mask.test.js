@@ -132,28 +132,28 @@ describe.runIf(hasApp)('तारीख़/समय के खाने — ग
     w.close()
   })
 
-  it('टाइप करते ही अक्षर की जगह अंक आते हैं — 05-1 → 05-1M-YYYY', async () => {
+  it('टाइप करते ही अक्षर की जगह अंक आते हैं — 05-1 पर ढाँचा M-YYYY रह जाता है', async () => {
     const w = await boot()
     const skel = () => w.document.querySelector('.mskel').textContent
     type(w, 'fDate', '0')
-    expect(skel()).toBe('0D-MM-YYYY')
+    expect(skel()).toBe('D-MM-YYYY')
     type(w, 'fDate', '5')
-    expect(skel()).toBe('05-MM-YYYY')
+    expect(skel()).toBe('MM-YYYY')
     type(w, 'fDate', '1')
-    expect(skel()).toBe('05-1M-YYYY')                // टास्क का हूबहू उदाहरण
+    expect(skel()).toBe('M-YYYY')                    // 05-1 के बाद सिर्फ़ M बाक़ी (टास्क 09-ग)
     type(w, 'fDate', '2')
-    expect(skel()).toBe('05-12-YYYY')
+    expect(skel()).toBe('YYYY')
     w.close()
   })
 
   it('Backspace पर अक्षर लौट आते हैं', async () => {
     const w = await boot()
     type(w, 'fDate', '051')
-    expect(w.document.querySelector('.mskel').textContent).toBe('05-1M-YYYY')
+    expect(w.document.querySelector('.mskel').textContent).toBe('M-YYYY')
     const el = w.document.getElementById('fDate')
     el.dispatchEvent(new w.KeyboardEvent('keydown', { key: 'Backspace', bubbles: true, cancelable: true }))
     expect(el.value).toBe('05-')
-    expect(w.document.querySelector('.mskel').textContent).toBe('05-MM-YYYY')   // M लौटा
+    expect(w.document.querySelector('.mskel').textContent).toBe('MM-YYYY')   // M लौटा
     w.close()
   })
 
@@ -179,10 +179,14 @@ describe.runIf(hasApp)('तारीख़/समय के खाने — ग
     const skel = () => w.document.querySelectorAll('.mskel')[1].textContent
     await new Promise((r) => setTimeout(r, 40))
     expect(skel()).toBe('HH:MM')
-    type(w, 'fTime', '1447')
-    expect(skel()).toBe('14:47:SS')                  // मिनट पूरा → सेकंड की जगह दिखे
+    type(w, 'fTime', '14')
+    expect(w.document.getElementById('fTime').value).toBe('14:')   // विभाजक खाने में ही है
+    expect(skel()).toBe('MM')
+    type(w, 'fTime', '47')
+    expect(w.document.getElementById('fTime').value).toBe('14:47:')
+    expect(skel()).toBe('SS')                        // मिनट पूरा → सेकंड की जगह दिखे
     type(w, 'fTime', '32')
-    expect(skel()).toBe('14:47:32')
+    expect(skel()).toBe('')                          // सब भर गया — ढाँचा ख़त्म
     expect(w.document.getElementById('hTime').textContent).toContain('सेकंड वैकल्पिक')
     expect(w.document.getElementById('fTime').getAttribute('aria-describedby')).toBe('hTime')
     w.close()

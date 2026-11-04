@@ -159,13 +159,9 @@ body{font-family:"Segoe UI","Nirmala UI","Noto Sans Devanagari","Kohinoor Devana
 .helpFoot a{color:#7a3b06}
 body.printing #helpModal{display:none!important}
 /* जन्म-तारीख़/समय के खाने — ढाँचा सदा दिखे + ग़लत अंक पर झटका (राउंड 65 / टास्क 09) */
-.mskel{position:fixed;z-index:5;pointer-events:none;white-space:pre;color:#8a8172;overflow:hidden;user-select:none}
-.mskel b{font-weight:inherit;color:transparent}      /* भरे अंक पारदर्शी — नीचे खाने के असली अंक दिखें */
-.mskel i{font-style:normal;color:#8a8172}           /* सेपरेटर भी 3:1 से ऊपर */
+.mskel{position:fixed;z-index:5;pointer-events:none;white-space:pre;color:#8a8172;overflow:visible;user-select:none;padding-left:1px}
 /* सहायता-पंक्ति की जगह पहले से रक्षित — संदेश बदलने पर नीचे का हिस्सा न उछले */
 .f > .hint{min-height:17px}
-/* masked खाने monospace में — तभी '_' और अंक बराबर चौड़े होते हैं और ढाँचा हूबहू बैठता है */
-.maskf{font-family:ui-monospace,"SF Mono",Menlo,Consolas,"DejaVu Sans Mono",monospace;font-variant-numeric:tabular-nums;letter-spacing:0}
 .inp.nope,.stDate.nope{border-color:#dc2626!important;background:#fff7f7!important}
 @keyframes nopeShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
 .inp.nope,.stDate.nope{animation:nopeShake .17s 2}
