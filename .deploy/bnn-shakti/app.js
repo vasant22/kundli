@@ -47,14 +47,24 @@
     catch (e) { toast(L('⚠️ इस ब्राउज़र में सहेजना उपलब्ध नहीं — बैकअप फ़ाइल वाला तरीक़ा इस्तेमाल करें', '⚠️ Saving is not available in this browser — use the Backup File method')); return false; }
   }
 
+  // राउंड 65 (4-11-2026): महीने में उतने दिन हैं या नहीं — यह जाँच पहले नहीं थी,
+  // इसलिए 31-02 / 30-02 / 31-04 / 29-02-2021 जैसी अनहोनी तारीख़ें पार हो जाती थीं
+  // और गणना चुपचाप अगले महीने की तारीख़ पर चल पड़ती थी।
+  function daysInMonth(y, mo) {
+    if (mo === 2) return ((y % 4 === 0 && y % 100 !== 0) || y % 400 === 0) ? 29 : 28;
+    return (mo === 4 || mo === 6 || mo === 9 || mo === 11) ? 30 : 31;
+  }
   function vDate(s) {
     s = (s || '').trim();
     var m = /^(\d{1,2})[\-\/.](\d{1,2})[\-\/.](\d{4})$/.exec(s);
     if (!m) return null;
     var d = +m[1], mo = +m[2], y = +m[3];
-    if (d < 1 || d > 31 || mo < 1 || mo > 12 || y < 1800 || y > 2400) return null;
+    if (mo < 1 || mo > 12 || y < 1800 || y > 2400) return null;
+    if (d < 1 || d > daysInMonth(y, mo)) return null;
     return ('0' + d).slice(-2) + '-' + ('0' + mo).slice(-2) + '-' + y;
   }
+  // खाने में पूरी तारीख़ जैसा कुछ लिखा है या नहीं (सिर्फ़ संदेश चुनने के लिए)
+  function isDateShaped(s) { return /^\d{1,2}[\-\/.]\d{1,2}[\-\/.]\d{4}$/.test((s || '').trim()); }
   function vTime(s) {
     // राउंड 64 / चरण 2: सेकंड वैकल्पिक है। maskTyped समय-खाने में मिनट भरते ही आख़िरी ':'
     // लगा देता है (ताकि सीधे सेकंड टाइप हो सकें), इसलिए आख़िर के ':' हटाकर जाँचें।
@@ -295,7 +305,15 @@
   function gather() {
     var errs = []; clearErr();
     var date = vDate($('fDate').value);
-    if (!date) { errs.push(L('जन्म तिथि', 'Date of Birth')); $('fDate').classList.add('err'); $('hDate').textContent = L('दिन-महीना-साल भरें — जैसे 18-06-1995', 'Fill DD-MM-YYYY — e.g. 18-06-1995'); $('hDate').className = 'hint err'; }
+    if (!date) {
+      errs.push(L('जन्म तिथि', 'Date of Birth')); $('fDate').classList.add('err');
+      // खाना भरा हुआ पर तारीख़ अनहोनी है (31-02 आदि) — तब साफ़ बात लिखो
+      var shaped = isDateShaped($('fDate').value);
+      $('hDate').textContent = shaped
+        ? L('यह तारीख़ नहीं होती — महीने में उतने दिन नहीं हैं (जैसे 31-02 नहीं होता)। तारीख़ जाँचें।', 'That date does not exist (e.g. 31-02). Please check the date.')
+        : L('दिन-महीना-साल भरें — जैसे 18-06-1995', 'Fill DD-MM-YYYY — e.g. 18-06-1995');
+      $('hDate').className = 'hint err';
+    }
     var time = vTime($('fTime').value);
     if (!time) { errs.push(L('जन्म समय', 'Time of Birth')); $('fTime').classList.add('err'); $('hTime').textContent = L('घंटा:मिनट भरें (सेकंड वैकल्पिक) — जैसे 14:47 या 14:47:32', 'Fill HH:MM (seconds optional) — e.g. 14:47 or 14:47:32'); $('hTime').className = 'hint err'; }
     var lat = vNum($('fLat').value);

@@ -5767,32 +5767,69 @@
 	}
 	/**
 	* The nine andhirams inside a bhukthi (sequence starts from the bhukthi lord).
-	* Length = floor(bhukthi_length × a / 120) days; the last ends on the bhukthi end.
+	*
+	* राउंड 65-ख (4-11-2026) — काटने का नियम (Vas22 जी की हाँ):
+	* पहले यह सूची भुक्ति की **दिखने वाली** शुरुआत से बनती थी, पर लंबाई **पूरी भुक्ति** की
+	* ली जाती थी। इसलिए जन्म पर कटी पहली महादशा की भुक्तियों में नीचे की पंक्तियाँ भुक्ति के
+	* अंत से आगे निकल जाती थीं और आख़िरी पंक्ति उलटी (आरंभ > अंत) दिखती थी — जैसे
+	* बेतूल 22-01-1980: भुक्ति मंगल 22-01-1980→01-08-1980 का अंतर चंद्र 24-01-1981→01-08-1980
+	* (हर कुंडली में ठीक एक ऐसी पंक्ति)।
+	*
+	* अब: अंतर पूरी भुक्ति-अवधि पर वैसे ही बनते हैं, फिर [जन्म, भुक्ति-अंत] की सीमा में काटे जाते हैं —
+	*  • पूरी तरह जन्म से पहले ख़त्म होने वाला अंतर → `blank` पंक्ति (तारीख़ें नहीं दिखतीं;
+	*    वही ढंग जो पहली महादशा की बीती भुक्तियों में पहले से है)
+	*  • जन्म के आर-पार वाला अंतर → आरंभ = जन्म-तारीख़
+	*  • भुक्ति के अंत से आगे कुछ नहीं जाता → उससे आगे की पंक्तियाँ हट जाती हैं और
+	*    आख़िरी पंक्ति का अंत = भुक्ति का अंत
+	*  • किसी पंक्ति का आरंभ > अंत नहीं होता
+	* जिन भुक्तियों में कुछ नहीं कटता (सामान्य भुक्तियाँ), उनका output पहले जैसा ही रहता है।
 	*/
 	function andhiramList(mahaLord, bhukthi, birth, settings = DASHA_SETTINGS) {
 		const b0 = birthYMD(birth);
-		const bhukthiLen = Math.floor(YEARS[mahaLord] * settings.bhukthiYearDays * YEARS[bhukthi.lord] / 120);
-		const rows = [];
-		let start = parseISO(bhukthi.startISO);
+		const birthISO = `${b0.y}-${String(b0.m).padStart(2, "0")}-${String(b0.d).padStart(2, "0")}`;
+		const birthDate = parseISO(birthISO);
+		const fullLen = Math.floor(YEARS[mahaLord] * settings.bhukthiYearDays * YEARS[bhukthi.lord] / 120);
+		const start0 = parseISO(bhukthi.startISO);
 		const end = parseISO(bhukthi.endISO);
+		const cut = iso(start0) === birthISO ? Math.max(0, fullLen - Math.round((end.getTime() - start0.getTime()) / day)) : 0;
 		const lordIdx = ORDER.indexOf(bhukthi.lord);
+		const p = [addDays(start0, -cut)];
+		for (let i = 1; i <= 8; i++) p.push(addDays(p[i - 1], Math.floor(fullLen * YEARS[ORDER[(lordIdx + i - 1) % 9]] / 120)));
+		p.push(end);
+		const rows = [];
 		for (let i = 0; i < 9; i++) {
 			const lord = ORDER[(lordIdx + i) % 9];
-			const e = i === 8 ? end : addDays(start, Math.floor(bhukthiLen * YEARS[lord] / 120));
+			let s1 = p[i];
+			let e1 = p[i + 1];
+			if (e1.getTime() > end.getTime()) e1 = end;
+			if (e1.getTime() <= s1.getTime()) continue;
+			if (e1.getTime() <= birthDate.getTime()) {
+				rows.push({
+					lord,
+					blank: true,
+					startISO: null,
+					endISO: null,
+					age: null
+				});
+				continue;
+			}
+			if (s1.getTime() < birthDate.getTime()) s1 = birthDate;
 			rows.push({
 				lord,
-				startISO: iso(start),
-				endISO: iso(e),
-				age: ymdDiff(b0, ymdOf(e))
+				startISO: iso(s1),
+				endISO: iso(e1),
+				age: ymdDiff(b0, ymdOf(e1))
 			});
-			start = e;
 		}
 		return rows;
 	}
 	/** Index of the row running at `now` ({y,m,d}); -1 when outside the list. */
 	function runningIndex(rows, now) {
 		const nowISO = `${now.y}-${String(now.m).padStart(2, "0")}-${String(now.d).padStart(2, "0")}`;
-		for (let i = 0; i < rows.length; i++) if (nowISO >= rows[i].startISO && nowISO < rows[i].endISO) return i;
+		for (let i = 0; i < rows.length; i++) {
+			if (rows[i].blank) continue;
+			if (nowISO >= rows[i].startISO && nowISO < rows[i].endISO) return i;
+		}
 		return -1;
 	}
 	const todayYMD = () => {

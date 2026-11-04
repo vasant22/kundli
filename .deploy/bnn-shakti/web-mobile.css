@@ -1,0 +1,118 @@
+/* BNN Shakti — केवल WEBSITE (mybapuji.com/bnn-shakti/) के लिए mobile सुधार
+   राउंड 65 / टास्क 02 (4-11-2026) · यह file desktop app में कहीं शामिल नहीं होती
+   (build/make-web.mjs ही इसे online copy में जोड़ता है)। नियम: 360–430px पर पूरा
+   app चले; बड़ी screen (≤820px तक) पर भी यही ढाँचा ठीक रहे। */
+
+@media (max-width: 820px) {
+  /* ---- पूरा ढाँचा: अब page ख़ुद scroll होगा, अंदर के खाने नहीं ---- */
+  /* overflow-x लगाने से body scroll-container बन जाता है और position:sticky टूट जाता है —
+     इसलिए उसे नहीं लगाते; नीचे हर चीज़ को चौड़ाई में बसाया गया है। */
+  html, body { height: auto; min-width: 0; }
+  body { display: block; }
+  /* web-info.html की अपनी style (जो बाद में आती है) उलट देती है — इसलिए !important */
+  .shell { display: block; height: auto !important; min-height: 0 !important; }
+  .topbar { position: static !important; }   /* phone पर दो पंक्ति की पट्टी चिपके न रहे */
+  .statusbar { position: static !important; }
+  .main, .result { overflow: visible; padding: 10px; }
+
+  /* ---- ऊपर की पट्टी: लिपटे बटन, 44px के थप्पे ---- */
+  .topbar { height: auto; flex-wrap: wrap; gap: 6px; padding: 6px 8px; }
+  .topbar .brand { font-size: 14px; }
+  .topbar .brand .sub { display: none; }
+  .topbar .btn { height: 40px; font-size: 12.5px; padding: 0 9px; }
+  .topbar .sp { flex: 1 1 100%; height: 0; }
+
+  /* mybapuji menu-पट्टी छोटी (आड़ी scroll चलती रहे) */
+  .mb-strip, .mb-strip .in { height: 34px; }
+  .mb-strip .in { padding: 0 8px; gap: 2px; }
+  .mb-strip .brand { font-size: 12px; padding: 3px 7px; margin-right: 2px; }
+  .mb-strip .mb-link { font-size: 12.5px; padding: 3px 7px; }
+
+  /* ---- बाईं पट्टी (कुंडली-सूची) सबसे ऊपर, छोटी ---- */
+  .side { width: auto; padding: 10px; gap: 6px; max-height: none; }
+  .side .list { max-height: 30vh; }
+  .side .brandbox { display: none; }          /* बड़ा logo phone पर जगह खाता है */
+  .side .btn { height: 40px; font-size: 13px; }
+  .chip { font-size: 13px; padding: 7px 12px; }   /* उँगली से दबाने लायक */
+  .inpDark { height: 40px; font-size: 15px; } /* iOS पर 16px से कम ज़ूम करा देता है — फ़ॉन्ट 15px + [meta] ठीक */
+
+  /* ---- form: एक कॉलम, बड़े खाने ---- */
+  .cols { grid-template-columns: 1fr; gap: 12px; }
+  .geo { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .f { margin-bottom: 12px; }
+  .f label { font-size: 14px; }
+  .inp, .inline select { height: 46px; font-size: 16px; }
+  .ib { width: 46px; height: 46px; font-size: 18px; }
+  .radios { font-size: 16px; padding: 10px 0; gap: 26px; }
+  .radios input { width: 20px; height: 20px; }
+  .hint { font-size: 12.5px; }
+  .foot { flex-wrap: wrap; gap: 8px; }
+  .foot .btn, .foot .btn.big { flex: 1 1 100%; height: 48px; font-size: 16px; }
+
+  /* ---- नतीजा: क्रम = चार्ट → BP/AP/गोचर (चिपके) → तालिकाएँ → स्पेशल ट्रांज़िट ---- */
+  .rgrid { display: flex; flex-direction: column; gap: 10px; }
+  .rcolL, .rcolR { display: contents; }        /* बच्चे सीधे ऊपर वाले flex के हो जाते हैं */
+  /* flex की पंक्तियाँ अपने बच्चे की कम-से-कम चौड़ाई से फैल जाती हैं — रोकें */
+  .rcolL > *, .rcolR > * { min-width: 0; max-width: 100%; }
+  .rcolL > .card:nth-child(1) { order: 1; }    /* चार्ट */
+  .rcolR > .chartctrl        { order: 2; }     /* BP | AP | गोचर — चिपका रहे */
+  .rcolR > .card:nth-child(2) { order: 3; }    /* BHAVA */
+  .rcolR > .card:nth-child(3) { order: 4; }    /* PLANET */
+  .rcolR > .card:nth-child(4) { order: 5; }    /* DHASA */
+  .rcolL > .card:nth-child(2) { order: 6; }    /* स्पेशल ट्रांज़िट */
+
+  .chartctrl { position: sticky; top: 0; z-index: 30; background: #faf6ee;
+    padding: 6px 0; margin: 0; border-bottom: 1px solid #e8dfcf; flex-wrap: wrap; }
+  .chartctrl .tab { font-size: 13px; padding: 7px 12px; }
+
+  .card { padding: 9px 10px; border-radius: 9px; }
+  .ct { font-size: 13px; }
+  .tabs { gap: 5px; }
+  .tab { font-size: 12.5px; padding: 5px 10px; }
+  .rbar { gap: 6px; }
+  .rbar .btn { height: 40px; }
+
+  /* चार्ट पूरी चौड़ाई में */
+  #rChart svg, .nchart { width: 100% !important; max-width: 100% !important; }
+  .south { max-width: 100%; }
+  .sc { min-height: 74px; font-size: 11px; }
+
+  /* तालिकाएँ: अंदर आड़ी scroll, page नहीं खिसके */
+  .tbl, .stres { overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 100%; }
+  .tbl table, .stres table { min-width: max-content; font-size: 12.5px; }
+  .tbl th, .tbl td { padding: 5px 8px; white-space: nowrap; }
+  .stres th, .stres td { padding: 4px 7px; white-space: nowrap; }
+
+  /* गोचर/तारीख़ के खाने — inline width को हराने के लिए !important */
+  .dtwrap { display: flex; align-items: center; gap: 4px; max-width: 100%; }
+  .dtwrap input { width: 100% !important; max-width: 100%; }
+  #gocharTime { min-width: 0; }
+  .stDate { height: 40px; font-size: 15px; }
+  .trow, .strow { gap: 6px; }
+  .trow .btn, .strow .btn { height: 40px; }
+
+  /* सेटिंग्स विंडो */
+  .modal { width: 100%; max-width: 100%; max-height: 100vh; border-radius: 0; }
+  .mbody { grid-template-columns: 1fr; padding: 12px; gap: 12px; }
+  .mrow label { width: 78px; font-size: 12.5px; }
+  .mrow .inp { height: 40px; font-size: 15px; }
+  .toast { max-width: 92%; bottom: 12px; font-size: 13.5px; }
+  .statusbar { font-size: 12px; padding: 6px 10px; }
+}
+
+/* बहुत छोटी screen (≤380px): ज़रा और कसकर */
+@media (max-width: 380px) {
+  .geo { grid-template-columns: 1fr; }
+  .topbar .btn { font-size: 12px; padding: 0 7px; }
+}
+
+/* ---- टैबलेट (641–820px): form और बाईं सूची दो कॉलम में, जगह बरबाद न हो ---- */
+@media (min-width: 641px) and (max-width: 820px) {
+  .shell { display: flex !important; align-items: stretch; }
+  .side { width: 244px; flex: none; }
+  .side .brandbox { display: none; }
+  .main { flex: 1; min-width: 0; }
+  .cols { grid-template-columns: 1fr 1fr; }
+  .geo { grid-template-columns: 1fr 1fr; }
+  .foot .btn, .foot .btn.big { flex: 0 0 auto; }
+}
