@@ -157,7 +157,7 @@ body{font-family:"Segoe UI","Nirmala UI","Noto Sans Devanagari","Kohinoor Devana
 .helpCourse a:hover{text-decoration:underline}
 .helpFoot{margin-top:10px;font-size:13px;color:#8a7a5a}
 .helpFoot a{color:#7a3b06}
-body.printing .helpModal{display:none!important}
+body.printing #helpModal{display:none!important}
 /* प्रिंट / PDF */
 #printSheet{display:none;background:#fff;color:#111}
 body.printing #printSheet{display:block;padding:14px 16px;font-size:13px;line-height:1.55}
