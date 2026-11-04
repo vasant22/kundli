@@ -116,15 +116,75 @@ describe.runIf(hasApp)('तारीख़/समय के खाने — ग
     w.close()
   })
 
-  it('खाना ख़ाली हो तब भी ढाँचा (placeholder जैसा) दिखता है, aria-label में प्रारूप', async () => {
+  it('खाना ख़ाली हो तब भी ढाँचा अक्षरों में दिखता है (DD-MM-YYYY), aria-label + aria-describedby', async () => {
     const w = await boot()
     await new Promise((r) => setTimeout(r, 50))
     const skel = w.document.querySelector('.mskel')
     expect(skel).toBeTruthy()
-    expect(skel.textContent).toBe('__-__-____')
+    expect(skel.textContent).toBe('DD-MM-YYYY')
     const el = w.document.getElementById('fDate')
     expect(el.getAttribute('aria-label') || '').toMatch(/दिन-महीना-वर्ष|DD-MM-YYYY/)
     expect(el.placeholder).toBe('')                 // पुराना लंबा placeholder हटा
+    // सहायता-पंक्ति सदा दिखे और खाने से जुड़ी हो
+    const hint = w.document.getElementById('hDate')
+    expect(hint.textContent).toBe('दिन-महीना-वर्ष · जैसे 18-06-1995')
+    expect(el.getAttribute('aria-describedby')).toBe('hDate')
+    w.close()
+  })
+
+  it('टाइप करते ही अक्षर की जगह अंक आते हैं — 05-1 → 05-1M-YYYY', async () => {
+    const w = await boot()
+    const skel = () => w.document.querySelector('.mskel').textContent
+    type(w, 'fDate', '0')
+    expect(skel()).toBe('0D-MM-YYYY')
+    type(w, 'fDate', '5')
+    expect(skel()).toBe('05-MM-YYYY')
+    type(w, 'fDate', '1')
+    expect(skel()).toBe('05-1M-YYYY')                // टास्क का हूबहू उदाहरण
+    type(w, 'fDate', '2')
+    expect(skel()).toBe('05-12-YYYY')
+    w.close()
+  })
+
+  it('Backspace पर अक्षर लौट आते हैं', async () => {
+    const w = await boot()
+    type(w, 'fDate', '051')
+    expect(w.document.querySelector('.mskel').textContent).toBe('05-1M-YYYY')
+    const el = w.document.getElementById('fDate')
+    el.dispatchEvent(new w.KeyboardEvent('keydown', { key: 'Backspace', bubbles: true, cancelable: true }))
+    expect(el.value).toBe('05-')
+    expect(w.document.querySelector('.mskel').textContent).toBe('05-MM-YYYY')   // M लौटा
+    w.close()
+  })
+
+  it('ग़लत अंक पर सहायता-पंक्ति लाल संदेश बने, ठीक होते ही सहायता लौटे', async () => {
+    const w = await boot()
+    const hint = w.document.getElementById('hDate')
+    const help = hint.textContent
+    type(w, 'fDate', '511')
+    expect(hint.textContent).toBe('दिन 31 से अधिक नहीं हो सकता')
+    expect(hint.className).toContain('err')
+    type(w, 'fDate', '2')                            // ग़लत '1' रुका था; अब 2 लेते हैं (52? नहीं — '5' के बाद 2 = 52 > 31 → रुकेगा)
+    expect(hint.className).toContain('err')
+    const w2 = await boot()
+    const h2 = w2.document.getElementById('hDate')
+    type(w2, 'fDate', '3')                          // ठीक अंक — पंक्ति सहायता पर लौटे
+    expect(h2.textContent).toBe('दिन-महीना-वर्ष · जैसे 18-06-1995')
+    expect(h2.className).not.toContain('err')
+    w.close(); w2.close()
+  })
+
+  it('समय के खाने में HH:MM ढाँचा और सेकंड शुरू होने पर :SS', async () => {
+    const w = await boot()
+    const skel = () => w.document.querySelectorAll('.mskel')[1].textContent
+    await new Promise((r) => setTimeout(r, 40))
+    expect(skel()).toBe('HH:MM')
+    type(w, 'fTime', '1447')
+    expect(skel()).toBe('14:47:SS')                  // मिनट पूरा → सेकंड की जगह दिखे
+    type(w, 'fTime', '32')
+    expect(skel()).toBe('14:47:32')
+    expect(w.document.getElementById('hTime').textContent).toContain('सेकंड वैकल्पिक')
+    expect(w.document.getElementById('fTime').getAttribute('aria-describedby')).toBe('hTime')
     w.close()
   })
 
