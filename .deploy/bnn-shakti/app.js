@@ -500,6 +500,9 @@
   function curT() { return (RTRANSIT && RESULT && RESULT.trTables) ? RESULT.trTables : RESULT; }
   var RST = null;
   var HI = { sun: 'सूर्य', moon: 'चंद्र', mars: 'मंगल', mercury: 'बुध', jupiter: 'गुरु', venus: 'शुक्र', saturn: 'शनि', rahu: 'राहु', ketu: 'केतु' };
+  // संस्करण — version.js से (एक ही स्थिरांक); न मिले तो सिर्फ़ नाम
+  var APP_VER = (window.BNNSemver && window.BNNSemver.appVersion) ? window.BNNSemver.appVersion : '';
+  var APP_LABEL = 'BNN Shakti' + (APP_VER ? ' ' + APP_VER : '');
   var SHORT = { sun: 'SUN', moon: 'MOO', mars: 'MAR', mercury: 'MER', jupiter: 'JUP', venus: 'VEN', saturn: 'SAT', rahu: 'RAH', ketu: 'KET' }; // राउंड 11: बड़े code (website जैसे)
   var RASHIS = ['मेष', 'वृष', 'मिथुन', 'कर्क', 'सिंह', 'कन्या', 'तुला', 'वृश्चिक', 'धनु', 'मकर', 'कुम्भ', 'मीन'];
   var RASHIS_EN = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'];
@@ -1646,11 +1649,11 @@
     var isSouth = (typeof RCHART !== 'undefined' && RCHART === 'south');
     var chartSvg = isSouth ? southSvgString() : northSvgString();
     var cap = isSouth ? L('दक्षिण भारतीय चार्ट (गोचर सहित)', 'South Indian Chart (with transit)') : L('उत्तर भारतीय चार्ट (गोचर सहित)', 'North Indian Chart (with transit)');
-    var brand = '<div class="pBrand"><img class="pBrandIcon" src="branding/bnn-shakti.png"><div><div class="pBrandName">BNN Shakti 1.0 (beta)</div><div class="pBrandSub"><a href="mailto:info@mybapuji.com">info@mybapuji.com</a> · <a href="https://mybapuji.com" target="_blank">mybapuji.com</a></div></div></div>';
+    var brand = '<div class="pBrand"><img class="pBrandIcon" src="branding/bnn-shakti.png"><div><div class="pBrandName">' + APP_LABEL + '</div><div class="pBrandSub"><a href="mailto:info@mybapuji.com">info@mybapuji.com</a> · <a href="https://mybapuji.com" target="_blank">mybapuji.com</a></div></div></div>';
     var astr = [a.name, a.title].filter(Boolean).join(' — ');
     var astr2 = [a.addr1, a.addr2, a.city, (a.pin ? L('पिन ', 'PIN ') + a.pin : ''), (a.phone ? '📞 ' + a.phone : ''), a.email, a.website].filter(Boolean).join(' · ');
     var foot = '<div class="pFoot"><div class="pFootAstro">' + esc(astr || '') + (astr2 ? '<span class="pFootSep"> · </span>' + esc(astr2) : '') + '</div>'
-      + L('BNN Shakti 1.0 (beta) · <a href="mailto:info@mybapuji.com">info@mybapuji.com</a> · <a href="https://mybapuji.com" target="_blank">mybapuji.com</a> · प्रिंट: ', 'BNN Shakti 1.0 (beta) · <a href="mailto:info@mybapuji.com">info@mybapuji.com</a> · <a href="https://mybapuji.com" target="_blank">mybapuji.com</a> · Printed: ') + todayStamp() + '</div>';
+      + APP_LABEL + L(' · <a href="mailto:info@mybapuji.com">info@mybapuji.com</a> · <a href="https://mybapuji.com" target="_blank">mybapuji.com</a> · प्रिंट: ', ' · <a href="mailto:info@mybapuji.com">info@mybapuji.com</a> · <a href="https://mybapuji.com" target="_blank">mybapuji.com</a> · Printed: ') + todayStamp() + '</div>';
     var page = function (inner, last) { return '<div class="pPage">' + inner + (last ? foot : '') + '</div>'; };
     var two = function (l, r) { return '<div class="pTwoCol"><div class="pSide">' + l + '</div><div class="pSide">' + r + '</div></div>'; };
     var m1 = RMODE;                       // 30+ → AP, 30− → BP (openResult में तय)
@@ -1868,7 +1871,7 @@
       ctx.fillStyle = '#8f1d14'; ctx.font = 'bold 14px sans-serif';
       ctx.fillText('mybapuji.com - निशुल्क ज्योतिष सामग्री: कुंडली · कुंडली मिलान · पंचांग · BNN चार्ट', W / 2, yEnd + 8);
       ctx.fillStyle = '#6b5b3a'; ctx.font = '13px sans-serif';
-      ctx.fillText('BNN Shakti 1.0 · info@mybapuji.com', W / 2, yEnd + 28);
+      ctx.fillText(APP_LABEL + ' · info@mybapuji.com', W / 2, yEnd + 28);
       var outH = Math.round(yEnd + 44);
       var out = document.createElement('canvas');
       out.width = W; out.height = outH;
@@ -2333,7 +2336,7 @@
     els = document.querySelectorAll('[data-lt]');
     for (i = 0; i < els.length; i++) els[i].title = T(els[i].getAttribute('data-lt'));
     document.documentElement.lang = (LANG === 'en') ? 'en' : 'hi';
-    if (!/mybapuji/.test(document.title)) document.title = 'BNN Shakti 1.0 (beta)';
+    if (!/mybapuji/.test(document.title)) document.title = APP_LABEL;
     $('btnLang').textContent = L('🌐 भाषा: हिंदी', '🌐 Language: English');
     refreshAyanOptions();
     refreshFormTitle();

@@ -8,6 +8,10 @@
 (function (root) {
   'use strict'
 
+  // ऐप का संस्करण — **यही एक जगह** (राउंड 65 / टास्क 05)। बदलते समय यह भी बदलें:
+  // desktop/package.json · build/version.json · CHANGELOG.md
+  var APP_VERSION = '1.0.1'
+
   function parse(v) {
     var s = String(v == null ? '' : v).trim()
     var m = /^v?(\d+(?:\.\d+)*)/i.exec(s)
@@ -27,7 +31,7 @@
     return 0
   }
 
-  var api = { parse: parse, compare: compare }
+  var api = { parse: parse, compare: compare, appVersion: APP_VERSION, label: 'BNN Shakti ' + APP_VERSION }
   if (typeof module !== 'undefined' && module.exports) module.exports = api
   if (root && typeof root === 'object') root.BNNSemver = api
 })(typeof window !== 'undefined' ? window : (typeof globalThis !== 'undefined' ? globalThis : this))
