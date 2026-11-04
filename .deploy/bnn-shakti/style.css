@@ -129,10 +129,18 @@ body{font-family:"Segoe UI","Nirmala UI","Noto Sans Devanagari","Kohinoor Devana
 .logoImg{height:30px;border:1px solid #d8cfc0;border-radius:6px;background:#fff}
 .mfoot{display:flex;gap:8px;justify-content:flex-end;padding:0 16px 14px}
 .hint12{font-size:14px;font-weight:700;color:#1d4ed8;min-width:70px;text-align:right}
+/* "नया संस्करण उपलब्ध है" की पट्टी (राउंड 65 / टास्क 03) — केवल desktop */
+.updbar{flex:none;display:flex;align-items:center;gap:10px;padding:5px 12px;background:#7c2d12;color:#fff7ed;font-size:13px;border-bottom:2px solid #d97706;line-height:1.4}
+.updbar .updTxt{min-width:0}
+.updbar b{color:#fde68a}
+.updbar .updGo{flex:none;height:26px;border-radius:6px;border:0;background:#f59e0b;color:#3f2703;font-weight:700;font-size:12.5px;padding:0 11px;cursor:pointer;font-family:inherit}
+.updbar .updGo:hover{background:#fbbf24}
+.updbar .updX{flex:none;height:26px;width:26px;border-radius:6px;border:1px solid #a16207;background:transparent;color:#fff7ed;cursor:pointer;font-size:13px;line-height:1;font-family:inherit}
+.updbar .updX:hover{background:#a16207}
 /* प्रिंट / PDF */
 #printSheet{display:none;background:#fff;color:#111}
 body.printing #printSheet{display:block;padding:14px 16px;font-size:13px;line-height:1.55}
-body.printing .topbar,body.printing .shell,body.printing .statusbar,body.printing .result,body.printing .toast,body.printing #settingsModal{display:none!important}
+body.printing .topbar,body.printing .shell,body.printing .statusbar,body.printing .result,body.printing .toast,body.printing .updbar,body.printing #settingsModal{display:none!important}
 #printSheet .pHead{background:#faf6ee;border:1px solid #e8dfcf;border-radius:8px;padding:8px 10px}
 #printSheet .pSlogan{text-align:center;font-size:16px;font-weight:700;color:#7a4a12}
 #printSheet .pName{text-align:center;font-size:14px;font-weight:700;margin-top:2px}

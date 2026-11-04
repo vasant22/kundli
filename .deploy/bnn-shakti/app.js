@@ -19,6 +19,49 @@
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
+  // ---------- "नया संस्करण उपलब्ध है" की पतली पट्टी (राउंड 65 / टास्क 03) ----------
+  // केवल desktop में: window.desktop.checkUpdate() से version.json आता है। web version में
+  // window.desktop ही नहीं होता, इसलिए यह पट्टी कभी नहीं दिखती (वहाँ हमेशा नया ही चलता है)।
+  // कोई गड़बड़ (internet नहीं, file नहीं, JSON गलत) → चुपचाप कुछ नहीं।
+  var UPD_SKIP_KEY = 'bnn_upd_skip_v1';
+  function showUpdateBar(u) {
+    if (!u || !u.version) return;
+    var cmp = (window.BNNSemver && window.BNNSemver.compare) ? window.BNNSemver.compare(u.version, u.current) : 0;
+    if (cmp <= 0) return;                        // नया नहीं है — कुछ न दिखाओ
+    try { if (localStorage.getItem(UPD_SKIP_KEY) === u.version) return; } catch (e) {}
+    if (document.getElementById('updBar')) return;
+    var bar = document.createElement('div');
+    bar.id = 'updBar';
+    bar.className = 'updbar';
+    bar.innerHTML =
+      '<span class="updTxt">' + L('BNN Shakti का नया संस्करण ', 'A newer version of BNN Shakti is available: ') +
+      '<b>' + esc(u.version) + '</b> ' + L('उपलब्ध है', 'is available') +
+      (u.note ? ' — ' + esc(u.note) : '') + '</span>' +
+      '<span class="sp"></span>' +
+      '<button type="button" class="updGo" id="updGo">' + L('डाउनलोड करें', 'Download') + '</button>' +
+      '<button type="button" class="updX" id="updX" title="' + L('बंद करें', 'Close') + '" aria-label="' + L('बंद करें', 'Close') + '">✕</button>';
+    document.body.insertBefore(bar, document.body.firstChild);
+    $('updGo').addEventListener('click', function () {
+      var url = u.url || 'https://mybapuji.com/free-bhrigu-nandi-nadi-jyotish-software-download/';
+      if (window.desktop && window.desktop.openExternal) window.desktop.openExternal(url);
+      else window.open(url, '_blank', 'noopener');
+    });
+    $('updX').addEventListener('click', function () {
+      try { localStorage.setItem(UPD_SKIP_KEY, u.version); } catch (e) {}
+      if (bar.parentNode) bar.parentNode.removeChild(bar);
+    });
+  }
+  // जाँच — खुलने के 5 सेकंड बाद एक बार (देरी से, ताकि शुरुआत धीमी न हो)
+  function scheduleUpdateCheck() {
+    if (!(window.desktop && window.desktop.checkUpdate)) return;
+    setTimeout(function () {
+      try {
+        window.desktop.checkUpdate().then(function (u) { if (u) showUpdateBar(u); }).catch(function () {});
+      } catch (e) { /* चुपचाप */ }
+    }, 5000);
+  }
+  window.BNN_showUpdateBar = showUpdateBar;   // जाँच के लिए (नुक़सान नहीं)
+
   function setStatus() {
     var d = new Date();
     var hh = ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
@@ -2570,6 +2613,7 @@
     $('dmRestore').addEventListener('click', function () { closeDataModal(); closeSettings(); $('fileIn').click(); });
     $('dataClose').addEventListener('click', closeDataModal);
     $('dataModal').addEventListener('mousedown', function (ev) { if (ev.target === this) closeDataModal(); });
+    scheduleUpdateCheck();
     if (window.desktop && window.desktop.isDesktop) {
       $('dmNoteBrowser').hidden = true;
       $('dmNoteDesktop').hidden = false;
