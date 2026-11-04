@@ -5714,54 +5714,47 @@
 	*/
 	function bhukthiList(maha, birth, settings = DASHA_SETTINGS) {
 		const b0 = birthYMD(birth);
-		const rows = [];
-		let start = parseISO(maha.startISO);
+		const birthISO = `${b0.y}-${String(b0.m).padStart(2, "0")}-${String(b0.d).padStart(2, "0")}`;
+		const birthDate = parseISO(birthISO);
+		const start0 = parseISO(maha.startISO);
 		const end = parseISO(maha.endISO);
 		const lordIdx = ORDER.indexOf(maha.lord);
 		const nominal = (lord) => Math.floor(YEARS[maha.lord] * settings.bhukthiYearDays * YEARS[lord] / 120);
-		let overhang = 0;
-		{
-			let sum = 0;
-			for (let i = 0; i < 9; i++) sum += nominal(ORDER[(lordIdx + i) % 9]);
-			const span = Math.round((end - start) / 864e5);
-			if (sum - span > 366) overhang = sum - span;
-		}
+		const partial = iso(start0) === birthISO;
+		const sum9 = ORDER.reduce((a, l) => a + nominal(l), 0);
+		const fullStart = partial ? addDays(end, -sum9) : start0;
+		const rows = [];
+		let cur = fullStart;
 		for (let i = 0; i < 9; i++) {
 			const lord = ORDER[(lordIdx + i) % 9];
-			const last = i === 8;
-			if (overhang > 0) {
-				const nom = nominal(lord);
-				if (overhang >= nom) {
-					overhang -= nom;
-					rows.push({
-						lord,
-						blank: true,
-						startISO: null,
-						endISO: null,
-						age: null
-					});
-					continue;
-				}
-				const len = nom - overhang;
-				overhang = 0;
-				const e = addDays(start, len);
+			let e = i === 8 ? end : addDays(cur, nominal(lord));
+			if (e.getTime() > end.getTime()) e = end;
+			const blank = (why) => {
 				rows.push({
 					lord,
-					startISO: iso(start),
-					endISO: iso(e),
-					age: ymdDiff(b0, ymdOf(e))
+					blank: true,
+					startISO: null,
+					endISO: null,
+					age: null
 				});
-				start = e;
+				cur = e;
+			};
+			if (e.getTime() <= birthDate.getTime()) {
+				blank();
 				continue;
 			}
-			const e = last ? end : addDays(start, nominal(lord));
+			const s1 = cur.getTime() < birthDate.getTime() ? birthDate : cur;
+			if (e.getTime() <= s1.getTime()) {
+				blank();
+				continue;
+			}
 			rows.push({
 				lord,
-				startISO: iso(start),
+				startISO: iso(s1),
 				endISO: iso(e),
 				age: ymdDiff(b0, ymdOf(e))
 			});
-			start = e;
+			cur = e;
 		}
 		return rows;
 	}

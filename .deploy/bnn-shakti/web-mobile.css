@@ -22,11 +22,19 @@
   .topbar .btn { height: 40px; font-size: 12.5px; padding: 0 9px; }
   .topbar .sp { flex: 1 1 100%; height: 0; }
 
-  /* mybapuji menu-पट्टी छोटी (आड़ी scroll चलती रहे) */
+  /* mybapuji menu-पट्टी छोटी (आड़ी scroll) — दाएँ किनारे पर हल्का fade,
+     ताकि दिखे कि आगे और item हैं (आख़िरी item आधा कटा न लगे) */
   .mb-strip, .mb-strip .in { height: 34px; }
-  .mb-strip .in { padding: 0 8px; gap: 2px; }
+  .mb-strip { position: relative; }
+  .mb-strip .in { padding: 0 8px; gap: 2px; overscroll-behavior-x: contain;
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 26px), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 26px), transparent); }
   .mb-strip .brand { font-size: 12px; padding: 3px 7px; margin-right: 2px; }
   .mb-strip .mb-link { font-size: 12.5px; padding: 3px 7px; }
+
+  /* ऊपर की पट्टी में PNG/प्रिंट/PDF फ़ोन पर नहीं — ये नतीजे की पंक्ति में
+     (← वापस के साथ) पहले से हैं, दो बार न दिखें */
+  .topbar #btnPng, .topbar #btnPrint, .topbar #btnPdf { display: none !important; }
 
   /* ---- बाईं पट्टी (कुंडली-सूची) सबसे ऊपर, छोटी ---- */
   .side { width: auto; padding: 10px; gap: 6px; max-height: none; }
