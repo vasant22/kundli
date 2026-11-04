@@ -246,7 +246,8 @@
     }
     $('fLat').value = p.lat; $('fLon').value = p.lon;
     $('fGmt').value = 5.5; $('fDstChk').checked = false;
-    hideSugg(); updateFormOk();
+    GMT_AUTO = true;                 // सूची से चुना → offset हमारा (1906 से पहले हो तो LMT)
+    hideSugg(); updateFormOk(); maybeLmt();
   }
   function applyPlace() {
     var v = $('fPlace').value.trim();
@@ -353,6 +354,7 @@
     $('fPlace').value = plv; hideSugg();
     $('fLat').value = r.lat != null ? r.lat : ''; $('fLon').value = r.lon != null ? r.lon : '';
     $('fGmt').value = r.gmt != null ? r.gmt : 5.5; $('fDstChk').checked = Number(r.dst) > 0;
+    GMT_AUTO = false;   // सहेजी कुंडली का offset कभी अपने-आप न बदले
     refreshFormTitle();
     clearErr(); updateHour12(); updateFormOk(); renderList();
     toast(L('कुंडली खोल दी — संदर्भ ', 'Kundli opened — Ref ') + r.ref);
@@ -362,6 +364,57 @@
     ['fDate', 'fTime', 'fLat', 'fLon', 'fGmt', 'fPlace'].forEach(function (id) { $(id).classList.remove('err'); });
     $('hDate').textContent = ''; $('hTime').textContent = '';
     $('hDate').className = 'hint'; $('hTime').className = 'hint';
+  }
+
+  // ---------- 1906 से पहले का जन्म: स्थानीय समय (LMT) (राउंड 65 / टास्क 07-ग) ----------
+  // भारत में 01-01-1906 से पहले घड़ी स्थानीय (सूर्य) समय पर थी। ऐसे जन्म में GMT-खाना
+  // देशांतर/15 से भर देते हैं (ऐप offset मिनट तक ही रखता है, इसलिए निकटतम मिनट)।
+  // उपयोगकर्ता ने ख़ुद offset लिखा हो तो **कभी नहीं** बदलते।
+  var GMT_AUTO = true;          // true = हमने भरा है (बदला जा सकता है); false = user ने ख़ुद लिखा
+  function pad2n(n) { return (n < 10 ? '0' : '') + n; }
+  function lmtOf(lon) {          // देशांतर → {min घंटे में, text '+05:32:56'}
+    var hoursExact = Number(lon) / 15;
+    var totalSec = Math.round(hoursExact * 3600);
+    var sign = totalSec < 0 ? '-' : '+';
+    var a = Math.abs(totalSec);
+    var h = Math.floor(a / 3600), m = Math.floor((a % 3600) / 60), sec = a % 60;
+    var minutes = Math.round(hoursExact * 60);          // ऐप इतना ही रखता है
+    return { gmt: minutes / 60, text: sign + pad2n(h) + ':' + pad2n(m) + ':' + pad2n(sec) };
+  }
+  function isIndia() {
+    var c = $('fCountry');
+    return !c || c.value === 'India' || $('fCountry').value === '';
+  }
+  function maybeLmt() {
+    var hint = $('hGmt'); if (!hint) return;
+    hint.textContent = ''; hint.className = 'hint';
+    var d = vDate($('fDate').value);
+    if (!d) return;
+    var y = +d.slice(-4), md = d.slice(3);     // 'MM-YYYY'
+    var before = (y < 1906);
+    var lon = vNum($('fLon').value);
+    var place = String($('fPlace').value || '');
+    // (क) 1906 से पहले + भारत + निर्देशांक मौजूद + offset हमारा → LMT भरो
+    if (before && isIndia() && lon !== null && GMT_AUTO) {
+      var l = lmtOf(lon);
+      $('fGmt').value = String(Math.round(l.gmt * 1e4) / 1e4);
+      hint.textContent = L('1906 से पहले का जन्म — स्थानीय समय (LMT) ' + l.text + ' लगाया गया (देशांतर ' + Number(lon).toFixed(2) + '°); चाहें तो बदल सकते हैं।',
+        'Birth before 1906 — local mean time (LMT) ' + l.text + ' filled in (longitude ' + Number(lon).toFixed(2) + '°); you may change it.');
+      hint.className = 'hint lmt';
+      return;
+    }
+    // (ख) बॉम्बे / कलकत्ता — सिर्फ़ सूचना (offset अपने-आप नहीं बदलता)
+    var isBom = /mumbai|bombay|मुंबई|बॉम्बे/i.test(place);
+    var isCal = /kolkata|calcutta|कोलकाता|कलकत्ता/i.test(place);
+    if (isBom && y >= 1906 && y <= 1955) {
+      hint.textContent = L('उस समय बॉम्बे-समय (+04:51) चलता था। ऐप offset अपने-आप नहीं बदलता — जानकारी के लिए लिखा है।',
+        'Bombay Time (+04:51) was in use then. The app does not change the offset automatically — shown for information.');
+      hint.className = 'hint lmt';
+    } else if (isCal && y >= 1906 && y <= 1948) {
+      hint.textContent = L('उस समय कलकत्ता-समय (+05:53:20) चलता था। ऐप offset अपने-आप नहीं बदलता — जानकारी के लिए लिखा है।',
+        'Calcutta Time (+05:53:20) was in use then. The app does not change the offset automatically — shown for information.');
+      hint.className = 'hint lmt';
+    }
   }
 
   function gather() {
@@ -407,14 +460,62 @@
     return { rec: rec, errs: errs };
   }
 
-  function saveKundli(silent) {
+  // खुले रिकॉर्ड का "व्यक्ति" बदला या नहीं — नाम या जन्म-विवरण (तारीख़/समय/स्थान/लिंग)
+  // अलग हो तो यह दूसरा व्यक्ति है; सिर्फ़ group/मोबाइल बदलना "सुधार" है।
+  function identityChanged(oldR, rec) {
+    if (!oldR) return false;
+    var g1 = String(oldR.gender || 'पुरुष'), g2 = String(rec.gender || 'पुरुष');
+    return String(oldR.name || '').trim() !== String(rec.name || '').trim()
+      || String(oldR.date || '') !== String(rec.date || '')
+      || String(oldR.time || '') !== String(rec.time || '')
+      || String(oldR.placeEN || oldR.place || '') !== String(rec.placeEN || rec.place || '')
+      || Number(oldR.lat) !== Number(rec.lat) || Number(oldR.lon) !== Number(rec.lon)
+      || Number(oldR.gmt) !== Number(rec.gmt) || Number(oldR.dst || 0) !== Number(rec.dst || 0)
+      || g1 !== g2;
+  }
+  // पूछने वाली खिड़की: "बदलें" या "नई कुंडली" (default = नई कुंडली)
+  function askOverwrite(oldName, done) {
+    var old = document.getElementById('owModal'); if (old) old.remove();
+    var wrap = document.createElement('div');
+    wrap.id = 'owModal';
+    wrap.style.cssText = 'position:fixed;inset:0;background:rgba(20,24,32,.55);display:flex;align-items:center;justify-content:center;z-index:9999';
+    wrap.innerHTML = '<div style="background:#faf6ee;border:2px solid #d97706;border-radius:14px;max-width:560px;padding:20px 22px;box-shadow:0 18px 50px rgba(0,0,0,.35);font-family:inherit">' +
+      '<div style="font-size:18px;font-weight:800;color:#7a4a18;margin-bottom:8px">' + L('यह कुंडली बदलें या नई सहेजें?', 'Replace this kundli or save as new?') + '</div>' +
+      '<div style="font-size:14.5px;color:#3f3627;line-height:1.65;margin-bottom:16px">' +
+      L('इसमें नाम या जन्म-विवरण बदला हुआ है। <b>' + esc(oldName || 'पुरानी') + '</b> की कुंडली बदलें, या इसे <b>नई कुंडली</b> के रूप में सहेजें?',
+        'The name or birth details have changed. Replace <b>' + esc(oldName || 'the old') + '</b> kundli, or save this as a <b>new</b> kundli?') + '</div>' +
+      '<div style="display:flex;gap:10px;flex-wrap:wrap">' +
+      '<button id="owNew" class="btn" style="height:40px;background:#d97706;color:#fff;border-color:#d97706;font-weight:800">' + L('नई कुंडली सहेजें', 'Save as new') + '</button>' +
+      '<button id="owReplace" class="btn" style="height:40px">' + L('पुरानी बदलें', 'Replace old') + '</button>' +
+      '<button id="owCancel" class="btn" style="height:40px;margin-left:auto">' + L('रद्द', 'Cancel') + '</button>' +
+      '</div></div>';
+    document.body.appendChild(wrap);
+    var close = function () { wrap.remove(); };
+    var first = wrap.querySelector('#owNew');
+    wrap.querySelector('#owNew').onclick = function () { close(); done('new'); };
+    wrap.querySelector('#owReplace').onclick = function () { close(); done('replace'); };
+    wrap.querySelector('#owCancel').onclick = function () { close(); done('cancel'); };
+    wrap.addEventListener('click', function (e) { if (e.target === wrap) { close(); done('cancel'); } });
+    setTimeout(function () { try { first.focus(); } catch (e) {} }, 30);
+  }
+
+  async function saveKundli(silent) {
     var g = gather();
     if (g.errs.length) { toast(L('कृपया पहले ठीक करें: ', 'Please fix first: ') + g.errs.join(' · ')); return null; }
-    var rec = g.rec; var isNew = !currentId;
+    var rec = g.rec;
+    var oldR = null;
+    if (currentId) { for (var k = 0; k < state.records.length; k++) if (state.records[k].id === currentId) oldR = state.records[k]; }
+    var mode = 'new';
+    if (oldR && identityChanged(oldR, rec)) {
+      mode = await new Promise(function (res) { askOverwrite(oldR.name, res); });
+      if (mode === 'cancel') return null;      // कुछ नहीं बदला
+    } else if (oldR) {
+      mode = 'replace';                         // कुछ बदला ही नहीं (या केवल group/मोबाइल) → वही रिकॉर्ड
+    }
+    var isNew = (mode !== 'replace') || !oldR;
     if (!isNew) {
-      for (var i = 0; i < state.records.length; i++) {
-        if (state.records[i].id === currentId) { rec.id = currentId; rec.ref = state.records[i].ref; state.records[i] = rec; break; }
-      }
+      rec.id = currentId; rec.ref = oldR.ref;
+      for (var i = 0; i < state.records.length; i++) if (state.records[i].id === currentId) { state.records[i] = rec; break; }
     } else {
       rec.id = Date.now(); rec.ref = state.nextRef; state.nextRef++;
       state.records.push(rec); currentId = rec.id;
@@ -432,7 +533,7 @@
     $('fName').value = ''; $('fMobile').value = '';
     $('fDate').value = ''; $('fTime').value = '';
     $('fCountry').value = 'India'; rebuildStates('Maharashtra'); $('fPlace').value = ''; hideSugg();
-    $('fLat').value = ''; $('fLon').value = ''; $('fGmt').value = 5.5; $('fDstChk').checked = false;
+    $('fLat').value = ''; $('fLon').value = ''; $('fGmt').value = 5.5; $('fDstChk').checked = false; GMT_AUTO = true;
     applyDefaultPlace();
     var gs = document.getElementsByName('gender');
     for (var j = 0; j < gs.length; j++) gs[j].checked = false;   // चरण 3: पहले से कुछ चुना न हो
@@ -2387,8 +2488,7 @@
     $('btnSave').addEventListener('click', function () { saveKundli(false); });
     $('btnDelete').addEventListener('click', deleteKundli);
     $('btnShow').addEventListener('click', function () {
-      var r = saveKundli(true);
-      if (r) openResult(r);
+      saveKundli(true).then(function (r) { if (r) openResult(r); });
     });
     $('btnAddGroup').addEventListener('click', openGroupModal);
     $('groupSave').addEventListener('click', createGroup);
@@ -2419,6 +2519,12 @@
     $('fTime').addEventListener('input', updateHour12);
     $('fTime').addEventListener('blur', updateHour12);
     $('fDate').addEventListener('blur', function () { var v = vDate(this.value); if (v) this.value = v; });
+    // राउंड 65 / टास्क 07-ग: 1906 से पहले का LMT अपने-आप
+    $('fGmt').addEventListener('input', function () { GMT_AUTO = false; maybeLmt(); });
+    $('fDate').addEventListener('change', maybeLmt);
+    $('fLat').addEventListener('input', maybeLmt);
+    $('fLon').addEventListener('input', maybeLmt);
+    $('fPlace').addEventListener('change', maybeLmt);
     $('fTime').addEventListener('blur', function () { var v = vTime(this.value); if (v) this.value = v; });
 
     document.querySelectorAll('.chip').forEach(function (c) {

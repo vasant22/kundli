@@ -131,6 +131,17 @@ describe.runIf(hasApp)('1.0.0 → 1.0.1: पुराना data बचता �
     w2.close()
   })
 
+  it('खोली गई कुंडली अपने सहेजे निर्देशांक ही इस्तेमाल करती है (सूची से नहीं पढ़ती)', async () => {
+    // ref 10 में lat 21.9006 है, पर यहाँ हम 21.4833 (पुरानी सर-वाली) सहेजकर देखते हैं
+    const st = { nextRef: 2, groups: ['परिवार'], records: [Object.assign({}, RECS[0], { lat: 21.4833, lon: 78.25, gmt: 5.5 })] }
+    const w = await boot({ bnn_kundli_v1: st })
+    w.document.querySelector('#list .li').click()
+    await new Promise((r) => setTimeout(r, 80))
+    expect(Number(w.document.getElementById('fLat').value)).toBe(21.4833)
+    expect(Number(w.document.getElementById('fLon').value)).toBe(78.25)
+    w.close()
+  })
+
   it('पुरानी (1.0.0) शैली की backup फ़ाइल भी खुलती है — जिन खेतों में gender/सेकंड न हों', async () => {
     const oldStyle = {
       nextRef: 3,

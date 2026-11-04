@@ -27,8 +27,8 @@ function appStates() {
 describe.runIf(hasApp)('स्थान-सूची (places.js) — भरोसे की जाँच', () => {
   const P = hasApp ? loadPlaces() : []
 
-  it('सूची में 6000+ स्थान हैं और हर प्रविष्टि में नाम/राज्य/अक्षांश/देशांतर है', () => {
-    expect(P.length).toBeGreaterThan(6000)
+  it('सूची में 6500+ स्थान हैं और हर प्रविष्टि में नाम/राज्य/अक्षांश/देशांतर है', () => {
+    expect(P.length).toBeGreaterThan(6500)
     for (const p of P) {
       expect(typeof p[0], 'नाम').toBe('string')
       expect(p[0].trim().length, 'ख़ाली नाम').toBeGreaterThan(0)
@@ -78,6 +78,22 @@ describe.runIf(hasApp)('स्थान-सूची (places.js) — भरो�
       expect(Math.abs(p[4] - lon), name + ' देशांतर').toBeLessThan(0.5)
       expect(p[2], name + ' राज्य').toBeTruthy()
     }
+  })
+
+  it('ज़िला-मुख्यालय मौजूद हैं (07-ख में जोड़े गए): Tawang, Champhai, Dharwad, Mangaldoi, Golaghat', () => {
+    for (const n of ['Tawang', 'Champhai', 'Dharwad', 'Mangaldoi', 'Golaghat', 'Sarupathar']) {
+      const p = P.find((x) => x[0] === n)
+      expect(p, n + ' सूची में नहीं').toBeTruthy()
+      expect(p[3] > 6 && p[3] < 37 && p[4] > 68 && p[4] < 98, n + ' के निर्देशांक').toBe(true)
+    }
+    // Sarupathar असम में, गोलाघाट के पास (26.0–26.3, 93.7–94.1) — 96.81 वाली ग़लत प्रविष्टि नहीं
+    const sar = P.filter((x) => x[0] === 'Sarupathar')
+    expect(sar.length).toBe(1)
+    expect(sar[0][2]).toBe('Assam')
+    expect(sar[0][3]).toBeGreaterThan(26.0)
+    expect(sar[0][3]).toBeLessThan(26.3)
+    expect(sar[0][4]).toBeGreaterThan(93.7)
+    expect(sar[0][4]).toBeLessThan(94.1)
   })
 
   it('राज्य-नाम की जाँच: Daman & Diu के स्थान अब उसी राज्य में हैं, Dadra & Nagar Haveli में नहीं', () => {
