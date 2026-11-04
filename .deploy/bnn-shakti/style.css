@@ -158,6 +158,16 @@ body{font-family:"Segoe UI","Nirmala UI","Noto Sans Devanagari","Kohinoor Devana
 .helpFoot{margin-top:10px;font-size:13px;color:#8a7a5a}
 .helpFoot a{color:#7a3b06}
 body.printing #helpModal{display:none!important}
+/* जन्म-तारीख़/समय के खाने — ढाँचा सदा दिखे + ग़लत अंक पर झटका (राउंड 65 / टास्क 09) */
+.mskel{position:fixed;z-index:5;pointer-events:none;white-space:pre;color:#b9b0a0;overflow:hidden;user-select:none}
+/* masked खाने monospace में — तभी '_' और अंक बराबर चौड़े होते हैं और ढाँचा हूबहू बैठता है */
+.maskf{font-family:ui-monospace,"SF Mono",Menlo,Consolas,"DejaVu Sans Mono",monospace;font-variant-numeric:tabular-nums;letter-spacing:0}
+.inp.nope,.stDate.nope{border-color:#dc2626!important;background:#fff7f7!important}
+@keyframes nopeShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+.inp.nope,.stDate.nope{animation:nopeShake .17s 2}
+@media (prefers-reduced-motion: reduce){.inp.nope,.stDate.nope{animation:none}}
+.mmsg{color:#b91c1c;font-weight:600}
+body.printing .mskel{display:none!important}
 /* प्रिंट / PDF */
 #printSheet{display:none;background:#fff;color:#111}
 body.printing #printSheet{display:block;padding:14px 16px;font-size:13px;line-height:1.55}

@@ -745,6 +745,7 @@
   function showView(which) {
     document.querySelector('.shell').hidden = (which !== 'form');
     $('viewResult').hidden = (which !== 'result');
+    try { document.dispatchEvent(new Event('bnn:skel')); } catch (e) {}   // तारीख़-खानों का ढाँचा फिर बैठाओ
     // कुंडली खुलते ही page ऊपर-से (पूरी view) दिखे — user request 2026-10-16
     if (which === 'result') { try { window.scrollTo(0, 0); } catch (e) {} }
   }
@@ -2076,6 +2077,106 @@
     // 'dt' खाने में "ओवरराइट" ढंग: छहों हिस्से (दिन-महीना-वर्ष घंटा:मिनट:सेकंड) सदा दिखें,
     // अंक टाइप करने पर उसी जगह का अंक बदले, Backspace केवल cursor पीछे ले जाए, और
     // खाना अधूरा/ग़लत छोड़कर बाहर निकलें तो आख़िरी सही तारीख़-समय लौट आए।
+    // ---------- राउंड 65 / टास्क 09: अंक-दर-अंक रोक + ढाँचा सदा दिखे ----------
+    var Y_MIN = 1800, Y_MAX = 2400;     // app की असली सीमा (vDate + ephemeris sepl_18)
+    var MONTH_HI = ['जनवरी', 'फ़रवरी', 'मार्च', 'अप्रैल', 'मई', 'जून', 'जुलाई', 'अगस्त', 'सितंबर', 'अक्टूबर', 'नवंबर', 'दिसंबर']
+    var MONTH_EN = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+    var MSG = {
+      dayMax: function () { return L('दिन 31 से अधिक नहीं हो सकता', 'Day cannot be more than 31'); },
+      dayZero: function () { return L('दिन 00 नहीं हो सकता', 'Day cannot be 00'); },
+      monthMax: function () { return L('महीना 12 से अधिक नहीं हो सकता', 'Month cannot be more than 12'); },
+      monthZero: function () { return L('महीना 00 नहीं हो सकता', 'Month cannot be 00'); },
+      monthDays: function (m) {
+        var n = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][m - 1];
+        return L((MONTH_HI[m - 1] || '') + ' में ' + n + ' दिन होते हैं', (MONTH_EN[m - 1] || '') + ' has ' + n + ' days');
+      },
+      yearRange: function () { return L('वर्ष ' + Y_MIN + ' से ' + Y_MAX + ' के बीच होना चाहिए', 'Year must be between ' + Y_MIN + ' and ' + Y_MAX); },
+      leap: function () { return L('यह लीप-वर्ष नहीं है — 29 फ़रवरी नहीं होती', 'Not a leap year — 29 February does not exist'); },
+      hourMax: function () { return L('घंटा 23 से अधिक नहीं हो सकता', 'Hour cannot be more than 23'); },
+      minMax: function () { return L('मिनट 59 से अधिक नहीं हो सकता', 'Minute cannot be more than 59'); },
+      secMax: function () { return L('सेकंड 59 से अधिक नहीं हो सकता', 'Second cannot be more than 59'); },
+      paste: function () { return L('चिपकाया गया मान ठीक नहीं — अंक जाँचें', 'The pasted value is not valid — please check it'); }
+    };
+    function dimOf(m, y) {
+      if (!(m >= 1 && m <= 12)) return 31;
+      if (m === 2) return leap(+(y || 0)) ? 29 : (+(y || 0) >= Y_MIN ? 28 : 29);
+      return [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][m - 1];
+    }
+    // इस अंक को लेने से कुछ ग़लत बन जाएगा? (null = ठीक) — unit + बनने वाला मान
+    function ruleViolation(unit, next) {
+      var dg = segs[0] || '', mo = segs[1] || '', yr = segs[2] || '';
+      if (unit === 'day') {
+        // पहला अंक 0–9 चलेगा (जैसे '5' → दिन '5_'), पर **दूसरा** अंक तभी जो 1–31 बनाए
+        // ('51', '32', '00' कभी नहीं) — और महीना भरा हो तो उस महीने की सीमा भी।
+        if (next.length === 1) return null;
+        if (next.length === 2) {
+          if (+next === 0) return MSG.dayZero();
+          if (+next > 31) return MSG.dayMax();
+          var m = +mo;
+          if (m >= 1 && m <= 12 && +next > dimOf(m, yr)) return MSG.monthDays(m);
+        }
+      }
+      if (unit === 'month') {
+        if (next.length === 1 && +next > 1) return MSG.monthMax();
+        if (next.length === 2) {
+          if (+next === 0) return MSG.monthZero();
+          if (+next > 12) return MSG.monthMax();
+          var d0 = +dg, y0 = +yr;
+          if (d0 >= 1 && d0 > dimOf(+next, y0)) return MSG.monthDays(+next);
+        }
+      }
+      if (unit === 'year') {
+        var first = next.charAt(0);
+        if (next.length === 1 && first !== '1' && first !== '2') return MSG.yearRange();
+        if (next.length === 2) {
+          if (first === '1' && next.charAt(1) !== '8' && next.charAt(1) !== '9') return MSG.yearRange();
+          if (first === '2' && !(next.charAt(1) >= '0' && next.charAt(1) <= '4')) return MSG.yearRange();
+        }
+        if (next.length === 3 && next.slice(0, 2) === '24' && next.charAt(2) !== '0') return MSG.yearRange();
+        if (next.length === 4) {
+          var y = +next;
+          if (y < Y_MIN || y > Y_MAX) return MSG.yearRange();
+          if (+dg === 29 && +mo === 2 && !leap(y)) return MSG.leap();
+        }
+      }
+      if (unit === 'hour') {
+        if (next.length === 1 && +next > 2) return MSG.hourMax();
+        if (next.length === 2 && +next > 23) return MSG.hourMax();
+      }
+      if (unit === 'minute' && next.length === 1 && +next > 5) return MSG.minMax();
+      if (unit === 'minute' && next.length === 2 && +next > 59) return MSG.minMax();
+      if (unit === 'second' && next.length === 1 && +next > 5) return MSG.secMax();
+      if (unit === 'second' && next.length === 2 && +next > 59) return MSG.secMax();
+      return null;
+    }
+    // संदेश + हल्का लाल झटका (prefers-reduced-motion पर बिना animation — CSS में)
+    var msgEl = null, flashT = null;
+    function msgBox() {
+      if (msgEl && document.body.contains(msgEl)) return msgEl;
+      var id = el.id === 'fDate' ? 'hDate' : (el.id === 'fTime' ? 'hTime' : null);
+      if (id) msgEl = document.getElementById(id);
+      if (!msgEl || msgEl.id === null) {
+        msgEl = document.createElement('span');
+        msgEl.className = 'hint mmsg';
+        if (el.parentNode) el.parentNode.appendChild(msgEl);
+      }
+      return msgEl;
+    }
+    function reject(msg) {
+      el.classList.add('nope');
+      clearTimeout(flashT);
+      flashT = setTimeout(function () { el.classList.remove('nope'); }, 520);
+      var m = msgBox();
+      if (m) { m.textContent = msg; m.className = 'hint mmsg err'; }
+      // संदेश दिखने से लेआउट थोड़ा खिसक सकता है — ढाँचा फिर बैठा दो
+      setTimeout(function () { try { paintSkel(); } catch (e) {} }, 0);
+      return null;
+    }
+    function clearMsg() {
+      var m = msgBox();
+      if (m && m.className.indexOf('mmsg') >= 0) { m.textContent = ''; m.className = 'hint mmsg'; }
+    }
+
     var lastGood = '';
     function isFull() { if (segs.length !== W.length) return false; for (var q = 0; q < W.length; q++) if ((segs[q] || '').length !== W[q]) return false; return true; }
     function isValidDt() {
@@ -2096,7 +2197,11 @@
       var i = segAt(c), a = segStart(i), off = c - a;
       if (off >= W[i]) { if (i < W.length - 1) { i++; a = segStart(i); off = 0; } else { off = W[i] - 1; } }
       if (off < 0) off = 0;
-      segs[i] = segs[i].slice(0, off) + ch + segs[i].slice(off + 1);
+      var cand = (segs[i] || '').slice(0, off) + ch + (segs[i] || '').slice(off + 1);
+      var badW = ruleViolation(DT_UNITS[mode][i], cand);
+      if (badW) { reject(badW); return; }
+      clearMsg();
+      segs[i] = cand;
       el.value = render(); lastOut = el.value;
       var np = a + off + 1;
       if (off + 1 >= W[i] && i < W.length - 1) np = segStart(i + 1);
@@ -2182,10 +2287,30 @@
       if (mode === 'dt' && isFull()) { dtOverwrite(ch); return; }
       var caret = (el.selectionStart == null) ? el.value.length : el.selectionStart;
       var i = segAt(caret);
-      if (segs[i].length >= W[i]) segs[i] = ch;         // हिस्सा भरा है → नया अंक उसकी जगह
-      else segs[i] += ch;
+      var cur = segs[i] || '';
+      var next = (cur.length >= W[i]) ? ch : cur + ch;   // हिस्सा भरा है → नया अंक उसकी जगह
+      var bad = ruleViolation(DT_UNITS[mode][i], next);
+      if (bad) { reject(bad); return; }                  // अंक नहीं जुड़ा (टास्क 09)
+      clearMsg();
+      segs[i] = next;
       var full = segs[i].length >= W[i];
       paint(i, full);
+    }
+    // चिपके/अपने-आप भरे पूरे मान की जाँच (टास्क 09)
+    function validCombo(arr) {
+      var U = DT_UNITS[mode] || [];
+      var iD = U.indexOf('day'), iM = U.indexOf('month'), iY = U.indexOf('year');
+      var iH = U.indexOf('hour'), iMi = U.indexOf('minute'), iS = U.indexOf('second');
+      if (iY >= 0 && (arr[iY] || '').length === 4) { var y = +arr[iY]; if (y < Y_MIN || y > Y_MAX) return false }
+      if (iM >= 0 && (arr[iM] || '').length === 2) { if (+arr[iM] < 1 || +arr[iM] > 12) return false }
+      if (iD >= 0 && (arr[iD] || '').length === 2) {
+        if (+arr[iD] < 1 || +arr[iD] > 31) return false
+        if (iM >= 0 && (arr[iM] || '').length === 2 && +arr[iD] > dimOf(+arr[iM], iY >= 0 ? +arr[iY] : 0)) return false
+      }
+      if (iH >= 0 && (arr[iH] || '').length === 2 && +arr[iH] > 23) return false
+      if (iMi >= 0 && (arr[iMi] || '').length === 2 && +arr[iMi] > 59) return false
+      if (iS >= 0 && (arr[iS] || '').length === 2 && +arr[iS] > 59) return false
+      return true
     }
     function backspace(forward) {
       sync();
@@ -2196,6 +2321,75 @@
       segs[i] = segs[i].slice(0, -1);
       paint(i, false);
     }
+    // ---------- राउंड 65 / टास्क 09 (ख): ढाँचा सदा दिखे ----------
+    // खाने के ऊपर एक हल्का span: भरे हुए अंक पारदर्शी (नीचे खाने के अपने अंक दिखते हैं)
+    // और बाक़ी जगह '_' — इसलिए टाइप करते समय भी पूरा ढाँचा दिखता रहता है।
+    var skelEl = document.createElement('span');
+    skelEl.className = 'mskel';
+    skelEl.setAttribute('aria-hidden', 'true');
+    skelEl.style.display = 'none';
+    document.body.appendChild(skelEl);
+    function patternText() {
+      var out = '', typedLen = 0;
+      for (var i = 0; i < W.length; i++) {
+        if (i) out += SP[i - 1];
+        var got = (segs[i] || ''), need = W[i] - got.length;
+        typedLen += got.length + (i ? 1 : 0);
+        out += got;
+        for (var k = 0; k < need; k++) out += '_';
+        if (mode === 'time' && i === 1 && !(segs[2] || '')) break;   // सेकंड वैकल्पिक
+      }
+      return { text: out, typed: typedLen };
+    }
+    function placeSkel() {
+      if (mode === 'dt' || !document.body.contains(el)) { skelEl.style.display = 'none'; return; }
+      var r = el.getBoundingClientRect();
+      if (!r.width || !r.height) { skelEl.style.display = 'none'; return; }
+      var cs = window.getComputedStyle(el);
+      skelEl.style.display = 'block';
+      skelEl.style.left = (r.left + (parseFloat(cs.borderLeftWidth) || 0) + (parseFloat(cs.paddingLeft) || 0)) + 'px';
+      skelEl.style.top = r.top + 'px';
+      skelEl.style.height = r.height + 'px';
+      skelEl.style.lineHeight = r.height + 'px';
+      skelEl.style.fontFamily = cs.fontFamily;
+      skelEl.style.fontSize = cs.fontSize;
+      skelEl.style.fontWeight = cs.fontWeight;
+      skelEl.style.letterSpacing = cs.letterSpacing;
+      // छोटा सुधार: जो जगह सच में मिली, उससे जो चाहिए थी उसका अंतर जोड़ दो (sub-pixel)
+      var want = r.left + (parseFloat(cs.borderLeftWidth) || 0) + (parseFloat(cs.paddingLeft) || 0);
+      var got = skelEl.getBoundingClientRect().left;
+      if (Math.abs(want - got) > 0.05) skelEl.style.left = (parseFloat(skelEl.style.left) + (want - got)) + 'px';
+    }
+    function paintSkel() {
+      if (mode === 'dt') return;
+      var p = patternText();
+      var typed = String(el.value || '');
+      var n = Math.min(typed.length, p.text.length);
+      skelEl.innerHTML = '<span style="color:transparent">' + esc(typed.slice(0, n)) + '</span>' + esc(p.text.slice(n));
+      placeSkel();
+    }
+    function arLabel() {
+      var fmt = mode === 'date' ? L('दिन-महीना-वर्ष, जैसे 18-06-1995', 'DD-MM-YYYY, e.g. 18-06-1995')
+        : mode === 'time' ? L('घंटा:मिनट, सेकंड वैकल्पिक — जैसे 14:47 या 14:47:32', 'HH:MM with optional seconds — e.g. 14:47 or 14:47:32')
+          : L('तारीख़ और समय — दिन-महीना-वर्ष घंटा:मिनट:सेकंड', 'Date and time — DD-MM-YYYY HH:MM:SS');
+      el.setAttribute('aria-label', fmt);
+      el.setAttribute('title', fmt);
+    }
+    function initSkel() {
+      el.classList.add('maskf');          // अंक और '_' बराबर चौड़े (ढाँचा हूबहू बैठे)
+      if (mode === 'dt') return;
+      el.removeAttribute('data-lp');       // पुराना लंबा placeholder हटाओ (ढाँचा अब दिखता है)
+      el.placeholder = '';
+      arLabel();
+      paintSkel();
+    }
+    document.addEventListener('bnn:lang', function () { arLabel(); paintSkel(); });
+    document.addEventListener('bnn:skel', function () { paintSkel(); });
+    ['input', 'focus', 'blur', 'keyup', 'click'].forEach(function (ev) { el.addEventListener(ev, paintSkel); });
+    window.addEventListener('resize', placeSkel);
+    window.addEventListener('scroll', placeSkel, true);
+    initSkel();
+
     el.addEventListener('keydown', function (e) {
       if (e.ctrlKey || e.metaKey || e.altKey) return;
       if (e.key >= '0' && e.key <= '9' && e.key.length === 1) { e.preventDefault(); digit(e.key); return; }
@@ -2261,8 +2455,11 @@
       var d = t.replace(/\D/g, '');
       if (!d) return;
       load();
-      var k = 0;
-      for (var i = 0; i < W.length && k < d.length; i++) { segs[i] = d.slice(k, k + W[i]); k += W[i]; }
+      var k = 0, cand = (segs || []).slice();
+      for (var i = 0; i < W.length && k < d.length; i++) { cand[i] = d.slice(k, k + W[i]); k += W[i]; }
+      if (!validCombo(cand)) { reject(MSG.paste()); return; }     // टास्क 09
+      clearMsg();
+      segs = cand;
       el.value = render(); lastOut = el.value;
       try { el.setSelectionRange(el.value.length, el.value.length); } catch (er) { }
       fire();
@@ -2469,6 +2666,7 @@
     sel.options[1].textContent = L('लाहिरी 1940', 'Lahiri 1940');
   }
   function applyLang() {
+    try { document.dispatchEvent(new Event('bnn:lang')); } catch (e) {}
     var i, els;
     els = document.querySelectorAll('[data-l]');
     for (i = 0; i < els.length; i++) els[i].textContent = T(els[i].getAttribute('data-l'));

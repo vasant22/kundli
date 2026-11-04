@@ -4895,16 +4895,20 @@
 	//#endregion
 	//#region ../projects/kundli/src/timeutil.js
 	function parseUtcOffset(text) {
-		const m = /^([+-]?)(\d{1,2})(?::([0-5]\d))?$/.exec(String(text).trim());
+		const m = /^([+-]?)(\d{1,2})(?::([0-5]\d)(?::([0-5]\d))?)?$/.exec(String(text).trim());
 		if (!m) return null;
-		const minutes = (m[1] === "-" ? -1 : 1) * (Number(m[2]) * 60 + Number(m[3] ?? 0));
+		const minutes = (m[1] === "-" ? -1 : 1) * (Number(m[2]) * 60 + Number(m[3] ?? 0) + Number(m[4] ?? 0) / 60);
 		if (minutes < -720 || minutes > 840) return null;
 		return minutes;
 	}
 	function formatUtcOffset(minutes) {
 		const sign = minutes < 0 ? "-" : "+";
-		const abs = Math.abs(minutes);
-		return `${sign}${String(Math.floor(abs / 60)).padStart(2, "0")}:${String(abs % 60).padStart(2, "0")}`;
+		const total = Math.round(Math.abs(minutes) * 60);
+		const h = Math.floor(total / 3600);
+		const m = Math.floor(total % 3600 / 60);
+		const sec = total % 60;
+		const base = `${sign}${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+		return sec ? `${base}:${String(sec).padStart(2, "0")}` : base;
 	}
 	function offsetAt(utcMs, timeZone) {
 		const dtf = new Intl.DateTimeFormat("en-US", {
@@ -6718,8 +6722,9 @@
 		return n.length < 2 ? "0" + n : n;
 	}
 	function offsetText(gmtHours) {
-		var t = Math.round(gmtHours * 60), sign = t < 0 ? "-" : "+", a = Math.abs(t);
-		return sign + pad2(Math.floor(a / 60)) + ":" + pad2(a % 60);
+		var t = Math.round(gmtHours * 3600), sign = t < 0 ? "-" : "+", a = Math.abs(t);
+		var h = Math.floor(a / 3600), mi = Math.floor(a % 3600 / 60), se = a % 60;
+		return sign + pad2(h) + ":" + pad2(mi) + (se ? ":" + pad2(se) : "");
 	}
 	function parseDate(s) {
 		var m = /^(\d{1,2})-(\d{1,2})-(\d{4})$/.exec(String(s || "").trim());

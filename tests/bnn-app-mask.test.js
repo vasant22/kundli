@@ -1,0 +1,146 @@
+// tests/bnn-app-mask.test.js — राउंड 65 / टास्क 09 (4-11-2026)
+//
+// जन्म-तारीख़/समय के खाने: **अंक दबाते ही** ग़लत जोड़ रुके (बाद में नहीं), और ढाँचा
+// (DD-MM-YYYY) सदा दिखे। यहाँ असली app/app.js को jsdom में चलाकर वही टाइप-क्रम जाँचे हैं
+// जो टास्क में लिखे हैं, और साथ में Backspace/ढाँचा/paste।
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { JSDOM } from 'jsdom'
+import { describe, expect, it } from 'vitest'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const APP = path.resolve(__dirname, '../../../bnn-kundli-windows/app')
+const hasApp = fs.existsSync(path.join(APP, 'app.js'))
+
+async function boot() {
+  const html = fs.readFileSync(path.join(APP, 'index.html'), 'utf8')
+  const dom = new JSDOM(html, { url: 'http://localhost/', runScripts: 'outside-only' })
+  const w = dom.window
+  w.BNN_PLACES = []; w.alert = () => {}; w.confirm = () => true
+  w.BNNEngine = { compute: async () => { throw new Error('STUB') } }
+  w.eval(fs.readFileSync(path.join(APP, 'app.js'), 'utf8'))
+  await new Promise((r) => setTimeout(r, 40))
+  if (w.document.querySelectorAll('#fGroup option').length === 0) w.document.dispatchEvent(new w.Event('DOMContentLoaded', { bubbles: true }))
+  await new Promise((r) => setTimeout(r, 60))
+  return w
+}
+function type(w, id, txt) {
+  const el = w.document.getElementById(id)
+  el.focus()
+  for (const ch of txt) el.dispatchEvent(new w.KeyboardEvent('keydown', { key: ch, bubbles: true, cancelable: true }))
+}
+const val = (w, id) => w.document.getElementById(id).value
+const msg = (w, id) => (w.document.getElementById(id === 'fDate' ? 'hDate' : 'hTime') || {}).textContent || ''
+
+describe.runIf(hasApp)('तारीख़/समय के खाने — ग़लत अंक दबाते ही रुकते हैं (टास्क 09)', () => {
+  it('51112011 → दिन 5 पर ही रुकता है (51 नहीं बनता)', async () => {
+    const w = await boot()
+    type(w, 'fDate', '51112011')
+    expect(val(w, 'fDate')).toBe('5')
+    expect(msg(w, 'fDate')).toContain('31')
+    w.close()
+  })
+
+  it('3104 → 04 का 4 रुकता है (अप्रैल में 31 दिन नहीं)', async () => {
+    const w = await boot()
+    type(w, 'fDate', '3104')
+    expect(val(w, 'fDate')).toBe('31-0')          // महीने का दूसरा अंक नहीं लिया
+    expect(msg(w, 'fDate')).toContain('अप्रैल')   // "अप्रैल में 30 दिन होते हैं"
+    w.close()
+  })
+
+  it('2902 + 2021 → लीप-वर्ष न होने से आख़िरी 1 रुकता है; 2020 चलता है', async () => {
+    const w = await boot()
+    type(w, 'fDate', '29022021')
+    expect(val(w, 'fDate')).toBe('29-02-202')
+    expect(msg(w, 'fDate')).toContain('लीप')
+    w.close()
+    const w2 = await boot()
+    type(w2, 'fDate', '29022020')
+    expect(val(w2, 'fDate')).toBe('29-02-2020')
+    w2.close()
+  })
+
+  it('3012 ठीक चलता है; 00 महीना/दिन नहीं बनते', async () => {
+    const w = await boot()
+    type(w, 'fDate', '3012')
+    expect(val(w, 'fDate')).toBe('30-12-')
+    w.close()
+    const w2 = await boot()
+    type(w2, 'fDate', '00')
+    expect(val(w2, 'fDate')).toBe('0')
+    expect(msg(w2, 'fDate')).toContain('00')
+    w2.close()
+  })
+
+  it('वर्ष की सीमा: 17xx नहीं बनता (1800 से शुरू), 2401 नहीं, 2400 चलता है', async () => {
+    const w = await boot()
+    type(w, 'fDate', '01011799')
+    // पहला अंक 1 → दूसरा 8/9 ही: '7' रुकता है, फिर 9,9 से साल '199' बनता है
+    expect(val(w, 'fDate')).toBe('01-01-199')
+    w.close()
+    const w2 = await boot()
+    type(w2, 'fDate', '01012401')
+    expect(val(w2, 'fDate')).toBe('01-01-240')     // 2401 का 1 रुके (2400 अधिकतम)
+    w2.close()
+    const w3 = await boot()
+    type(w3, 'fDate', '01012400')
+    expect(val(w3, 'fDate')).toBe('01-01-2400')
+    w3.close()
+  })
+
+  it('समय: 2460 → 4 रुकता है, 2359 ठीक, 12:6 → 6 रुकता है', async () => {
+    const w = await boot()
+    type(w, 'fTime', '2460')
+    expect(val(w, 'fTime')).toMatch(/^2[0-3]/)      // 24 नहीं बनता
+    w.close()
+    const w2 = await boot()
+    type(w2, 'fTime', '2359')
+    expect(val(w2, 'fTime')).toBe('23:59:')
+    w2.close()
+    const w3 = await boot()
+    type(w3, 'fTime', '126')
+    expect(val(w3, 'fTime')).toBe('12:')
+    expect(msg(w3, 'fTime')).toContain('59')
+    w3.close()
+  })
+
+  it('Backspace से अंक हटता है और ढाँचा लौट आता है', async () => {
+    const w = await boot()
+    type(w, 'fDate', '3112')
+    expect(val(w, 'fDate')).toBe('31-12-')
+    const el = w.document.getElementById('fDate')
+    el.dispatchEvent(new w.KeyboardEvent('keydown', { key: 'Backspace', bubbles: true, cancelable: true }))
+    expect(val(w, 'fDate')).toBe('31-1')
+    w.close()
+  })
+
+  it('खाना ख़ाली हो तब भी ढाँचा (placeholder जैसा) दिखता है, aria-label में प्रारूप', async () => {
+    const w = await boot()
+    await new Promise((r) => setTimeout(r, 50))
+    const skel = w.document.querySelector('.mskel')
+    expect(skel).toBeTruthy()
+    expect(skel.textContent).toBe('__-__-____')
+    const el = w.document.getElementById('fDate')
+    expect(el.getAttribute('aria-label') || '').toMatch(/दिन-महीना-वर्ष|DD-MM-YYYY/)
+    expect(el.placeholder).toBe('')                 // पुराना लंबा placeholder हटा
+    w.close()
+  })
+
+  it('ग़लत paste नहीं लिया जाता, सही paste चलता है', async () => {
+    const w = await boot()
+    const el = w.document.getElementById('fDate')
+    // jsdom में clipboardData नहीं होता — सीधा event बनाकर दो
+    const paste = (text) => {
+      const ev = new w.Event('paste', { bubbles: true, cancelable: true })
+      ev.clipboardData = { getData: () => text }
+      el.dispatchEvent(ev)
+    }
+    paste('31-04-2020')
+    expect(val(w, 'fDate')).toBe('')                 // अप्रैल में 31 नहीं → नहीं लिया
+    paste('15-08-1990')
+    expect(val(w, 'fDate')).toBe('15-08-1990')
+    w.close()
+  })
+})
