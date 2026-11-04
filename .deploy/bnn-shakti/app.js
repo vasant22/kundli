@@ -1227,8 +1227,20 @@
     renderBhava(); renderPlanet(); renderDasha();
     $('rTransitPlace').textContent = recPlace(RESULT_REC) + (recState(RESULT_REC) ? ', ' + recState(RESULT_REC) : '');
   }
+  // web पर engine पीछे-पीछे (async) आता है — ज़रूरत पड़े तो उसका इंतज़ार करो
+  async function ensureEngine(maxMs) {
+    if (window.BNNEngine) return true;
+    if (window.__bnnEngineReady && window.__bnnEngineReady.then) {
+      try { await Promise.race([window.__bnnEngineReady, new Promise(function (r) { setTimeout(r, maxMs || 20000) })]); } catch (e) {}
+    }
+    return !!window.BNNEngine;
+  }
   async function openResult(rec) {
-    if (!window.BNNEngine) { toast(L('गणना इंजन लोड नहीं हुआ', 'Calculation engine not loaded')); return; }
+    if (!window.BNNEngine) {
+      toast(L('गणना इंजन तैयार हो रहा है…', 'Preparing the calculation engine…'));
+      var okE = await ensureEngine(25000);
+      if (!okE) { toast(L('गणना इंजन लोड नहीं हुआ', 'Calculation engine not loaded')); return; }
+    }
     try {
       toast(L('⏳ गणना हो रही है…', '⏳ Calculating…'));
       var res = await window.BNNEngine.compute(rec);
