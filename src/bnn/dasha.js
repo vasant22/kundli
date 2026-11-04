@@ -14,11 +14,15 @@
 //    software's integer division (user 2026-10-13: the MER-dasha chain matches to the
 //    day; round() matched only its integer-safe rows); the LAST bhukthi ends exactly
 //    on the mahadasha end.
-//  • Andhiram length = floor(bhukthi_length × andhiram_years / 120) days;
-//    the LAST andhiram ends exactly on the bhukthi end. (The guide says
-//    "~364-day year within 1 day"; re-fit against the reference: the
-//    366-based proportional floors reproduce every readable reference date
+//  • Andhiram length = floor(bhukthi_length × andhiram_years / 120) days over the
+//    FULL bhukthi period; the LAST andhiram ends exactly on the bhukthi end.
+//    (The guide says "~364-day year within 1 day"; re-fit against the reference:
+//    the 366-based proportional floors reproduce every readable reference date
 //    to the day — kept as settings, residuals reported.)
+//  • राउंड 65-ख (4-11-2026): जन्म पर कटी पहली महादशा में अंतर पूरी अवधि पर बनकर
+//    [जन्म, भुक्ति-अंत] में काटे जाते हैं (जन्म से पहले ख़त्म → खाली पंक्ति,
+//    भुक्ति के अंत से आगे → पंक्ति हट जाती है)। इससे पहले जन्म-तारीख़ से बनते थे,
+//    इसलिए आख़िरी पंक्ति उलटी पड़ जाती थी। देखें andhiramList().
 //  • Ages are calendar differences from the birth date (Y-M-D).
 //
 // Spec: docs/bnn-guide.txt → Phase 6. Check: node scripts/bnn-calib/dasha-check.mjs
@@ -163,21 +167,55 @@ export function bhukthiList(maha, birth, settings = DASHA_SETTINGS) {
 
 /**
  * The nine andhirams inside a bhukthi (sequence starts from the bhukthi lord).
- * Length = floor(bhukthi_length × a / 120) days; the last ends on the bhukthi end.
+ *
+ * राउंड 65-ख (4-11-2026) — काटने का नियम (Vas22 जी की हाँ):
+ * पहले यह सूची भुक्ति की **दिखने वाली** शुरुआत से बनती थी, पर लंबाई **पूरी भुक्ति** की
+ * ली जाती थी। इसलिए जन्म पर कटी पहली महादशा की भुक्तियों में नीचे की पंक्तियाँ भुक्ति के
+ * अंत से आगे निकल जाती थीं और आख़िरी पंक्ति उलटी (आरंभ > अंत) दिखती थी — जैसे
+ * बेतूल 22-01-1980: भुक्ति मंगल 22-01-1980→01-08-1980 का अंतर चंद्र 24-01-1981→01-08-1980
+ * (हर कुंडली में ठीक एक ऐसी पंक्ति)।
+ *
+ * अब: अंतर पूरी भुक्ति-अवधि पर वैसे ही बनते हैं, फिर [जन्म, भुक्ति-अंत] की सीमा में काटे जाते हैं —
+ *  • पूरी तरह जन्म से पहले ख़त्म होने वाला अंतर → `blank` पंक्ति (तारीख़ें नहीं दिखतीं;
+ *    वही ढंग जो पहली महादशा की बीती भुक्तियों में पहले से है)
+ *  • जन्म के आर-पार वाला अंतर → आरंभ = जन्म-तारीख़
+ *  • भुक्ति के अंत से आगे कुछ नहीं जाता → उससे आगे की पंक्तियाँ हट जाती हैं और
+ *    आख़िरी पंक्ति का अंत = भुक्ति का अंत
+ *  • किसी पंक्ति का आरंभ > अंत नहीं होता
+ * जिन भुक्तियों में कुछ नहीं कटता (सामान्य भुक्तियाँ), उनका output पहले जैसा ही रहता है।
  */
 export function andhiramList(mahaLord, bhukthi, birth, settings = DASHA_SETTINGS) {
   const b0 = birthYMD(birth)
-  const bhukthiLen = Math.floor((YEARS[mahaLord] * settings.bhukthiYearDays * YEARS[bhukthi.lord]) / 120)
-  const rows = []
-  let start = parseISO(bhukthi.startISO)
+  const birthISO = `${b0.y}-${String(b0.m).padStart(2, '0')}-${String(b0.d).padStart(2, '0')}`
+  const birthDate = parseISO(birthISO)
+  const fullLen = Math.floor((YEARS[mahaLord] * settings.bhukthiYearDays * YEARS[bhukthi.lord]) / 120)
+  const start0 = parseISO(bhukthi.startISO)
   const end = parseISO(bhukthi.endISO)
+  // जो भुक्ति जन्म-तारीख़ से ही शुरू होती है (पहली, जन्म पर कटी), उसकी पूरी अवधि जन्म से
+  // पहले शुरू हुई थी — उतने दिन पीछे से बनाओ, फिर जन्म पर काटो।
+  const cut = iso(start0) === birthISO
+    ? Math.max(0, fullLen - Math.round((end.getTime() - start0.getTime()) / day))
+    : 0
   const lordIdx = ORDER.indexOf(bhukthi.lord)
+  // नौ सीमाएँ: p[0] = पूरी अवधि की शुरुआत, p[9] = भुक्ति का अंत
+  const p = [addDays(start0, -cut)]
+  for (let i = 1; i <= 8; i++) {
+    p.push(addDays(p[i - 1], Math.floor((fullLen * YEARS[ORDER[(lordIdx + i - 1) % 9]]) / 120)))
+  }
+  p.push(end)
+  const rows = []
   for (let i = 0; i < 9; i++) {
     const lord = ORDER[(lordIdx + i) % 9]
-    const last = i === 8
-    const e = last ? end : addDays(start, Math.floor((bhukthiLen * YEARS[lord]) / 120))
-    rows.push({ lord, startISO: iso(start), endISO: iso(e), age: ymdDiff(b0, ymdOf(e)) })
-    start = e
+    let s1 = p[i]
+    let e1 = p[i + 1]
+    if (e1.getTime() > end.getTime()) e1 = end
+    if (e1.getTime() <= s1.getTime()) continue // भुक्ति के अंत पर सिकुड़ गई — पंक्ति ही नहीं
+    if (e1.getTime() <= birthDate.getTime()) {
+      rows.push({ lord, blank: true, startISO: null, endISO: null, age: null })
+      continue
+    }
+    if (s1.getTime() < birthDate.getTime()) s1 = birthDate
+    rows.push({ lord, startISO: iso(s1), endISO: iso(e1), age: ymdDiff(b0, ymdOf(e1)) })
   }
   return rows
 }
@@ -186,6 +224,7 @@ export function andhiramList(mahaLord, bhukthi, birth, settings = DASHA_SETTINGS
 export function runningIndex(rows, now) {
   const nowISO = `${now.y}-${String(now.m).padStart(2, '0')}-${String(now.d).padStart(2, '0')}`
   for (let i = 0; i < rows.length; i++) {
+    if (rows[i].blank) continue // खाली पंक्ति (जन्म से पहले बीती) — तारीख़ें ही नहीं
     if (nowISO >= rows[i].startISO && nowISO < rows[i].endISO) return i
   }
   return -1

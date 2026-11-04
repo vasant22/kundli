@@ -75,6 +75,7 @@ async function computeRecord(swe, rec) {
   }
   return {
     utc: conv.utc, offsetText: conv.offsetText, bnn, exchanges: findExchanges(bnn.planets),
+    birthISO: `${d.y}-${String(d.m).padStart(2, '0')}-${String(d.d).padStart(2, '0')}`,
     tables, astro, labels, dasha,
     order: rec.gender === 'स्त्री'
       ? ['venus', 'sun', 'moon', 'mars', 'mercury', 'jupiter', 'saturn', 'rahu', 'ketu']
@@ -160,22 +161,17 @@ describe('BNN किनारे के मामले (राउंड 65) —
     })
   }
 
-  // 2) दशा की तारीख़ें लगातार
+  // 2) दशा की तारीख़ें लगातार (महादशा → भुक्ति → अंतर, तीनों स्तर)
   //
-  // पुरानी (राउंड 65 से पहले की) एक गड़बड़ यहाँ जान-बूझकर छोड़ी गई है, क्योंकि
-  // गणना का नियम बदलना मना है (रिपोर्ट में खुला मुद्दा लिखा है): जब किसी भुक्ति
-  // की असली लंबाई उसकी नाममात्र लंबाई से छोटी हो — यानी पहली (जन्म पर कटी)
-  // महादशा में जन्म वाली भुक्ति और उस महादशा की आख़िरी भुक्ति — तब `andhiramList`
-  // नाममात्र लंबाई से अंतर बनाता है और आख़िरी अंतर की अंत-तिथि उसकी शुरू-तिथि से
-  // पहले पड़ जाती है। (उदा. बेतूल 22-01-1980: भुक्ति मंगल 22-01-1980→01-08-1980,
-  // उसका आख़िरी अंतर चंद्र 24-01-1981→01-08-1980।)
-  // इसलिए यहाँ सिर्फ़ इतना जाँचा जाता है कि ऐसा हर कुंडली में एक बार से ज़्यादा
-  // न हो और पहली महादशा के बाहर कहीं न हो।
+  // राउंड 65-ख (4-11-2026) से अंतर-स्तर भी कड़ाई से जाँचा जाता है: जन्म पर कटी
+  // पहली महादशा में जो अंतर जन्म से पहले ही ख़त्म हो गए थे वे `blank` पंक्तियाँ हैं,
+  // और भुक्ति के अंत से आगे वाली पंक्तियाँ हट जाती हैं — इसलिए अंतर 9 से कम हो
+  // सकते हैं, पर कोई पंक्ति उलटी नहीं, क्रम टूटता नहीं, और आख़िरी अंतर हमेशा
+  // भुक्ति के अंत पर ख़त्म होता है।
   for (const rec of EDGE_CHARTS) {
     it('ref ' + rec.ref + ' ' + rec.name + ' — दशा/भुक्ति/अंतर की तारीख़ें लगातार', () => {
       const r = results.get(rec.ref)
       const problems = []
-      const known = [] // जन्म पर कटी पहली भुक्ति वाला पुराना मामला
       const md = r.dasha.mahadashas
       expect(md.length, 'महादशा 9 नहीं').toBe(9)
       for (let i = 0; i < md.length; i++) {
@@ -189,24 +185,58 @@ describe('BNN किनारे के मामले (राउंड 65) —
           if (dmy(real[j].startISO) !== dmy(real[j - 1].endISO)) problems.push('भुक्ति संधि नहीं मिली: ' + md[i].lord + '/' + real[j - 1].lord + '→' + real[j].lord)
           if (!(dmy(real[j].endISO) >= dmy(real[j].startISO))) problems.push('भुक्ति ' + md[i].lord + '/' + real[j].lord + ' उलटी है')
         }
+        if (real.length && dmy(real[0].startISO) !== s0) problems.push('पहली भुक्ति महादशा से नहीं जुड़ी (' + md[i].lord + ')')
+        if (real.length && dmy(real[real.length - 1].endISO) !== e0) problems.push('आख़िरी भुक्ति महादशा के अंत पर नहीं (' + md[i].lord + ')')
         for (const b of real) {
-          const an = (b.andhirams || []).filter((x) => !x.blank)
+          const all = b.andhirams || []
+          const an = all.filter((x) => !x.blank)
+          if (!an.length) { problems.push('भुक्ति ' + b.lord + ' का कोई अंतर नहीं'); continue }
+          if (an.length + all.filter((x) => x.blank).length !== all.length) problems.push('अंतर की गिनती में गड़बड़ (' + b.lord + ')')
           for (let j = 0; j < an.length; j++) {
             const a = an[j]
-            if (!(dmy(a.endISO) >= dmy(a.startISO))) {
-              const isKnown = i === 0 && j === an.length - 1
-              if (isKnown) known.push(md[i].lord + '/' + b.lord + '/' + a.lord + ' ' + a.startISO + '→' + a.endISO)
-              else problems.push('अंतर ' + md[i].lord + '/' + b.lord + '/' + a.lord + ' उलटी है (' + a.startISO + '→' + a.endISO + ')')
-            }
+            if (!(dmy(a.endISO) >= dmy(a.startISO))) problems.push('अंतर ' + md[i].lord + '/' + b.lord + '/' + a.lord + ' उलटी है (' + a.startISO + '→' + a.endISO + ')')
             if (j && dmy(a.startISO) !== dmy(an[j - 1].endISO)) problems.push('अंतर संधि नहीं मिली: ' + b.lord + '/' + an[j - 1].lord + '→' + a.lord)
           }
-          if (an.length && dmy(an[0].startISO) !== dmy(b.startISO)) problems.push('पहला अंतर भुक्ति से नहीं जुड़ा (' + b.lord + ')')
+          // पहला दिखने वाला अंतर या तो भुक्ति से जुड़ा हो, या जन्म-तारीख़ से (कटी भुक्ति)
+          if (dmy(an[0].startISO) !== dmy(b.startISO) && an[0].startISO !== r.birthISO) {
+            problems.push('पहला अंतर न भुक्ति से जुड़ा न जन्म से (' + b.lord + ' ' + an[0].startISO + ')')
+          }
+          if (dmy(an[an.length - 1].endISO) !== dmy(b.endISO)) problems.push('आख़िरी अंतर भुक्ति के अंत पर नहीं (' + b.lord + ' ' + an[an.length - 1].endISO + ' vs ' + b.endISO + ')')
+          if (all.length > 9) problems.push('अंतर 9 से ज़्यादा (' + b.lord + ')')
         }
       }
-      expect(known.length, 'जन्म-कटी भुक्ति की उलटी अंतर-पंक्तियाँ एक से ज़्यादा: ' + known.join(' ; ')).toBeLessThanOrEqual(1)
       expect(problems, rec.ref + ' में दशा-समस्याएँ:\n' + problems.slice(0, 12).join('\n')).toEqual([])
     })
   }
+
+  // 2-ख) जिन दो कुंडलियों पर यह गड़बड़ सबसे साफ़ दिखती थी (Task 01-ख में नाम लिए गए हैं)
+  it('बेतूल 22-01-1980 — पहली (कटी) महादशा में कोई अंतर उलटा नहीं, आख़िरी = भुक्ति का अंत', () => {
+    const r = results.get(10)
+    let rows = 0
+    for (const md of r.dasha.mahadashas) for (const b of md.bhukthis) {
+      if (b.blank) continue
+      const an = b.andhirams.filter((x) => !x.blank)
+      rows += an.length
+      for (const a of an) expect(dmy(a.endISO), b.lord + '/' + a.lord + ' उलटी').toBeGreaterThanOrEqual(dmy(a.startISO))
+      expect(an[an.length - 1].endISO).toBe(b.endISO)
+    }
+    expect(rows).toBeGreaterThan(40)
+  })
+
+  it('दशा-संधि वाली कुंडली (ref 39, पहली महादशा 8 दिन) — अंतर भी सीधे और भुक्ति के अंत पर', () => {
+    const r = results.get(39)
+    const md = r.dasha.mahadashas[0]
+    expect(dmy(md.endISO) - dmy(md.startISO)).toBeLessThan(100)
+    let total = 0
+    for (const b of md.bhukthis) {
+      if (b.blank) continue
+      const an = b.andhirams.filter((x) => !x.blank)
+      total += an.length
+      for (const a of an) expect(dmy(a.endISO), b.lord + '/' + a.lord + ' उलटी').toBeGreaterThanOrEqual(dmy(a.startISO))
+      expect(an[an.length - 1].endISO).toBe(b.endISO)
+    }
+    expect(total).toBeGreaterThan(0)
+  })
 
   // 3) ये कुंडलियाँ सचमुच किनारे पर हैं (वरना baseline का दायरा झूठा होगा)
   it('लग्न-संधि वाली कुंडली: लग्न अगली राशि से 0.01° से कम पहले है', () => {

@@ -83,8 +83,14 @@ describe('BNN Phase 6 — dasha / bhukthi / andhiram', () => {
           expect(bhukthi.andhirams).toEqual([]) // आधी दशा की बीती पंक्तियाँ खाली
           continue
         }
-        expect(bhukthi.andhirams).toHaveLength(9)
-        expect(bhukthi.andhirams[8].endISO).toBe(bhukthi.endISO) // आख़िरी अंतर = भुक्ति का अंत
+        // राउंड 65-ख: पहली (जन्म पर कटी) महादशा में कुछ अंतर जन्म से पहले ही ख़त्म हो जाते हैं
+        // (वे `blank` पंक्तियाँ) और भुक्ति के अंत से आगे वाली पंक्तियाँ हट जाती हैं — इसलिए
+        // 9 से कम हो सकती हैं; पर आख़िरी अंतर हमेशा भुक्ति के अंत पर ख़त्म होता है।
+        expect(bhukthi.andhirams.length).toBeGreaterThan(0)
+        expect(bhukthi.andhirams.length).toBeLessThanOrEqual(9)
+        const real = bhukthi.andhirams.filter((r) => !r.blank)
+        expect(real.length).toBeGreaterThan(0)
+        expect(real[real.length - 1].endISO).toBe(bhukthi.endISO) // आख़िरी अंतर = भुक्ति का अंत
       }
     }
     // चल रही पंक्तियाँ वही objects हैं जो पेड़ में लगे हैं (print/All-chart अछूते)
