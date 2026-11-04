@@ -160,6 +160,14 @@ body{font-family:"Segoe UI","Nirmala UI","Noto Sans Devanagari","Kohinoor Devana
 body.printing #helpModal{display:none!important}
 /* जन्म-तारीख़/समय के खाने — ढाँचा सदा दिखे + ग़लत अंक पर झटका (राउंड 65 / टास्क 09) */
 .mskel{position:fixed;z-index:5;pointer-events:none;white-space:pre;color:#8a8172;overflow:visible;user-select:none;padding-left:1px}
+/* ढाँचे के अक्षर हल्के; जो हिस्से पहले से भरे हैं वे अपने रंग में (टास्क 09-घ) */
+.mskel i{font-style:normal;color:#8a8172}
+.mskel b{font-weight:400;color:inherit}
+/* अधूरा हिस्सा = केसरिया रेखा, ग़लत हिस्सा (31-04) = लाल रेखा */
+.mskseg{position:fixed;z-index:4;pointer-events:none;border-bottom:2px solid #d97706;background:rgba(217,119,6,.10);border-radius:2px}
+.mskseg.bad{border-bottom-color:#dc2626;background:rgba(220,38,38,.13)}
+/* जिन खानों की अपनी सहायता-पंक्ति नहीं (गोचर dt / स्पेशल-ट्रांज़िट) — संदेश खाने के नीचे, layout में कुछ नहीं जुड़ता */
+.fmsg{position:fixed;z-index:9;pointer-events:none;white-space:nowrap;background:#fffdf8;border:1px solid #f0c9c9;border-radius:5px;padding:1px 7px;font-size:12px;line-height:1.5;color:#b91c1c;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,.10)}
 /* सहायता-पंक्ति की जगह पहले से रक्षित — संदेश बदलने पर नीचे का हिस्सा न उछले */
 .f > .hint{min-height:17px}
 .inp.nope,.stDate.nope{border-color:#dc2626!important;background:#fff7f7!important}
@@ -167,7 +175,7 @@ body.printing #helpModal{display:none!important}
 .inp.nope,.stDate.nope{animation:nopeShake .17s 2}
 @media (prefers-reduced-motion: reduce){.inp.nope,.stDate.nope{animation:none}}
 .mmsg{color:#b91c1c;font-weight:600}
-body.printing .mskel{display:none!important}
+body.printing .mskel,body.printing .mskseg,body.printing .fmsg{display:none!important}
 /* प्रिंट / PDF */
 #printSheet{display:none;background:#fff;color:#111}
 body.printing #printSheet{display:block;padding:14px 16px;font-size:13px;line-height:1.55}
