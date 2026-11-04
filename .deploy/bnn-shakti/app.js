@@ -51,12 +51,31 @@
       if (bar.parentNode) bar.parentNode.removeChild(bar);
     });
   }
+  // version.json से आया course link सहायता की खिड़की को दो (ख़ाली/ग़लत → नहीं दिखेगा)
+  function applyCourseUrl(u) {
+    try { if (window.BNNHelp && window.BNNHelp.setCourseUrl) window.BNNHelp.setCourseUrl(u); } catch (e) {}
+  }
   // जाँच — खुलने के 5 सेकंड बाद एक बार (देरी से, ताकि शुरुआत धीमी न हो)
   function scheduleUpdateCheck() {
-    if (!(window.desktop && window.desktop.checkUpdate)) return;
+    if (!(window.desktop && window.desktop.checkUpdate)) {
+      // web: वही version.json इसी साइट से (same-origin) — सिर्फ़ course link के लिए
+      setTimeout(function () {
+        try {
+          fetch('version.json', { cache: 'no-store' })
+            .then(function (r) { return r.ok ? r.json() : null; })
+            .then(function (j) { if (j) applyCourseUrl(j.courseUrl); })
+            .catch(function () { /* चुपचाप — internet/file नहीं */ });
+        } catch (e) {}
+      }, 1200);
+      return;
+    }
     setTimeout(function () {
       try {
-        window.desktop.checkUpdate().then(function (u) { if (u) showUpdateBar(u); }).catch(function () {});
+        window.desktop.checkUpdate().then(function (u) {
+          if (!u) return;                 // बंद/विफल — चुपचाप
+          applyCourseUrl(u.courseUrl);    // भरा हो तभी link दिखेगा
+          showUpdateBar(u);
+        }).catch(function () {});
       } catch (e) { /* चुपचाप */ }
     }, 5000);
   }

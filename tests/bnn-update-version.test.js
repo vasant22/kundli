@@ -56,6 +56,9 @@ describe.runIf(hasApp)('नया संस्करण — version.json ला�
       if (req.url === '/ok.json') {
         res.writeHead(200, { 'content-type': 'application/json' })
         res.end(JSON.stringify({ version: '1.0.1', date: '2026-11-04', note: 'सुधार', url: 'https://mybapuji.com/x/' }))
+      } else if (req.url === '/course.json') {
+        res.writeHead(200, { 'content-type': 'application/json' })
+        res.end(JSON.stringify({ version: '1.0.1', note: '', url: '', courseUrl: 'https://mybapuji.com/bnn-jyotish-course/' }))
       } else if (req.url === '/same.json') {
         res.writeHead(200, { 'content-type': 'application/json' })
         res.end(JSON.stringify({ version: '1.0.0', note: '', url: '' }))
@@ -83,6 +86,15 @@ describe.runIf(hasApp)('नया संस्करण — version.json ला�
     expect(r.data.version).toBe('1.0.1')
     expect(r.data.note).toBe('सुधार')
     expect(r.data.url).toMatch(/^https:\/\/mybapuji\.com\//)
+  })
+
+  it('courseUrl version.json से आता है; न हो तो ख़ाली', async () => {
+    const r = await mod.fetchVersionInfo(base + '/course.json')
+    expect(r.ok).toBe(true)
+    expect(r.data.courseUrl).toBe('https://mybapuji.com/bnn-jyotish-course/')
+    const r2 = await mod.fetchVersionInfo(base + '/same.json')   // इसमें courseUrl नहीं है
+    expect(r2.ok).toBe(true)
+    expect(r2.data.courseUrl).toBe('')
   })
 
   it('पुराना/वही संस्करण (1.0.0) → ok:true (दिखाना-न-दिखाना तुलना से तय होगा)', async () => {

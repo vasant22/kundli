@@ -7,8 +7,10 @@
 (function () {
   'use strict'
 
-  // निःशुल्क course — index page (एक ही जगह बदलनी है अगर URL बदले)
-  var COURSE_URL = 'https://mybapuji.com/bnn-jyotish-course/'
+  // निःशुल्क course का link — **ऐप में तय नहीं**। यह server की version.json के `courseUrl`
+  // खेत से आता है (राउंड 65 / टास्क 04-ख), ताकि course publish होते ही सिर्फ़ server की
+  // file बदलनी पड़े, नया build नहीं। ख़ाली/ग़लत domain → link दिखता ही नहीं।
+  var COURSE_URL = ''
 
   var T = [
     {
@@ -194,7 +196,7 @@
     var html = '<h3>' + t.title + '</h3><ul>'
     for (var j = 0; j < t.lines.length; j++) html += '<li>' + t.lines[j] + '</li>'
     html += '</ul>'
-    html += '<div class="helpCourse">📘 <a href="' + COURSE_URL + '" id="helpCourseLink">BNN ज्योतिष सीखें — mybapuji.com पर निःशुल्क course</a></div>'
+    if (COURSE_URL) html += '<div class="helpCourse">📘 <a href="' + COURSE_URL + '" id="helpCourseLink">BNN ज्योतिष सीखें — mybapuji.com पर निःशुल्क course</a></div>'
     html += '<div class="helpFoot">सहायता चाहिए? <a href="mailto:info@mybapuji.com" id="helpMailLink">info@mybapuji.com</a></div>'
     pane.innerHTML = html
     pane.scrollTop = 0
@@ -205,6 +207,35 @@
       ev.preventDefault()
       openExternal('mailto:info@mybapuji.com')
     })
+  }
+
+  // version.json से मिला course link — केवल https://mybapuji.com/ से शुरू हो तो मानो
+  function setCourseUrl(u) {
+    var s1 = String(u == null ? '' : u).trim()
+    COURSE_URL = /^https:\/\/mybapuji\.com\//i.test(s1) ? s1 : ''
+    refresh()
+    return COURSE_URL
+  }
+
+  // खिड़की खुली हो तो मौजूदा विषय फिर दिखाओ (link बाद में आया हो तो भी दिख जाए)
+  function refresh() {
+    if (!modal || modal.hidden) return
+    var on = document.querySelector('#helpList .helpTopic.on')
+    show(on ? +on.dataset.i : 0)
+  }
+
+  // Tab/Shift+Tab खिड़की के अंदर ही घूमें
+  function focusables() {
+    if (!modal) return []
+    var all = modal.querySelectorAll('button, a[href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
+    var out = []
+    for (var i = 0; i < all.length; i++) {
+      var e = all[i]
+      if (e.disabled) continue
+      if (e.closest && e.closest('[hidden]')) continue   // छिपी चीज़ें नहीं
+      out.push(e)
+    }
+    return out
   }
 
   function openHelp() {
@@ -225,8 +256,25 @@
   }
 
   document.addEventListener('keydown', function (ev) {
-    if (ev.key === 'Escape' && modal && !modal.hidden) { ev.preventDefault(); closeHelp() }
+    if (!modal || modal.hidden) return
+    if (ev.key === 'Escape') { ev.preventDefault(); closeHelp(); return }
+    if (ev.key === 'Tab') {
+      var f = focusables()
+      if (!f.length) return
+      var first = f[0], last = f[f.length - 1]
+      var cur = document.activeElement
+      if (!modal.contains(cur)) { ev.preventDefault(); first.focus(); return }
+      if (ev.shiftKey && cur === first) { ev.preventDefault(); last.focus(); return }
+      if (!ev.shiftKey && cur === last) { ev.preventDefault(); first.focus(); return }
+    }
   })
 
-  window.BNNHelp = { open: openHelp, close: closeHelp, topics: T, courseUrl: COURSE_URL }
+  window.BNNHelp = {
+    open: openHelp,
+    close: closeHelp,
+    topics: T,
+    setCourseUrl: setCourseUrl,
+    refresh: refresh,
+    getCourseUrl: function () { return COURSE_URL }
+  }
 })()
