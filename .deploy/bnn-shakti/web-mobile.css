@@ -124,3 +124,14 @@
   .geo { grid-template-columns: 1fr 1fr; }
   .foot .btn, .foot .btn.big { flex: 0 0 auto; }
 }
+
+/* ---- सहायता की खिड़की (राउंड 65 / टास्क 04): phone पर एक ही स्तंभ ---- */
+@media (max-width: 820px) {
+  .helpModal { width: 100%; max-width: 100%; max-height: 100vh; border-radius: 0; height: 100%; }
+  .helpBody { grid-template-columns: 1fr; grid-template-rows: auto minmax(0, 1fr); }
+  .helpList { flex-direction: row; flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden;
+    border-right: 0; border-bottom: 1px solid #e8dfcf; padding: 8px; gap: 6px;
+    max-height: none; -webkit-overflow-scrolling: touch; }
+  .helpTopic { white-space: nowrap; font-size: 13px; padding: 8px 11px; background: #fff; border-color: #e8cfa6; }
+  .helpPane { max-height: none; padding: 12px 14px 18px; font-size: 14.5px; -webkit-overflow-scrolling: touch; }
+}

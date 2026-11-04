@@ -2499,6 +2499,10 @@
     $('btnPdf').addEventListener('click', function () { doPdf(); });
     $('btnLang').addEventListener('click', toggleLang);
     $('btnSettings').addEventListener('click', openSettings);
+    // सहायता (राउंड 65 / टास्क 04) — सामग्री app/help.js में है
+    $('btnHelp').addEventListener('click', function () {
+      if (window.BNNHelp && window.BNNHelp.open) window.BNNHelp.open();
+    });
 
     $('btnBack').addEventListener('click', function () { showView('form'); });
     $('rBhavaTabs').addEventListener('click', function (ev) { var t = ev.target.closest('.tab'); if (!t || !RESULT) return; RBHAVA_TAB = t.dataset.t; setTabs('rBhavaTabs', RBHAVA_TAB); renderBhava(); });
