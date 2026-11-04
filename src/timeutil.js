@@ -6,19 +6,26 @@
 
 // "+05:30" | "-8" | "5:30" → minutes east of UTC; null if not an offset.
 export function parseUtcOffset(text) {
-  const m = /^([+-]?)(\d{1,2})(?::([0-5]\d))?$/.exec(String(text).trim())
+  // ±HH:MM:SS भी चलता है (राउंड 65 / टास्क 08) — सेकंड वाला offset मिनट में लौटता है
+  // (जैसे +05:31:57 → 331.95) ताकि पुराने सारे गणना-रास्ते वैसे ही चलें।
+  const m = /^([+-]?)(\d{1,2})(?::([0-5]\d)(?::([0-5]\d))?)?$/.exec(String(text).trim())
   if (!m) return null
   const sign = m[1] === '-' ? -1 : 1
-  const minutes = sign * (Number(m[2]) * 60 + Number(m[3] ?? 0))
+  const minutes = sign * (Number(m[2]) * 60 + Number(m[3] ?? 0) + Number(m[4] ?? 0) / 60)
   if (minutes < -12 * 60 || minutes > 14 * 60) return null
   return minutes
 }
 
 // 330 → "+05:30"; -480 → "-08:00"
 export function formatUtcOffset(minutes) {
+  // पूरे मिनट पर पहले जैसा "+05:30"; सेकंड हों तो "+05:31:57" (राउंड 65 / टास्क 08)
   const sign = minutes < 0 ? '-' : '+'
-  const abs = Math.abs(minutes)
-  return `${sign}${String(Math.floor(abs / 60)).padStart(2, '0')}:${String(abs % 60).padStart(2, '0')}`
+  const total = Math.round(Math.abs(minutes) * 60)      // सेकंड में
+  const h = Math.floor(total / 3600)
+  const m = Math.floor((total % 3600) / 60)
+  const sec = total % 60
+  const base = `${sign}${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
+  return sec ? `${base}:${String(sec).padStart(2, '0')}` : base
 }
 
 // Is this a usable IANA time zone name for Intl? ("Asia/Kolkata", "UTC", …)

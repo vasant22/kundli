@@ -35,15 +35,14 @@ function setGeo(w, lat, lon) {
 function typeGmt(w, v) { $(w, 'fGmt').value = String(v); $(w, 'fGmt').dispatchEvent(new w.Event('input', { bubbles: true })) }
 
 describe.runIf(hasApp)('1906 से पहले का जन्म — स्थानीय समय (LMT)', () => {
-  it('1875 वाराणसी (82.97°E) → GMT अपने-आप +05:32, सूचना में सेकंड सहित LMT', async () => {
+  it('1875 वाराणसी (82.97°E) → GMT अपने-आप +05:31:54 (पूरे सेकंड), सूचना में वही LMT', async () => {
     const w = await boot()
     setGeo(w, 25.3176, 82.9739)
     setDate(w, '12-09-1875')
-    const g = Number($(w, 'fGmt').value)
-    expect(Math.abs(g - 5.5333)).toBeLessThan(0.0002)          // 332 मिनट = 05:32
+    expect($(w, 'fGmt').value).toBe('+05:31:54')               // 19914 सेकंड = 5:31:54
     const hint = $(w, 'hGmt').textContent
     expect(hint).toContain('LMT')
-    expect(hint).toContain('+05:31:')                          // असली LMT सेकंड सहित (≈+05:31:57)
+    expect(hint).toContain('+05:31:54')
     w.close()
   })
 
@@ -54,11 +53,11 @@ describe.runIf(hasApp)('1906 से पहले का जन्म — स्�
     const w2 = await boot()
     setGeo(w2, 25.3176, 82.9739)
     setDate(w2, '31-12-1905')
-    expect(Number($(w2, 'fGmt').value)).toBeCloseTo(5.5333, 3)
+    expect($(w2, 'fGmt').value).toBe('+05:31:54')              // सेकंड सहित LMT
     expect($(w2, 'hGmt').textContent).toContain('LMT')
     setDate(w2, '01-01-1906')
     expect($(w2, 'hGmt').textContent).toBe('')                 // 1906 से सूचना नहीं
-    expect(Number($(w2, 'fGmt').value)).toBeCloseTo(5.5333, 3) // खाना वैसा ही रहा (बदला नहीं)
+    expect($(w2, 'fGmt').value).toBe('+05:31:54')              // खाना वैसा ही रहा (बदला नहीं)
     w.close(); w2.close()
   })
 
@@ -77,7 +76,8 @@ describe.runIf(hasApp)('1906 से पहले का जन्म — स्�
     setGeo(w, 51.5074, -0.1278)
     $(w, 'fCountry').value = 'UK'
     setDate(w, '12-09-1875')
-    expect(Number($(w, 'fGmt').value)).not.toBeCloseTo(-0.0085, 3)   // -0.1278/15 = -0.0085
+    // भारत से बाहर → LMT नहीं (खाना '5.5' जैसा ही रहता है, offset की शक्ल में नहीं बदलता)
+    expect($(w, 'fGmt').value).not.toContain(':')
     w.close()
   })
 

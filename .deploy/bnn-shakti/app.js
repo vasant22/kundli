@@ -137,6 +137,29 @@
     if (h > 23 || mi > 59 || se > 59) return null;
     return ('0' + h).slice(-2) + ':' + ('0' + mi).slice(-2) + ':' + ('0' + se).slice(-2);
   }
+  // GMT: सादा घंटा (5.5) या offset की शक्ल में (+05:30 / +05:31:57 / -04:00) — दोनों चलें
+  // (राउंड 65 / टास्क 08)
+  function parseOffsetText(s) {
+    var m = /^([+-]?)(\d{1,2})(?::([0-5]\d)(?::([0-5]\d))?)?$/.exec(String(s || '').trim());
+    if (!m) return null;
+    var sign = m[1] === '-' ? -1 : 1;
+    var mins = sign * (Number(m[2]) * 60 + Number(m[3] || 0) + Number(m[4] || 0) / 60);
+    if (mins < -720 || mins > 840) return null;
+    return mins / 60;                      // घंटे में
+  }
+  function vGmt(s) {
+    s = String(s == null ? '' : s).trim();
+    if (!s) return null;
+    if (s.indexOf(':') >= 0) return parseOffsetText(s);
+    var n = Number(s);
+    if (!isFinite(n) || n < -12 || n > 14) return null;
+    return n;
+  }
+  function fmtOffsetHours(h) {              // घंटे → '+05:30' (पूरे मिनट) या '+05:31:57'
+    var t = Math.round(Number(h) * 3600), sign = t < 0 ? '-' : '+', a = Math.abs(t);
+    var hh = Math.floor(a / 3600), mm = Math.floor((a % 3600) / 60), ss = a % 60;
+    return sign + (hh < 10 ? '0' : '') + hh + ':' + (mm < 10 ? '0' : '') + mm + (ss ? ':' + (ss < 10 ? '0' : '') + ss : '');
+  }
   function vNum(s) {
     s = (s || '').trim();
     if (s === '') return null;
@@ -353,7 +376,7 @@
     for (var pj = 0; pj < PLACES.length; pj++) { if (PLACES[pj].n === plv) { plv = PLACES[pj].en; break; } }
     $('fPlace').value = plv; hideSugg();
     $('fLat').value = r.lat != null ? r.lat : ''; $('fLon').value = r.lon != null ? r.lon : '';
-    $('fGmt').value = r.gmt != null ? r.gmt : 5.5; $('fDstChk').checked = Number(r.dst) > 0;
+    $('fGmt').value = r.gmtText || (r.gmt != null ? r.gmt : 5.5); $('fDstChk').checked = Number(r.dst) > 0;
     GMT_AUTO = false;   // सहेजी कुंडली का offset कभी अपने-आप न बदले
     refreshFormTitle();
     clearErr(); updateHour12(); updateFormOk(); renderList();
@@ -397,7 +420,7 @@
     // (क) 1906 से पहले + भारत + निर्देशांक मौजूद + offset हमारा → LMT भरो
     if (before && isIndia() && lon !== null && GMT_AUTO) {
       var l = lmtOf(lon);
-      $('fGmt').value = String(Math.round(l.gmt * 1e4) / 1e4);
+      $('fGmt').value = l.text;              // '+05:31:57' — पूरे सेकंड (टास्क 08)
       hint.textContent = L('1906 से पहले का जन्म — स्थानीय समय (LMT) ' + l.text + ' लगाया गया (देशांतर ' + Number(lon).toFixed(2) + '°); चाहें तो बदल सकते हैं।',
         'Birth before 1906 — local mean time (LMT) ' + l.text + ' filled in (longitude ' + Number(lon).toFixed(2) + '°); you may change it.');
       hint.className = 'hint lmt';
@@ -435,8 +458,13 @@
     if (lat === null || lat < -90 || lat > 90) { errs.push(L('अक्षांश', 'Latitude')); $('fLat').classList.add('err'); }
     var lon = vNum($('fLon').value);
     if (lon === null || lon < -180 || lon > 180) { errs.push(L('देशांतर', 'Longitude')); $('fLon').classList.add('err'); }
-    var gmt = vNum($('fGmt').value);
-    if (gmt === null || gmt < -12 || gmt > 14) { errs.push('GMT'); $('fGmt').classList.add('err'); }
+    var gmt = vGmt($('fGmt').value);
+    if (gmt === null) {
+      errs.push('GMT'); $('fGmt').classList.add('err');
+      var hG = $('hGmt');
+      if (hG) { hG.textContent = L('GMT ऐसे लिखें: +05:30 या +05:31:57 (या सादा 5.5) — घंटा 0–14, मिनट/सेकंड 0–59', 'Write GMT like +05:30 or +05:31:57 (or plain 5.5) — hours 0–14, minutes/seconds 0–59'); hG.className = 'hint err'; }
+    }
+    gmt = (gmt === null) ? 5.5 : Math.round(gmt * 3600) / 3600;   // सेकंड तक साफ़
     var dst = $('fDstChk').checked ? 1 : 0;
     var placeRaw = $('fPlace').value.trim();
     if (!placeRaw) { errs.push(L('जन्म स्थान', 'Birth Place')); $('fPlace').classList.add('err'); }
@@ -455,7 +483,7 @@
       mobile: $('fMobile').value.trim(), date: date || $('fDate').value.trim(), time: time || $('fTime').value.trim(),
       country: hiOfEn(COUNTRIES, countryEN), countryEN: countryEN,
       state: hiOfEn(STATES, stateENv), stateEN: stateENv, place: placeHI, placeEN: placeEN,
-      lat: lat, lon: lon, gmt: gmt, dst: dst
+      lat: lat, lon: lon, gmt: gmt, gmtText: fmtOffsetHours(gmt), dst: dst
     };
     return { rec: rec, errs: errs };
   }
@@ -1757,7 +1785,7 @@
     var rec = RESULT_REC, b = RESULT.bnn, a = SETTINGS.astro;
     var age = ageFrom(rec.date);
     var meta = L('संदर्भ क्रमांक: ', 'Ref No.: ') + rec.ref + L(' · नाम: ', ' · Name: ') + esc(rec.name || '—') + ' · ' + esc(genderName(rec.gender)) + (age !== '' ? L(' · आयु ', ' · Age ') + age + L(' वर्ष', ' yrs') : '') + '<br>'
-      + L('जन्म: ', 'Birth: ') + esc(rec.date) + ' ' + esc(rec.time) + L(' · स्थान: ', ' · Place: ') + esc(recPlace(rec)) + (recState(rec) ? ', ' + esc(recState(rec)) : '') + L(' · लग्न: ', ' · Lagna: ') + rashiName(b.ascendant.rashi)
+      + L('जन्म: ', 'Birth: ') + esc(rec.date) + ' ' + esc(rec.time) + (RESULT.offsetText ? ' (' + esc(RESULT.offsetText) + ')' : '') + L(' · स्थान: ', ' · Place: ') + esc(recPlace(rec)) + (recState(rec) ? ', ' + esc(recState(rec)) : '') + L(' · लग्न: ', ' · Lagna: ') + rashiName(b.ascendant.rashi)
 ;   // user 2026-10-20: page-1 par dasha/bhukti nahi
     var isSouth = (typeof RCHART !== 'undefined' && RCHART === 'south');
     var chartSvg = isSouth ? southSvgString() : northSvgString();
@@ -2289,7 +2317,7 @@
     var el = $('formOk'); if (!el) return;
     // चरण 3: लिंग भी ज़रूरी है — चुना हुआ न हो तो "✅ जन्म विवरण ठीक है" न दिखे
     var gOk = !!document.querySelector('input[name="gender"]:checked');
-    var ok = gOk && !!vDate($('fDate').value) && !!vTime($('fTime').value) && vNum($('fLat').value) !== null && vNum($('fLon').value) !== null && vNum($('fGmt').value) !== null && !!$('fPlace').value.trim();
+    var ok = gOk && !!vDate($('fDate').value) && !!vTime($('fTime').value) && vNum($('fLat').value) !== null && vNum($('fLon').value) !== null && vGmt($('fGmt').value) !== null && !!$('fPlace').value.trim();
     el.hidden = !ok;
   }
 
