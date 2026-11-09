@@ -228,7 +228,7 @@ describe.skipIf(!hasApp)('ऐप का print sheet — 3-11 + मध्य ब�
   it('पेटी — एक ग्रह: कोड + शीर्षक + दोनों बिंदु', async () => {
     const w = await boot(makeResult({ mid: { points: [115.5, 295.5], members: [{ key: 'jupiter', gap: 0.3 }], effective: true } }))
     const sheet = printSheet(w)
-    const band = sheet.querySelector('.mbg')
+    const band = sheet.querySelector('.pMid')
     expect(band).toBeTruthy()
     const txt = band.textContent
     expect(txt).toContain('JUP')
@@ -241,7 +241,7 @@ describe.skipIf(!hasApp)('ऐप का print sheet — 3-11 + मध्य ब�
   it('पेटी — दो ग्रह: "MAR . SAT" + "एक से अधिक — प्रभाव नहीं"', async () => {
     const w = await boot(makeResult({ mid: { points: [141.25, 321.25], members: [{ key: 'mars', gap: 1.1 }, { key: 'saturn', gap: 1.4 }], effective: false } }))
     const sheet = printSheet(w)
-    const txt = sheet.querySelector('.mbg').textContent
+    const txt = sheet.querySelector('.pMid').textContent
     expect(txt).toContain('MAR . SAT')
     expect(txt).toContain('एक से अधिक — प्रभाव नहीं')
     expect(txt).toContain('सिंह 21°15′')
@@ -251,13 +251,13 @@ describe.skipIf(!hasApp)('ऐप का print sheet — 3-11 + मध्य ब�
   it('पेटी — कोई नहीं: ख़ाली पेटी, पर शीर्षक व दोनों बिंदु रहते हैं', async () => {
     const w = await boot(makeResult({ mid: { points: [41.8, 221.8], members: [], effective: false } }))
     const sheet = printSheet(w)
-    const band = sheet.querySelector('.mbg')
+    const band = sheet.querySelector('.pMid')
     expect(band).toBeTruthy()
-    const texts = Array.from(band.querySelectorAll('text')).map((t) => t.textContent)
-    expect(texts.length).toBe(2)                       // कोड-पंक्ति ही नहीं (ख़ाली पेटी)
-    expect(texts[0]).toContain('राहु-केतु मध्य बिंदु')
-    expect(texts[1]).toContain('वृष 11°48′')
-    expect(texts.join(' ')).not.toContain('एक से अधिक')
+    const lines = Array.from(band.children).map((d) => d.textContent)
+    expect(lines.length).toBe(2)                       // कोड-पंक्ति ही नहीं (ख़ाली पेटी)
+    expect(lines[0]).toContain('राहु-केतु मध्य बिंदु')
+    expect(lines[1]).toContain('वृष 11°48′')
+    expect(lines.join(' ')).not.toContain('एक से अधिक')
   })
 
   it('गोचर मोड में भी print में NATAL की 3-11 और पेटी', async () => {
@@ -268,6 +268,6 @@ describe.skipIf(!hasApp)('ऐप का print sheet — 3-11 + मध्य ब�
     expect(sheet.querySelectorAll('.pPage').length).toBe(6)
     expect(sheet.querySelector('.p311').textContent).toContain('NATAL')
     expect(sheet.querySelector('.p311').textContent).toContain('SAT')
-    expect(sheet.querySelector('.mbg').textContent).toContain('JUP')
+    expect(sheet.querySelector('.pMid').textContent).toContain('JUP')
   })
 })

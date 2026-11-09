@@ -111,6 +111,19 @@ describe('सर के software की 16 कुंडलियाँ — र�
   }
 })
 
+// राउंड 66 / टास्क 10-ग: टास्क 10-ख में लिखा था "कीर्ति का BP ख़ाली" — वह ग़लत था
+// (Vas22 जी/Claude ने 9-11-2026 को पुष्टि की: BP में भी SUN↔MAR जुड़ते हैं, नियम वही)।
+describe('कीर्ति — BP (जन्म की सीट) का 3-11', () => {
+  it('BP: SUN→MAR ; MAR→SUN (जन्म; अंतर 57°10.6′ — 60° से 2.82° कम)', () => {
+    const c = CHARTS.find((x) => x.n === 3)
+    const b = chartOf(c)
+    const t = threeElevenTable(b.planets, 'BP', ORDER_M)
+    expect(rowsOf(t)).toEqual({ sun: ['mars'], mars: ['sun'] })
+    expect(t.sun[0].side).toBe(3)
+    expect(Math.abs(t.sun[0].gap - 2.824)).toBeLessThan(0.02)
+  })
+})
+
 describe('शुद्ध स्थिति — 3-11 के उदाहरण', () => {
   const S = { mesh: 0, vrish: 1, mithun: 2, kark: 3, simha: 4, kanya: 5, tula: 6, vrishchik: 7, dhanu: 8, makar: 9, kumbh: 10, meen: 11 }
   const P = (key, sign, degInSign, retro = false) => {
