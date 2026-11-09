@@ -60,6 +60,9 @@ describe.runIf(hasHelp)('सहायता — course link (version.json से
     // कुछ भी set किए बिना — जैसे version.json न मिला हो
     const pane = w.document.getElementById('helpPane')
     expect(w.document.getElementById('helpCourseLink')).toBeNull()
+    // राउंड 67 / टास्क 12: सूची में सबसे ऊपर “इस संस्करण में नया” आ गया — बाक़ी सहायता वैसी ही है
+    expect(w.document.getElementById('helpT_naya')).toBeTruthy()
+    w.document.getElementById('helpT_naya').click()
     expect(pane.textContent).toContain('नई कुंडली बनाना')      // सामग्री दिख रही है
     expect(pane.textContent).toContain('info@mybapuji.com')    // संपर्क तो रहता ही है
     w.close()

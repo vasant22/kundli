@@ -11,8 +11,19 @@
   // खेत से आता है (राउंड 65 / टास्क 04-ख), ताकि course publish होते ही सिर्फ़ server की
   // file बदलनी पड़े, नया build नहीं। ख़ाली/ग़लत domain → link दिखता ही नहीं।
   var COURSE_URL = ''
+  // राउंड 67 / टास्क 12: संस्करण सहायता में साफ़ दिखे — वही एक स्रोत (version.js)
+  var VER = (window.BNNSemver && window.BNNSemver.appVersion) ? window.BNNSemver.appVersion : ''
 
   var T = [
+    {
+      id: 'is-sanskar',
+      title: 'इस संस्करण में नया' + (VER ? ' (' + VER + ')' : ''),
+      lines: [
+        (VER ? 'संस्करण ' + VER + ' — ' : '') + 'नया “3-11” tab: ग्रह तालिका में SPECIAL और PRSSS के बीच; जो दो ग्रह 60° ±3° पर बैठे हों (तीसरे/ग्यारहवें), उनका संबंध — ये संशोधक ग्रह हैं।',
+        '“राहु-केतु मध्य बिंदु” की पेटी अब चार्ट के ऊपर-दाएँ बड़े रूप में (ग्रह न हों तो भी पूरा आकार, “—” सहित); उसके आमने-सामने “परिवर्तन” की बराबर बड़ी पेटी।',
+        'दोनों Print, PDF और ऑल चार्ट (PNG) में भी आते हैं। नया संस्करण आने पर ऊपर की पट्टी में उसका नाम दिखता है (web पर पुरानी files दिखें तो “ताज़ा करें” बटन)।'
+      ]
+    },
     {
       id: 'naya',
       title: 'नई कुंडली बनाना · सहेजना · खोलना',
@@ -153,7 +164,7 @@
     modal.id = 'helpModal'
     modal.hidden = true
     var box = el('div', 'modal helpModal', '')
-    var head = el('div', 'mtb', '<span>❓ सहायता — BNN Shakti</span><span class="sp"></span>')
+    var head = el('div', 'mtb', '<span>❓ सहायता — BNN Shakti' + (VER ? ' · ' + VER : '') + '</span><span class="sp"></span>')
     var close = el('button', 'helpX', '✕')
     close.type = 'button'
     close.title = 'बंद करें (Esc)'

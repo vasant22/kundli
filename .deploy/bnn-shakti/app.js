@@ -57,6 +57,23 @@
       if (bar.parentNode) bar.parentNode.removeChild(bar);
     });
   }
+  // राउंड 67 / टास्क 12: web पर पुरानी files दिख रही हों (browser cache) तो पतली पट्टी +
+  // “ताज़ा करें” बटन। desktop पर यह नहीं — वहाँ डाउनलोड वाला सूचना-रास्ता ही रहता है।
+  function showStaleBar(serverVer) {
+    if (!serverVer) return;
+    var cmp = (window.BNNSemver && window.BNNSemver.compare) ? window.BNNSemver.compare(serverVer, APP_VER) : 0;
+    if (cmp <= 0) return;                       // server पर भी वही या पुराना — कुछ न दिखाओ
+    if (document.getElementById('updBar')) return;
+    var bar = document.createElement('div');
+    bar.id = 'updBar';
+    bar.className = 'updbar stale';
+    bar.innerHTML = '<span class="updTxt">' + L('नया संस्करण ', 'A newer version ') + '<b>v' + esc(serverVer) + '</b> ' +
+      L('उपलब्ध है — पन्ना ताज़ा करें', 'is available — reload the page') + '</span><span class="sp"></span>' +
+      '<button type="button" class="updGo" id="updReload">' + L('ताज़ा करें', 'Reload') + '</button>';
+    document.body.insertBefore(bar, document.body.firstChild);
+    var rl = $('updReload');
+    if (rl) rl.addEventListener('click', function () { try { location.reload(); } catch (e) {} });
+  }
   // version.json से आया course link सहायता की खिड़की को दो (ख़ाली/ग़लत → नहीं दिखेगा)
   function applyCourseUrl(u) {
     try { if (window.BNNHelp && window.BNNHelp.setCourseUrl) window.BNNHelp.setCourseUrl(u); } catch (e) {}
@@ -69,7 +86,7 @@
         try {
           fetch('version.json', { cache: 'no-store' })
             .then(function (r) { return r.ok ? r.json() : null; })
-            .then(function (j) { if (j) applyCourseUrl(j.courseUrl); })
+            .then(function (j) { if (j) { applyCourseUrl(j.courseUrl); showStaleBar(j.version); } })
             .catch(function () { /* चुपचाप — internet/file नहीं */ });
         } catch (e) {}
       }, 1200);
@@ -86,6 +103,7 @@
     }, 5000);
   }
   window.BNN_showUpdateBar = showUpdateBar;   // जाँच के लिए (नुक़सान नहीं)
+  window.BNN_showStaleBar = showStaleBar;     // जाँच के लिए (नुक़सान नहीं)
 
   function setStatus() {
     var d = new Date();
@@ -643,6 +661,15 @@
   // संस्करण — version.js से (एक ही स्थिरांक); न मिले तो सिर्फ़ नाम
   var APP_VER = (window.BNNSemver && window.BNNSemver.appVersion) ? window.BNNSemver.appVersion : '';
   var APP_LABEL = 'BNN Shakti' + (APP_VER ? ' ' + APP_VER : '');
+  // राउंड 67 / टास्क 12: build की तारीख़ — build करते समय index.html के meta से आती है
+  // (make-web.mjs / prepare.mjs build/version.json की date भरते हैं)। न मिले → केवल संस्करण।
+  var BUILD_DATE = ((document.querySelector('meta[name="bnn-build-date"]') || {}).content || '').trim();
+  function renderVersionBits() {
+    var b = $('appVerBadge');
+    if (b) { b.textContent = APP_VER ? 'v' + APP_VER : ''; b.hidden = !APP_VER; }
+    var v = $('brandVer');
+    if (v) v.textContent = APP_VER ? (L('संस्करण ', 'Version ') + APP_VER + (BUILD_DATE ? ' · ' + BUILD_DATE : '')) : '';
+  }
   var SHORT = { sun: 'SUN', moon: 'MOO', mars: 'MAR', mercury: 'MER', jupiter: 'JUP', venus: 'VEN', saturn: 'SAT', rahu: 'RAH', ketu: 'KET' }; // राउंड 11: बड़े code (website जैसे)
   var RASHIS = ['मेष', 'वृष', 'मिथुन', 'कर्क', 'सिंह', 'कन्या', 'तुला', 'वृश्चिक', 'धनु', 'मकर', 'कुम्भ', 'मीन'];
   var RASHIS_EN = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'];
@@ -3037,6 +3064,7 @@
     }
     document.documentElement.lang = (LANG === 'en') ? 'en' : 'hi';
     if (!/mybapuji/.test(document.title)) document.title = APP_LABEL;
+    renderVersionBits();
     $('btnLang').textContent = L('🌐 भाषा: हिंदी', '🌐 Language: English');
     refreshAyanOptions();
     refreshFormTitle();
