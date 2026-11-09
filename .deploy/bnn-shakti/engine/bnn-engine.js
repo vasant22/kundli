@@ -5012,7 +5012,7 @@
 			constName: "SE_SATURN"
 		}
 	];
-	const norm$5 = (x) => (x % 360 + 360) % 360;
+	const norm$6 = (x) => (x % 360 + 360) % 360;
 	/** Set the BNN ayanamsa on a Swiss-Ephemeris instance (call before calc). */
 	function setBnnAyanamsa(swe) {
 		swe.set_sid_mode(BNN_SETTINGS.ayanamsaMode, 0, 0);
@@ -5088,11 +5088,11 @@
 	}
 	/** Tithi 1–30 from sidereal Sun/Moon longitudes (1–15 शुक्ल, 16–30 कृष्ण). */
 	function tithiIndexOf(sunLon, moonLon) {
-		return Math.floor(norm$5(moonLon - sunLon) / 12) + 1;
+		return Math.floor(norm$6(moonLon - sunLon) / 12) + 1;
 	}
 	/** Yoga 1–27 from sidereal Sun+Moon longitudes. */
 	function yogaIndexOf(sunLon, moonLon) {
-		return Math.floor(norm$5(sunLon + moonLon) / (360 / 27)) + 1;
+		return Math.floor(norm$6(sunLon + moonLon) / (360 / 27)) + 1;
 	}
 	/**
 	* R6 parivartana pairs: two planets sitting in each other's sign
@@ -5146,7 +5146,7 @@
 	}
 	//#endregion
 	//#region ../projects/kundli/src/bnn/combos.js
-	const norm$4 = (x) => (x % 360 + 360) % 360;
+	const norm$5 = (x) => (x % 360 + 360) % 360;
 	const COMBO_SETTINGS = Object.freeze({
 		returnedCatchDeg: 1,
 		aspectForwardDeg: 1,
@@ -5208,7 +5208,7 @@
 	}
 	/** In-direction degrees from a seat to a point (0 ≤ d < 360). */
 	function deltaTo(seat, x) {
-		return seat.retro ? norm$4(seat.lon - x) : norm$4(x - seat.lon);
+		return seat.retro ? norm$5(seat.lon - x) : norm$5(x - seat.lon);
 	}
 	/**
 	* Zone membership + order key for a point against a source seat.
@@ -5245,20 +5245,20 @@
 		if (seat.key === "mars") return [{
 			label: "MAR4",
 			from: "mars",
-			point: norm$4(seat.lon + 90)
+			point: norm$5(seat.lon + 90)
 		}, {
 			label: "MAR8",
 			from: "mars",
-			point: norm$4(seat.lon + 210)
+			point: norm$5(seat.lon + 210)
 		}];
 		if (seat.key === "saturn") return [{
 			label: "SAT3",
 			from: "saturn",
-			point: norm$4(seat.lon + 60)
+			point: norm$5(seat.lon + 60)
 		}, {
 			label: "SAT10",
 			from: "saturn",
-			point: norm$4(seat.lon + 270)
+			point: norm$5(seat.lon + 270)
 		}];
 		return [];
 	}
@@ -5303,7 +5303,7 @@
 		}
 		if (seat.exchanged) for (const other of Object.values(seats)) {
 			if (other.key === planetKey) continue;
-			const back = norm$4(seat.lon - other.lon);
+			const back = norm$5(seat.lon - other.lon);
 			if (back <= 0 || back > COMBO_SETTINGS.returnedCatchDeg) continue;
 			if (entries.some((e) => e.type === "planet" && e.key === other.key)) continue;
 			let width = 30;
@@ -5311,7 +5311,7 @@
 				const b = bhavaIndexOf(seat.lon, opts.cusps);
 				const a = opts.cusps[b - 1].longitude;
 				const c = opts.cusps[b % 12].longitude;
-				width = norm$4(c - a) || 360;
+				width = norm$5(c - a) || 360;
 			}
 			entries.push({
 				type: "planet",
@@ -5388,8 +5388,8 @@
 		const b = bhavaIndexOf(lon, cusps);
 		const a = cusps[b - 1].longitude;
 		const c = cusps[b % 12].longitude;
-		const d = norm$4(lon - a);
-		const w = norm$4(c - a) || 360;
+		const d = norm$5(lon - a);
+		const w = norm$5(c - a) || 360;
 		return {
 			bhava: b,
 			value: Math.round(planetToBhavaPlainPercent(d, w))
@@ -5409,8 +5409,8 @@
 		const perBhava = Array.from({ length: 13 }, () => []);
 		for (const other of Object.values(seats)) {
 			let b = bhavaOf(other.lon);
-			const d = norm$4(other.lon - cuspList[b - 1]);
-			const w = norm$4(cuspList[b % 12] - cuspList[b - 1]) || 360;
+			const d = norm$5(other.lon - cuspList[b - 1]);
+			const w = norm$5(cuspList[b % 12] - cuspList[b - 1]) || 360;
 			let dist = d;
 			let pct = planetToBhavaPercent(d, w);
 			if (COMBO_SETTINGS.bhavaEdgeRule && pct < 0) {
@@ -5428,7 +5428,7 @@
 		}
 		for (const caster of Object.values(seats)) for (const ap of aspectPoints(caster)) {
 			const b = bhavaOf(ap.point);
-			const d = norm$4(ap.point - cuspList[b - 1]);
+			const d = norm$5(ap.point - cuspList[b - 1]);
 			if (d >= 30) continue;
 			perBhava[b].push({
 				type: "aspect",
@@ -5487,13 +5487,13 @@
 			acc += w;
 		}
 	}
-	const norm$3 = (x) => (x % 360 + 360) % 360;
+	const norm$4 = (x) => (x % 360 + 360) % 360;
 	/**
 	* The full five-level chain for one longitude:
 	* [rashi lord, star lord, sub, sub-sub, sub-sub-sub].
 	*/
 	function prsssChain(longitude) {
-		const lon = norm$3(longitude);
+		const lon = norm$4(longitude);
 		const rashiLord = RASHI_LORDS[Math.floor(lon / 30) % 12];
 		const NAK = 360 / 27;
 		const nakLordIdx = Math.floor(lon / NAK) % 9;
@@ -5518,7 +5518,7 @@
 	}
 	//#endregion
 	//#region ../projects/kundli/src/bnn/special.js
-	const norm$2 = (x) => (x % 360 + 360) % 360;
+	const norm$3 = (x) => (x % 360 + 360) % 360;
 	/** Star lord (nakshatra lord) of a natal longitude. */
 	function starLordOf(longitude) {
 		return computePrsss(longitude)[1];
@@ -5534,7 +5534,7 @@
 			const cusp = cuspLons[b - 1];
 			const qualified = Object.values(seats).filter((p) => bhavaIndexOf(p.lon, cusps) === b).filter((p) => p.rashi === signs[b - 1] || RASHI_LORDS[p.rashi] === bhavaLord[b - 1]);
 			if (qualified.length > 0) {
-				qualified.sort((p, q) => norm$2(p.lon - cusp) - norm$2(q.lon - cusp));
+				qualified.sort((p, q) => norm$3(p.lon - cusp) - norm$3(q.lon - cusp));
 				directors[b] = qualified[0].key;
 			} else directors[b] = bhavaLord[b - 1];
 		}
@@ -5572,7 +5572,7 @@
 		for (let b = 1; b <= 12; b++) {
 			lords[b] = bhavaLord[b - 1];
 			const occupants = Object.values(seats).filter((p) => bhavaIndexOf(p.lon, cusps) === b);
-			occupants.sort((p, q) => norm$2(p.lon - cuspLons[b - 1]) - norm$2(q.lon - cuspLons[b - 1]));
+			occupants.sort((p, q) => norm$3(p.lon - cuspLons[b - 1]) - norm$3(q.lon - cuspLons[b - 1]));
 			inBhava[b] = occupants.map((p) => ({
 				key: p.key,
 				natalRetro: p.natalRetro
@@ -5977,7 +5977,7 @@
 			9
 		]
 	});
-	const norm$1 = (x) => (x % 360 + 360) % 360;
+	const norm$2 = (x) => (x % 360 + 360) % 360;
 	/** Signed shortest difference a→b in degrees, ∈ (−180, 180]. */
 	const signedDelta = (a, b) => (b - a + 540) % 360 - 180;
 	/** Position of `zSign` counted forward from `fromSign` (1..12). */
@@ -6013,7 +6013,7 @@
 	}
 	/** Branch of (deg from frame start − zDeg) nearest to zero. */
 	function rvNear(lon, frameSign, zDeg) {
-		let v = norm$1(lon - frameSign * 30) - zDeg;
+		let v = norm$2(lon - frameSign * 30) - zDeg;
 		if (v > 180) v -= 360;
 		if (v < -180) v += 360;
 		return v;
@@ -6272,7 +6272,7 @@
 			for (const add of adds) out.push({
 				owner: key,
 				add,
-				val: norm$1(lon + add)
+				val: norm$2(lon + add)
 			});
 		}
 		out.sort((a, b) => a.val - b.val);
@@ -6401,7 +6401,7 @@
 		events.sort((a, b) => a.t - b.t);
 		const reach = (tCross, fwd) => {
 			const l0 = at(tCross).lon;
-			const target = norm$1(l0 + (fwd ? C : -C));
+			const target = norm$2(l0 + (fwd ? C : -C));
 			let lo = tCross;
 			let hi = tCross + 432e6;
 			const ok = (t) => {
@@ -6612,7 +6612,7 @@
 	}
 	//#endregion
 	//#region ../projects/kundli/src/bnn/transit-combos.js
-	const norm = (x) => (x % 360 + 360) % 360;
+	const norm$1 = (x) => (x % 360 + 360) % 360;
 	const isNode = (key) => key === "rahu" || key === "ketu";
 	/**
 	* One transit planet's row: the transit planet is the centre, the natal planets
@@ -6626,7 +6626,7 @@
 			retro: !!transitPlanet.retro,
 			exchanged: false
 		};
-		const deltaTo = (x) => center.retro ? norm(center.lon - x) : norm(x - center.lon);
+		const deltaTo = (x) => center.retro ? norm$1(center.lon - x) : norm$1(x - center.lon);
 		const entries = [];
 		for (const other of Object.values(natalSeats)) {
 			const m = memberOf(center, other.lon);
@@ -6687,6 +6687,104 @@
 		const out = {};
 		for (const t of transitPlanets) out[t.key] = labelSuffix(t.longitude, natalCusps).value;
 		return out;
+	}
+	//#endregion
+	//#region ../projects/kundli/src/bnn/teen-gyarah.js
+	const norm = (x) => (x % 360 + 360) % 360;
+	const TG_SETTINGS = Object.freeze({
+		linkDeg: 60,
+		linkToleranceDeg: 3,
+		midOffsets: Object.freeze([90, 270]),
+		midToleranceDeg: 3
+	});
+	const SEVEN = Object.freeze([
+		"sun",
+		"moon",
+		"mars",
+		"mercury",
+		"jupiter",
+		"venus",
+		"saturn"
+	]);
+	const isSeven = (k) => SEVEN.includes(k);
+	/**
+	* (क) 3-11 तालिका।
+	* हर ग्रह की पंक्ति → [{ key, gap, side }]; gap = |कोण − 60°|, side = 3 अगर सदस्य
+	* ~60° आगे, 11 अगर ~60° पीछे। राहु-केतु की पंक्तियाँ ख़ाली रहती हैं।
+	* क्रम: सदस्य की उसी mode की सीट की राशि-डिग्री घटते क्रम में; बराबर हो तो
+	* पुरुष/स्त्री पंक्ति-क्रम (order, न दिया जाए तो planets का क्रम)।
+	*/
+	function threeElevenTable(planets, mode = "AP", order = null) {
+		const seats = seatPositions(planets, mode);
+		const rowOrder = order && order.length ? order : planets.map((p) => p.key);
+		const rank = (k) => {
+			const i = rowOrder.indexOf(k);
+			return i < 0 ? 99 : i;
+		};
+		const out = {};
+		for (const p of planets) out[p.key] = [];
+		for (const a of planets.map((p) => p.key)) {
+			if (!isSeven(a) || !seats[a]) continue;
+			for (const b of SEVEN) {
+				if (a === b || !seats[b]) continue;
+				const d = norm(seats[b].lon - seats[a].lon);
+				let side = 0;
+				let gap = 0;
+				if (d >= TG_SETTINGS.linkDeg - TG_SETTINGS.linkToleranceDeg && d <= TG_SETTINGS.linkDeg + TG_SETTINGS.linkToleranceDeg) {
+					side = 3;
+					gap = Math.abs(d - TG_SETTINGS.linkDeg);
+				} else if (d >= 360 - TG_SETTINGS.linkDeg - TG_SETTINGS.linkToleranceDeg && d <= 360 - TG_SETTINGS.linkDeg + TG_SETTINGS.linkToleranceDeg) {
+					side = 11;
+					gap = Math.abs(360 - d - TG_SETTINGS.linkDeg);
+				}
+				if (!side) continue;
+				out[a].push({
+					key: b,
+					gap,
+					side
+				});
+			}
+			const degOf = (k) => seats[k] ? seats[k].degInSign : 0;
+			out[a].sort((x, y) => degOf(y.key) - degOf(x.key) || rank(x.key) - rank(y.key));
+		}
+		return out;
+	}
+	/**
+	* (ख) राहु-केतु मध्य बिंदु।
+	* points = [राहु+90°, राहु+270°] (राहु सदा जन्म का), members = [{ key, gap }]
+	* (उसी mode की सीट, वृत्तीय अंतर ≤ 3.000°, बिंदु से पहले/बाद दोनों बराबर),
+	* effective = members.length === 1 (एक फँसे ग्रह का ही कारकत्व जाता है)।
+	* क्रम: पुरुष/स्त्री पंक्ति-क्रम।
+	*/
+	function rahuKetuMidpoint(planets, mode = "AP", order = null) {
+		const seats = seatPositions(planets, mode);
+		const rowOrder = order && order.length ? order : planets.map((p) => p.key);
+		const rank = (k) => {
+			const i = rowOrder.indexOf(k);
+			return i < 0 ? 99 : i;
+		};
+		const rahu = planets.find((p) => p.key === "rahu");
+		const points = rahu ? TG_SETTINGS.midOffsets.map((o) => norm(rahu.longitude + o)) : [];
+		const members = [];
+		if (points.length) for (const k of SEVEN) {
+			if (!seats[k]) continue;
+			let best = Infinity;
+			for (const pt of points) {
+				let d = Math.abs(norm(seats[k].lon - pt));
+				if (d > 180) d = 360 - d;
+				if (d < best) best = d;
+			}
+			if (best <= TG_SETTINGS.midToleranceDeg) members.push({
+				key: k,
+				gap: best
+			});
+		}
+		members.sort((x, y) => rank(x.key) - rank(y.key));
+		return {
+			points,
+			members,
+			effective: members.length === 1
+		};
 	}
 	//#endregion
 	//#region build/entry.js
@@ -6851,6 +6949,15 @@
 					labels[lm][lkey] = labelSuffix(lseats[lkey].lon, bnn.cusps).value;
 				}
 			}
+			var planetOrder = fem ? ORDER_F : ORDER_M;
+			tables.r311 = {
+				AP: threeElevenTable(bnn.planets, "AP", planetOrder),
+				BP: threeElevenTable(bnn.planets, "BP", planetOrder)
+			};
+			var midpoint = {
+				AP: rahuKetuMidpoint(bnn.planets, "AP", planetOrder),
+				BP: rahuKetuMidpoint(bnn.planets, "BP", planetOrder)
+			};
 			return {
 				calcVersion: 1,
 				utc: conv.utc,
@@ -6858,6 +6965,7 @@
 				bnn,
 				exchanges,
 				tables,
+				midpoint,
 				astro,
 				dasha,
 				prsss,

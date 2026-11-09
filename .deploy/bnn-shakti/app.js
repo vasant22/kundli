@@ -663,7 +663,7 @@
   }
   var COLORS = { sun: '#1d4ed8', moon: '#1d4ed8', jupiter: '#1d4ed8', venus: '#1d4ed8', mars: '#15803d', mercury: '#15803d', saturn: '#c2410c', rahu: '#c2410c', ketu: '#db2777' };
   var BHAVA_TH = { 159: '1-5-9 में ग्रह||Planets in 1-5-9', 1579: '1-5-7-9 में ग्रह||Planets in 1-5-7-9', brsss: 'BRSSS चक्र||BRSSS Cycle', special: 'SPECIAL — स्वामी · बैठे ग्रह||SPECIAL — Lord · Sitting' };
-  var PLANET_TH = { 1579: '1-5-7-9 संयोजन||1-5-7-9 Combination', 159: '1-5-9 संयोजन||1-5-9 Combination', special: 'SPECIAL — स्वामी · देता · तारा||SPECIAL — Lord · Gives · Star', prsss: 'PRSSS चक्र||PRSSS Cycle' };
+  var PLANET_TH = { 1579: '1-5-7-9 संयोजन||1-5-7-9 Combination', 159: '1-5-9 संयोजन||1-5-9 Combination', special: 'SPECIAL — स्वामी · देता · तारा||SPECIAL — Lord · Gives · Star', r311: '3-11 संबंध (60° ±3°)||3-11 Link (60° ±3°)', prsss: 'PRSSS चक्र||PRSSS Cycle' };
   var DASHA_TH = { maha: 'महादशा||Mahadasha', bhukthi: 'भुक्ति||Bhukti', andhiram: 'अंतर||Antar' };
 
   function pad2(n) { n = String(n); return n.length < 2 ? '0' + n : n; }
@@ -992,12 +992,32 @@
     t.style.top = Math.round(top) + 'px';
   }
   function hidePlTip() { var t = document.getElementById('plTip'); if (t) t.classList.remove('on'); }
+  // राउंड 66: 3-11 के खाने और मध्य-बिंदु की पेटी पर सादा टिप (वही #plTip बक्सा)
+  function showMiniTip(el, txt, col) {
+    var t = plTipEl();
+    t.innerHTML = '<span class="pt-min" style="border-left-color:' + (col || '#1d4ed8') + '">' + esc(txt) + '</span>';
+    t.classList.add('on');
+    document.__plEl = el; document.__plSide = 'left';
+    plTipPlace(0, 0);
+  }
+  function tgTipText(el) {
+    var v = String(el.getAttribute('data-tg') || '').split('|');
+    var side = v[0] === '3' ? L('3रा', '3rd') : L('11वाँ', '11th');
+    var g = Number(v[1]) || 0;
+    var dg = Math.floor(g), mn = Math.round((g - dg) * 60);
+    if (mn === 60) { dg++; mn = 0; }
+    return side + ' · ' + L('अंतर ', 'gap ') + dg + '°' + pad2(mn) + '′';
+  }
   function plTipWire() {
     if (document.__plTip) return; document.__plTip = 1;
     document.addEventListener('mouseover', function (e) {
       var bh = (e.target && e.target.closest) ? e.target.closest('[data-lord]') : null;
       if (bh && RESULT) { hidePlTip(); showBhTip(bh, +bh.getAttribute('data-lord')); return; }
       hideBhTip();
+      var tg = (e.target && e.target.closest) ? e.target.closest('[data-tg]') : null;
+      if (tg && RESULT) { document.__plKey = null; showMiniTip(tg, tgTipText(tg), '#1d4ed8'); return; }
+      var mb = (e.target && e.target.closest) ? e.target.closest('[data-mb]') : null;
+      if (mb && RESULT) { document.__plKey = null; showMiniTip(mb, mb.getAttribute('data-mbtip') || '', '#b45309'); return; }
       var t = (e.target && e.target.closest) ? e.target.closest('[data-pl]') : null;
       if (!t || !RESULT) return;
       document.__plEl = t;
@@ -1006,17 +1026,17 @@
       showPlTip(t, t.getAttribute('data-pl'), e.clientX, e.clientY);
     });
     document.addEventListener('mousemove', function (e) {
-      var t = (e.target && e.target.closest) ? e.target.closest('[data-pl]') : null;
+      var t = (e.target && e.target.closest) ? e.target.closest('[data-pl],[data-tg],[data-mb]') : null;
       if (!t) return;
       plTipPlace(e.clientX, e.clientY);
     });
     document.addEventListener('mouseout', function (e) {
       var bh = (e.target && e.target.closest) ? e.target.closest('[data-lord]') : null;
       if (bh && !(e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest('[data-lord]'))) hideBhTip();
-      var t = (e.target && e.target.closest) ? e.target.closest('[data-pl]') : null;
+      var t = (e.target && e.target.closest) ? e.target.closest('[data-pl],[data-tg],[data-mb]') : null;
       if (!t) return;
       var to = e.relatedTarget;
-      if (to && to.closest && to.closest('[data-pl]')) return;
+      if (to && to.closest && to.closest('[data-pl],[data-tg],[data-mb]')) return;
       hidePlTip();
     });
     document.addEventListener('scroll', function () { hidePlTip(); hideBhTip(); }, true);
@@ -1024,7 +1044,88 @@
   }
   function renderChart() {
     $('rChart').innerHTML = (RCHART === 'north') ? northSvgString() : southSvgString();
+    renderMidBand();
     hovClear(); hovWire(); plTipWire();
+  }
+  // ---------- राउंड 66 / टास्क 10 (ख): राहु-केतु मध्य बिंदु की छोटी पेटी ----------
+  // चार्ट के ऊपर-दाएँ कोने के बाहर, चार्ट के आकार/स्थान को छुए बिना (absolute)।
+  // सदा जन्म (NATAL) का; AP/BP चुनने पर उसी mode की सीट से।
+  function fmtRashiDM(lon) {
+    var x = ((lon % 360) + 360) % 360, r = Math.floor(x / 30), v = x - r * 30;
+    var g = Math.floor(v), m = Math.round((v - g) * 60);
+    if (m === 60) { g++; m = 0; }
+    return rashiName(r) + ' ' + g + '°' + pad2(m) + '′';
+  }
+  // राउंड 66 / टास्क 10-ख: print व All-Charts PNG के लिए वही पेटी चार्ट के अंदर (SVG में)
+  // बनती है — screen पर HTML वाली पेटी है, इसलिए दोनों में डेटा यही एक जगह से आता है।
+  function midBandData(mode) {
+    var mp = RESULT && RESULT.midpoint ? RESULT.midpoint[mode] : null;
+    if (!mp) return null;
+    return {
+      codes: mp.members.map(function (e) { return pCode(e.key); }).join(' . '),
+      more: mp.members.length > 1,
+      pts: mp.points.map(fmtRashiDM).join(' · ')
+    };
+  }
+  function midBandSvg(kind, mode) {
+    var d = midBandData(mode); if (!d) return '';
+    // नाप चार्ट की अपनी इकाइयों में (north 484×484, south 804×736) — चार्ट का आकार नहीं बदलता।
+    var g = kind === 'south'
+      ? { x: 504, w: 166, c: 15.5, s: 10.6, lh: 13.2, pad: 6 }
+      : { x: 282, w: 128, c: 11.5, s: 8.2, lh: 10.2, pad: 5 };
+    var showCodes = !!d.codes;                       // कोई ग्रह नहीं → पेटी ख़ाली (सिर्फ़ शीर्षक+बिंदु)
+    var lines = (showCodes ? 1 : 0) + (d.more ? 1 : 0) + 2;
+    var h = g.pad * 2 + (showCodes ? g.c : g.s) + (lines - 1) * g.lh;
+    var y0 = -2 - h;
+    var cx = g.x + g.w / 2;
+    var out = '<g class="mbg" data-mb="1"><rect x="' + g.x + '" y="' + y0.toFixed(1) + '" width="' + g.w + '" height="' + h.toFixed(1) +
+      '" rx="3" fill="#fcd9c4" stroke="#b4643a" stroke-width="1"/>';
+    var ty = y0 + g.pad + (showCodes ? g.c * 0.82 : g.s * 0.82);
+    if (showCodes) {
+      out += '<text x="' + cx + '" y="' + ty.toFixed(1) + '" text-anchor="middle" font-family="sans-serif" font-size="' + g.c +
+        '" font-weight="800" fill="#5b2b10">' + esc(d.codes) + '</text>';
+      ty += g.lh;
+    }
+    if (d.more) {
+      out += '<text x="' + cx + '" y="' + ty.toFixed(1) + '" text-anchor="middle" font-family="sans-serif" font-size="' + g.s +
+        '" font-weight="600" fill="#8a5a3a">' + esc(L('एक से अधिक — प्रभाव नहीं', 'More than one — no effect')) + '</text>';
+      ty += g.lh;
+    }
+    out += '<text x="' + cx + '" y="' + ty.toFixed(1) + '" text-anchor="middle" font-family="sans-serif" font-size="' + g.s +
+      '" font-weight="600" fill="#7a4a2c">' + esc(L('राहु-केतु मध्य बिंदु (±3°)', 'Rahu-Ketu midpoint (±3°)')) + '</text>';
+    ty += g.lh;
+    out += '<text x="' + cx + '" y="' + ty.toFixed(1) + '" text-anchor="middle" font-family="sans-serif" font-size="' + g.s +
+      '" font-weight="600" fill="#7a4a2c">' + esc(d.pts) + '</text></g>';
+    return out;
+  }
+  // राउंड 66 / टास्क 10-ग: **print/PDF** की पेटी HTML में (position:absolute) — अक्षर सीधे
+  // px/mm में, इसलिए चार्ट कितना भी छोटा-बड़ा हो, A4 पर पढ़ने लायक रहते हैं।
+  // PNG की पेटी वही SVG वाली (midBandSvg) रहती है — वह पहले से ठीक है।
+  function midBandHtml(mode) {
+    var d = midBandData(mode); if (!d) return '';
+    var h = '<div class="pMid" data-mb="1">';
+    if (d.codes) h += '<div class="pmc">' + esc(d.codes) + '</div>';
+    if (d.more) h += '<div class="pmn">' + esc(L('एक से अधिक — प्रभाव नहीं', 'More than one — no effect')) + '</div>';
+    h += '<div class="pmt">' + esc(L('राहु-केतु मध्य बिंदु (±3°)', 'Rahu-Ketu midpoint (±3°)')) + '</div>';
+    h += '<div class="pmt">' + esc(d.pts) + '</div></div>';
+    return h;
+  }
+  function renderMidBand() {
+    var box = $('rChart'); if (!box) return;
+    var old = box.querySelector('.midband'); if (old && old.parentNode) old.parentNode.removeChild(old);
+    var mp = RESULT && RESULT.midpoint ? RESULT.midpoint[RMODE] : null;
+    if (!mp) return;
+    var d = document.createElement('div');
+    d.className = 'midband' + (mp.members.length ? '' : ' em');
+    if (mp.members.length) {
+      d.innerHTML = '<span class="mbv">' + esc(mp.members.map(function (e) { return pCode(e.key); }).join(' . ')) + '</span>' +
+        (mp.members.length > 1 ? '<span class="mbn">' + L('एक से अधिक — प्रभाव नहीं', 'More than one — no effect') + '</span>' : '');
+    }
+    // टिप: दोनों बिंदु राशि-डिग्री के साथ
+    d.setAttribute('data-mb', '1');
+    d.setAttribute('data-mbtip', L('राहु-केतु मध्य बिंदु (±3°): ', 'Rahu-Ketu midpoint (±3°): ') +
+      mp.points.map(fmtRashiDM).join(' · '));
+    box.appendChild(d);
   }
   var WEEKDAYS_EN = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
   var WEEKDAYS_HI = ['रविवार', 'सोमवार', 'मंगलवार', 'बुधवार', 'गुरुवार', 'शुक्रवार', 'शनिवार'];
@@ -1175,7 +1276,7 @@
     return pick ? { cx: pick.cx, cy: pick.cy } : { cx: best.cx, cy: best.cy };
   }
 
-  function northSvgString() {
+  function northSvgString(midMode) {
     var b = RESULT.bnn, asc = b.ascendant.rashi;
     var byH = {};
     b.planets.forEach(function (p) { var h = ((p.rashi - asc + 12) % 12) + 1; (byH[h] = byH[h] || []).push(p); });
@@ -1205,9 +1306,10 @@
     }
     var tg = northTransitLines(asc).map(function (L) { return '<text x="' + L.x + '" y="' + L.y + '" font-size="11" font-weight="600" text-anchor="' + L.anchor + '" fill="' + L.c + '">' + L.t + '</text>'; }).join('');
     var panelTxt = panelLinesTxt(170, 170, 1, chartPanelData());
-    return '<svg class="nchart" xmlns="http://www.w3.org/2000/svg" viewBox="-72 -72 484 484" width="560" height="560"><g font-family="sans-serif">' + tg + '<rect x="3" y="3" width="334" height="334" fill="#fffdf7" stroke="#c9a24a" stroke-width="1.6"/><line x1="3" y1="3" x2="337" y2="337" stroke="#c9a24a" stroke-width="1.2"/><line x1="337" y1="3" x2="3" y2="337" stroke="#c9a24a" stroke-width="1.2"/><polygon points="170,3 337,170 170,337 3,170" fill="none" stroke="#c9a24a" stroke-width="1.2"/><rect x="88" y="88" width="164" height="164" rx="10" fill="#fffdf3" stroke="#e3d2a6"/>' + panelTxt + T + '</g></svg>';
+    var mb = midMode ? midBandSvg('north', midMode) : '';
+    return '<svg class="nchart" xmlns="http://www.w3.org/2000/svg" viewBox="-72 -72 484 484" width="560" height="560"><g font-family="sans-serif">' + tg + '<rect x="3" y="3" width="334" height="334" fill="#fffdf7" stroke="#c9a24a" stroke-width="1.6"/><line x1="3" y1="3" x2="337" y2="337" stroke="#c9a24a" stroke-width="1.2"/><line x1="337" y1="3" x2="3" y2="337" stroke="#c9a24a" stroke-width="1.2"/><polygon points="170,3 337,170 170,337 3,170" fill="none" stroke="#c9a24a" stroke-width="1.2"/><rect x="88" y="88" width="164" height="164" rx="10" fill="#fffdf3" stroke="#e3d2a6"/>' + panelTxt + T + mb + '</g></svg>';
   }
-  function southSvgString() {
+  function southSvgString(midMode) {
     var b = RESULT.bnn, asc = b.ascendant.rashi;
     var byR = {};
     b.planets.forEach(function (p) { (byR[p.rashi] = byR[p.rashi] || []).push(p); });
@@ -1235,7 +1337,8 @@
     s += '<rect x="135" y="135" width="270" height="270" fill="#fffdf3" stroke="#e3d2a6"/>';
     s += panelLinesTxt(270, 270, 1.3, chartPanelData());
     var tg = southTransitLines(asc).map(function (L) { return '<text x="' + L.x + '" y="' + L.y + '" font-size="16" font-weight="600" text-anchor="' + L.anchor + '" fill="' + L.c + '">' + L.t + '</text>'; }).join('');
-    return '<svg class="nchart" xmlns="http://www.w3.org/2000/svg" viewBox="-132 -72 804 736" width="804" height="736"><g font-family="sans-serif">' + tg + s + '</g></svg>';
+    var mb = midMode ? midBandSvg('south', midMode) : '';
+    return '<svg class="nchart" xmlns="http://www.w3.org/2000/svg" viewBox="-132 -72 804 736" width="804" height="736"><g font-family="sans-serif">' + tg + s + mb + '</g></svg>';
   }
   function renderBhava() {
     var T = curT();
@@ -1292,6 +1395,24 @@
         for (i = 0; i < cols; i++) html += entTd(list[i], i);
         var partner = astro[k];
         html += '<td class="entc cep">' + (partner ? esc(codeFor(partner, RTRANSIT)) : '—') + '</td>';
+        html += '</tr>';
+      });
+      $('rPlanet').innerHTML = '<table class="coltbl">' + html + '</table>';
+      return;
+    }
+    if (RPLANET_TAB === 'r311') {
+      // सादी गहरी-नीली प्रविष्टियाँ — कोई प्रतिशत/भूमिका-रंग नहीं (सर जैसा)
+      var tg = (RESULT.tables.r311 && RESULT.tables.r311[RMODE]) || {};
+      var maxT = 0;
+      RESULT.order.forEach(function (k) { var ln = (tg[k] || []).length; if (ln > maxT) maxT = ln; });
+      var colsT = Math.max(7, maxT);
+      RESULT.order.forEach(function (k) {
+        var list = tg[k] || [];
+        html += '<tr><td class="rlab">' + pLabNat(k) + '</td>';
+        for (i = 0; i < colsT; i++) {
+          var e = list[i];
+          html += '<td class="entc tgc"' + (e ? ' data-tg="' + e.side + '|' + e.gap + '"' : '') + '>' + (e ? esc(pCode(e.key)) : '') + '</td>';
+        }
         html += '</tr>';
       });
       $('rPlanet').innerHTML = '<table class="coltbl">' + html + '</table>';
@@ -1723,6 +1844,27 @@
     });
     return '<div class="pBlock"><div class="pTitle">' + L('ग्रह Combination', 'PLANET Combination') + ' — NATAL — ' + ms + '</div><table class="pcols">' + html + '</table></div>';
   }
+  // राउंड 66 / टास्क 10-ख: 3-11 तालिका — बिलकुल वही जो screen पर (सदा NATAL का mode)
+  function printPlanetBlock311(mode) {
+    mode = mode || RMODE;
+    var tg = (RESULT.tables.r311 && RESULT.tables.r311[mode]) || {};
+    var max = 0;
+    RESULT.order.forEach(function (k) { var l = (tg[k] || []).length; if (l > max) max = l; });
+    var cols = Math.max(3, max);
+    var html = '';
+    RESULT.order.forEach(function (k) {
+      var list = tg[k] || [];
+      html += '<tr><td class="rlab">' + esc(pLabNat(k)) + '</td>';
+      for (var i = 0; i < cols; i++) {
+        var e = list[i];
+        html += '<td class="entc tgc">' + (e ? esc(pCode(e.key)) : '') + '</td>';
+      }
+      html += '</tr>';
+    });
+    var ms = mode + ' · ' + (mode === 'AP' ? L('परिवर्तन के बाद', 'After Parivartan') : L('परिवर्तन से पहले', 'Before Parivartan'));
+    return '<div class="pBlock p311"><div class="pTitle">' + L('ग्रह 3-11 संबंध (60° ±3°)', 'PLANET COMBINATION') +
+      ' — NATAL — 3-11 — ' + ms + '</div><table class="pcols">' + html + '</table></div>';
+  }
   function printBhavaSpecial(mode) {
     mode = mode || RMODE;
     var sp = RESULT.tables.special[mode];
@@ -1805,7 +1947,7 @@
       + L('जन्म: ', 'Birth: ') + esc(rec.date) + ' ' + esc(rec.time) + (RESULT.offsetText ? ' (' + esc(RESULT.offsetText) + ')' : '') + L(' · स्थान: ', ' · Place: ') + esc(recPlace(rec)) + (recState(rec) ? ', ' + esc(recState(rec)) : '') + L(' · लग्न: ', ' · Lagna: ') + rashiName(b.ascendant.rashi)
 ;   // user 2026-10-20: page-1 par dasha/bhukti nahi
     var isSouth = (typeof RCHART !== 'undefined' && RCHART === 'south');
-    var chartSvg = isSouth ? southSvgString() : northSvgString();
+    var chartSvg = isSouth ? southSvgString() : northSvgString();   // राउंड 66-ग: पेटी अलग HTML में (नीचे)
     var cap = isSouth ? L('दक्षिण भारतीय चार्ट (गोचर सहित)', 'South Indian Chart (with transit)') : L('उत्तर भारतीय चार्ट (गोचर सहित)', 'North Indian Chart (with transit)');
     var brand = '<div class="pBrand"><img class="pBrandIcon" src="branding/bnn-shakti.png"><div><div class="pBrandName">' + APP_LABEL + '</div><div class="pBrandSub"><a href="mailto:info@mybapuji.com">info@mybapuji.com</a> · <a href="https://mybapuji.com" target="_blank">mybapuji.com</a></div></div></div>';
     var astr = [a.name, a.title].filter(Boolean).join(' — ');
@@ -1815,10 +1957,10 @@
     var page = function (inner, last) { return '<div class="pPage">' + inner + (last ? foot : '') + '</div>'; };
     var two = function (l, r) { return '<div class="pTwoCol"><div class="pSide">' + l + '</div><div class="pSide">' + r + '</div></div>'; };
     var m1 = RMODE;                       // 30+ → AP, 30− → BP (openResult में तय)
-    var p1 = page(brand + '<div class="pMetaBox">' + meta + '</div>' + '<div class="ppChartBox pChartSingle">' + chartSvg + '<div class="pCap">' + cap + '</div></div>');
+    var p1 = page(brand + '<div class="pMetaBox">' + meta + '</div>' + '<div class="ppChartBox pChartSingle">' + chartSvg + midBandHtml(m1) + '<div class="pCap">' + cap + '</div></div>');
     var topLab = function (txt) { return '<div class="pComboTop">' + txt + '</div>'; };
     var p2 = page(two(topLab(L('भाव Combination 159', 'BHAVA Combination 159')) + printBhavaBlock(m1, '159'),
-                      topLab(L('ग्रह Combination 1579', 'PLANET Combination 1579')) + printPlanetBlock(m1, '1579')));
+                      topLab(L('ग्रह Combination 1579', 'PLANET Combination 1579')) + printPlanetBlock(m1, '1579') + printPlanetBlock311(m1)));
     var p3 = page('<div class="pPageTitle">' + L('भाव BRSSS · भाव SPECIAL', 'Bhava BRSSS · Bhava SPECIAL') + '</div>' + two(printBhavaBlock(m1, 'brsss'), printBhavaSpecial(m1)));
     var p4 = page('<div class="pPageTitle">' + L('ग्रह PRSSS · ग्रह SPECIAL', 'Planet PRSSS · Planet SPECIAL') + '</div>' + two(printPlanetBlock(m1, 'prsss'), printPlanetSpecial(m1)));
     var p5 = page(two(printDashaBlock('dhasa'), printDashaBlock('bhukthi')));
@@ -1879,7 +2021,7 @@
     try {
       toast(L('⏳ PNG बन रहा है…', '⏳ Making PNG…'));
       var isSouthPng = (typeof RCHART !== 'undefined' && RCHART === 'south');   // राउंड 52: जो स्क्रीन पर, वही PNG में
-      var nImg = await svgToImg(isSouthPng ? southSvgString() : northSvgString());
+      var nImg = await svgToImg(isSouthPng ? southSvgString(RMODE) : northSvgString(RMODE));   // राउंड 66-ख: पेटी सहित
       var W = 1600, M = 30, CH = 730;
       var rec = RESULT_REC;
       var canvas = document.createElement('canvas');
@@ -2006,6 +2148,33 @@
         ctx.beginPath(); ctx.moveTo(px, top); ctx.lineTo(px, bot); ctx.stroke();
         var px2 = px + partW;
         ctx.beginPath(); ctx.moveTo(px2, top); ctx.lineTo(px2, bot); ctx.stroke();
+      })();
+      // राउंड 66 / टास्क 10-ख: 3-11 तालिका — PLANET 1579 के नीचे (print जैसा ढाँचा)
+      var tg3 = (RESULT.tables.r311 && RESULT.tables.r311[RMODE]) || {};
+      var mx3 = 0;
+      RESULT.order.forEach(function (k) { var l = (tg3[k] || []).length; if (l > mx3) mx3 = l; });
+      var cols3 = Math.max(3, mx3);
+      var cw3 = Math.min(150, Math.round((cw - labW - 8) / cols3));
+      yy = titleBar('PLANET COMBINATION — NATAL — 3-11 — ' + RMODE, yy + 34) + 14;
+      var t3Start = yy;
+      RESULT.order.forEach(function (k) {
+        ctx.fillStyle = '#b3261e'; ctx.font = 'bold 16px sans-serif';
+        ctx.fillText(pLabNat(k), x0 + 4, yy + 20);
+        (tg3[k] || []).forEach(function (e, j) {
+          ctx.fillStyle = '#1d4ed8'; ctx.font = 'bold 16px sans-serif';
+          ctx.fillText(pCode(e.key), x0 + labW + j * cw3 + 4, yy + 20);
+        });
+        ctx.strokeStyle = '#f0e7d2'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(x0, yy + rh - 6); ctx.lineTo(x0 + labW + cols3 * cw3, yy + rh - 6); ctx.stroke();
+        yy += rh;
+      });
+      (function () {                         // 3-11 तालिका की खड़ी लकीरें
+        var top = t3Start - 6, bot = yy - 6;
+        ctx.strokeStyle = '#e6d9bd'; ctx.lineWidth = 1;
+        for (var c4 = 0; c4 <= cols3; c4++) {
+          var vx4 = Math.min(x0 + labW + c4 * cw3, x0 + cw);
+          ctx.beginPath(); ctx.moveTo(vx4, top); ctx.lineTo(vx4, bot); ctx.stroke();
+        }
       })();
       var d = RESULT.dasha;
       var runLines = [];
@@ -2856,6 +3025,12 @@
     for (i = 0; i < els.length; i++) els[i].placeholder = T(els[i].getAttribute('data-lp'));
     els = document.querySelectorAll('[data-lt]');
     for (i = 0; i < els.length; i++) els[i].title = T(els[i].getAttribute('data-lt'));
+    // राउंड 66: PLANET tabs का title (3-11 संबंध का अर्थ) — भाषा के साथ बदलता है
+    var ptabs = document.querySelectorAll('#rPlanetTabs .tab');
+    for (i = 0; i < ptabs.length; i++) {
+      var tk = ptabs[i].dataset ? ptabs[i].dataset.t : '';
+      if (tk && PLANET_TH[tk]) ptabs[i].title = T(PLANET_TH[tk]);
+    }
     document.documentElement.lang = (LANG === 'en') ? 'en' : 'hi';
     if (!/mybapuji/.test(document.title)) document.title = APP_LABEL;
     $('btnLang').textContent = L('🌐 भाषा: हिंदी', '🌐 Language: English');
