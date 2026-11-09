@@ -786,13 +786,16 @@
   }
 
   function renderParivartan() {
-    var box = $('rParivartan');
-    // परिवर्तन हो → ग्रह + धड़कता रंग; न हो → ख़ाली घेरा (hide नहीं, कोई color-बदलाव नहीं)
+    // राउंड 66 / टास्क 10-घ: छोटी गोली की जगह बड़ी आयताकार पेटी (शीर्षक + गाढ़े नाम)
+    var box = $('rParivartan'), pane = $('pPariv');
+    if (!box) return;
     box.hidden = false;
-    if (!RESULT.exchanges.length) { box.textContent = ''; box.classList.add('nopulse'); return; }
-    box.classList.remove('nopulse');
-    var t = RESULT.exchanges.map(function (p) { return planetName(p[0]) + ' ⇄ ' + planetName(p[1]); }).join('  ·  ');
-    box.textContent = '🔁 ' + t;
+    if (pane) pane.classList.toggle('on', !!(RESULT.exchanges && RESULT.exchanges.length));
+    if (!RESULT.exchanges.length) { box.textContent = '—'; return; }
+    // दो परिवर्तन हों तो दो पंक्तियाँ
+    box.innerHTML = RESULT.exchanges.map(function (p) {
+      return esc(planetName(p[0]) + ' ⇄ ' + planetName(p[1]));
+    }).join('<br>');
   }
   // ---------- राउंड 37 (user 19-10-2026): ग्रह पर mouse → उसके फल-भावों तक उसी रंग की पतली तीर-रेखाएँ ----------
   var HOV_NS = 'http://www.w3.org/2000/svg';
@@ -1111,21 +1114,22 @@
     return h;
   }
   function renderMidBand() {
-    var box = $('rChart'); if (!box) return;
-    var old = box.querySelector('.midband'); if (old && old.parentNode) old.parentNode.removeChild(old);
+    // राउंड 66 / टास्क 10-घ: यह अब चार्ट के अंदर नहीं, चार्ट के ऊपर-दाएँ कोने के बाहर बनी
+    // स्थिर पेटी (#pMid) में भरती है — परिवर्तन वाली पेटी के आमने-सामने, एक ही नाप की।
+    var pane = $('pMid'), val = $('rMidV'), note = $('rMidN');
+    if (!pane || !val) return;
     var mp = RESULT && RESULT.midpoint ? RESULT.midpoint[RMODE] : null;
-    if (!mp) return;
-    var d = document.createElement('div');
-    d.className = 'midband' + (mp.members.length ? '' : ' em');
-    if (mp.members.length) {
-      d.innerHTML = '<span class="mbv">' + esc(mp.members.map(function (e) { return pCode(e.key); }).join(' . ')) + '</span>' +
-        (mp.members.length > 1 ? '<span class="mbn">' + L('एक से अधिक — प्रभाव नहीं', 'More than one — no effect') + '</span>' : '');
+    if (!mp) { val.textContent = '—'; if (note) note.hidden = true; return; }
+    var codes = mp.members.map(function (e) { return pCode(e.key); }).join(' . ');
+    val.textContent = codes || '—';
+    if (note) {
+      if (mp.members.length > 1) { note.textContent = L('एक से अधिक — प्रभाव नहीं', 'More than one — no effect'); note.hidden = false; }
+      else { note.textContent = ''; note.hidden = true; }
     }
-    // टिप: दोनों बिंदु राशि-डिग्री के साथ
-    d.setAttribute('data-mb', '1');
-    d.setAttribute('data-mbtip', L('राहु-केतु मध्य बिंदु (±3°): ', 'Rahu-Ketu midpoint (±3°): ') +
+    // टिप: दोनों बिंदु राशि-डिग्री के साथ (पहले जैसा)
+    pane.setAttribute('data-mb', '1');
+    pane.setAttribute('data-mbtip', L('राहु-केतु मध्य बिंदु (±3°): ', 'Rahu-Ketu midpoint (±3°): ') +
       mp.points.map(fmtRashiDM).join(' · '));
-    box.appendChild(d);
   }
   var WEEKDAYS_EN = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
   var WEEKDAYS_HI = ['रविवार', 'सोमवार', 'मंगलवार', 'बुधवार', 'गुरुवार', 'शुक्रवार', 'शनिवार'];

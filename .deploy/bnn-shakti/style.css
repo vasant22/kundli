@@ -361,7 +361,18 @@ body.printing .topbar,body.printing .shell,body.printing .statusbar,body.printin
 /* ---------- सुधार-राउंड 13: ST की एक merged तालिका (scroll सहित) ---------- */
 .stbox .stscroll{max-height:520px;overflow:auto}
 
-.pariv-pill{display:inline-block;margin:0 6px 0 0;padding:4px 16px;border-radius:999px;border:2px solid #d9a95f;background:#fff7e6;color:#8a5a12;font-weight:800;font-size:14.5px;animation:parivPulse 2.6s ease-in-out infinite}
+/* ---------- राउंड 66 / टास्क 10-घ: परिवर्तन और मध्य-बिंदु की दो बड़ी पेटियाँ ----------
+   दोनों चार्ट के ऊपर-बाएँ/ऊपर-दाएँ कोने के बाहर, आमने-सामने, एक ही नाप (कम से कम 150×72)।
+   ख़ाली हों तब भी पूरा आकार — तभी आँखों से ओझल नहीं होतीं। */
+#rBoxes{display:flex;align-items:stretch;justify-content:space-between;gap:10px;flex-wrap:nowrap}
+.peti{flex:0 0 auto;width:170px;min-height:72px;max-width:48%;box-sizing:border-box;border:2px solid;border-radius:6px;
+  padding:3px 10px 5px;display:flex;flex-direction:column;justify-content:flex-start;overflow:hidden}
+.peti.pariv{border-color:#d9a95f;background:#fff7e6;color:#8a5a12}
+.peti.mid{border-color:#b4643a;background:#fcd9c4;color:#5b2b10}
+.peti.pariv.on{animation:parivPulse 2.6s ease-in-out infinite}
+.petiT{font-size:11px;font-weight:700;line-height:1.25;opacity:.72;letter-spacing:.2px}
+.petiV{font-size:18px;font-weight:800;line-height:1.3;margin-top:1px;overflow-wrap:anywhere}
+.petiN{font-size:11px;font-weight:600;line-height:1.25;margin-top:1px;opacity:.85}
 @keyframes parivPulse{0%,100%{border-color:#d9a95f;background:#fff7e6;box-shadow:0 0 0 rgba(76,175,80,0)}50%{border-color:#4caf50;background:#eaf7ea;box-shadow:0 0 7px rgba(76,175,80,.4)}}
 .chartctrl{display:flex;gap:6px;justify-content:center;margin:2px 0 4px}
 
@@ -423,7 +434,7 @@ body{min-width:980px}
 @media (min-height:1100px){ .nchart{width:720px} }
 
 /* सुधार-राउंड 31: परिवर्तन न हो → ख़ाली शांत घेरा (pulse बंद) */
-.pariv-pill.nopulse{animation:none;border-color:#e3d2a6;background:#fdfaf3;box-shadow:none;min-width:52px;min-height:22px}
+/* (पुराना .pariv-pill.nopulse — अब पेटी .pbox.pariv है) */
 
 /* सुधार-राउंड 34 (user) */
 .nchart{width:700px}
@@ -538,12 +549,7 @@ body{min-width:980px}
 
 /* ---------- राउंड 66 / टास्क 10: राहु-केतु मध्य बिंदु की छोटी पेटी ----------
    चार्ट के ऊपर-दाएँ कोने के बाहर (absolute) — चार्ट का आकार/स्थान नहीं बदलता। */
-.midband{position:absolute;top:0;right:0;z-index:5;background:#fcd9c4;border:1px solid #b4643a;border-radius:5px;
-  padding:2px 9px 3px;min-width:44px;min-height:20px;text-align:center;line-height:1.15;color:#5b2b10;
-  letter-spacing:.4px;font-weight:800;font-size:13px;cursor:default}
-.midband .mbv{display:block;white-space:nowrap}
-.midband .mbn{display:block;font-weight:600;font-size:9.5px;color:#8a5a3a;letter-spacing:0;white-space:nowrap}
-.midband.em{min-height:18px}
+/* (स्क्रीन की छोटी .midband हटी — अब #pMid पेटी; print/PDF की .pMid ऊपर अलग है) */
 /* 3-11 तालिका: सादा गहरा नीला, कोई प्रतिशत/भूमिका-रंग नहीं */
 .tbl table.coltbl td.tgc{color:#1d4ed8;font-weight:700}
 
