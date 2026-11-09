@@ -11,11 +11,13 @@ import { describe, expect, it } from 'vitest'
 
 const APP_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../bnn-kundli-windows/app')
 const hasApp = fs.existsSync(path.join(APP_DIR, 'app.js'))
-const VER = (() => {
+// ⚠️ यह पंक्ति `hasApp` के बिना नहीं चलनी चाहिए — GitHub पर केवल `kundli` repo होता है,
+// बगल का `bnn-kundli-windows` नहीं; वहाँ पहले ENOENT से पूरी file गिर जाती थी (CI fail, 9-11-2026)।
+const VER = hasApp ? (() => {
   const s = fs.readFileSync(path.join(APP_DIR, 'version.js'), 'utf8')
   const m = /APP_VERSION = '([^']+)'/.exec(s)
   return m ? m[1] : ''
-})()
+})() : ''
 
 async function boot(opts = {}) {
   let html = fs.readFileSync(path.join(APP_DIR, 'index.html'), 'utf8')
