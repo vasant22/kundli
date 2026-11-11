@@ -76,70 +76,75 @@ export const TRIMSHAMSA_EVEN = [
   [30, 7], // 25–30 Vrishchika
 ]
 
-// The sixty shashtiamsha deities (BPHS ch.6). `shubha` = traditional nature of
-// the deity: true = शुभ, false = अशुभ, null = मिश्र/सम (the later lists do not
-// agree on these, so they are shown as neutral rather than guessed).
+// The sixty shashtiamsha deities — BPHS ch.6, shlokas 34-39 (the list begins
+// "घोरश्च राक्षसो देवः कुबेरो यक्षकिन्नरौ…" and ends "…चन्द्ररेखा त्वयुग्मपाः";
+// "अयुग्मपाः" means "lords of the odd signs", not a 61st name).
+//
+// `shubha`: BPHS 6.41 only says that a graha in a शुभ shashtiamsa gives good
+// results and in a क्रूर one destroys them — it does not classify each name.
+// The split below therefore follows the meaning of the name; where the later
+// lists disagree the entry stays `null` (मिश्र) instead of being guessed.
 export const SHASHTIAMSA_DEITIES = [
-  { hi: 'घोर', en: 'Ghora', shubha: false },
-  { hi: 'राक्षस', en: 'Rakshasa', shubha: false },
-  { hi: 'देव', en: 'Deva', shubha: true },
-  { hi: 'कुबेर', en: 'Kubera', shubha: true },
-  { hi: 'किन्नर', en: 'Kinnara', shubha: true },
-  { hi: 'भ्रष्ट', en: 'Bhrashta', shubha: false },
-  { hi: 'कुलघ्न', en: 'Kulaghna', shubha: false },
-  { hi: 'गरल', en: 'Garala', shubha: false },
-  { hi: 'वह्नि', en: 'Vahni', shubha: false },
-  { hi: 'माया', en: 'Maya', shubha: null },
-  { hi: 'पुरीषक', en: 'Purishaka', shubha: false },
-  { hi: 'अपांपति', en: 'Apampati', shubha: null },
-  { hi: 'मरुत्', en: 'Marut', shubha: null },
-  { hi: 'काल', en: 'Kaala', shubha: false },
-  { hi: 'सर्प', en: 'Sarpa', shubha: false },
-  { hi: 'अमृत', en: 'Amrita', shubha: true },
-  { hi: 'इन्दु', en: 'Indu', shubha: true },
-  { hi: 'मृदु', en: 'Mridu', shubha: true },
-  { hi: 'कोमल', en: 'Komala', shubha: true },
-  { hi: 'हेरम्ब', en: 'Heramba', shubha: true },
-  { hi: 'ब्रह्मा', en: 'Brahma', shubha: true },
-  { hi: 'विष्णु', en: 'Vishnu', shubha: true },
-  { hi: 'महेश्वर', en: 'Maheshwara', shubha: true },
-  { hi: 'देव', en: 'Deva', shubha: true },
-  { hi: 'आर्द्र', en: 'Ardra', shubha: null },
-  { hi: 'कालीनास', en: 'Kalinasa', shubha: false },
-  { hi: 'क्षितीश', en: 'Kshitisa', shubha: null },
-  { hi: 'कमलाकर', en: 'Kamalakara', shubha: true },
-  { hi: 'गुलिक', en: 'Gulika', shubha: false },
-  { hi: 'मृत्यु', en: 'Mrityu', shubha: false },
-  { hi: 'काल', en: 'Kaala', shubha: false },
-  { hi: 'दवाग्नि', en: 'Davagni', shubha: false },
-  { hi: 'घोर', en: 'Ghora', shubha: false },
-  { hi: 'यम', en: 'Yama', shubha: false },
-  { hi: 'कंटक', en: 'Kantaka', shubha: false },
-  { hi: 'सुधा', en: 'Sudha', shubha: true },
-  { hi: 'अमृत', en: 'Amrita', shubha: true },
-  { hi: 'पूर्णचंद्र', en: 'Poornachandra', shubha: true },
-  { hi: 'विषदग्ध', en: 'Vishadagdha', shubha: false },
-  { hi: 'कुलनाश', en: 'Kulanasa', shubha: false },
-  { hi: 'वंशक्षय', en: 'Vamsakshaya', shubha: false },
-  { hi: 'उत्पात', en: 'Utpata', shubha: false },
-  { hi: 'काल', en: 'Kaala', shubha: false },
-  { hi: 'सौम्य', en: 'Saumya', shubha: true },
-  { hi: 'कोमल', en: 'Komala', shubha: true },
-  { hi: 'शीतल', en: 'Sheetala', shubha: true },
-  { hi: 'करालदंष्ट्र', en: 'Karaladamshtra', shubha: false },
-  { hi: 'चंद्रमुखी', en: 'Chandramukhi', shubha: true },
-  { hi: 'प्रवीण', en: 'Praveena', shubha: true },
-  { hi: 'कालपावक', en: 'Kaalapavaka', shubha: false },
-  { hi: 'धन्नायुध', en: 'Dhannayudha', shubha: null },
-  { hi: 'निर्मल', en: 'Nirmala', shubha: true },
-  { hi: 'सौम्य', en: 'Saumya', shubha: true },
-  { hi: 'क्रूर', en: 'Kroora', shubha: false },
-  { hi: 'अतिशीतल', en: 'Atisheetala', shubha: true },
-  { hi: 'अमृत', en: 'Amrita', shubha: true },
-  { hi: 'पयोधि', en: 'Payodhi', shubha: true },
-  { hi: 'भ्रमण', en: 'Bhramana', shubha: null },
-  { hi: 'चंद्रेखा', en: 'Chandrarekha', shubha: true },
-  { hi: 'सम', en: 'Sama', shubha: null },
+  { hi: 'घोर', en: 'Ghora', shubha: false }, // 1
+  { hi: 'राक्षस', en: 'Rakshasa', shubha: false }, // 2
+  { hi: 'देव', en: 'Deva', shubha: true }, // 3
+  { hi: 'कुबेर', en: 'Kubera', shubha: true }, // 4
+  { hi: 'यक्ष', en: 'Yaksha', shubha: true }, // 5
+  { hi: 'किन्नर', en: 'Kinnara', shubha: true }, // 6
+  { hi: 'भ्रष्ट', en: 'Bhrashta', shubha: false }, // 7
+  { hi: 'कुलघ्न', en: 'Kulaghna', shubha: false }, // 8
+  { hi: 'गरल', en: 'Garala', shubha: false }, // 9
+  { hi: 'वह्नि', en: 'Vahni', shubha: false }, // 10
+  { hi: 'माया', en: 'Maya', shubha: false }, // 11
+  { hi: 'पुरीषक', en: 'Purishaka', shubha: false }, // 12
+  { hi: 'अपांपति', en: 'Apampati', shubha: null }, // 13
+  { hi: 'मरुत्वान्', en: 'Marutvan', shubha: null }, // 14
+  { hi: 'काल', en: 'Kaala', shubha: false }, // 15
+  { hi: 'सर्प', en: 'Sarpa', shubha: false }, // 16
+  { hi: 'अमृत', en: 'Amrita', shubha: true }, // 17
+  { hi: 'इन्दु', en: 'Indu', shubha: true }, // 18
+  { hi: 'मृदु', en: 'Mridu', shubha: true }, // 19
+  { hi: 'कोमल', en: 'Komala', shubha: true }, // 20
+  { hi: 'हेरम्ब', en: 'Heramba', shubha: true }, // 21
+  { hi: 'ब्रह्मा', en: 'Brahma', shubha: true }, // 22
+  { hi: 'विष्णु', en: 'Vishnu', shubha: true }, // 23
+  { hi: 'महेश्वर', en: 'Maheshwara', shubha: true }, // 24
+  { hi: 'देव', en: 'Deva', shubha: true }, // 25
+  { hi: 'आर्द्र', en: 'Ardra', shubha: null }, // 26
+  { hi: 'कलिनाश', en: 'Kalinasha', shubha: true }, // 27
+  { hi: 'क्षितीश', en: 'Kshitisa', shubha: null }, // 28
+  { hi: 'कमलाकर', en: 'Kamalakara', shubha: true }, // 29
+  { hi: 'गुलिक', en: 'Gulika', shubha: false }, // 30
+  { hi: 'मृत्यु', en: 'Mrityu', shubha: false }, // 31
+  { hi: 'काल', en: 'Kaala', shubha: false }, // 32
+  { hi: 'दावाग्नि', en: 'Davagni', shubha: false }, // 33
+  { hi: 'घोर', en: 'Ghora', shubha: false }, // 34
+  { hi: 'यम', en: 'Yama', shubha: false }, // 35
+  { hi: 'कंटक', en: 'Kantaka', shubha: false }, // 36
+  { hi: 'सुधा', en: 'Sudha', shubha: true }, // 37
+  { hi: 'अमृत', en: 'Amrita', shubha: true }, // 38
+  { hi: 'पूर्णचंद्र', en: 'Poornachandra', shubha: true }, // 39
+  { hi: 'विषदग्ध', en: 'Vishadagdha', shubha: false }, // 40
+  { hi: 'कुलनाश', en: 'Kulanasha', shubha: false }, // 41
+  { hi: 'वंशक्षय', en: 'Vamsakshaya', shubha: false }, // 42
+  { hi: 'उत्पात', en: 'Utpata', shubha: false }, // 43
+  { hi: 'काल', en: 'Kaala', shubha: false }, // 44
+  { hi: 'सौम्य', en: 'Saumya', shubha: true }, // 45
+  { hi: 'कोमल', en: 'Komala', shubha: true }, // 46
+  { hi: 'शीतल', en: 'Sheetala', shubha: true }, // 47
+  { hi: 'करालदंष्ट्र', en: 'Karaladamshtra', shubha: false }, // 48
+  { hi: 'चंद्रमुखी', en: 'Chandramukhi', shubha: true }, // 49
+  { hi: 'प्रवीण', en: 'Praveena', shubha: true }, // 50
+  { hi: 'कालपावक', en: 'Kaalapavaka', shubha: false }, // 51
+  { hi: 'दण्डायुध', en: 'Dandayudha', shubha: false }, // 52
+  { hi: 'निर्मल', en: 'Nirmala', shubha: true }, // 53
+  { hi: 'सौम्य', en: 'Saumya', shubha: true }, // 54
+  { hi: 'क्रूर', en: 'Kroora', shubha: false }, // 55
+  { hi: 'अतिशीतल', en: 'Atisheetala', shubha: true }, // 56
+  { hi: 'अमृत', en: 'Amrita', shubha: true }, // 57
+  { hi: 'पयोधि', en: 'Payodhi', shubha: true }, // 58
+  { hi: 'भ्रमण', en: 'Bhramana', shubha: null }, // 59
+  { hi: 'चंद्ररेखा', en: 'Chandrarekha', shubha: true }, // 60
 ]
 
 // Amsha number (1..60) inside a sign, from the degrees already elapsed there.

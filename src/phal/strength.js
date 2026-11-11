@@ -1,8 +1,8 @@
 // strength.js — विंशोपक बल (vimshopaka bala), BPHS ch.7.
 //
 // Each of the sixteen vargas carries a fixed weight; inside a varga a graha
-// scores 20 (own sign / exaltation), 18 (great friend), 15 (friend),
-// 10 (neutral), 7 (enemy) or 5 (bitter enemy / debilitated). The weighted sum
+// scores 20 (own sign / exaltation / moolatrikona), 18 (great friend),
+// 15 (friend), 10 (neutral), 7 (enemy) or 5 (bitter enemy). The weighted sum
 // over 20 gives a 0–20 figure — deliberately NOT a 0–100 score: the classics
 // only define 20.
 //
@@ -11,9 +11,13 @@
 //
 // D2 (hora) has its own rule: Sun/Mars/Jupiter are strong in the Sun's hora
 // (Simha), Moon/Venus/Saturn in the Moon's hora (Karka), and Mercury in both.
+//
+// A varga-nicha gets NO special number: BPHS ch.7 does not give one, so the
+// graha is scored by its panchadha relation to that sign's lord (18/15/10/7/5),
+// exactly like any other position. (Task 01b, 2026-11-11 — see the report.)
 
 import { VARGA_ORDERS, vargaRashi } from './vargas.js'
-import { dignityIn } from './dignity.js'
+import { dignityIn, panchadha } from './dignity.js'
 import { ALL_KEYS } from './frame.js'
 
 export const VIMSHOPAKA_WEIGHTS = {
@@ -24,7 +28,6 @@ export const VIMSHOPAKA_WEIGHTS = {
 export const DIGNITY_POINTS = {
   exalted: 20, own: 20, moolatrikona: 20,
   adhimitra: 18, mitra: 15, sama: 10, shatru: 7, adhishatru: 5,
-  debilitated: 5, // the classics give the weakest band to a varga-nicha too
 }
 
 export const STRENGTH_BANDS = [
@@ -55,6 +58,12 @@ export function vargaScore(key, n, rashi, rashiOf) {
   // Mid-sign degree: moolatrikona and own sign both score 20, so the exact
   // degree inside a *varga* sign cannot change the number.
   const dig = dignityIn(key, rashi, 15, rashiOf)
+  if (dig.level === 'debilitated') {
+    // BPHS ch.7 has no separate number for नीच, so the score comes from the
+    // panchadha relation to the sign's lord (टास्क 01b, 2026-11-11).
+    const rel = panchadha(key, dig.lord, rashiOf)
+    return DIGNITY_POINTS[rel] ?? 10
+  }
   return DIGNITY_POINTS[dig.level] ?? 10
 }
 

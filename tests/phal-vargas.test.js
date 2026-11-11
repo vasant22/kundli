@@ -4,6 +4,7 @@
 import { beforeAll, describe, expect, it } from 'vitest'
 import { initEphemeris, navamsaOf, computeKundli } from '../src/astro.js'
 import {
+  SHASHTIAMSA_DEITIES,
   VARGA_ORDERS,
   vargaRashi,
   vargaChart,
@@ -159,18 +160,116 @@ describe('shashtiamsa number and deity', () => {
     expect(shashtiamsaNumber(29.99)).toBe(60)
   })
 
+  // BPHS 6.40: "समे भे व्यत्ययाज्ज्ञेयाः षष्ट्यंशेशाः" — in an even sign only the
+  // deity order reverses; the sign itself is still counted forwards.
   it('deity: direct order in odd signs, reverse in even signs', () => {
-    expect(shashtiamsaDeity(0, 0.1).en).toBe('Ghora')
-    expect(shashtiamsaDeity(0, 29.99).en).toBe('Sama')
-    expect(shashtiamsaDeity(1, 0.1).en).toBe('Sama') // Vrishabha → reversed
+    expect(shashtiamsaDeity(0, 0.1).en).toBe('Ghora') // Mesha, amsha 1
+    expect(shashtiamsaDeity(0, 29.99).en).toBe('Chandrarekha') // Mesha, amsha 60
+    expect(shashtiamsaDeity(1, 0.1).en).toBe('Chandrarekha') // Vrishabha → reversed
     expect(shashtiamsaDeity(1, 29.99).en).toBe('Ghora')
   })
 
-  it('sixty deities, all named, in a stable order', () => {
-    expect(VARGA_ORDERS.length).toBe(16)
-    const list = []
-    for (let i = 0; i < 60; i++) list.push(shashtiamsaDeity(0, i * 0.5 + 0.01).en)
-    expect(new Set(list).size).toBeGreaterThan(45)
+  it('odd signs: amsha 5 = यक्ष, amsha 52 = दण्डायुध, amsha 56 = अतिशीतल', () => {
+    expect(shashtiamsaDeity(0, 2.1)).toMatchObject({ number: 5, hi: 'यक्ष', en: 'Yaksha' })
+    expect(shashtiamsaDeity(0, 25.6)).toMatchObject({ number: 52, hi: 'दण्डायुध', en: 'Dandayudha' })
+    expect(shashtiamsaDeity(0, 27.6)).toMatchObject({ number: 56, hi: 'अतिशीतल', en: 'Atisheetala' })
+  })
+
+  it('even signs: Vrishabha 2.1° is amsha 5 → the 56th name (अतिशीतल)', () => {
+    // reverse order: index = 61 − amsha number = 56
+    expect(shashtiamsaDeity(1, 2.1)).toMatchObject({ number: 5, hi: 'अतिशीतल', en: 'Atisheetala' })
+  })
+
+  it('exactly sixty deities — BPHS अ.6 श्लोक 34–39, कोई गढ़ा हुआ नाम नहीं', () => {
+    expect(SHASHTIAMSA_DEITIES.length).toBe(60)
+    expect(SHASHTIAMSA_DEITIES.some((d) => d.en === 'Sama' || d.hi === 'सम')).toBe(false)
+    expect(SHASHTIAMSA_DEITIES[4]).toMatchObject({ hi: 'यक्ष' }) // #5
+    expect(SHASHTIAMSA_DEITIES[29]).toMatchObject({ hi: 'गुलिक' }) // #30
+    expect(SHASHTIAMSA_DEITIES[51]).toMatchObject({ hi: 'दण्डायुध' }) // #52
+    expect(SHASHTIAMSA_DEITIES[59]).toMatchObject({ hi: 'चंद्ररेखा' }) // #60
+    for (const d of SHASHTIAMSA_DEITIES) {
+      expect(typeof d.hi).toBe('string')
+      expect(d.hi.length).toBeGreaterThan(0)
+      expect(typeof d.en).toBe('string')
+      expect([true, false, null]).toContain(d.shubha)
+    }
+  })
+
+  it('the whole list, in BPHS order (snapshot)', () => {
+    expect(SHASHTIAMSA_DEITIES.map((d) => `${d.hi} · ${d.en} · ${d.shubha}`)).toEqual([
+      'घोर · Ghora · false',
+      'राक्षस · Rakshasa · false',
+      'देव · Deva · true',
+      'कुबेर · Kubera · true',
+      'यक्ष · Yaksha · true',
+      'किन्नर · Kinnara · true',
+      'भ्रष्ट · Bhrashta · false',
+      'कुलघ्न · Kulaghna · false',
+      'गरल · Garala · false',
+      'वह्नि · Vahni · false',
+      'माया · Maya · false',
+      'पुरीषक · Purishaka · false',
+      'अपांपति · Apampati · null',
+      'मरुत्वान् · Marutvan · null',
+      'काल · Kaala · false',
+      'सर्प · Sarpa · false',
+      'अमृत · Amrita · true',
+      'इन्दु · Indu · true',
+      'मृदु · Mridu · true',
+      'कोमल · Komala · true',
+      'हेरम्ब · Heramba · true',
+      'ब्रह्मा · Brahma · true',
+      'विष्णु · Vishnu · true',
+      'महेश्वर · Maheshwara · true',
+      'देव · Deva · true',
+      'आर्द्र · Ardra · null',
+      'कलिनाश · Kalinasha · true',
+      'क्षितीश · Kshitisa · null',
+      'कमलाकर · Kamalakara · true',
+      'गुलिक · Gulika · false',
+      'मृत्यु · Mrityu · false',
+      'काल · Kaala · false',
+      'दावाग्नि · Davagni · false',
+      'घोर · Ghora · false',
+      'यम · Yama · false',
+      'कंटक · Kantaka · false',
+      'सुधा · Sudha · true',
+      'अमृत · Amrita · true',
+      'पूर्णचंद्र · Poornachandra · true',
+      'विषदग्ध · Vishadagdha · false',
+      'कुलनाश · Kulanasha · false',
+      'वंशक्षय · Vamsakshaya · false',
+      'उत्पात · Utpata · false',
+      'काल · Kaala · false',
+      'सौम्य · Saumya · true',
+      'कोमल · Komala · true',
+      'शीतल · Sheetala · true',
+      'करालदंष्ट्र · Karaladamshtra · false',
+      'चंद्रमुखी · Chandramukhi · true',
+      'प्रवीण · Praveena · true',
+      'कालपावक · Kaalapavaka · false',
+      'दण्डायुध · Dandayudha · false',
+      'निर्मल · Nirmala · true',
+      'सौम्य · Saumya · true',
+      'क्रूर · Kroora · false',
+      'अतिशीतल · Atisheetala · true',
+      'अमृत · Amrita · true',
+      'पयोधि · Payodhi · true',
+      'भ्रमण · Bhramana · null',
+      'चंद्ररेखा · Chandrarekha · true',
+    ])
+  })
+
+  it('every amsha 1..60 maps to a name, and the mapping is one-to-one per sign', () => {
+    const odd = []
+    for (let i = 0; i < 60; i++) odd.push(shashtiamsaDeity(0, i * 0.5 + 0.01).en)
+    expect(odd.length).toBe(60)
+    expect(odd[0]).toBe('Ghora')
+    expect(odd[59]).toBe('Chandrarekha')
+    // an even sign must produce the exact reverse of the odd-sign order
+    const even = []
+    for (let i = 0; i < 60; i++) even.push(shashtiamsaDeity(1, i * 0.5 + 0.01).en)
+    expect(even).toEqual([...odd].reverse())
   })
 })
 

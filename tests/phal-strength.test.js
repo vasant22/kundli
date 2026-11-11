@@ -60,6 +60,19 @@ describe('vargaScore — the twenty-point scale', () => {
     expect(DIGNITY_POINTS.adhishatru).toBe(5)
   })
 
+  it('a varga-nicha is scored by its panchadha relation, not a made-up number', () => {
+    // BPHS ch.7 gives no separate value for नीच, so there is no
+    // DIGNITY_POINTS.debilitated entry at all.
+    expect('debilitated' in DIGNITY_POINTS).toBe(false)
+    // Sun नीच in Tula (lord Venus, a natural enemy): Venus in the 2nd → 7
+    expect(vargaScore('sun', 1, 6, { sun: 6, venus: 7 })).toBe(7)
+    // same नीच Sun, Venus in the 8th (temporary enemy) → 5
+    expect(vargaScore('sun', 1, 6, { sun: 6, venus: 2 })).toBe(5)
+    // ...and with a friendly lord placed well a नीच graha scores higher:
+    // Venus नीच in Kanya (lord Mercury, a natural friend), Mercury in the 2nd → 18
+    expect(vargaScore('venus', 1, 5, { venus: 5, mercury: 6 })).toBe(18)
+  })
+
   it('D2 hora: सूर्य/मंगल/गुरु Simha में, चंद्र/शुक्र/शनि Karka में, बुध दोनों में', () => {
     const any = {}
     expect(vargaScore('sun', 2, 4, any)).toBe(20) // Simha hora
