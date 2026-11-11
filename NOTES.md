@@ -947,3 +947,13 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - **PDF:** 1985 व 1990 दोनों **21 पन्ने**; हर पन्ने पर mybapuji.com, कहीं "60′" नहीं, मुखपृष्ठ पर पृष्ठ-संख्या नहीं।
   poppler install (`brew install poppler`) → pdftotext/pdftoppm से जाँच; PDF बनाने के लिए CDP-आधारित `.openclaw-tmp/cdp.mjs` (पुराना `--print-to-pdf` JS से पहले print कर देता था)।
 - tests **1048 → 1066 ✓** (18 नए) · build ✓ · मुख्य bundle 22.55 kB (जस का तस) · phal chunk 157 kB।
+
+### 2026-11-11 — फलादेश PDF / टास्क 04 (oracle दोबारा + अंतिम जाँच + deploy-तैयारी)
+- oracle 12 कुंडलियाँ `python3.12` से दोबारा (output सिर्फ़ `.openclaw-tmp/phal-oracle/`) → **4030/4059 = 99.3%**;
+  ग्रह-स्थिति · वर्ग · D60 · विंशोपक · दशा · BAV · SAV · साढ़ेसाती · कारक — **सब 100%**। बचे 29 = योग-परिभाषाएँ (24) + आंशिक कालसर्प (5), जान-बूझकर।
+- **99 text entries लिखे थे पर कभी छपते नहीं थे** — `LAGNA` (12) · `MOON_RASHI` (12) · `NAKSHATRA` (27) · `GOCHAR` (48)।
+  अब "एक नज़र में" में **स्वभाव** खंड और गोचर-तालिका में धीमे ग्रहों का पूरा फल-वाक्य (पहले सिर्फ़ शुभ/सावधानी)। +2 test।
+- 6 PDF (1985/1990 + 1973/2001/1943/1996) सब **21 पन्ने**; हर पन्ने पर mybapuji.com; कहीं "1वें"/"60′" नहीं; मुखपृष्ठ पर footer/पृष्ठ-संख्या नहीं।
+- deploy-सूची का `chown/chmod` `kundli-phal` को छोड़ रहा था → जोड़ा; `.deploy/kundli-site.tar.gz` (3.38 MB) में `kundli-phal/index.html`।
+- code/टिप्पणी/docs से व्यक्ति-नाम हटे ("स्वीकृत तालिका/स्वीकृति")। oracle की unzip copy हटाई, zip जस की तस।
+- tests **1068 ✓** (3 todo) · build ✓ · commits `bac7d5d` (03-ख) + `cb906aa` (04), local — **deploy नहीं**।
