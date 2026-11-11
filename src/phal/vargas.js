@@ -263,8 +263,9 @@ export function vargaLagnaSensitivity(swe, birth, { maxSec = 600, stepSec = 10 }
   const base = {}
   for (const n of VARGA_ORDERS) base[n] = vargaRashi(baseLon, n)
 
+  // limitSec tells the report what a null means: "no change within 10 minutes".
   const out = {}
-  for (const n of VARGA_ORDERS) out[n] = { backSec: null, forwardSec: null }
+  for (const n of VARGA_ORDERS) out[n] = { backSec: null, forwardSec: null, limitSec: maxSec }
 
   const findEdge = (dir) => {
     let prev = 0

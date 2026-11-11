@@ -334,5 +334,8 @@ describe('vargaLagnaSensitivity', () => {
     }
     expect(s[1].forwardSec).toBe(null)
     expect(s[1].backSec).toBe(null)
+    // null का अर्थ: सीमा के भीतर नहीं बदलता — limitSec output में आता है
+    expect(s[60].limitSec).toBe(600)
+    expect(s[1].limitSec).toBe(600)
   })
 })

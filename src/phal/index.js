@@ -21,7 +21,7 @@ import { computeKundli } from '../astro.js'
 import { computePanchang } from '../panchang.js'
 import { RASHIS, GRAHAS, NAKSHATRAS } from '../i18n.js'
 import { ALL_KEYS, SEVEN_KEYS, makeFrame } from './frame.js'
-import { VARGA_INFO, VARGA_ORDERS, allVargas, vargaLagnaSensitivity } from './vargas.js'
+import { VARGA_INFO, VARGA_ORDERS, allVargas, shashtiamsaDeity, vargaLagnaSensitivity } from './vargas.js'
 import { dignitySummary, karakaNature, planetPositions } from './dignity.js'
 import { vimshopakaBala } from './strength.js'
 import { antardashaTable, currentPeriods, mahadashaTable, vimshottariTree } from './dasha.js'
@@ -56,6 +56,20 @@ function houseTable(frame) {
   return rows
 }
 
+// D60 deities for every graha and the lagna (टास्क 01-ग: अब output में भी).
+function d60Table(kundli) {
+  const entry = (rashi, degInSign) => {
+    const d = shashtiamsaDeity(rashi, degInSign)
+    return { number: d.number, hi: d.hi, en: d.en, shubha: d.shubha, rashi }
+  }
+  const planets = {}
+  for (const p of kundli.planets) planets[p.key] = entry(p.rashi, p.degInSign)
+  return {
+    planets,
+    lagna: entry(kundli.ascendant.rashi, kundli.ascendant.degInSign),
+  }
+}
+
 // The nine-graha table: sign, degree, house, nakshatra/pada, state, strength.
 function planetTable(frame, positions, strength) {
   return ALL_KEYS.map((key) => {
@@ -73,8 +87,9 @@ function planetTable(frame, positions, strength) {
       retro: Boolean(p.retro),
       dignity: positions[key].dignity,
       summary: dignitySummary(key, positions[key]),
-      vimshopaka: strength.planets[key].total,
-      vimshopakaBand: strength.planets[key].bandHi,
+      // विंशोपक सिर्फ़ सात ग्रहों का है — राहु/केतु पर null (रिपोर्ट में "—")
+      vimshopaka: strength.planets[key]?.total ?? null,
+      vimshopakaBand: strength.planets[key]?.bandHi ?? null,
       owns: frame.housesOwned(key),
     }
   })
@@ -192,7 +207,14 @@ export function buildPhalData(swe, birth, opts = {}) {
     positions,
     karakaNature: karakaNature(frame),
     strength,
-    vargas: { charts: vargas, info: VARGA_INFO, order: VARGA_ORDERS, sensitivity },
+    vargas: {
+      charts: vargas,
+      info: VARGA_INFO,
+      order: VARGA_ORDERS,
+      sensitivity,
+      sensitivityLimitSec: sensitivity[VARGA_ORDERS[0]]?.limitSec ?? null,
+      d60: d60Table(kundli),
+    },
     dasha,
     yogas,
     doshas,

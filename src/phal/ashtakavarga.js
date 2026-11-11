@@ -24,7 +24,7 @@ const M = {
   moon: [1, 3, 6, 7, 10, 11],
   mars: [2, 3, 5, 6, 9, 10, 11],
   mercury: [1, 3, 4, 5, 7, 8, 10, 11],
-  jupiter: [1, 2, 4, 7, 8, 10, 11],
+  jupiter: [1, 4, 7, 8, 10, 11, 12], // 2026-11-11 सुधार (टास्क 01-ग): 2 की जगह 12
   venus: [3, 4, 5, 7, 9, 10, 11],
   saturn: [3, 5, 6, 11],
   lagna: [3, 6, 10, 11],
@@ -94,19 +94,27 @@ export const SAV_TOTAL = 337
 export const ASHTAKAVARGA_REFS = [...SEVEN_KEYS, 'lagna']
 
 // The bindus one graha receives in each of the twelve houses.
+//
+// Two orders are returned, because the two are easy to confuse:
+//   bySign  — index 0 = Mesha … 11 = Meena (the order the classical tables and
+//             the reference software print)
+//   byHouse — index 0 = the lagna's sign, 1 = the 2nd house … (the order the
+//             report's house table uses)
 export function bhinnashtakavarga(frame, key) {
   const table = ASHTAKAVARGA[key]
   const refRashi = (ref) => (ref === 'lagna' ? frame.lagnaRashi : frame.rashiOf[ref])
-  const bindus = []
-  for (let h = 1; h <= 12; h++) {
-    const rashi = frame.houseRashi[h - 1]
+  const countIn = (rashi) => {
     let n = 0
     for (const ref of ASHTAKAVARGA_REFS) {
       const house = ((rashi - refRashi(ref) + 12) % 12) + 1
       if (table[ref].includes(house)) n += 1
     }
-    bindus.push(n)
+    return n
   }
+  const bySign = []
+  for (let r = 0; r < 12; r++) bySign.push(countIn(r))
+  const byHouse = []
+  for (let h = 1; h <= 12; h++) byHouse.push(bySign[frame.houseRashi[h - 1]])
   const rows = ASHTAKAVARGA_REFS.map((ref) => ({
     ref,
     houses: table[ref],
@@ -115,21 +123,24 @@ export function bhinnashtakavarga(frame, key) {
   return {
     key,
     rows,
-    bindus,
-    total: bindus.reduce((a, b) => a + b, 0),
+    bySign,
+    byHouse,
+    total: bySign.reduce((a, b) => a + b, 0),
   }
 }
 
 export function computeAshtakavarga(frame) {
   const bav = {}
   for (const key of SEVEN_KEYS) bav[key] = bhinnashtakavarga(frame, key)
-  const sav = []
-  for (let h = 0; h < 12; h++) {
-    sav.push(SEVEN_KEYS.reduce((sum, k) => sum + bav[k].bindus[h], 0))
+  const savBySign = []
+  for (let r = 0; r < 12; r++) {
+    savBySign.push(SEVEN_KEYS.reduce((sum, k) => sum + bav[k].bySign[r], 0))
   }
+  const savByHouse = []
+  for (let h = 1; h <= 12; h++) savByHouse.push(savBySign[frame.houseRashi[h - 1]])
   return {
     bav,
-    sav: { bindus: sav, total: sav.reduce((a, b) => a + b, 0) },
+    sav: { bySign: savBySign, byHouse: savByHouse, total: savBySign.reduce((a, b) => a + b, 0) },
     // convenience for the report's "कौन-से भाव में कितने बिंदु" line
     houseRashi: frame.houseRashi,
     keys: ALL_KEYS,

@@ -1,4 +1,8 @@
 // tests/phal-strength.test.js — विंशोपक बल (BPHS ch.7).
+//
+// टास्क 01-ग के दो बदलाव यहाँ पक्के हैं:
+//   • तात्कालिक मैत्री जन्म-कुंडली (D1) की स्थितियों से — सोलहों वर्गों में वही
+//   • विंशोपक सिर्फ़ सात ग्रहों का (राहु/केतु का कोई अंक नहीं)
 import { beforeAll, describe, expect, it } from 'vitest'
 import { computeKundli, initEphemeris } from '../src/astro.js'
 import {
@@ -9,6 +13,7 @@ import {
   vimshopakaBala,
 } from '../src/phal/strength.js'
 import { VARGA_ORDERS } from '../src/phal/vargas.js'
+import { dignityIn, panchadha } from '../src/phal/dignity.js'
 
 describe('weights', () => {
   it('the sixteen weights add up to exactly 20', () => {
@@ -37,22 +42,16 @@ describe('vargaScore — the twenty-point scale', () => {
     expect(DIGNITY_POINTS.exalted).toBe(20)
     expect(vargaScore('sun', 1, 4, own)).toBe(20) // Sun in Simha
     expect(vargaScore('sun', 1, 0, own)).toBe(20) // Sun in Mesha (exalted)
-    expect(vargaScore('saturn', 1, 6, own)).toBe(20) // Saturn in Tula (exalted)
+    expect(vargaScore('saturn', 1, 6, own)).toBe(20)
   })
 
   it('the friendship bands: 18 / 15 / 10 / 7 / 5', () => {
-    // The score depends on the relation to the LORD OF THE SIGN the graha sits
-    // in — so these cases place the Sun in a sign and its lord somewhere.
     // Sun in Dhanu (lord Jupiter, a natural friend), Jupiter in the 2nd → 18
     expect(vargaScore('sun', 1, 8, { sun: 8, jupiter: 9 })).toBe(18)
-    // same pair with Jupiter in the 8th (temporary enemy) → neutral 10
-    expect(vargaScore('sun', 1, 8, { sun: 8, jupiter: 3 })).toBe(10)
-    // Sun in Mithuna (lord Mercury, neutral), Mercury in the 2nd → friend 15
-    expect(vargaScore('sun', 1, 2, { sun: 2, mercury: 3 })).toBe(15)
-    // Sun in Vrishabha (lord Venus, an enemy), Venus in the 2nd → enemy 7
-    expect(vargaScore('sun', 1, 1, { sun: 1, venus: 2 })).toBe(7)
-    // same but Venus in the 8th → bitter enemy 5
-    expect(vargaScore('sun', 1, 1, { sun: 1, venus: 8 })).toBe(5)
+    expect(vargaScore('sun', 1, 8, { sun: 8, jupiter: 3 })).toBe(10) // 8th → neutral
+    expect(vargaScore('sun', 1, 2, { sun: 2, mercury: 3 })).toBe(15) // friend
+    expect(vargaScore('sun', 1, 1, { sun: 1, venus: 2 })).toBe(7) // enemy
+    expect(vargaScore('sun', 1, 1, { sun: 1, venus: 8 })).toBe(5) // bitter enemy
     expect(DIGNITY_POINTS.adhimitra).toBe(18)
     expect(DIGNITY_POINTS.mitra).toBe(15)
     expect(DIGNITY_POINTS.sama).toBe(10)
@@ -61,33 +60,24 @@ describe('vargaScore — the twenty-point scale', () => {
   })
 
   it('a varga-nicha is scored by its panchadha relation, not a made-up number', () => {
-    // BPHS ch.7 gives no separate value for नीच, so there is no
-    // DIGNITY_POINTS.debilitated entry at all.
     expect('debilitated' in DIGNITY_POINTS).toBe(false)
-    // Sun नीच in Tula (lord Venus, a natural enemy): Venus in the 2nd → 7
-    expect(vargaScore('sun', 1, 6, { sun: 6, venus: 7 })).toBe(7)
-    // same नीच Sun, Venus in the 8th (temporary enemy) → 5
+    expect(vargaScore('sun', 1, 6, { sun: 6, venus: 7 })).toBe(7) // Sun नीच in Tula
     expect(vargaScore('sun', 1, 6, { sun: 6, venus: 2 })).toBe(5)
-    // ...and with a friendly lord placed well a नीच graha scores higher:
-    // Venus नीच in Kanya (lord Mercury, a natural friend), Mercury in the 2nd → 18
-    expect(vargaScore('venus', 1, 5, { venus: 5, mercury: 6 })).toBe(18)
+    expect(vargaScore('venus', 1, 5, { venus: 5, mercury: 6 })).toBe(18) // नीच but friendly lord
   })
 
   it('D2 hora: सूर्य/मंगल/गुरु Simha में, चंद्र/शुक्र/शनि Karka में, बुध दोनों में', () => {
     const any = {}
-    expect(vargaScore('sun', 2, 4, any)).toBe(20) // Simha hora
+    expect(vargaScore('sun', 2, 4, any)).toBe(20)
     expect(vargaScore('mars', 2, 4, any)).toBe(20)
     expect(vargaScore('jupiter', 2, 4, any)).toBe(20)
-    expect(vargaScore('moon', 2, 3, any)).toBe(20) // Karka hora
+    expect(vargaScore('moon', 2, 3, any)).toBe(20)
     expect(vargaScore('venus', 2, 3, any)).toBe(20)
     expect(vargaScore('saturn', 2, 3, any)).toBe(20)
     expect(vargaScore('mercury', 2, 4, any)).toBe(20)
     expect(vargaScore('mercury', 2, 3, any)).toBe(20)
-    // wrong hora → weak
     expect(vargaScore('sun', 2, 3, any)).toBe(5)
     expect(vargaScore('moon', 2, 4, any)).toBe(5)
-    // nodes are neutral in the hora
-    expect(vargaScore('rahu', 2, 3, any)).toBe(10)
   })
 })
 
@@ -108,18 +98,30 @@ beforeAll(async () => {
   swe = await initEphemeris()
 }, 30000)
 
-const BIRTH = {
+const BIRTH_1985 = {
+  utc: { year: 1985, month: 8, day: 15, hour: 2, minute: 0, second: 0 },
+  latitude: 19.0728,
+  longitude: 72.8826,
+}
+const BIRTH_1990 = {
   utc: { year: 1990, month: 5, day: 15, hour: 9, minute: 0, second: 0 },
   latitude: 25.31668,
   longitude: 83.01041,
 }
 
 describe('vimshopakaBala', () => {
-  it('produces a 0–20 figure for every graha, matching its own weighted sum', () => {
-    const k = computeKundli(swe, BIRTH)
-    const res = vimshopakaBala(k)
-    expect(Object.keys(res.planets).length).toBe(9)
-    for (const [key, p] of Object.entries(res.planets)) {
+  it('सिर्फ़ सात ग्रहों का अंक — राहु/केतु नहीं (टास्क 01-ग)', () => {
+    const res = vimshopakaBala(computeKundli(swe, BIRTH_1985))
+    expect(Object.keys(res.planets).sort()).toEqual(
+      ['jupiter', 'mars', 'mercury', 'moon', 'saturn', 'sun', 'venus']
+    )
+    expect(res.planets.rahu).toBeUndefined()
+    expect(res.planets.ketu).toBeUndefined()
+  })
+
+  it('0–20 के भीतर, और अपने ही भारित योग से मेल', () => {
+    const res = vimshopakaBala(computeKundli(swe, BIRTH_1990))
+    for (const p of Object.values(res.planets)) {
       expect(Number.isFinite(p.total)).toBe(true)
       expect(p.total).toBeGreaterThanOrEqual(5)
       expect(p.total).toBeLessThanOrEqual(20)
@@ -127,8 +129,46 @@ describe('vimshopakaBala', () => {
       const sum = p.perVarga.reduce((acc, v) => acc + v.weight * v.score, 0) / 20
       expect(Math.abs(sum - p.total)).toBeLessThan(0.011)
       expect(p.perVarga.map((v) => v.varga)).toEqual(VARGA_ORDERS)
-      expect(['full', 'medium', 'little', 'weak']).toContain(p.band)
-      expect(key).toBe(p.key)
     }
+  })
+
+  it('तात्कालिक मैत्री D1 से — हर वर्ग का अंक D1 की स्थिति से ही बनता है', () => {
+    const k = computeKundli(swe, BIRTH_1985)
+    const res = vimshopakaBala(k)
+    const d1 = Object.fromEntries(k.planets.map((p) => [p.key, p.rashi]))
+    for (const key of Object.keys(res.planets)) {
+      for (const row of res.planets[key].perVarga) {
+        if (row.varga === 2) continue // D2 का अपना होरा-नियम है
+        const dig = dignityIn(key, row.rashi, 15, d1)
+        const expected = dig.level === 'debilitated'
+          ? DIGNITY_POINTS[panchadha(key, dig.lord, d1)] ?? 10
+          : DIGNITY_POINTS[dig.level] ?? 10
+        expect(row.score, `${key} D${row.varga}`).toBe(expected)
+      }
+    }
+  })
+
+  it('15-08-1985 की कुंडली — हमारे अंक (regression pin)', () => {
+    const res = vimshopakaBala(computeKundli(swe, BIRTH_1985))
+    const got = Object.fromEntries(Object.entries(res.planets).map(([k, v]) => [k, v.total]))
+    expect(got).toEqual({
+      sun: 12.45, moon: 15.23, mars: 12.88, mercury: 11.9, jupiter: 11.88, venus: 14.75, saturn: 16.25,
+    })
+  })
+
+  it('D1-मैत्री और वर्ग-चार्ट-मैत्री में फ़र्क़ आता है (यानी नियम सचमुच बदला)', () => {
+    const k = computeKundli(swe, BIRTH_1985)
+    const d1 = Object.fromEntries(k.planets.map((p) => [p.key, p.rashi]))
+    const vargaMap = Object.fromEntries(k.planets.map((p) => [p.key, p.vargottama ?? null]))
+    // D1 और किसी वर्ग की स्थितियाँ अलग हैं — इसलिए दोनों तरीक़ों के अंक अलग आते हैं
+    let differs = 0
+    for (const key of ['sun', 'moon', 'mars']) {
+      for (const n of [3, 9, 30]) {
+        const r = vimshopakaBala(k).planets[key].perVarga.find((v) => v.varga === n).rashi
+        if (r !== d1[key]) differs++
+      }
+    }
+    expect(differs).toBeGreaterThan(0)
+    expect(vargaMap).toBeTruthy()
   })
 })

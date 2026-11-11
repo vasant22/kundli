@@ -288,3 +288,81 @@ describe('दृष्टि (aspects)', () => {
     expect(exchange(g, 'mars', 'venus')).toBe(false)
   })
 })
+
+// --- टास्क 01-ग के नियम ------------------------------------------------------
+describe('हर्ष / सरल / विमल — 6/8/12 का स्वामी किसी भी दुष्ट-भाव में', () => {
+  // Mesha lagna: 6th Kanya (Mercury), 8th Vrishchika (Mars), 12th Meena (Jupiter)
+  it('सरल — 8वें का स्वामी छठे में', () => {
+    const res = detectYogas(chart(0, { ...SPREAD, mars: 5 }))
+    const y = byId(res, 'vipareeta')
+    expect(y.detail.named.map((n) => n.id)).toContain('sarala')
+  })
+  it('हर्ष — 6ठे का स्वामी आठवें में', () => {
+    const res = detectYogas(chart(0, { ...SPREAD, mercury: 7, mars: 2, jupiter: 2 }))
+    expect(byId(res, 'vipareeta').detail.named.map((n) => n.id)).toContain('harsha')
+  })
+  it('विमल — 12वें का स्वामी छठे में', () => {
+    const res = detectYogas(chart(0, { ...SPREAD, jupiter: 5, mars: 2, mercury: 2 }))
+    expect(byId(res, 'vipareeta').detail.named.map((n) => n.id)).toContain('vimala')
+  })
+  it('नहीं बनता जब तीनों स्वामी दुष्ट-भावों से बाहर हों', () => {
+    // Mercury (6th lord) 3rd, Mars (8th lord) 10th, Jupiter (12th lord) 2nd
+    const res = detectYogas(chart(0, { ...SPREAD, mercury: 2, mars: 9, jupiter: 1 }))
+    const names = byId(res, 'vipareeta').detail.named.map((n) => n.id)
+    expect(names).toEqual([])
+  })
+})
+
+describe('अधियोग — दो शुभ ग्रह चाहिए (एक हो तो आंशिक)', () => {
+  it('एक शुभ ग्रह → present नहीं, partial हाँ', () => {
+    const res = detectYogas(chart(0, { ...SPREAD, moon: 0, jupiter: 6, mercury: 2 })) // Tula = 7th from Mesha
+    const y = byId(res, 'adhi')
+    expect(y.present).toBe(false)
+    expect(y.partial).toBe(true)
+  })
+  it('दो शुभ ग्रह → योग बनता है', () => {
+    const res = detectYogas(chart(0, { ...SPREAD, moon: 0, jupiter: 6, mercury: 5 }))
+    const y = byId(res, 'adhi')
+    expect(y.present).toBe(true)
+    expect(y.partial).toBe(false)
+  })
+  it('शून्य → न योग, न आंशिक', () => {
+    const res = detectYogas(chart(0, { ...SPREAD, moon: 0, jupiter: 2, mercury: 4, venus: 3 }))
+    const y = byId(res, 'adhi')
+    expect(y.present).toBe(false)
+    expect(y.partial).toBe(false)
+  })
+})
+
+describe('गजकेसरी — गुरु नीच हो तो कमज़ोर', () => {
+  it('गुरु मकर में नीच, चंद्र से दसवें (केंद्र) → योग बनता है पर weak', () => {
+    const res = detectYogas(chart(0, { ...SPREAD, moon: 0, jupiter: 9 }))
+    const y = byId(res, 'gajakesari')
+    expect(y.present).toBe(true)
+    expect(y.detail.weak).toBe(true)
+    expect(y.detail.debilitated).toBe(true)
+    expect(y.text).toContain('कमज़ोर')
+  })
+  it('गुरु उच्च (कर्क) → weak नहीं', () => {
+    const res = detectYogas(chart(0, { ...SPREAD, moon: 0, jupiter: 3 }))
+    const y = byId(res, 'gajakesari')
+    expect(y.present).toBe(true)
+    expect(y.detail.weak).toBe(false)
+  })
+})
+
+describe('नीचभंग — चंद्र खुद स्वामी हो तो "चंद्र से केंद्र" शर्त नहीं', () => {
+  // मंगल कर्क में नीच; नीच-राशि का स्वामी चंद्र, उच्च-राशि (मकर) का स्वामी शनि
+  it('सिर्फ़ चंद्र "चंद्र से पहले भाव" में है → भंग नहीं', () => {
+    // शनि लग्न से 2रे, चंद्र से 9वें — कहीं केंद्र में नहीं
+    const res = detectYogas(chart(0, { ...SPREAD, moon: 5, mars: 3, saturn: 1 }))
+    const y = byId(res, 'neechabhanga')
+    expect(y.detail.planets.some((p) => p.planet === 'mars')).toBe(false)
+  })
+  it('शनि लग्न से केंद्र में → भंग बनता है', () => {
+    const res = detectYogas(chart(0, { ...SPREAD, moon: 5, mars: 3, saturn: 3 }))
+    const entry = byId(res, 'neechabhanga').detail.planets.find((p) => p.planet === 'mars')
+    expect(Boolean(entry)).toBe(true)
+    expect(entry.byLord).toContain('saturn')
+  })
+})

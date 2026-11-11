@@ -18,7 +18,7 @@
 
 import { VARGA_ORDERS, vargaRashi } from './vargas.js'
 import { dignityIn, panchadha } from './dignity.js'
-import { ALL_KEYS } from './frame.js'
+import { SEVEN_KEYS } from './frame.js'
 
 export const VIMSHOPAKA_WEIGHTS = {
   1: 3.5, 2: 1, 3: 1, 4: 0.5, 7: 0.5, 9: 3, 10: 0.5, 12: 0.5,
@@ -68,6 +68,14 @@ export function vargaScore(key, n, rashi, rashiOf) {
 }
 
 // The full vimshopaka computation for one kundli.
+//
+// The temporary half of the panchadha friendship is read from the BIRTH chart
+// (D1) and the same relation is applied in all sixteen vargas — BPHS ch.3
+// defines tatkalika maitri from the grahas' actual (D1) positions
+// (टास्क 01-ग का निर्णय, 2026-11-11).
+//
+// Vimshopaka is defined for the seven grahas only; the nodes have no score and
+// the report prints "—" for them.
 export function vimshopakaBala(kundli) {
   // varga chart rashi maps (planet → rashi), one per division
   const charts = {}
@@ -76,14 +84,17 @@ export function vimshopakaBala(kundli) {
     for (const p of kundli.planets) map[p.key] = vargaRashi(p.longitude, n)
     charts[n] = map
   }
+  // D1 positions — the basis of the temporary friendship
+  const d1 = {}
+  for (const p of kundli.planets) d1[p.key] = p.rashi
 
   const planets = {}
-  for (const key of ALL_KEYS) {
+  for (const key of SEVEN_KEYS) {
     let total = 0
     const perVarga = []
     for (const n of VARGA_ORDERS) {
       const rashi = charts[n][key]
-      const score = vargaScore(key, n, rashi, charts[n])
+      const score = vargaScore(key, n, rashi, d1)
       const weight = VIMSHOPAKA_WEIGHTS[n]
       total += weight * score
       perVarga.push({ varga: n, rashi, score, weight })

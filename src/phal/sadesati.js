@@ -106,8 +106,38 @@ export function computeSadesati(swe, { moonRashi, birthMs, years = 100, stepDays
     }
   }
 
+  // Cycles: a साढ़ेसाती that pauses for a few months (Saturn slipping into the
+  // 11th and coming back) is still ONE cycle for a reader. Gaps up to a year are
+  // merged; the individual segments stay available in `phases`.
+  const cycleOf = (list) => {
+    const out = []
+    for (const p of list) {
+      const last = out[out.length - 1]
+      // ढैया के दो रूप (चौथा / आठवाँ) अलग गिने जाते हैं — उन्हें आपस में मत मिलाओ
+      const samePhase = !last || last.kind === 'sadesati' || last.phases[last.phases.length - 1].phase === p.phases[0].phase
+      if (last && samePhase && p.fromMs - last.toMs <= 365 * MS_DAY) {
+        last.toMs = p.toMs
+        last.phases.push(...p.phases)
+        last.segments.push({ fromMs: p.fromMs, toMs: p.toMs })
+      } else {
+        out.push({
+          kind: p.kind,
+          label: p.label,
+          labelEn: p.labelEn,
+          fromMs: p.fromMs,
+          toMs: p.toMs,
+          phases: [...p.phases],
+          segments: [{ fromMs: p.fromMs, toMs: p.toMs }],
+        })
+      }
+    }
+    return out
+  }
+
   const sadesati = periods.filter((p) => p.kind === 'sadesati')
   const dhaiya = periods.filter((p) => p.kind === 'dhaiya')
+  const sadesatiCycles = cycleOf(sadesati)
+  const dhaiyaCycles = cycleOf(dhaiya)
   const running = periods.find((p) => nowMs >= p.fromMs && nowMs < p.toMs) ?? null
   const upcoming = periods.find((p) => p.fromMs > nowMs) ?? null
 
@@ -115,6 +145,9 @@ export function computeSadesati(swe, { moonRashi, birthMs, years = 100, stepDays
     moonRashi,
     sadesati,
     dhaiya,
+    // merged view (a pause of a few months does not end the cycle)
+    sadesatiCycles,
+    dhaiyaCycles,
     current: running
       ? {
           ...running,
