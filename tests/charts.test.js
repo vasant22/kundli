@@ -2,7 +2,7 @@
 // tests/charts.test.js — Phase 7 verification of the SVG chart builders.
 // Run with: npm test
 import { describe, expect, it } from 'vitest'
-import { buildEastChart, buildNorthChart, buildSouthChart } from '../src/charts.js'
+import { buildEastChart, buildNorthChart, buildSouthChart, degShort } from '../src/charts.js'
 
 // Sample-chart fixture (same values as tests/astro.test.js).
 const KUNDLI = {
@@ -109,5 +109,26 @@ describe('East Indian chart (SVG)', () => {
 
   it('shows the chart metadata in the centre', () => {
     expect(svg.querySelector('.center-info').textContent).toContain('Varanasi')
+  })
+})
+
+// टास्क 03-ख §1: अंश-मिनट में "60′" नहीं और राशि-सीमा नहीं टूटती.
+describe('degShort — गोलाई', () => {
+  it('पहले कुल मिनट गोल होते हैं', () => {
+    expect(degShort(20.9999)).toBe("21°00'")
+    expect(degShort(7.04)).toBe("7°02'")
+    expect(degShort(0.004)).toBe("0°00'")
+  })
+
+  it('30° की सीमा नहीं लाँघी जाती (29.9999 → 29°59 मिनट)', () => {
+    expect(degShort(29.9999)).toBe("29°59'")
+    expect(degShort(29.999999)).toBe("29°59'")
+  })
+
+  it('चार्ट-label में कभी 60 मिनट नहीं दिखते', () => {
+    const k = { ...KUNDLI, planets: KUNDLI.planets.map((p) => (p.key === 'venus' ? { ...p, degInSign: 20.9999 } : p)) }
+    const svg = buildNorthChart(k, { varga: 'D1' })
+    expect(svg.outerHTML).not.toMatch(/60'/)
+    expect(svg.outerHTML).toContain("21°00'")
   })
 })

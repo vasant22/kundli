@@ -69,6 +69,15 @@
 - [x] `vite.config.js` + `scripts/build-server-layout.mjs` → `/kundli-phal/`
 - [x] Print-CSS (A4, अभी 24 पन्ने), कोई बाहरी font/tracker नहीं
 
+## टास्क 03-ख — PDF की गड़बड़ियाँ ✅ (2026-11-11)
+- [x] अंश-गोलाई: `degMinHi()` + `degShort()` — कहीं "20° 60′" नहीं; 29.9999 → 29° 59′ (राशि नहीं बदलती)
+- [x] ग्रह-खंड: हर स्वामित्व-भाव की अलग पंक्ति (`LORD_IN_HOUSE[owns][बैठा]`) — 1985 पर 16 पंक्तियों का test
+- [x] योग: base + ifWeak/ifCombust/ifBhanga; तालिका में सिर्फ़ बने योग, बाक़ी एक पंक्ति
+- [x] दशा: DASHA_TEMPLATE भरा हुआ (महादशा + अंतर्दशा) + स्थिति + tone; महादशा-तालिका में स्वामी/बैठा स्तंभ
+- [x] पन्नों का बहाव: thead दोहराव, पंक्ति-स्तर avoid, मुखपृष्ठ पर footer/पृष्ठ-संख्या नहीं
+- [x] D9 में "0°00′" बंद; बटन का "30 पन्ने" → "20–25 पन्ने"
+- [x] PDF 1985 + 1990 = 21-21 पन्ने; screenshots `reports/img/phal-03b/`
+
 ## टास्क 04 — जाँच (बाक़ी)
 - [ ] oracle (सिर्फ़ `.openclaw-tmp/phal-oracle/`) से अंक मिलान
 - [ ] print-PDF screenshots, 5 कुंडलियाँ

@@ -147,15 +147,12 @@ export function buildEastChart(kundli, meta = {}, opts = {}) {
   return svg
 }
 
-// Short degree within the sign, e.g. 7.04 → "7°02'".
-function degShort(deg) {
-  let d = Math.floor(deg)
-  let m = Math.floor((deg - d) * 60 + 0.5)
-  if (m === 60) {
-    d += 1
-    m = 0
-  }
-  return `${d}°${String(m).padStart(2, '0')}'`
+// Short degree within the sign, e.g. 7.04 → "7°02'". Round to whole minutes
+// first (so 20.9999 → "21°00'", never "20°60'"), and never let the rounding
+// cross the sign boundary: 29.9999 → "29°59'".
+export function degShort(deg) {
+  const total = Math.min(Math.round(deg * 60), 30 * 60 - 1)
+  return `${Math.floor(total / 60)}°${String(total % 60).padStart(2, '0')}'`
 }
 
 // Planet label for one body: short code + (R) when retrograde + degree.

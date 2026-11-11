@@ -163,7 +163,13 @@ w(`*आधार: ${SRC.YOGA_TEXT}*`)
 w()
 w('| key | text | tone | आधार |')
 w('|---|---|---|---|')
-for (const [i, v] of Object.entries(T.YOGA_TEXT)) w(`| \`YOGA_TEXT.${i}\` | ${txt(v)} | ${TONE_HI[toneOf(v)]} | ${SRC.YOGA_TEXT} |`)
+for (const [i, v] of Object.entries(T.YOGA_TEXT)) {
+  // कुछ योग base + शर्त वाले हिस्सों में बँटे हैं (ifWeak/ifCombust/ifBhanga)
+  if (v.t) { w(`| \`YOGA_TEXT.${i}\` | ${txt(v)} | ${TONE_HI[toneOf(v)]} | ${SRC.YOGA_TEXT} |`); continue }
+  for (const [part, e] of Object.entries(v)) {
+    w(`| \`YOGA_TEXT.${i}.${part}\` | ${txt(e)} | ${TONE_HI[toneOf(e)]} | ${SRC.YOGA_TEXT} |`)
+  }
+}
 w()
 
 // दोष

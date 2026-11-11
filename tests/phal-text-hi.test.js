@@ -104,7 +104,22 @@ describe('ढाँचा — सब entries मौजूद, ख़ाली �
       'rajayoga', 'dhana', 'vipareeta', 'harsha', 'sarala', 'vimala', 'neechabhanga',
       'sunapha', 'anapha', 'durudhara', 'kemadruma', 'adhi', 'chandra-mangal', 'amala',
       'parivartana', 'veshi', 'vashi', 'ubhayachari', 'shakata']
-    for (const id of ids) expect(typeof T.YOGA_TEXT[id].t, id).toBe('string')
+    for (const id of ids) {
+      const entry = T.YOGA_TEXT[id]
+      expect(typeof (entry.t ?? entry.base?.t), id).toBe('string')
+      for (const [k, v] of Object.entries(entry)) {
+        if (!k.startsWith('if')) continue
+        expect(typeof v?.t, `${id}.${k}`).toBe('string')
+        expect(typeof v?.tone, `${id}.${k}`).toBe('string')
+      }
+    }
+    // शर्त वाला हिस्सा base से अलग है (टास्क 03-ख §3)
+    expect(T.YOGA_TEXT.gajakesari.ifWeak.t).toContain('{why}')
+    expect(T.YOGA_TEXT.gajakesari.base.t).not.toContain('नीच')
+    expect(T.YOGA_TEXT.budhaditya.ifCombust.t).toContain('अस्त')
+    expect(T.YOGA_TEXT.budhaditya.base.t).not.toContain('अस्त')
+    expect(T.YOGA_TEXT.kemadruma.ifBhanga.t).toContain('{planets}')
+    expect(T.YOGA_TEXT.kemadruma.base.t).not.toContain('केंद्र')
     for (const k of ['mangal', 'kaalSarpa', 'guruChandal', 'sadesati1', 'sadesati2', 'sadesati3', 'dhaiya']) {
       expect(typeof T.DOSHA_TEXT[k].t, k).toBe('string')
     }

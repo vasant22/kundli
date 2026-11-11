@@ -73,7 +73,9 @@ body.ready .phal-loading { display: none; }
 }
 
 /* ---------- मुखपृष्ठ ---------- */
-.cover { text-align: center; padding: 10mm 0 6mm; break-after: page; }
+/* मुखपृष्ठ के बाद अलग से पेज-ब्रेक नहीं — अगला अध्याय ख़ुद `break-before: page`
+   लगाता है; दोनों एक साथ रहने से बीच में ख़ाली पन्ना बन जाता था. */
+.cover { text-align: center; padding: 10mm 0 6mm; }
 .cover-rule { height: 4px; background: var(--saffron); width: 42mm; margin: 0 auto 14mm; }
 .cover-brand { letter-spacing: 2px; color: var(--saffron); font-weight: 700; margin: 0; text-transform: lowercase; }
 .cover h1 { font-size: 30px; color: var(--indigo); margin: 6px 0 2px; letter-spacing: .5px; }
@@ -96,13 +98,13 @@ body.ready .phal-loading { display: none; }
   background: var(--saffron); color: #fff; font-weight: 700; border-radius: 8px;
   padding: 2px 9px; font-size: 13px;
 }
-.ch-head h2 { font-size: 19px; color: var(--indigo); margin: 0; }
+.ch-head h2 { font-size: 19px; color: var(--indigo); margin: 0; break-after: avoid; }
 .ch-intro {
   background: var(--saffron-soft); border-left: 3px solid var(--saffron);
-  padding: 8px 12px; margin: 0 0 14px; font-size: 14px; color: #4b3a2a;
+  padding: 8px 12px; margin: 0 0 10px; font-size: 14px; color: #4b3a2a;
 }
-h3 { color: var(--indigo); font-size: 15.5px; margin: 16px 0 6px; }
-p { margin: 8px 0; }
+h3 { color: var(--indigo); font-size: 15.5px; margin: 13px 0 6px; break-after: avoid; }
+p { margin: 8px 0; orphans: 2; widows: 2; }
 .muted, .note { color: var(--muted); font-size: 13.5px; }
 .err { color: var(--care); font-weight: 600; }
 
@@ -121,7 +123,11 @@ p { margin: 8px 0; }
 .tone-savdhan i { background: var(--care); }
 
 /* ---------- तालिकाएँ ---------- */
-.tbl { width: 100%; border-collapse: collapse; margin: 8px 0 12px; font-size: 13.5px; }
+/* बड़ी तालिका पन्ने के बीच टूट सके, पर हर नए पन्ने पर heading दोहराई जाए;
+   सिर्फ़ एक पंक्ति टूटने से बची रहती है (टास्क 03-ख §5). */
+.tbl { width: 100%; border-collapse: collapse; margin: 8px 0 12px; font-size: 13.5px; break-inside: auto; }
+.tbl thead { display: table-header-group; }
+.tbl tr { break-inside: avoid; }
 .tbl th {
   text-align: left; color: var(--indigo); font-weight: 700; font-size: 13px;
   border-bottom: 2px solid var(--saffron); padding: 6px 7px;
@@ -142,10 +148,14 @@ p { margin: 8px 0; }
 .phal-chart svg.chart line, .phal-chart svg.chart rect, .phal-chart svg.chart polygon { stroke: var(--indigo); }
 .phal-chart svg.chart text { fill: var(--ink); }
 
+/* दो तालिकाएँ साथ-साथ (सुदर्शन दृष्टि 6+6) */
+.split-tables { display: flex; gap: 6mm; align-items: flex-start; }
+.split-tables .tbl { flex: 1; }
+
 /* ---------- अन्य ---------- */
 .varga-row { display: flex; gap: 10px; align-items: flex-start; border-bottom: 1px solid var(--line); padding: 8px 0; break-inside: avoid; }
 .varga-row > div { flex: 1; }
-.pblock { border-top: 1px solid var(--line); padding-top: 8px; break-inside: avoid; }
+.pblock { border-top: 1px solid var(--line); padding-top: 8px; }
 .pblock h3 { margin: 8px 0 4px; }
 .nowbox { background: var(--saffron-soft); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; }
 .glossary { margin: 0; }
@@ -156,23 +166,38 @@ p { margin: 8px 0; }
 /* ---------- print ---------- */
 @page {
   size: A4;
-  margin: 14mm 14mm 16mm;
+  margin: 12mm 14mm 14mm;
   @bottom-left { content: "यह फलादेश mybapuji.com की निःशुल्क ऑनलाइन कुंडली से तैयार किया गया है"; font-size: 8pt; color: #6b7280; }
   @bottom-right { content: "पृष्ठ " counter(page); font-size: 8pt; color: #6b7280; }
   @top-left { content: "॥ जन्म कुंडली फलादेश ॥"; font-size: 8pt; color: #1e3a5f; }
   @top-right { content: "mybapuji.com"; font-size: 8pt; color: #e8730c; }
 }
 
+/* मुखपृष्ठ पर footer और पृष्ठ-संख्या नहीं (टास्क 03-ख §5) */
+@page :first {
+  @bottom-left { content: none; }
+  @bottom-right { content: none; }
+}
+
 @media print {
   html, body { background: #fff; font-size: 10.5pt; }
   #bar, .phal-loading, .phal-msg { display: none !important; }
   #report { margin: 0; padding: 0; box-shadow: none; max-width: none; }
-  .cover { break-after: page; }
   .chapter { break-before: page; }
   .cover-boxes, .cbox { break-inside: avoid; }
   .tbl th { background: none; }
   .tbl tbody tr:nth-child(even) td { background: #fdf1e6; }
   .tone { border-color: #d1d5db; }
+  /* काग़ज़ पर तालिकाएँ थोड़ी कसकर — इससे आधी-ख़ाली पन्ने कम बनते हैं */
+  .tbl { font-size: 12px; margin: 6px 0 10px; }
+  .tbl th { padding: 4px 6px; }
+  .tbl td { padding: 3.5px 6px; line-height: 1.45; }
+  .newpage { break-before: page; }
+  .chart-grid { gap: 10mm; flex-wrap: nowrap; }
+  .phal-chart svg { width: 70mm; height: 70mm; }
+  .phal-chart.wide svg { width: 86mm; height: 86mm; }
+  .tbl.compact { font-size: 11.5px; }
+  .tbl.compact th, .tbl.compact td { padding: 3px 6px; }
 }
 
 @media (max-width: 640px) {

@@ -53,3 +53,15 @@ export function rashiBoth(index) {
 export function grahaList(keys) {
   return keys.map(grahaHi).join(', ')
 }
+
+// अंश-मिनट (राशि के भीतर). पहले कुल मिनट गोल होते हैं, फिर अंश और मिनट बनते हैं,
+// इसलिए "20° 60′" जैसा कभी नहीं छपता:
+//   20.9999 → "21° 00′" · 0.004 → "0° 00′"
+// राशि-सीमा (30°00′) कभी नहीं लाँघी जाती — 29.9999 → "29° 59′" (आख़िरी मिनट नीचे).
+export function degMinHi(deg) {
+  if (!Number.isFinite(deg)) return '—'
+  const total = Math.min(Math.round(Math.abs(deg) * 60), 30 * 60 - 1)
+  const d = Math.floor(total / 60)
+  const m = total % 60
+  return `${d}° ${String(m).padStart(2, '0')}′`
+}
