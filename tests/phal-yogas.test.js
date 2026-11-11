@@ -247,9 +247,10 @@ describe('वेशि / वाशि / उभयचरी', () => {
     expect(byId(res, 'veshi').present).toBe(true)
     expect(byId(res, 'ubhayachari').present).toBe(false)
   })
-  it('वाशि — a graha in the 12th from the Sun', () => {
-    const res = detectYogas(chart(0, { ...SPREAD, sun: 0, mercury: 11 }))
+  it('वाशि — a graha in the 12th from the Sun (और 2रे में कोई नहीं)', () => {
+    const res = detectYogas(chart(0, { ...SPREAD, sun: 0, mercury: 11, jupiter: 4 }))
     expect(byId(res, 'vashi').present).toBe(true)
+    expect(byId(res, 'veshi').present).toBe(false)
   })
   it('उभयचरी — both sides', () => {
     const res = detectYogas(chart(0, { ...SPREAD, sun: 0, mercury: 1, venus: 11 }))
@@ -382,5 +383,50 @@ describe('अमला — केवल बुध/गुरु/शुक्र (
     // बुध को शनि के साथ मकर (10वें) में रखा
     const res = detectYogas(chart(0, { ...SPREAD, moon: 3, mercury: 9, saturn: 9, jupiter: 2, venus: 3 }))
     expect(byId(res, 'amala').planets).not.toContain('mercury')
+  })
+})
+
+
+describe('परस्पर-अपवर्जी योग (टास्क 01-ङ)', () => {
+  // चंद्र-परिवार: सुनफा / अनफा / दुरधरा
+  it('चंद्र के सिर्फ़ दूसरे में ग्रह → सिर्फ़ सुनफा', () => {
+    const res = detectYogas(chart(0, { ...SPREAD, moon: 1, jupiter: 2 }))
+    expect(byId(res, 'sunapha').present).toBe(true)
+    expect(byId(res, 'anapha').present).toBe(false)
+    expect(byId(res, 'durudhara').present).toBe(false)
+  })
+  it('चंद्र के सिर्फ़ बारहवें में ग्रह → सिर्फ़ अनफा', () => {
+    const res = detectYogas(chart(0, { ...SPREAD, moon: 1, jupiter: 0 }))
+    expect(byId(res, 'anapha').present).toBe(true)
+    expect(byId(res, 'sunapha').present).toBe(false)
+    expect(byId(res, 'durudhara').present).toBe(false)
+  })
+  it('चंद्र के दोनों ओर ग्रह → सिर्फ़ दुरधरा', () => {
+    const res = detectYogas(chart(0, { ...SPREAD, moon: 1, jupiter: 2, venus: 0 }))
+    expect(byId(res, 'durudhara').present).toBe(true)
+    expect(byId(res, 'sunapha').present).toBe(false)
+    expect(byId(res, 'anapha').present).toBe(false)
+    expect(byId(res, 'sunapha').text).toContain('दुरधरा')
+  })
+
+  // सूर्य-परिवार: वेशि / वाशि / उभयचरी
+  it('सूर्य के सिर्फ़ दूसरे में ग्रह → सिर्फ़ वेशि', () => {
+    const res = detectYogas(chart(0, { ...SPREAD, sun: 0, mercury: 1, venus: 4 }))
+    expect(byId(res, 'veshi').present).toBe(true)
+    expect(byId(res, 'vashi').present).toBe(false)
+    expect(byId(res, 'ubhayachari').present).toBe(false)
+  })
+  it('सूर्य के सिर्फ़ बारहवें में ग्रह → सिर्फ़ वाशि', () => {
+    const res = detectYogas(chart(0, { ...SPREAD, sun: 0, mercury: 11, venus: 4, jupiter: 4 }))
+    expect(byId(res, 'vashi').present).toBe(true)
+    expect(byId(res, 'veshi').present).toBe(false)
+    expect(byId(res, 'ubhayachari').present).toBe(false)
+  })
+  it('सूर्य के दोनों ओर ग्रह → सिर्फ़ उभयचरी', () => {
+    const res = detectYogas(chart(0, { ...SPREAD, sun: 0, mercury: 1, venus: 11 }))
+    expect(byId(res, 'ubhayachari').present).toBe(true)
+    expect(byId(res, 'veshi').present).toBe(false)
+    expect(byId(res, 'vashi').present).toBe(false)
+    expect(byId(res, 'veshi').text).toContain('उभयचरी')
   })
 })

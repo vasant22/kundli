@@ -247,10 +247,14 @@ function chandraYogas(frame) {
   const excluded = ['sun', 'rahu', 'ketu', 'moon']
   const inSecond = SEVEN_KEYS.filter((k) => !excluded.includes(k) && frame.rashiOf[k] === second)
   const inTwelfth = SEVEN_KEYS.filter((k) => !excluded.includes(k) && frame.rashiOf[k] === twelfth)
-  const sunapha = inSecond.length > 0
-  const anapha = inTwelfth.length > 0
-  const durudhara = sunapha && anapha
-  const kemadruma = !sunapha && !anapha
+  // परस्पर-अपवर्जी (शास्त्रीय परिभाषा): सुनफा = सिर्फ़ दूसरे में, अनफा = सिर्फ़
+  // बारहवें में, दोनों में हों तो सिर्फ़ दुरधरा; दोनों ख़ाली तो केमद्रुम।
+  const anySecond = inSecond.length > 0
+  const anyTwelfth = inTwelfth.length > 0
+  const sunapha = anySecond && !anyTwelfth
+  const anapha = anyTwelfth && !anySecond
+  const durudhara = anySecond && anyTwelfth
+  const kemadruma = !anySecond && !anyTwelfth
 
   const kendraFrom = (baseRashi) =>
     SEVEN_KEYS.filter((k) => k !== 'moon' && k !== 'sun' && KENDRA.includes(houseOf(frame.rashiOf[k], baseRashi)))
@@ -258,13 +262,23 @@ function chandraYogas(frame) {
 
   return [
     yoga('sunapha', 'सुनफा योग', 'Sunapha Yoga', 'शास्त्रीय', sunapha,
-      sunapha ? `चंद्र से दूसरे भाव में ${grahaList(inSecond)} — सुनफा योग।` : 'चंद्र से दूसरे भाव में कोई ग्रह नहीं — सुनफा नहीं।',
+      sunapha
+        ? `चंद्र से दूसरे भाव में ${grahaList(inSecond)} — सुनफा योग।`
+        : anyTwelfth
+          ? 'चंद्र के दोनों ओर ग्रह हैं — इसलिए सुनफा नहीं, दुरधरा योग है।'
+          : 'चंद्र से दूसरे भाव में कोई ग्रह नहीं — सुनफा नहीं।',
       { planets: inSecond }),
     yoga('anapha', 'अनफा योग', 'Anapha Yoga', 'शास्त्रीय', anapha,
-      anapha ? `चंद्र से बारहवें भाव में ${grahaList(inTwelfth)} — अनफा योग।` : 'चंद्र से बारहवें भाव में कोई ग्रह नहीं — अनफा नहीं।',
+      anapha
+        ? `चंद्र से बारहवें भाव में ${grahaList(inTwelfth)} — अनफा योग।`
+        : anySecond
+          ? 'चंद्र के दोनों ओर ग्रह हैं — इसलिए अनफा नहीं, दुरधरा योग है।'
+          : 'चंद्र से बारहवें भाव में कोई ग्रह नहीं — अनफा नहीं।',
       { planets: inTwelfth }),
     yoga('durudhara', 'दुरधरा योग', 'Durudhara Yoga', 'शास्त्रीय', durudhara,
-      durudhara ? 'चंद्र के दोनों ओर (दूसरे और बारहवें भाव में) ग्रह — दुरधरा योग।' : 'दोनों ओर ग्रह नहीं — दुरधरा नहीं।',
+      durudhara
+        ? 'चंद्र के दोनों ओर (दूसरे और बारहवें भाव में) ग्रह — दुरधरा योग; सुनफा और अनफा अलग नहीं गिने जाते।'
+        : 'दोनों ओर ग्रह नहीं — दुरधरा नहीं।',
       {}),
     yoga('kemadruma', 'केमद्रुम दोष', 'Kemadruma Dosha', 'शास्त्रीय', kemadruma && bhangaPlanets.length === 0,
       kemadruma
@@ -350,15 +364,33 @@ function veshiVashi(frame) {
   const twelfth = (sunRashi + 11) % 12
   const inSecond = SEVEN_KEYS.filter((k) => !excluded.includes(k) && frame.rashiOf[k] === second)
   const inTwelfth = SEVEN_KEYS.filter((k) => !excluded.includes(k) && frame.rashiOf[k] === twelfth)
-  const veshi = inSecond.length > 0
-  const vashi = inTwelfth.length > 0
+  // परस्पर-अपवर्जी: वेशि = सिर्फ़ दूसरे में, वाशि = सिर्फ़ बारहवें में,
+  // दोनों में हों तो सिर्फ़ उभयचरी (शास्त्रीय परिभाषा, टास्क 01-ङ).
+  const anySecond = inSecond.length > 0
+  const anyTwelfth = inTwelfth.length > 0
+  const veshi = anySecond && !anyTwelfth
+  const vashi = anyTwelfth && !anySecond
+  const ubhayachari = anySecond && anyTwelfth
   return [
     yoga('veshi', 'वेशि योग', 'Veshi Yoga', 'शास्त्रीय', veshi,
-      veshi ? `सूर्य से दूसरे में ${grahaList(inSecond)} — वेशि योग।` : 'सूर्य से दूसरे में कोई ग्रह नहीं।', { planets: inSecond }),
+      veshi
+        ? `सूर्य से दूसरे में ${grahaList(inSecond)} — वेशि योग।`
+        : anyTwelfth
+          ? 'सूर्य के दोनों ओर ग्रह हैं — इसलिए वेशि नहीं, उभयचरी योग है।'
+          : 'सूर्य से दूसरे में कोई ग्रह नहीं।',
+      { planets: inSecond }),
     yoga('vashi', 'वाशि योग', 'Vashi Yoga', 'शास्त्रीय', vashi,
-      vashi ? `सूर्य से बारहवें में ${grahaList(inTwelfth)} — वाशि योग।` : 'सूर्य से बारहवें में कोई ग्रह नहीं।', { planets: inTwelfth }),
-    yoga('ubhayachari', 'उभयचरी योग', 'Ubhayachari Yoga', 'शास्त्रीय', veshi && vashi,
-      veshi && vashi ? 'सूर्य के दोनों ओर ग्रह — उभयचरी योग।' : 'दोनों ओर ग्रह नहीं — उभयचरी नहीं।', {}),
+      vashi
+        ? `सूर्य से बारहवें में ${grahaList(inTwelfth)} — वाशि योग।`
+        : anySecond
+          ? 'सूर्य के दोनों ओर ग्रह हैं — इसलिए वाशि नहीं, उभयचरी योग है।'
+          : 'सूर्य से बारहवें में कोई ग्रह नहीं।',
+      { planets: inTwelfth }),
+    yoga('ubhayachari', 'उभयचरी योग', 'Ubhayachari Yoga', 'शास्त्रीय', ubhayachari,
+      ubhayachari
+        ? 'सूर्य के दोनों ओर (दूसरे और बारहवें भाव में) ग्रह — उभयचरी योग; वेशि और वाशि अलग नहीं गिने जाते।'
+        : 'दोनों ओर ग्रह नहीं — उभयचरी नहीं।',
+      {}),
   ]
 }
 
