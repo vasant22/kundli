@@ -8,6 +8,9 @@ import * as T from '../../src/phal/text-hi.js'
 
 const OUT = []
 const w = (s = '') => OUT.push(s)
+const txt = (v) => (v && typeof v === 'object' ? v.t : v)
+const toneOf = (v) => (v && typeof v === 'object' ? v.tone : '—')
+const TONE_HI = { shubh: 'शुभ', mishr: 'मिश्र', savdhan: 'सावधानी' }
 
 const SRC = {
   PLANET_IN_HOUSE: 'फलदीपिका अ.8 (भावगत ग्रहफल)',
@@ -63,14 +66,45 @@ w('हर पंक्ति में: **key** → text → *शास्त्
 w('सारा text मूल लेखन है (किसी किताब/अनुवाद/website से नहीं); स्वर संतुलित — न डराने वाला, न निश्चित भविष्यवाणी।')
 w()
 
+// बदले हुए entries (पुरानी copy से तुलना) — सबसे ऊपर
+let OLD = null
+try { OLD = await import('../../.openclaw-tmp/text-hi-old.mjs') } catch { OLD = null }
+if (OLD) {
+  const flat = (root, path = '') => {
+    const out = {}
+    const walk = (node, p) => {
+      if (node && typeof node === 'object' && typeof node.t === 'string') { out[p] = node.t; return }
+      if (typeof node === 'string') { out[p] = node; return }
+      if (node && typeof node === 'object') for (const [k, v] of Object.entries(node)) walk(v, p ? `${p}.${k}` : k)
+    }
+    for (const [k, v] of Object.entries(root)) walk(v, k)
+    return out
+  }
+  const a = flat(OLD), b = flat(T)
+  const changed = Object.keys(b).filter((k) => a[k] !== undefined && a[k] !== b[k])
+  w(`## 0. बदले हुए entries (${changed.length})`)
+  w('टास्क 02-ख में tone के हिसाब से ये text बदले गए — Claude सिर्फ़ इन्हें जाँचे।')
+  w()
+  w('| key | पुराना | नया | tone |')
+  w('|---|---|---|---|')
+  const toneAt = (path) => {
+    const parts = path.split('.')
+    let node = T
+    for (const p of parts) node = node?.[p]
+    return node?.tone ?? '—'
+  }
+  for (const k of changed) w(`| \`${k}\` | ${a[k]} | ${b[k]} | ${TONE_HI[toneAt(k)] ?? '—'} |`)
+  w()
+}
+
 // ग्रह भाव में
 w(`## 1. ${LABEL.PLANET_IN_HOUSE}`)
 w(`*आधार: ${SRC.PLANET_IN_HOUSE}*`)
 w()
-w('| key | text | आधार |')
-w('|---|---|---|')
+w('| key | text | tone | आधार |')
+w('|---|---|---|---|')
 for (const [key, row] of Object.entries(T.PLANET_IN_HOUSE)) {
-  for (const [h, text] of Object.entries(row)) w(`| \`PLANET_IN_HOUSE.${key}[${h}]\` | ${text} | ${SRC.PLANET_IN_HOUSE} |`)
+  for (const [h, v] of Object.entries(row)) w(`| \`PLANET_IN_HOUSE.${key}[${h}]\` | ${txt(v)} | ${TONE_HI[toneOf(v)]} | ${SRC.PLANET_IN_HOUSE} |`)
 }
 w()
 
@@ -78,10 +112,10 @@ w()
 w(`## 2. ${LABEL.LORD_IN_HOUSE}`)
 w(`*आधार: ${SRC.LORD_IN_HOUSE}*`)
 w()
-w('| key | text | आधार |')
-w('|---|---|---|')
+w('| key | text | tone | आधार |')
+w('|---|---|---|---|')
 for (const [lord, row] of Object.entries(T.LORD_IN_HOUSE)) {
-  for (const [placed, text] of Object.entries(row)) w(`| \`LORD_IN_HOUSE.${lord}[${placed}]\` | ${text} | ${SRC.LORD_IN_HOUSE} |`)
+  for (const [placed, v] of Object.entries(row)) w(`| \`LORD_IN_HOUSE.${lord}[${placed}]\` | ${txt(v)} | ${TONE_HI[toneOf(v)]} | ${SRC.LORD_IN_HOUSE} |`)
 }
 w()
 
@@ -92,7 +126,7 @@ for (const [k, title] of [['LAGNA', LABEL.LAGNA], ['MOON_RASHI', LABEL.MOON_RASH
   w()
   w('| key | text | आधार |')
   w('|---|---|---|')
-  for (const [i, text] of Object.entries(T[k])) w(`| \`${k}.${i}\` | ${text} | ${SRC[k]} |`)
+  for (const [i, v] of Object.entries(T[k])) w(`| \`${k}.${i}\` | ${txt(v)} | ${TONE_HI[toneOf(v)]} | ${SRC[k]} |`)
   w()
 }
 
@@ -103,7 +137,7 @@ for (const [k, title] of [['KARAKATVA', LABEL.KARAKATVA], ['HOUSE_TOPICS', LABEL
   w()
   w('| key | text | आधार |')
   w('|---|---|---|')
-  for (const [i, text] of Object.entries(T[k])) w(`| \`${k}.${i}\`${k === 'KARAKATVA' ? ` (${PLANET_HI[i]})` : ''} | ${text} | ${SRC[k]} |`)
+  for (const [i, v] of Object.entries(T[k])) w(`| \`${k}.${i}\`${k === 'KARAKATVA' ? ` (${PLANET_HI[i]})` : ''} | ${txt(v)} | ${TONE_HI[toneOf(v)]} | ${SRC[k]} |`)
   w()
 }
 
@@ -111,9 +145,9 @@ for (const [k, title] of [['KARAKATVA', LABEL.KARAKATVA], ['HOUSE_TOPICS', LABEL
 w(`## ${LABEL.DASHA}`)
 w(`*आधार: ${SRC.DASHA}*`)
 w()
-w('| key | text | आधार |')
-w('|---|---|---|')
-for (const [i, text] of Object.entries(T.DASHA)) w(`| \`DASHA.${i}\` (${PLANET_HI[i]}) | ${text} | ${SRC.DASHA} |`)
+w('| key | text | tone | आधार |')
+w('|---|---|---|---|')
+for (const [i, v] of Object.entries(T.DASHA)) w(`| \`DASHA.${i}\` (${PLANET_HI[i]}) | ${txt(v)} | ${TONE_HI[toneOf(v)]} | ${SRC.DASHA} |`)
 w()
 w(`**Template** (\`DASHA_TEMPLATE\`) — *${SRC.DASHA_TEMPLATE}*`)
 w()
@@ -127,28 +161,28 @@ w()
 w(`## ${LABEL.YOGA_TEXT}`)
 w(`*आधार: ${SRC.YOGA_TEXT}*`)
 w()
-w('| key | text | आधार |')
-w('|---|---|---|')
-for (const [i, text] of Object.entries(T.YOGA_TEXT)) w(`| \`YOGA_TEXT.${i}\` | ${text} | ${SRC.YOGA_TEXT} |`)
+w('| key | text | tone | आधार |')
+w('|---|---|---|---|')
+for (const [i, v] of Object.entries(T.YOGA_TEXT)) w(`| \`YOGA_TEXT.${i}\` | ${txt(v)} | ${TONE_HI[toneOf(v)]} | ${SRC.YOGA_TEXT} |`)
 w()
 
 // दोष
 w(`## ${LABEL.DOSHA_TEXT}`)
 w(`*आधार: ${SRC.DOSHA_TEXT}*`)
 w()
-w('| key | text | आधार |')
-w('|---|---|---|')
-for (const [i, text] of Object.entries(T.DOSHA_TEXT)) w(`| \`DOSHA_TEXT.${i}\` | ${text} | ${SRC.DOSHA_TEXT} |`)
+w('| key | text | tone | आधार |')
+w('|---|---|---|---|')
+for (const [i, v] of Object.entries(T.DOSHA_TEXT)) w(`| \`DOSHA_TEXT.${i}\` | ${txt(v)} | ${TONE_HI[toneOf(v)]} | ${SRC.DOSHA_TEXT} |`)
 w()
 
 // गोचर
 w(`## ${LABEL.GOCHAR}`)
 w(`*आधार: ${SRC.GOCHAR}*`)
 w()
-w('| key | text | आधार |')
-w('|---|---|---|')
+w('| key | text | tone | आधार |')
+w('|---|---|---|---|')
 for (const [g, row] of Object.entries(T.GOCHAR)) {
-  for (const [h, text] of Object.entries(row)) w(`| \`GOCHAR.${g}[${h}]\` (${PLANET_HI[g]}) | ${text} | ${SRC.GOCHAR} |`)
+  for (const [h, v] of Object.entries(row)) w(`| \`GOCHAR.${g}[${h}]\` (${PLANET_HI[g]}) | ${txt(v)} | ${TONE_HI[toneOf(v)]} | ${SRC.GOCHAR} |`)
 }
 w()
 
@@ -156,23 +190,23 @@ w()
 w(`## ${LABEL.VARGA_TEXT}`)
 w(`*आधार: ${SRC.VARGA_TEXT}*`)
 w()
-w('| key | text | आधार |')
-w('|---|---|---|')
-for (const [i, text] of Object.entries(T.VARGA_TEXT)) w(`| \`VARGA_TEXT.${i}\` | ${text} | ${SRC.VARGA_TEXT} |`)
+w('| key | text | tone | आधार |')
+w('|---|---|---|---|')
+for (const [i, v] of Object.entries(T.VARGA_TEXT)) w(`| \`VARGA_TEXT.${i}\` | ${txt(v)} | ${TONE_HI[toneOf(v)]} | ${SRC.VARGA_TEXT} |`)
 w()
 w(`**D60 का अर्थ** — *${SRC.D60_NOTE}*`)
 w()
-w('| key | text | आधार |')
-w('|---|---|---|')
-for (const [i, text] of Object.entries(T.D60_NOTE)) w(`| \`D60_NOTE.${i}\` | ${text} | ${SRC.D60_NOTE} |`)
+w('| key | text | tone | आधार |')
+w('|---|---|---|---|')
+for (const [i, v] of Object.entries(T.D60_NOTE)) w(`| \`D60_NOTE.${i}\` | ${txt(v)} | ${TONE_HI[toneOf(v)]} | ${SRC.D60_NOTE} |`)
 w()
 
 // उपाय
 w(`## ${LABEL.UPAYA}`)
 w(`*आधार: ${SRC.UPAYA}*`)
 w()
-w('| key | text | आधार |')
-w('|---|---|---|')
+w('| key | text | tone | आधार |')
+w('|---|---|---|---|')
 for (const [g, u] of Object.entries(T.UPAYA)) {
   if (typeof u === 'string') { w(`| \`UPAYA.${g}\` | ${u} | ${SRC.UPAYA} |`); continue }
   w(`| \`UPAYA.${g}.free\` (${PLANET_HI[g]}) | ${u.free} | ${SRC.UPAYA} |`)
@@ -187,7 +221,7 @@ for (const [k, title] of [['CHAPTER_INTRO', LABEL.CHAPTER_INTRO], ['GLOSSARY', L
   w()
   w('| key | text | आधार |')
   w('|---|---|---|')
-  for (const [i, text] of Object.entries(T[k])) w(`| \`${k}.${i}\` | ${text} | ${SRC[k]} |`)
+  for (const [i, v] of Object.entries(T[k])) w(`| \`${k}.${i}\` | ${txt(v)} | ${TONE_HI[toneOf(v)]} | ${SRC[k]} |`)
   w()
 }
 w(`## ${LABEL.CLOSING_NOTE}`)
