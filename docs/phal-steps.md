@@ -63,11 +63,11 @@
 - [ ] Vas22 जी के लिए review-पत्र (कौन-सा वाक्य किस नियम से)
 - [ ] पूरा text सिर्फ़ `buildPhalData` के object से — कोई अलग गणना नहीं
 
-## टास्क 03 — report page + PDF (बाक़ी)
-- [ ] `phal/index.html` + `src/phal/render.js` + `phal.css` (mybapuji रंग)
-- [ ] kundli page पर "📄 विस्तृत फलादेश (PDF)" बटन (result के नीचे, layout न बदले)
-- [ ] `vite.config.js` + `scripts/build-server-layout.mjs` में नया entry
-- [ ] Print-CSS (25–35 पन्ने, A4), कोई बाहरी font/tracker नहीं
+## टास्क 03 — report page + PDF ✅ (2026-11-11)
+- [x] `phal/index.html` + `src/phal/{report.js,main.js,phal.css}` (mybapuji रंग)
+- [x] kundli page पर "📄 विस्तृत फलादेश (PDF)" बटन (result के नीचे, layout न बदले)
+- [x] `vite.config.js` + `scripts/build-server-layout.mjs` → `/kundli-phal/`
+- [x] Print-CSS (A4, अभी 24 पन्ने), कोई बाहरी font/tracker नहीं
 
 ## टास्क 04 — जाँच (बाक़ी)
 - [ ] oracle (सिर्फ़ `.openclaw-tmp/phal-oracle/`) से अंक मिलान

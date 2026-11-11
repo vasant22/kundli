@@ -928,3 +928,4 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
   मुख्य bundle 21.7 → 22.6 kB (+0.9), phal अलग chunk 151.6 kB।
 - **जाँच:** suite **1048 ✓** (report के 6 नए test) · build ✓ · PDF 24 पन्ने, पहला पन्ना देखा (देवनागरी सही, header/footer मौजूद) ·
   desktop 1280 व phone 390 के screenshot · कुंडली पेज पर बटन जाँचा (href सही, target=_blank)।
+- 02-ख + 03 के बाद: कुंडली पेज का bundle 22.6 kB (पहले 21.7), फलादेश का अलग chunk 151.6 kB; `/kundli-phal/` deploy-लेआउट में जुड़ा।
