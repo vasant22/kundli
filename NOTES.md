@@ -915,3 +915,16 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - `ordinalHi(n, unit)` — "चौथे भाव"; कहीं "4वें" नहीं (regex test)। `scripts/phal-calib/export-text-review.mjs` से
   **review-पत्र** `reports/2026-11-11-phal-text-review.md` (638 पंक्तियाँ, हर entry की key + ग्रंथ/अध्याय)।
 - tests **1014 → 1038 ✓** (18 नए: ढाँचा · भाषा · सुरक्षा) · build ✓ · commit (push नहीं)।
+
+### 2026-11-11 — फलादेश PDF / टास्क 02-ख + टास्क 03 (text की दिशा + report page)
+- **02-ख (text):** हर फल-entry अब `{ t, tone }` — `shubh` / `mishr` / `savdhan`। tone की तालिका Claude ने दी (ग्रह-भाव 108, भावेश-भाव 144 का नियम,
+  गोचर की शुभ-भाव सूची); जो text उलटी दिशा में थे वे फिर से लिखे (**219 entries बदले**)। आधुनिक/pश्चिमी शब्द हटे
+  (दूसरों के संसाधन · बीमा · वित्त-क्षेत्र · पड़ोस · फ़ैशन · तंत्र)। मंगल-नोट सुधरा, शनि का रत्न "पंचधातु या चाँदी"।
+  review-पत्र में सबसे ऊपर tone-स्तंभ + "बदले हुए entries" की तालिका।
+- **03 (report page):** नई `phal/index.html` + `src/phal/{report.js,main.js,phal.css}`; `vite.config.js` में entry,
+  `scripts/build-server-layout.mjs` → `.deploy/kundli-site/kundli-phal/`। 14 अध्याय (विषय-सूची सहित), हर अध्याय नए पन्ने से,
+  tone का रंग+शब्द चिह्न, A4 print CSS (`@page` margin-boxes में हर पन्ने पर नाम + पृष्ठ-संख्या), noindex/follow।
+  कुंडली पेज पर result के नीचे **"📄 विस्तृत फलादेश (PDF)"** बटन (नई tab, वही prefill params) + SEO पंक्ति + FAQ।
+  मुख्य bundle 21.7 → 22.6 kB (+0.9), phal अलग chunk 151.6 kB।
+- **जाँच:** suite **1048 ✓** (report के 6 नए test) · build ✓ · PDF 24 पन्ने, पहला पन्ना देखा (देवनागरी सही, header/footer मौजूद) ·
+  desktop 1280 व phone 390 के screenshot · कुंडली पेज पर बटन जाँचा (href सही, target=_blank)।

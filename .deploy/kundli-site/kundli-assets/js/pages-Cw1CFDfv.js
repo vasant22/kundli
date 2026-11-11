@@ -1,0 +1,1 @@
+var e={kundli:`/kundli/`,match:`/kundli-milan/`,panchang:`/panchang/`,bnn:`/bnn-chart/`},t=e=>new URL(e,location.origin).href;export{t as n,e as t};

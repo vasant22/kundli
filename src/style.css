@@ -1462,3 +1462,16 @@ details.manual[open] summary {
     print-color-adjust: exact;
   }
 }
+
+/* 📄 विस्तृत फलादेश (PDF) — result के नीचे का बटन (टास्क 03) */
+.phal-cta{
+  margin-top:18px;padding-top:14px;border-top:1px dashed #e5e7eb;text-align:center;
+}
+.phal-btn{
+  display:inline-block;background:#e8730c;color:#fff;text-decoration:none;
+  font-weight:700;font-size:16px;padding:12px 22px;border-radius:12px;
+  box-shadow:0 2px 0 #c65f06;
+}
+.phal-btn:hover,.phal-btn:focus{background:#d96a08;color:#fff}
+.phal-cta .phal-hint{margin:8px 0 0;font-size:13px;color:#6b7280}
+@media print{.phal-cta{display:none}}

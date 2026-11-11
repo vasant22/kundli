@@ -42,6 +42,7 @@ export default defineConfig({
         'kundli-widget': page('widgets/kundli/index.html'),
         'match-widget': page('widgets/match/index.html'),
         bnn: page('bnn/index.html'),
+        phal: page('phal/index.html'),
       },
     },
   },

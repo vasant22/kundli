@@ -31,6 +31,7 @@ const MAP = [
   ['match/index.html', 'kundli-milan/index.html'],
   ['panchang/index.html', 'panchang/index.html'],
   ['bnn/index.html', 'bnn-chart/index.html'],
+  ['phal/index.html', 'kundli-phal/index.html'],
   ['widgets/kundli/index.html', 'kundli/widget/index.html'],
   ['widgets/match/index.html', 'kundli-milan/widget/index.html'],
   ['panchang-widget/index.html', 'panchang/widget/index.html'],

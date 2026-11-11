@@ -1,0 +1,1 @@
+var e={name:{hi:`मुंबई, महाराष्ट्र`,en:`Mumbai, Maharashtra`},latitude:19.076,longitude:72.8777,timeZone:`Asia/Kolkata`};export{e as t};

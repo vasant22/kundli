@@ -370,6 +370,23 @@ function downloadChartPng(values, onError) {
 }
 
 // Plain-text version of the results (for the Copy button, Phase 8).
+// फलादेश page का link — वही prefill format जो prefill.js पढ़ता है.
+function phalUrl(values, conversion, coords) {
+  const q = new URLSearchParams()
+  if (values.name) q.set('name', values.name)
+  if (values.gender) q.set('gender', values.gender)
+  q.set('day', values.day)
+  q.set('month', values.month)
+  q.set('year', values.year)
+  q.set('hour', values.hour)
+  q.set('min', values.minute)
+  q.set('sec', values.second === '' ? '0' : values.second)
+  if (values.place) q.set('place', values.place)
+  if (coords) { q.set('lat', String(coords.latitude)); q.set('lng', String(coords.longitude)) }
+  if (conversion?.zone) q.set('tz', conversion.zone)
+  return `../kundli-phal/?${q.toString()}`
+}
+
 function buildDetailsText(values) {
   const k = values.kundli
   const meta = chartMeta(values)
@@ -761,6 +778,25 @@ function showSummary(values, scroll) {
     pdfHint.textContent = t('actions.pdfHint')
     actions.append(pngBtn, printBtn, copyBtn, actionMsg, pdfHint)
     card.append(actions)
+
+    // 📄 विस्तृत फलादेश (PDF) — नई tab में पूरा पराशरी फलादेश
+    const phalCoords = resolveCoordinates(values)
+    if (phalCoords && computeConversion(values)) {
+      const phalBox = document.createElement('div')
+      phalBox.className = 'phal-cta'
+      const phalLink = document.createElement('a')
+      phalLink.className = 'phal-btn'
+      phalLink.dataset.action = 'phal'
+      phalLink.target = '_blank'
+      phalLink.rel = 'noopener'
+      phalLink.href = phalUrl(values, computeConversion(values), phalCoords)
+      phalLink.textContent = t('btn.phal')
+      const phalHint = document.createElement('p')
+      phalHint.className = 'note phal-hint'
+      phalHint.textContent = t('phal.hint')
+      phalBox.append(phalLink, phalHint)
+      card.append(phalBox)
+    }
   }
 
   const note = document.createElement('p')
