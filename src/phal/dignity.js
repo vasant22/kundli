@@ -38,7 +38,11 @@ export const MOOLATRIKONA = {
   saturn: { rashi: 10, from: 0, to: 20 },
 }
 
-// Natural (naisargika) friendship — BPHS ch.3.
+// Rahu/Ketu: BPHS has NO naisargika friendship table for the nodes, so the
+// report shows only उच्च / नीच and "—" in every other sign (टास्क 01-घ).
+export const NODE_KEYS = ['rahu', 'ketu']
+
+// Natural (naisargika) friendship — BPHS ch.3 (seven grahas only).
 export const NATURAL_FRIENDS = {
   sun: { friends: ['moon', 'mars', 'jupiter'], neutral: ['mercury'], enemies: ['venus', 'saturn'] },
   moon: { friends: ['sun', 'mercury'], neutral: ['mars', 'jupiter', 'venus', 'saturn'], enemies: [] },
@@ -47,10 +51,6 @@ export const NATURAL_FRIENDS = {
   jupiter: { friends: ['sun', 'moon', 'mars'], neutral: ['saturn'], enemies: ['mercury', 'venus'] },
   venus: { friends: ['mercury', 'saturn'], neutral: ['mars', 'jupiter'], enemies: ['sun', 'moon'] },
   saturn: { friends: ['mercury', 'venus'], neutral: ['jupiter'], enemies: ['sun', 'moon', 'mars'] },
-  // The nodes have no naisargika table in BPHS; the usual later convention is
-  // used and labelled as परवर्ती wherever it is shown.
-  rahu: { friends: ['venus', 'saturn', 'mercury'], neutral: ['jupiter'], enemies: ['sun', 'moon', 'mars'] },
-  ketu: { friends: ['venus', 'saturn', 'mercury'], neutral: ['jupiter'], enemies: ['sun', 'moon', 'mars'] },
 }
 
 export const DIGNITY_LABELS = {
@@ -63,6 +63,7 @@ export const DIGNITY_LABELS = {
   shatru: { hi: 'शत्रु', en: 'Enemy' },
   adhishatru: { hi: 'अधिशत्रु', en: 'Bitter enemy' },
   debilitated: { hi: 'नीच', en: 'Debilitated' },
+  none: { hi: '—', en: '—' },
 }
 
 // Digbala houses (BPHS ch.7): the house in which each graha is strongest.
@@ -79,7 +80,7 @@ export const COMBUSTION_ORB_RETRO = { mercury: 12, venus: 8 }
 
 export function naturalRelation(from, to) {
   const t = NATURAL_FRIENDS[from]
-  if (!t) return 'neutral'
+  if (!t) return 'none' // राहु/केतु की नैसर्गिक तालिका नहीं
   if (t.friends.includes(to)) return 'friend'
   if (t.enemies.includes(to)) return 'enemy'
   return 'neutral'
@@ -97,14 +98,20 @@ export function temporaryRelation(fromRashi, toRashi) {
 // rashis in the chart being examined (D1 or a varga chart).
 export function panchadha(from, to, rashiOf) {
   if (from === to) return 'own'
+  if (NODE_KEYS.includes(from) || NODE_KEYS.includes(to)) return 'none'
   const nat = naturalRelation(from, to)
   const rFrom = rashiOf[from]
   const rTo = rashiOf[to]
   if (rFrom == null || rTo == null) return nat === 'friend' ? 'mitra' : nat === 'enemy' ? 'shatru' : 'sama'
   const tmp = temporaryRelation(rFrom, rTo)
+  // BPHS अ.3 की पूरी पंचधा तालिका:
+  //   नैसर्गिक मित्र + ता. मित्र = अधिमित्र | + ता. शत्रु = सम
+  //   नैसर्गिक सम    + ता. मित्र = मित्र    | + ता. शत्रु = शत्रु
+  //   नैसर्गिक शत्रु + ता. मित्र = सम       | + ता. शत्रु = अधिशत्रु
+  // (टास्क 01-घ: पहले "शत्रु + ता. मित्र" को शत्रु लिखा गया था — यही bug था.)
   if (nat === 'friend') return tmp === 'friend' ? 'adhimitra' : 'sama'
   if (nat === 'neutral') return tmp === 'friend' ? 'mitra' : 'shatru'
-  return tmp === 'friend' ? 'shatru' : 'adhishatru'
+  return tmp === 'friend' ? 'sama' : 'adhishatru'
 }
 
 // The dignity of `key` sitting in `rashi`, given the chart's rashi map.
@@ -127,6 +134,10 @@ export function dignityIn(key, rashi, degInSign, rashiOf) {
   const deb = DEBILITATION[key]
   if (deb && deb.rashi === rashi) {
     return { level: 'debilitated', lord, ...DIGNITY_LABELS.debilitated }
+  }
+  // राहु-केतु: उच्च/नीच के अलावा कोई मैत्री-श्रेणी नहीं (BPHS में तालिका नहीं)
+  if (NODE_KEYS.includes(key)) {
+    return { level: 'none', lord, ...DIGNITY_LABELS.none }
   }
   const rel = panchadha(key, lord, rashiOf)
   const level = rel === 'own' ? 'own' : rel
@@ -226,12 +237,12 @@ export function karakaNature(frame) {
 
 // A plain-language one-liner per graha, for the "ग्रह-स्थिति" table.
 export function dignitySummary(key, pos) {
-  const parts = [pos.dignity.hi]
+  const parts = pos.dignity.level === 'none' ? [] : [pos.dignity.hi]
   if (pos.retro) parts.push('वक्री')
   if (pos.combustion.combust) parts.push('अस्त')
   if (pos.vargottama) parts.push('वर्गोत्तम')
   if (pos.digbala) parts.push('दिग्बली')
-  return parts.join(' · ')
+  return parts.length ? parts.join(' · ') : '—'
 }
 
 export { SEVEN_KEYS, houseOf, norm360 }

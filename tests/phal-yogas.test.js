@@ -366,3 +366,21 @@ describe('नीचभंग — चंद्र खुद स्वामी �
     expect(entry.byLord).toContain('saturn')
   })
 })
+
+describe('अमला — केवल बुध/गुरु/शुक्र (चंद्र नहीं), बुध पाप के साथ हो तो नहीं', () => {
+  it('चंद्र दसवें में हो तो अमला नहीं (चंद्र इस सूची में नहीं)', () => {
+    // lagna Mesha → 10th = Makara; चंद्र को मकर में रखो, बाक़ी शुभ दूर
+    const res = detectYogas(chart(0, { ...SPREAD, moon: 9, jupiter: 2, venus: 3, mercury: 5 }))
+    expect(byId(res, 'amala').present).toBe(false)
+  })
+  it('गुरु दसवें में → अमला बनता है', () => {
+    const res = detectYogas(chart(0, { ...SPREAD, moon: 3, jupiter: 9, venus: 3, mercury: 5 }))
+    expect(byId(res, 'amala').present).toBe(true)
+    expect(byId(res, 'amala').planets).toContain('jupiter')
+  })
+  it('बुध पाप ग्रह के साथ हो तो अमला में नहीं गिना जाता', () => {
+    // बुध को शनि के साथ मकर (10वें) में रखा
+    const res = detectYogas(chart(0, { ...SPREAD, moon: 3, mercury: 9, saturn: 9, jupiter: 2, venus: 3 }))
+    expect(byId(res, 'amala').planets).not.toContain('mercury')
+  })
+})

@@ -133,7 +133,7 @@ export const SHASHTIAMSA_DEITIES = [
   { hi: 'कोमल', en: 'Komala', shubha: true }, // 46
   { hi: 'शीतल', en: 'Sheetala', shubha: true }, // 47
   { hi: 'करालदंष्ट्र', en: 'Karaladamshtra', shubha: false }, // 48
-  { hi: 'चंद्रमुखी', en: 'Chandramukhi', shubha: true }, // 49
+  { hi: 'चंद्रमुख', en: 'Chandramukha', shubha: true }, // 49 (BPHS 6.38: करालदंष्ट्रचन्द्रास्य — पुल्लिंग)
   { hi: 'प्रवीण', en: 'Praveena', shubha: true }, // 50
   { hi: 'कालपावक', en: 'Kaalapavaka', shubha: false }, // 51
   { hi: 'दण्डायुध', en: 'Dandayudha', shubha: false }, // 52

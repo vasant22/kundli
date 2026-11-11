@@ -3,12 +3,14 @@
 import { describe, expect, it } from 'vitest'
 import {
   DIGNITY_LABELS,
+  NATURAL_FRIENDS,
   DIGBALA_HOUSE,
   MOOLATRIKONA,
   EXALTATION,
   DEBILITATION,
   combustionOf,
   dignityIn,
+  dignitySummary,
   isVargottama,
   karakaNature,
   naturalRelation,
@@ -97,24 +99,58 @@ describe('पंचधा मैत्री (five-fold friendship)', () => {
     expect(temporaryRelation(0, 8)).toBe('enemy') // 9th
   })
 
-  it('the five-fold combinations', () => {
-    // friend + friend = great friend
-    expect(panchadha('sun', 'jupiter', map('sun', 0, 'jupiter', 1))).toBe('adhimitra')
-    // friend + enemy = neutral
-    expect(panchadha('sun', 'jupiter', map('sun', 0, 'jupiter', 6))).toBe('sama')
-    // neutral + friend = friend
-    expect(panchadha('moon', 'jupiter', map('moon', 0, 'jupiter', 1))).toBe('mitra')
-    // neutral + enemy = enemy
-    expect(panchadha('moon', 'jupiter', map('moon', 0, 'jupiter', 6))).toBe('shatru')
-    // enemy + friend = enemy
-    expect(panchadha('sun', 'venus', map('sun', 0, 'venus', 1))).toBe('shatru')
-    // enemy + enemy = bitter enemy
-    expect(panchadha('sun', 'venus', map('sun', 0, 'venus', 6))).toBe('adhishatru')
+  // BPHS अ.3 की पूरी छह-कोठरी तालिका (टास्क 01-घ का truth-table test).
+  it('छहों संयोजन — पूरी पंचधा तालिका', () => {
+    const CASES = [
+      // [from, to, to-rashi, नैसर्गिक, तात्कालिक, अपेक्षित]
+      ['sun', 'jupiter', 1, 'friend', 'friend', 'adhimitra'],
+      ['sun', 'jupiter', 6, 'friend', 'enemy', 'sama'],
+      ['moon', 'jupiter', 1, 'neutral', 'friend', 'mitra'],
+      ['moon', 'jupiter', 6, 'neutral', 'enemy', 'shatru'],
+      ['sun', 'venus', 1, 'enemy', 'friend', 'sama'], // ← टास्क 01-घ का सुधार
+      ['sun', 'venus', 6, 'enemy', 'enemy', 'adhishatru'],
+    ]
+    for (const [from, to, rTo, nat, tmp, want] of CASES) {
+      expect(naturalRelation(from, to), `${from}→${to} natural`).toBe(nat)
+      expect(temporaryRelation(0, rTo), `${from}→${to} temporary`).toBe(tmp)
+      expect(panchadha(from, to, map(from, 0, to, rTo)), `${from}→${to} (${nat}+${tmp})`).toBe(want)
+    }
+    // एक भी ग़लत कोठरी न बचे — तीनों नैसर्गिक × दोनों तात्कालिक
+    expect(CASES.length).toBe(6)
+  })
+
+  it('नैसर्गिक शत्रु + तात्कालिक मित्र = सम (पहले ग़लती से शत्रु आता था)', () => {
+    expect(panchadha('sun', 'venus', map('sun', 0, 'venus', 1))).toBe('sama')
+    expect(panchadha('mars', 'mercury', map('mars', 0, 'mercury', 1))).toBe('sama')
   })
 
   it('a graha in its own sign is स्वराशि, not a friendship band', () => {
     expect(panchadha('mars', 'mars', map('mars', 0, 'mars', 0))).toBe('own')
     expect(dignityIn('mars', 7, 10, { mars: 7 }).level).toBe('own')
+  })
+})
+
+describe('राहु/केतु — BPHS में मैत्री-तालिका नहीं (टास्क 01-घ)', () => {
+  it('NATURAL_FRIENDS में राहु/केतु नहीं हैं', () => {
+    expect(NATURAL_FRIENDS.rahu).toBeUndefined()
+    expect(NATURAL_FRIENDS.ketu).toBeUndefined()
+    expect(naturalRelation('rahu', 'mars')).toBe('none')
+  })
+
+  it('राहु-केतु की स्थिति सिर्फ़ उच्च/नीच, बाक़ी "—"', () => {
+    expect(dignityIn('rahu', 1, 10, { rahu: 1 }).level).toBe('exalted') // वृषभ
+    expect(dignityIn('rahu', 7, 10, { rahu: 7 }).level).toBe('debilitated') // वृश्चिक
+    expect(dignityIn('ketu', 7, 10, { ketu: 7 }).level).toBe('exalted')
+    expect(dignityIn('ketu', 1, 10, { ketu: 1 }).level).toBe('debilitated')
+    const none = dignityIn('rahu', 4, 10, { rahu: 4 }) // सिंह
+    expect(none.level).toBe('none')
+    expect(none.hi).toBe('—')
+    expect(panchadha('rahu', 'sun', { rahu: 4, sun: 0 })).toBe('none')
+  })
+
+  it('dignitySummary में नोड्स पर सिर्फ़ दूसरी बातें दिखें, "—" नहीं', () => {
+    const pos = { dignity: { level: 'none', hi: '—' }, retro: true, combustion: { combust: false }, vargottama: false, digbala: false }
+    expect(dignitySummary('rahu', pos)).toBe('वक्री')
   })
 })
 

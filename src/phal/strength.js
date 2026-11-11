@@ -47,13 +47,13 @@ const HORA_MOON_GROUP = ['moon', 'venus', 'saturn']
 
 export function vargaScore(key, n, rashi, rashiOf) {
   if (n === 2) {
-    if (key === 'mercury') return 20 // Mercury is strong in both horas
-    const wantsSun = HORA_SUN_GROUP.includes(key)
-    const wantsMoon = HORA_MOON_GROUP.includes(key)
-    if (wantsSun && rashi === 4) return 20
-    if (wantsMoon && rashi === 3) return 20
-    if (key === 'rahu' || key === 'ketu') return 10 // nodes: neutral in hora
-    return 5
+    // होरा के दो हिस्से हैं — बल या तो पूरा (20) या शून्य। सूर्य/मंगल/गुरु सिंह-होरा
+    // में, चंद्र/शुक्र/शनि कर्क-होरा में, बुध दोनों में; बाक़ी में 0.
+    // (टास्क 01-घ: पहले 5 दिया जा रहा था — इसे 0 करने पर oracle से 84/84 मिले।)
+    if (key === 'mercury') return 20
+    if (HORA_SUN_GROUP.includes(key) && rashi === 4) return 20
+    if (HORA_MOON_GROUP.includes(key) && rashi === 3) return 20
+    return 0
   }
   // Mid-sign degree: moolatrikona and own sign both score 20, so the exact
   // degree inside a *varga* sign cannot change the number.

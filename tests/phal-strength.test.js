@@ -50,7 +50,7 @@ describe('vargaScore — the twenty-point scale', () => {
     expect(vargaScore('sun', 1, 8, { sun: 8, jupiter: 9 })).toBe(18)
     expect(vargaScore('sun', 1, 8, { sun: 8, jupiter: 3 })).toBe(10) // 8th → neutral
     expect(vargaScore('sun', 1, 2, { sun: 2, mercury: 3 })).toBe(15) // friend
-    expect(vargaScore('sun', 1, 1, { sun: 1, venus: 2 })).toBe(7) // enemy
+    expect(vargaScore('sun', 1, 1, { sun: 1, venus: 2 })).toBe(10) // शत्रु + ता. मित्र = सम (01-घ)
     expect(vargaScore('sun', 1, 1, { sun: 1, venus: 8 })).toBe(5) // bitter enemy
     expect(DIGNITY_POINTS.adhimitra).toBe(18)
     expect(DIGNITY_POINTS.mitra).toBe(15)
@@ -61,12 +61,12 @@ describe('vargaScore — the twenty-point scale', () => {
 
   it('a varga-nicha is scored by its panchadha relation, not a made-up number', () => {
     expect('debilitated' in DIGNITY_POINTS).toBe(false)
-    expect(vargaScore('sun', 1, 6, { sun: 6, venus: 7 })).toBe(7) // Sun नीच in Tula
+    expect(vargaScore('sun', 1, 6, { sun: 6, venus: 7 })).toBe(10) // नीच Sun, शत्रु + ता. मित्र = सम
     expect(vargaScore('sun', 1, 6, { sun: 6, venus: 2 })).toBe(5)
     expect(vargaScore('venus', 1, 5, { venus: 5, mercury: 6 })).toBe(18) // नीच but friendly lord
   })
 
-  it('D2 hora: सूर्य/मंगल/गुरु Simha में, चंद्र/शुक्र/शनि Karka में, बुध दोनों में', () => {
+  it('D2 hora: अपनी होरा में 20, दूसरे की होरा में 0 (बुध दोनों में 20)', () => {
     const any = {}
     expect(vargaScore('sun', 2, 4, any)).toBe(20)
     expect(vargaScore('mars', 2, 4, any)).toBe(20)
@@ -76,8 +76,10 @@ describe('vargaScore — the twenty-point scale', () => {
     expect(vargaScore('saturn', 2, 3, any)).toBe(20)
     expect(vargaScore('mercury', 2, 4, any)).toBe(20)
     expect(vargaScore('mercury', 2, 3, any)).toBe(20)
-    expect(vargaScore('sun', 2, 3, any)).toBe(5)
-    expect(vargaScore('moon', 2, 4, any)).toBe(5)
+    // दूसरे की होरा — बल शून्य (टास्क 01-घ)
+    expect(vargaScore('sun', 2, 3, any)).toBe(0)
+    expect(vargaScore('moon', 2, 4, any)).toBe(0)
+    expect(vargaScore('saturn', 2, 4, any)).toBe(0)
   })
 })
 
@@ -148,12 +150,14 @@ describe('vimshopakaBala', () => {
     }
   })
 
-  it('15-08-1985 की कुंडली — हमारे अंक (regression pin)', () => {
+  // स्वीकृति-test (टास्क 01-घ, §2) — यह कभी ढीला या हटाया नहीं जाता.
+  it('15-08-1985 की कुंडली — स्वीकृति मान ±0.02 (oracle से भी हूबहू)', () => {
     const res = vimshopakaBala(computeKundli(swe, BIRTH_1985))
     const got = Object.fromEntries(Object.entries(res.planets).map(([k, v]) => [k, v.total]))
-    expect(got).toEqual({
-      sun: 12.45, moon: 15.23, mars: 12.88, mercury: 11.9, jupiter: 11.88, venus: 14.75, saturn: 16.25,
-    })
+    const want = { sun: 12.68, moon: 15.22, mars: 12.88, mercury: 11.9, jupiter: 11.88, venus: 14.9, saturn: 16.85 }
+    for (const [key, value] of Object.entries(want)) {
+      expect(Math.abs(got[key] - value), `${key}: मिला ${got[key]}, चाहिए ${value}`).toBeLessThanOrEqual(0.02)
+    }
   })
 
   it('D1-मैत्री और वर्ग-चार्ट-मैत्री में फ़र्क़ आता है (यानी नियम सचमुच बदला)', () => {

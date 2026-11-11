@@ -245,7 +245,7 @@ describe('shashtiamsa number and deity', () => {
       'कोमल · Komala · true',
       'शीतल · Sheetala · true',
       'करालदंष्ट्र · Karaladamshtra · false',
-      'चंद्रमुखी · Chandramukhi · true',
+      'चंद्रमुख · Chandramukha · true',
       'प्रवीण · Praveena · true',
       'कालपावक · Kaalapavaka · false',
       'दण्डायुध · Dandayudha · false',

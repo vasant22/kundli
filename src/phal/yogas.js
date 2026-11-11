@@ -8,7 +8,7 @@
 // so a reader always knows how much weight a line has.
 
 import { RASHI_LORDS } from '../astro.js'
-import { SEVEN_KEYS, houseOf, isWaxingMoon } from './frame.js'
+import { SEVEN_KEYS, houseOf, isWaxingMoon, NATURAL_MALEFICS } from './frame.js'
 import { effectiveBenefics, effectiveMalefics } from './frame.js'
 import { EXALTATION, combustionOf } from './dignity.js'
 import { grahaHi, grahaList, ordinalHi } from './text.js'
@@ -302,8 +302,20 @@ function chandraMangal(frame) {
     present ? 'चंद्र और मंगल एक ही राशि में — चंद्र-मंगल योग।' : 'चंद्र और मंगल अलग — योग नहीं।', {})
 }
 
+// अमला: लग्न या चंद्र से दसवें में नैसर्गिक शुभ (बुध, गुरु, शुक्र; बुध तभी जब
+// पाप ग्रह के साथ न हो) — टास्क 01-घ का निर्णय.
+function amalaBenefics(frame) {
+  const out = ['jupiter', 'venus']
+  const merc = frame.byKey.mercury
+  const withMalefic = NATURAL_MALEFICS.some(
+    (k) => k !== 'rahu' && k !== 'ketu' && frame.rashiOf[k] === merc.rashi
+  )
+  if (!withMalefic) out.push('mercury')
+  return out
+}
+
 function amala(frame) {
-  const ben = [...benign(frame)]
+  const ben = amalaBenefics(frame)
   const lagna10 = (frame.lagnaRashi + 9) % 12
   const moon10 = (frame.byKey.moon.rashi + 9) % 12
   const found = ben.filter((k) => frame.rashiOf[k] === lagna10 || frame.rashiOf[k] === moon10)

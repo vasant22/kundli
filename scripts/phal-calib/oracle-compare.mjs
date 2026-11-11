@@ -139,11 +139,14 @@ function compareChart(data, oracle, chart) {
     if (key !== 'sun' && key !== 'rahu' && key !== 'ketu') {
       check('planets', `${key}.combust`, Boolean(data.positions[key].combustion.combust) === Boolean(theirs.combust), Boolean(data.positions[key].combustion.combust), Boolean(theirs.combust))
     }
-    check(
-      'planets', `${key}.dignity`,
-      normDignity(DIGNITY_WORDS[data.positions[key].dignity.level]) === normDignity(theirs.dignity),
-      DIGNITY_WORDS[data.positions[key].dignity.level], theirs.dignity
-    )
+    // राहु/केतु: BPHS में मैत्री-तालिका नहीं, इसलिए हम "—" दिखाते हैं — तुलना से बाहर
+    if (!['rahu', 'ketu'].includes(key)) {
+      check(
+        'planets', `${key}.dignity`,
+        normDignity(DIGNITY_WORDS[data.positions[key].dignity.level]) === normDignity(theirs.dignity),
+        DIGNITY_WORDS[data.positions[key].dignity.level], theirs.dignity
+      )
+    }
   }
 
   // --- 2. सोलह वर्ग ----------------------------------------------------------
