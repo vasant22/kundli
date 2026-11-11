@@ -12,8 +12,10 @@ const ORDINALS = [
 ]
 
 // 1 → 'पहले', 12 → 'बारहवें' (house numbers are always 1..12 here).
-export function ordinalHi(n) {
-  return ORDINALS[n - 1] ?? `${n}`
+// दूसरा argument देने पर वह शब्द जुड़ जाता है: ordinalHi(4, 'भाव') → 'चौथे भाव'.
+export function ordinalHi(n, unit = null) {
+  const word = ORDINALS[n - 1] ?? `${n}`
+  return unit ? `${word} ${unit}` : word
 }
 
 // "4th house" → "चौथे भाव"
