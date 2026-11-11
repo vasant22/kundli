@@ -227,3 +227,29 @@ describe('दशा — व्यक्तिगत दशाफल (टास�
     expect(html).toMatch(/उच्च|नीच|स्वराशि|मूलत्रिकोण|मित्र|सम|शत्रु/)
   })
 })
+
+describe('स्वभाव और गोचर के text — जो लिखे थे पर छपते नहीं थे (टास्क 04)', () => {
+  it('लग्न, चंद्र-राशि और जन्म-नक्षत्र का स्वभाव report में आता है', () => {
+    const d = buildPhalData(swe, BIRTH_1985, { nowMs: Date.UTC(2026, 10, 11) })
+    const html = renderReport(d)
+    expect(html).toContain(TX.LAGNA[d.summary.lagnaRashi + 1].t)
+    expect(html).toContain(TX.MOON_RASHI[d.summary.moonRashi + 1].t)
+    expect(html).toContain(TX.NAKSHATRA[d.summary.nakshatra].t)
+  })
+
+  it('गोचर की तालिका में धीमे ग्रहों का पूरा फल (सिर्फ़ शुभ/सावधानी नहीं)', () => {
+    const d = buildPhalData(swe, BIRTH_1985, { nowMs: Date.UTC(2026, 10, 11) })
+    const html = renderReport(d)
+    const map = { jupiter: 'ju', saturn: 'sa', rahu: 'ra', ketu: 'ke' }
+    let found = 0
+    for (const [key, ab] of Object.entries(map)) {
+      const g = d.gochar.main[key]
+      if (!g) continue
+      const tx = TX.GOCHAR[ab][g.houseFromMoon]
+      expect(tx, `${key}/${g.houseFromMoon}`).toBeTruthy()
+      expect(html, key).toContain(tx.t)
+      found++
+    }
+    expect(found).toBeGreaterThanOrEqual(3)
+  })
+})

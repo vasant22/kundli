@@ -158,8 +158,8 @@ async function main() {
   for e in /tmp/ksite/kundli-site/*; do cp -a "$e" "$D/"; done
 
   # 4. ownership + permissions
-  chown -R my4bap21:my4bap21 $D/kundli $D/kundli-milan $D/panchang $D/bnn-chart $D/kundli-assets
-  find $D/kundli $D/kundli-milan $D/panchang $D/bnn-chart $D/kundli-assets \\
+  chown -R my4bap21:my4bap21 $D/kundli $D/kundli-milan $D/kundli-phal $D/panchang $D/bnn-chart $D/kundli-assets
+  find $D/kundli $D/kundli-milan $D/kundli-phal $D/panchang $D/bnn-chart $D/kundli-assets \\
        -type d -exec chmod 755 {} + -o -type f -exec chmod 644 {} +
 
   # 5. verify public_html itself was NOT touched

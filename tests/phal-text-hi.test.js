@@ -146,7 +146,7 @@ describe('ढाँचा — सब entries मौजूद, ख़ाली �
 })
 
 describe('tone — तालिका और नियम से मेल', () => {
-  it('ग्रह-भाव का tone Claude की तालिका के बराबर', () => {
+  it('ग्रह-भाव का tone स्वीकृत तालिका के बराबर', () => {
     for (const key of ALL_KEYS) {
       for (const h of H) {
         const want = TONE[PLANET_TONE[KEYS[key]][h - 1]]

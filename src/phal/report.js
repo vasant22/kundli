@@ -128,7 +128,14 @@ function glance(data) {
       ['चल रही दशा', `${esc(grahaHi(cur.maha.key))} — ${esc(grahaHi(cur.antar.key))} — ${esc(grahaHi(cur.pratyantar.key))}`],
       ['मुख्य योग', esc(yogas)],
       ['दोष / साढ़ेसाती', esc(doshas)],
-    ]) + endChapter()
+    ]) +
+    // लग्न, चंद्र-राशि और जन्म-नक्षत्र का स्वभाव — text-hi.js की LAGNA/MOON_RASHI/NAKSHATRA entries
+    `<h3>स्वभाव</h3>` +
+    [TX.LAGNA[data.summary.lagnaRashi + 1], TX.MOON_RASHI[data.summary.moonRashi + 1], TX.NAKSHATRA[data.summary.nakshatra]]
+      .filter(Boolean)
+      .map((e) => `<p>${esc(e.t)} ${toneBadge(e.tone)}</p>`)
+      .join('') +
+    endChapter()
 }
 
 // --- अध्याय 3: जन्म-विवरण, पंचांग, अवकहड़ा ---------------------------------
@@ -475,8 +482,11 @@ function sadesati(data) {
   const g = data.gochar
   const grow = Object.keys(g.main).map((k) => {
     const p = g.main[k]
+    // धीमे ग्रहों (गुरु/शनि/राहु/केतु) के लिए फलदीपिका वाला पूरा वाक्य; बाक़ी के लिए सिर्फ़ चिह्न
+    const tx = TX.GOCHAR[KEY_BY[k]]?.[p.houseFromMoon]
+    const tone = p.shubhaFromMoon ? 'shubh' : 'savdhan'
     return [esc(grahaHi(k)), esc(rashiHi(p.rashi)), H(p.houseFromMoon), H(p.houseFromLagna),
-      p.shubhaFromMoon ? 'शुभ' : 'सावधानी']
+      tx ? `${esc(tx.t)} ${toneBadge(tx.tone)}` : toneBadge(tone)]
   })
   return chapter('s11', '11', 'साढ़ेसाती, ढैया और आज का गोचर', TX.CHAPTER_INTRO.gochar) +
     (now
