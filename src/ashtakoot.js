@@ -337,3 +337,34 @@ export function computeAshtakoot(boyMoon, girlMoon) {
   const total = Math.round(kootas.reduce((sum, k) => sum + k.points, 0) * 2) / 2
   return { kootas, total, max: 36, verdict: verdictOf(total) }
 }
+
+// ---------------------------------------------------------------------------
+// Public lookups for the phal (फलादेश) layer.
+// These read the SAME tables as the matching page, so the printed report can
+// never disagree with कुंडली-मिलान. Added 2026-11-11 (phal task 01); the
+// matching calculations above are untouched.
+// ---------------------------------------------------------------------------
+export function varnaOf(rashi) {
+  const key = VARNA_SEQ[rashi % 4]
+  return { key, hi: VARNA_HI[key], en: VARNA_EN[key] }
+}
+
+export function vashyaOf(rashi, degInSign) {
+  const key = vashyaGroup(rashi, degInSign)
+  return { key, hi: VASHYA_HI[key], en: VASHYA_EN[key] }
+}
+
+export function yoniOf(nakshatra) {
+  const idx = YONI_OF[nakshatra - 1]
+  return { key: idx, hi: YONI_ANIMALS_HI[idx], en: YONI_ANIMALS_EN[idx] }
+}
+
+export function ganaOf(nakshatra) {
+  const idx = GANA_OF[nakshatra - 1]
+  return { key: idx, hi: GANA_HI[idx], en: GANA_EN[idx] }
+}
+
+export function nadiOf(nakshatra) {
+  const idx = NADI_OF[nakshatra - 1]
+  return { key: idx, hi: NADI_HI[idx], en: NADI_EN[idx] }
+}

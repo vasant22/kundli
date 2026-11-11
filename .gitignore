@@ -18,3 +18,6 @@ public/wasm/
 
 # local reference captures (proprietary screenshots of other software) — never commit
 .openclaw-tmp/
+
+# tool artifacts (stray copies some editors drop next to the file)
+tests/.zwork/

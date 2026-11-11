@@ -202,8 +202,8 @@ export function navamsaKundli(kundli) {
 }
 
 // Vimshottari Dasha, from the Moon's nakshatra. Solar year = 365.25 days.
-const DASHA_SEQ = ['ketu', 'venus', 'sun', 'moon', 'mars', 'rahu', 'jupiter', 'saturn', 'mercury']
-const DASHA_YEARS = { ketu: 7, venus: 20, sun: 6, moon: 10, mars: 7, rahu: 18, jupiter: 16, saturn: 19, mercury: 17 }
+export const DASHA_SEQ = ['ketu', 'venus', 'sun', 'moon', 'mars', 'rahu', 'jupiter', 'saturn', 'mercury']
+export const DASHA_YEARS = { ketu: 7, venus: 20, sun: 6, moon: 10, mars: 7, rahu: 18, jupiter: 16, saturn: 19, mercury: 17 }
 export const YEAR_DAYS = 365.25
 const YEAR_MS = YEAR_DAYS * 24 * 3600 * 1000
 

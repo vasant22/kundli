@@ -855,3 +855,15 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - **Confirmed openings:** सूर्य rv −4.05° (19-01-2027) · मंगल −5° · शुक्र X +27.2° (26-10-2026) · पहली KET row = range-क्लिप (asli opening ~26-08-2026 = rv +27.2 पर)।
 - **Gap:** बाक़ी birth×transit जोड़ों की openings decode बाक़ी (engine: ketu 0 rows, rahu/venus देर से आ रही हैं) — पूरा ब्यौरा `docs/pcp-research.md` §5।
 - **अगला कदम:** openings decode → `src/bnn/pcp.js` → engine → app में chain display → (user के tokens आने पर)।
+
+## 2026-11-11 — फलादेश PDF — टास्क 01 (गणना-परत `src/phal/`)
+- नया folder `src/phal/` — 13 छोटी files, हर file का अपना test (12 files, **177 tests**)।
+  frame · vargas (D1–D60 + D60 देवता + लग्न-संवेदनशीलता) · dignity (उच्च/नीच/मूलत्रिकोण/पंचधा/अस्त/दिग्बल/वर्गोत्तम + योगकारक/मारक) ·
+  strength (विंशोपक, भार 20) · dasha (महादशा→अंतर→प्रत्यंतर, kundli page से हूबहू) · yogas (30+ योग + दृष्टि) · doshas (मंगल/कालसर्प/गुरु-चांडाल) ·
+  sadesati (जन्म→100 वर्ष, वक्री-टुकड़े सहित) · ashtakavarga (48/49/39/54/56/52/39 = 337) · gochar (आज + अगले 2 वर्ष) · avakahada · ratna/gems।
+- मुख्य entry: `buildPhalData(swe, birth, {nowMs})` (`src/phal/index.js`) — एक साफ़ JSON, कोई server/API/tracker नहीं।
+- छोटे बदलाव पुरानी files में (व्यवहार वैसा ही): `astro.js` से `DASHA_SEQ`/`DASHA_YEARS` export; `ashtakoot.js` में
+  `varnaOf/vashyaOf/yoniOf/ganaOf/nadiOf` (वही तालिकाएँ, मिलान-पेज को छुआ नहीं); `NOTICE.md` में मौलिकता की पंक्ति; `.gitignore` में `tests/.zwork/`।
+- जाँच: पूरा suite **974 ✓ + 3 todo** (पहले 797 ✓) · `npm run build` ✓ (मुख्य kundli bundle में कोई बढ़ोतरी नहीं — phal सिर्फ़ अपने entry में load होगा) ·
+  5 अलग जन्म-विवरणों पर `buildPhalData` बिना NaN/undefined · साढ़ेसाती की तारीख़ें सर के मानक प्रवेशों से ±2 दिन में (मकर 24-01-2020, कुंभ 29-04-2022)।
+- बाक़ी: टास्क 02 (text), 03 (report page + बटन), 04 (जाँच)। सूची `docs/phal-steps.md` में।
