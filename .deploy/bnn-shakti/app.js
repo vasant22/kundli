@@ -698,9 +698,21 @@
   function fmtISO(iso) { if (!iso) return '—'; var p = String(iso).split('-'); return p.length === 3 ? p[2] + '-' + p[1] + '-' + p[0] : iso; }
   function ageFrom(ds) { var m = /^(\d{1,2})-(\d{1,2})-(\d{4})$/.exec(ds || ''); if (!m) return ''; var b = new Date(+m[3], +m[2] - 1, +m[1]); var n = new Date(); var a = n.getFullYear() - b.getFullYear(); var mm = n.getMonth() - b.getMonth(); if (mm < 0 || (mm === 0 && n.getDate() < b.getDate())) a--; return a; }
   function chainText(ch) { if (ch == null) return '—'; if (Array.isArray(ch)) return ch.join(' · '); if (typeof ch === 'object') { try { return Object.keys(ch).map(function (k) { var v = ch[k]; return Array.isArray(v) ? v.join(' · ') : String(v); }).join(' · '); } catch (e) { return '—'; } } return String(ch); }
-  function entTd(e, idx, map) {
+  // पाठ 24 सूत्र 6 (Vas22, 12-11-2026; sir के software से पक्का — ex 16-07-1996 Nagpur: VEN = MAR, JUP#·15 हरा;
+  // RAH = MAR4, JUP#·0 हरा): PLANET तालिका में वक्री मंगल/बुध/गुरु/शुक्र सदस्य 20% से कम (0% तक) हो तब भी हरा।
+  // AP में कुर्सी की चाल (परिवर्तन-जोड़ी में साथी ग्रह की जन्म-चाल)। राहु-केतु, दृष्टि-बिंदु और BHAVA तालिका पर नहीं।
+  var VAKRI_HARA = { mars: 1, mercury: 1, jupiter: 1, venus: 1 };
+  function vakriMember(e, mode) {
+    if (!mode || !e || e.type !== 'planet' || !VAKRI_HARA[e.key] || !RESULT || !RESULT.bnn) return false;
+    var k = e.key;
+    if (mode === 'AP') (RESULT.exchanges || []).forEach(function (p) { if (p[0] === e.key) k = p[1]; else if (p[1] === e.key) k = p[0]; });
+    var r = false;
+    RESULT.bnn.planets.forEach(function (p) { if (p.key === k) r = !!p.retro; });
+    return r;
+  }
+  function entTd(e, idx, map, pmode) {
     if (!e) return '<td class="entc"></td>';
-    var cls = idx === 0 ? 'b' : ((e.type === 'planet' && e.key === 'saturn') ? 'g' : (e.percent >= 20 ? 'g' : 'o'));
+    var cls = idx === 0 ? 'b' : (((e.type === 'planet' && e.key === 'saturn') || vakriMember(e, pmode)) ? 'g' : (e.percent >= 20 ? 'g' : 'o'));
     var txt;
     if (e.type === 'aspect') {
       var lbl = String(e.label || '');
@@ -1423,7 +1435,7 @@
       RESULT.order.forEach(function (k) {
         var list = (pc[k] || {})[key] || [];
         html += '<tr><td class="rlab plbtn" data-pl="' + k + '">' + pLab(k) + '</td>';
-        for (i = 0; i < cols; i++) html += entTd(list[i], i);
+        for (i = 0; i < cols; i++) html += entTd(list[i], i, undefined, RTRANSIT ? null : RMODE);
         var partner = astro[k];
         html += '<td class="entc cep">' + (partner ? esc(codeFor(partner, RTRANSIT)) : '—') + '</td>';
         html += '</tr>';
@@ -1810,9 +1822,9 @@
     ctx.strokeRect(x + 0.5, topY + 0.5, w - 1, (y - topY) - 1);
     return y + 16;
   }
-  function pEnt(e, idx) {
+  function pEnt(e, idx, pmode) {
     if (!e) return null;
-    var cls = idx === 0 ? 'ceb' : ((e.type === 'planet' && e.key === 'saturn') ? 'ceg' : (e.percent >= 20 ? 'ceg' : 'ceo'));
+    var cls = idx === 0 ? 'ceb' : (((e.type === 'planet' && e.key === 'saturn') || vakriMember(e, pmode)) ? 'ceg' : (e.percent >= 20 ? 'ceg' : 'ceo'));
     var t = e.type === 'aspect' ? (e.label || '') + ' · ' + Math.round(e.percent)
           : (SHORT[e.key] || e.key) + ((e.natalRetro && e.key !== 'rahu' && e.key !== 'ketu') ? '#' : '') + ' · ' + Math.round(e.percent);
     return { t: t, c: cls };
@@ -1868,7 +1880,7 @@
     RESULT.order.forEach(function (k) {
       var list = (pc[k] || {})[key] || [];
       html += '<tr><td class="rlab">' + esc(pLabNat(k)) + '</td>';
-      for (i = 0; i < cols; i++) { var e = pEnt(list[i], i); html += '<td class="entc ' + (e ? e.c : '') + '">' + (e ? esc(e.t) : '') + '</td>'; }
+      for (i = 0; i < cols; i++) { var e = pEnt(list[i], i, mode); html += '<td class="entc ' + (e ? e.c : '') + '">' + (e ? esc(e.t) : '') + '</td>'; }
       var partner = astro[k];
       html += '<td class="entc cep">' + (partner ? esc(SHORT[partner] || partner) : '') + '</td>';
       html += '</tr>';
@@ -2088,9 +2100,9 @@
       ctx.textAlign = 'left';
       var x0 = cx + CH + 40, cw = W - x0 - M;
       var yC = cy - 8, rh = 30, labW = 64;
-      function entP(e, idx) {
+      function entP(e, idx, pmode) {
         if (!e) return null;
-        var cls = idx === 0 ? 'b' : ((e.type === 'planet' && e.key === 'saturn') ? 'g' : (e.percent >= 20 ? 'g' : 'o'));
+        var cls = idx === 0 ? 'b' : (((e.type === 'planet' && e.key === 'saturn') || vakriMember(e, pmode)) ? 'g' : (e.percent >= 20 ? 'g' : 'o'));
         var col = cls === 'b' ? '#1565c0' : cls === 'g' ? '#2e7d32' : '#ef6c00';
         var t = e.type === 'aspect' ? (e.label || '') + '-' + Math.round(e.percent)
               : (SHORT[e.key] || e.key) + ((e.natalRetro && e.key !== 'rahu' && e.key !== 'ketu') ? '#' : '') + '-' + Math.round(e.percent);
@@ -2156,7 +2168,7 @@
         ctx.fillText((SHORT[k] || k) + ((np && np.retro && k !== 'rahu' && k !== 'ketu') ? '#' : '') + (lbK != null ? '-' + lbK : ''), x0 + 4, yy + 20);
         var lst = (pc[k] || {}).list1579 || [];
         for (var j = 0; j < cols; j++) {
-          var ep = entP(lst[j], j);
+          var ep = entP(lst[j], j, RMODE);
           if (ep) { ctx.fillStyle = ep.c; ctx.font = 'bold 16px sans-serif'; ctx.fillText(ep.t, x0 + labW + j * pW + 4, yy + 20); }
         }
         var partner = astro[k];
