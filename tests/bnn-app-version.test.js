@@ -43,7 +43,7 @@ describe.skipIf(!hasApp)('संस्करण दिखना (राउंड
     expect(VER).toMatch(/^\d+\.\d+\.\d+$/)
     expect(b.textContent).toBe('v' + VER)
     expect(b.hidden).toBe(false)
-    expect(VER).toBe('1.0.2')                     // संस्करण-अंक इस टास्क में नहीं बदलता
+    expect(VER).toBe('1.0.3')                     // 1.0.3 (Claude, 12-11-2026: वक्री सदस्य हरा); संस्करण बदले तो यहाँ भी
     // शीर्षक (title) भी उसी स्रोत से
     expect(w.document.title).toBe('BNN Shakti ' + VER)
   })
@@ -66,7 +66,7 @@ describe.skipIf(!hasApp)('संस्करण दिखना (राउंड
   it('पुरानी-cache की पट्टी: server का संस्करण नया हो तभी, “ताज़ा करें” बटन के साथ', async () => {
     const w = await boot()
     expect(w.document.getElementById('updBar')).toBeNull()
-    w.BNN_showStaleBar('1.0.2')                    // बराबर — नहीं
+    w.BNN_showStaleBar(VER)                        // बराबर — नहीं (हाथ से लिखा अंक नहीं)
     expect(w.document.getElementById('updBar')).toBeNull()
     w.BNN_showStaleBar('0.9.9')                    // पुराना — नहीं
     expect(w.document.getElementById('updBar')).toBeNull()
