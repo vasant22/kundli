@@ -49,14 +49,16 @@ describe.skipIf(!hasApp)('टाइम-ज़ोन से offset अपने-�
     expect(opts[0].value).toBe('India')
     expect(opts[1].value).toBe('Nepal')
     expect(opts[opts.length - 1].value).toBe('Other')
-    // पुरानी कुंडलियों के चार मान वैसे ही (1.0.3 तक यही सहेजे जाते थे)
+    // पुरानी कुंडलियों के तीन मान वैसे ही (1.0.3 तक यही सहेजे जाते थे)
     for (const v of ['USA', 'UK', 'UAE']) expect(opts.some((o) => o.value === v)).toBe(true)
-    // देश खोज: 'germ' टाइप करते ही छन जाए
-    $(w, 'fCountryQ').value = 'germ'
-    $(w, 'fCountryQ').dispatchEvent(new w.Event('input', { bubbles: true }))
-    const after = [...w.document.querySelectorAll('#fCountry option')].map((o) => o.value)
-    expect(after).toContain('Germany')
-    expect(after.length).toBeLessThan(5)
+    // 1.0.4 / टास्क 03: एक ही खाना — नाम अंग्रेज़ी में, टाइप करते ही नीचे सूची छनती है
+    expect($(w, 'fCountryTxt').value).toBe('India')
+    expect(opts.every((o) => !/[\u0900-\u097F]/.test(o.textContent))).toBe(true)
+    $(w, 'fCountryTxt').value = 'germ'
+    $(w, 'fCountryTxt').dispatchEvent(new w.Event('input', { bubbles: true }))
+    const items = [...w.document.querySelectorAll('#countrySugg .sItem[data-ci]')].map((e) => e.textContent.trim())
+    expect(items.length).toBe(1)
+    expect(items[0]).toContain('Germany')
     w.close()
   })
 

@@ -259,64 +259,130 @@
   function geoRowOf(val) { var iso = isoOfVal(val); return iso ? GEO_BY_ISO[iso] : null; }
   function countryLabelOf(val) { var g = geoRowOf(val); return g ? (g[2] || g[1]) : (val || ''); }
 
-  // देश-सूची — टाइप करते ही छन जाती है (नाम/हिंदी/iso, सब पर मिलान)
-  function fillCountries(q) {
-    var sel = $('fCountry'); if (!sel) return;
-    var keep = sel.value || 'India';
-    var s = String(q || '').trim().toLowerCase();
-    sel.innerHTML = '';
-    var first = null;
+  // ---------- देश: एक ही खाना (टाइप/क्लिक → सूची खुलती है) ----------
+  // 1.0.4 / टास्क 03: पहले दो खाने थे (खोज + dropdown) — उनमें select का मान चुपचाप
+  // बदल जाता था और change न भेजने से राज्य भारत के ही रह जाते थे (रिफ़ 29 "Arlington,
+  // Maharashtra")। अब सूची सिर्फ़ सुझाव है; असली मान हमेशा pickCountry() से तय होता है।
+  function countryLabelOf(val) {
+    var g = geoRowOf(val);
+    return g ? g[1] : (val || '');        // हर जगह अंग्रेज़ी नाम (हिंदी नहीं)
+  }
+  function countryItems(q) {
+    var s = String(q || '').trim().toLowerCase(), out = [];
     GEO_C.forEach(function (c) {
+      if (c[0] === 'IN') return;         // भारत नीचे सबसे पहले जुड़ता है
       var hay = (c[1] + ' ' + (c[2] || '') + ' ' + c[0] + ' ' + c[3]).toLowerCase();
       if (s && hay.indexOf(s) < 0) return;
-      var o = document.createElement('option');
-      o.value = c[3]; o.textContent = c[2] || c[1]; o.title = c[1] + (c[2] ? ' · ' + c[2] : '');
-      sel.appendChild(o); if (!first) first = c[3];
+      out.push({ val: c[3], en: c[1], hi: c[2] || '' });
     });
-    var oo = document.createElement('option'); oo.value = 'Other'; oo.textContent = L('अन्य', 'Other'); sel.appendChild(oo);
-    if (!GEO_C.length) {   // पुरानी नौ देशों वाला रास्ता (geo.js नहीं मिला)
-      COUNTRIES.forEach(function (c) {
-        var hay = (c[0] + ' ' + c[1]).toLowerCase();
-        if (s && hay.indexOf(s) < 0) return;
-        var o = document.createElement('option'); o.value = c[0]; o.textContent = c[1] || c[0]; sel.appendChild(o); if (!first) first = c[0];
+    var india = { val: 'India', en: 'India', hi: 'भारत' };
+    if (!s || (india.en + ' ' + india.hi + ' In').toLowerCase().indexOf(s) > -1) out.unshift(india);
+    if (!s || 'other अन्य'.indexOf(s) > -1) out.push({ val: 'Other', en: 'Other', hi: 'अन्य' });
+    return out;
+  }
+  var CTRY_ITEMS = [];
+  function renderCountrySugg(q) {
+    var box = $('countrySugg'); if (!box) return;
+    CTRY_ITEMS = countryItems(q);
+    if (!CTRY_ITEMS.length) {
+      box.innerHTML = '<div class="sItem none">' + L('कोई देश नहीं मिला — नाम अंग्रेज़ी में जैसे India, Nepal, USA', 'No country found — type the English name, e.g. India, Nepal, USA') + '</div>';
+    } else {
+      var html = '';
+      CTRY_ITEMS.forEach(function (c, i) {
+        // 1.0.4 / टास्क 03: सूची में सिर्फ़ अंग्रेज़ी नाम (हिंदी सिर्फ़ खोज में काम आती है)
+        html += '<div class="sItem" data-ci="' + i + '">' + esc(c.en) + '</div>';
       });
+      box.innerHTML = html;
     }
+    box.hidden = false;
+    var t = $('fCountryTxt'); if (t) t.setAttribute('aria-expanded', 'true');
+  }
+  function hideCountrySugg() {
+    var box = $('countrySugg'); if (box) box.hidden = true;
+    var t = $('fCountryTxt'); if (t) t.setAttribute('aria-expanded', 'false');
+  }
+  function fillCountries() {
+    var sel = $('fCountry'); if (!sel) return;
+    var keep = sel.value || 'India';
+    sel.innerHTML = '';
+    GEO_C.forEach(function (c) {
+      var o = document.createElement('option'); o.value = c[3]; o.textContent = c[1]; sel.appendChild(o);
+    });
+    if (!GEO_C.length) {     // geo.js न मिले तो पुरानी नौ
+      COUNTRIES.forEach(function (c) { var o = document.createElement('option'); o.value = c[0]; o.textContent = c[0]; sel.appendChild(o); });
+    }
+    var oo = document.createElement('option'); oo.value = 'Other'; oo.textContent = 'Other'; sel.appendChild(oo);
     var has = false;
     for (var i = 0; i < sel.options.length; i++) if (sel.options[i].value === keep) { has = true; break; }
-    sel.value = has ? keep : (first || 'India');
+    sel.value = has ? keep : (sel.options[0] ? sel.options[0].value : 'India');
+    if ($('fCountryTxt')) $('fCountryTxt').value = countryLabelOf(sel.value);
   }
-  // 1.0.4 / टास्क 02: हर देश के राज्य/प्रांत (admin1) — भारत की सूची पहले जैसी
-  function rebuildStates(pick) {
-    var country = $('fCountry').value;
+  // देश चुनना — असली मान छिपे <select> में, बाक़ी सब उसके change पर (एक ही रास्ता)
+  function pickCountry(val) {
+    var sel = $('fCountry'); if (!sel) return;
+    var ok = false;
+    for (var i = 0; i < sel.options.length; i++) if (sel.options[i].value === val) { ok = true; break; }
+    if (!ok) { var o = document.createElement('option'); o.value = val; o.textContent = countryLabelOf(val); sel.appendChild(o); }
+    hideCountrySugg();
+    sel.value = val;
+    if ($('fCountryTxt')) $('fCountryTxt').value = countryLabelOf(val);
+    // .value डालने से change अपने-आप नहीं चलता — इसलिए साफ़-साफ़ भेजो (यही असली रास्ता)
+    sel.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  // ---------- राज्य/प्रांत: सिर्फ़ उसी देश की सूची ----------
+  // 1.0.4 / टास्क 03 का सबक़: ग़लत देश के राज्य दिखना/सहेजा जाना कभी नहीं होना चाहिए।
+  //   भारत → STATES · दूसरा देश → उसकी फ़ाइल की सूची (न हो तो खाना बंद) · Other → ख़ुद लिखें
+  function setStateMode(mode, list, pick) {
     var sel = $('fState'), txt = $('fStateTxt');
-    if (country === 'India' || !isoOfVal(country)) {
-      txt.hidden = true; sel.hidden = false;
-      sel.innerHTML = '';
-      STATES.forEach(function (s) { var o = document.createElement('option'); o.value = s[0]; o.textContent = s[0]; sel.appendChild(o); });
+    if (mode === 'free') {                       // 'Other' — ख़ुद लिखें
+      sel.hidden = true; sel.disabled = true; sel.innerHTML = '';
+      txt.hidden = false; txt.disabled = false;
+      txt.value = pick || '';
+      return;
+    }
+    txt.hidden = true; txt.disabled = true; txt.value = '';
+    sel.hidden = false;
+    if (mode === 'none') {                       // इस देश में राज्य-सूची नहीं
+      sel.innerHTML = '<option value="">—</option>';
+      sel.value = '';
+      sel.disabled = true;
+      return;
+    }
+    sel.disabled = false;
+    sel.innerHTML = '';
+    var any = document.createElement('option');
+    any.value = ''; any.textContent = L('— राज्य / प्रांत —', '— State / Province —');
+    sel.appendChild(any);
+    (list || []).forEach(function (st) {
+      var o = document.createElement('option'); o.value = st; o.textContent = st; sel.appendChild(o);
+    });
+    if (mode === 'india') {
       var ok = false;
       if (pick) { for (var i = 0; i < sel.options.length; i++) if (sel.options[i].value === pick) ok = true; }
       sel.value = ok ? pick : 'Maharashtra';
       return;
     }
-    var iso = isoOfVal(country);
-    sel.hidden = false; txt.hidden = true;
-    sel.innerHTML = '<option value="">' + L('लोड हो रहा है…', 'Loading…') + '</option>';
+    var oth = document.createElement('option');
+    oth.value = '__other__'; oth.textContent = L('✍️ ख़ुद लिखें…', '✍️ Type it yourself…');
+    sel.appendChild(oth);
+    if (pick) { for (var j = 0; j < sel.options.length; j++) if (sel.options[j].value === pick) { sel.value = pick; return; } sel.value = ''; }
+  }
+  function rebuildStates(pick) {
+    var val = $('fCountry').value || 'India';
+    if (val === 'India') { setStateMode('india', STATES.map(function (x) { return x[0]; }), pick); return; }
+    if (val === 'Other' || !isoOfVal(val)) { setStateMode('free', null, pick); return; }
+    var iso = isoOfVal(val);
+    var f = (window.BNN_GEO_PLACES || {})[iso];
+    if (f && f.s && f.s.length) { setStateMode('list', f.s.map(function (st) { return st[1]; }), pick); return; }
+    if (f) { setStateMode('none'); return; }          // जैसे सिंगापुर — राज्य-सूची ही नहीं
+    // फ़ाइल अभी नहीं आई — तब तक खाना बंद (भारत की सूची कभी न दिखे)
+    setStateMode('none');
     loadCountryPlaces(iso, function () {
-      if ($('fCountry').value !== country) return;      // इस बीच देश बदल गया
-      var f = (window.BNN_GEO_PLACES || {})[iso];
-      sel.innerHTML = '';
-      var any = document.createElement('option');
-      any.value = ''; any.textContent = L('— राज्य / प्रांत —', '— State / Province —');
-      sel.appendChild(any);
-      ((f && f.s) || []).forEach(function (st) {
-        var o = document.createElement('option'); o.value = st[1]; o.textContent = st[1]; sel.appendChild(o);
-      });
-      var oth = document.createElement('option');
-      oth.value = '__other__'; oth.textContent = L('✍️ ख़ुद लिखें…', '✍️ Type it yourself…');
-      sel.appendChild(oth);
-      if (pick) { for (var i = 0; i < sel.options.length; i++) if (sel.options[i].value === pick) { sel.value = pick; break; } }
-      txt.hidden = sel.value !== '__other__';
-      if (!txt.hidden) txt.value = (pick && pick !== '__other__') ? pick : '';
+      if ($('fCountry').value !== val) return;      // इस बीच देश बदल गया
+      var ff = (window.BNN_GEO_PLACES || {})[iso];
+      if (!ff || !ff.s || !ff.s.length) { setStateMode('none'); renderSugg($('fPlace').value); return; }
+      setStateMode('list', ff.s.map(function (st) { return st[1]; }), pick);
       renderSugg($('fPlace').value);
     });
   }
@@ -395,9 +461,13 @@
   function pickPlace(p) {
     $('fPlace').value = p.en;
     var sel = $('fState');
-    var want = (p.sc || p.se || '');
-    if (want && sel && !sel.hidden) {
-      for (var i = 0; i < sel.options.length; i++) if (sel.options[i].value === want) { sel.value = want; break; }
+    if (sel && !sel.hidden && !sel.disabled) {
+      var wants = [p.se, p.sc, p.s].filter(Boolean);     // भारत: राज्य का नाम; बाहर: नाम या admin1 कोड
+      for (var w = 0; w < wants.length; w++) {
+        var hit = false;
+        for (var i = 0; i < sel.options.length; i++) if (sel.options[i].value === wants[w]) { sel.value = wants[w]; hit = true; break; }
+        if (hit) break;
+      }
     }
     $('fLat').value = p.lat; $('fLon').value = p.lon;
     if (p.tz) setTz(p.tz, true);
@@ -521,6 +591,7 @@
     for (var ci = 0; ci < csel.options.length; ci++) if (csel.options[ci].value === ctryEN) cok = true;
     if (!cok) { var co = document.createElement('option'); co.value = ctryEN; co.textContent = ctryEN; csel.appendChild(co); }
     csel.value = ctryEN;
+    if ($('fCountryTxt')) $('fCountryTxt').value = countryLabelOf(ctryEN);
     rebuildStates(r.stateEN || enOfHiP(STATES, r.state) || r.state || '');
     var plv = r.placeEN || r.place || '';
     for (var pj = 0; pj < PLACES.length; pj++) { if (PLACES[pj].n === plv) { plv = PLACES[pj].en; break; } }
@@ -781,7 +852,17 @@
     if (!gender) errs.push(L('कृपया पुरुष या स्त्री चुनें', 'Please choose Male or Female'));
     var countryEN = $('fCountry').value || 'India';
     var isInd = (countryEN === 'India');
-    var stateENv = isInd ? $('fState').value : ($('fState').value === '__other__' ? $('fStateTxt').value.trim() : $('fState').value);
+    var stSel = $('fState'), stTxt = $('fStateTxt');
+    var stVal = (stSel && !stSel.disabled && !stSel.hidden) ? String(stSel.value || '') : '';
+    var freeTxt = (stTxt && !stTxt.hidden) ? String(stTxt.value || '').trim() : '';
+    var stateENv;
+    if (isInd) stateENv = stVal;
+    else if (stVal === '__other__' || (!stVal && freeTxt)) stateENv = freeTxt;   // ख़ुद लिखा
+    else stateENv = stVal;                     // सूची से · खाना बंद → '' (भारत का राज्य कभी नहीं)
+    // सुरक्षा-जाल: भारत से बाहर कोई भारतीय राज्य नाम किसी भी हालत में न जाए
+    if (!isInd && stateENv) {
+      for (var si = 0; si < STATES.length; si++) if (STATES[si][0] === stateENv) { stateENv = ''; break; }
+    }
     var rec = {
       name: $('fName').value.trim(), group: $('fGroup').value || state.groups[0], gender: gender,
       mobile: $('fMobile').value.trim(), date: date || $('fDate').value.trim(), time: time || $('fTime').value.trim(),
@@ -1396,47 +1477,59 @@
     };
   }
   function midBandSvg(kind, mode) {
-    var d = midBandData(mode); if (!d) return '';
-    // नाप चार्ट की अपनी इकाइयों में (north 484×484, south 804×736) — चार्ट का आकार नहीं बदलता।
+    var d = midBandData(mode);
+    // 1.0.4 / टास्क 03: शीर्षक ऊपर (परिवर्तन-पेटी जैसा), नीचे सिर्फ़ कोड या “—” — अंश-पंक्ति हटी
     var g = kind === 'south'
       ? { x: 504, w: 166, c: 15.5, s: 10.6, lh: 13.2, pad: 6 }
       : { x: 282, w: 128, c: 11.5, s: 8.2, lh: 10.2, pad: 5 };
-    var showCodes = !!d.codes;                       // कोई ग्रह नहीं → पेटी ख़ाली (सिर्फ़ शीर्षक+बिंदु)
-    var lines = (showCodes ? 1 : 0) + (d.more ? 1 : 0) + 2;
-    var h = g.pad * 2 + (showCodes ? g.c : g.s) + (lines - 1) * g.lh;
+    var codes = d && d.codes ? d.codes : '—';
+    var more = !!(d && d.more);
+    var lines = 1 + 1 + (more ? 1 : 0);              // शीर्षक + कोड/— + (नोट)
+    var h = g.pad * 2 + g.s + g.lh * (lines - 1) + 1;
     var y0 = -2 - h;
     var cx = g.x + g.w / 2;
     var out = '<g class="mbg" data-mb="1"><rect x="' + g.x + '" y="' + y0.toFixed(1) + '" width="' + g.w + '" height="' + h.toFixed(1) +
       '" rx="3" fill="#fcd9c4" stroke="#b4643a" stroke-width="1"/>';
-    var ty = y0 + g.pad + (showCodes ? g.c * 0.82 : g.s * 0.82);
-    if (showCodes) {
-      out += '<text x="' + cx + '" y="' + ty.toFixed(1) + '" text-anchor="middle" font-family="sans-serif" font-size="' + g.c +
-        '" font-weight="800" fill="#5b2b10">' + esc(d.codes) + '</text>';
+    var ty = y0 + g.pad + g.s * 0.82;
+    out += '<text x="' + cx + '" y="' + ty.toFixed(1) + '" text-anchor="middle" font-family="sans-serif" font-size="' + g.s +
+      '" font-weight="600" fill="#7a4a2c">' + esc(L('राहु-केतु मध्य बिंदु', 'Rahu-Ketu Midpoint')) + '</text>';
+    ty += g.lh + 1;
+    out += '<text x="' + cx + '" y="' + ty.toFixed(1) + '" text-anchor="middle" font-family="sans-serif" font-size="' + g.c +
+      '" font-weight="800" fill="#5b2b10">' + esc(codes) + '</text>';
+    if (more) {
       ty += g.lh;
-    }
-    if (d.more) {
       out += '<text x="' + cx + '" y="' + ty.toFixed(1) + '" text-anchor="middle" font-family="sans-serif" font-size="' + g.s +
         '" font-weight="600" fill="#8a5a3a">' + esc(L('एक से अधिक — प्रभाव नहीं', 'More than one — no effect')) + '</text>';
-      ty += g.lh;
     }
-    out += '<text x="' + cx + '" y="' + ty.toFixed(1) + '" text-anchor="middle" font-family="sans-serif" font-size="' + g.s +
-      '" font-weight="600" fill="#7a4a2c">' + esc(L('राहु-केतु मध्य बिंदु (±3°)', 'Rahu-Ketu midpoint (±3°)')) + '</text>';
-    ty += g.lh;
-    out += '<text x="' + cx + '" y="' + ty.toFixed(1) + '" text-anchor="middle" font-family="sans-serif" font-size="' + g.s +
-      '" font-weight="600" fill="#7a4a2c">' + esc(d.pts) + '</text></g>';
+    out += '</g>';
     return out;
   }
+  // परिवर्तन की पेटी (PNG की SVG में नहीं — वहाँ header में अपना बक्सा पहले से है)
   // राउंड 66 / टास्क 10-ग: **print/PDF** की पेटी HTML में (position:absolute) — अक्षर सीधे
   // px/mm में, इसलिए चार्ट कितना भी छोटा-बड़ा हो, A4 पर पढ़ने लायक रहते हैं।
   // PNG की पेटी वही SVG वाली (midBandSvg) रहती है — वह पहले से ठीक है।
+  function exchangesOf() { return (RESULT && RESULT.exchanges) ? RESULT.exchanges : []; }
+  function parivText() {
+    var ex = exchangesOf();
+    if (!ex.length) return '—';
+    return ex.map(function (p) { return planetName(p[0]) + ' ⇄ ' + planetName(p[1]); }).join(' · ');
+  }
   function midBandHtml(mode) {
-    var d = midBandData(mode); if (!d) return '';
+    var d = midBandData(mode);
+    var more = !!(d && d.more);
+    var codes = d && d.codes ? d.codes : '—';
     var h = '<div class="pMid" data-mb="1">';
-    if (d.codes) h += '<div class="pmc">' + esc(d.codes) + '</div>';
-    if (d.more) h += '<div class="pmn">' + esc(L('एक से अधिक — प्रभाव नहीं', 'More than one — no effect')) + '</div>';
-    h += '<div class="pmt">' + esc(L('राहु-केतु मध्य बिंदु (±3°)', 'Rahu-Ketu midpoint (±3°)')) + '</div>';
-    h += '<div class="pmt">' + esc(d.pts) + '</div></div>';
-    return h;
+    h += '<div class="pmt">' + esc(L('राहु-केतु मध्य बिंदु', 'Rahu-Ketu Midpoint')) + '</div>';
+    h += '<div class="pmc">' + esc(codes) + '</div>';
+    if (more) h += '<div class="pmn">' + esc(L('एक से अधिक — प्रभाव नहीं', 'More than one — no effect')) + '</div>';
+    return h + '</div>';
+  }
+  // 1.0.4 / टास्क 03: print/PDF में परिवर्तन की पेटी (चार्ट के ऊपर-बाएँ, मध्य-बिंदु जैसी ही)
+  function parivHtml() {
+    var h = '<div class="pPar" data-pv="1">';
+    h += '<div class="pmt">' + esc(L('परिवर्तन', 'Parivartan')) + '</div>';
+    h += '<div class="pmc">' + esc(parivText()) + '</div>';
+    return h + '</div>';
   }
   function renderMidBand() {
     // राउंड 66 / टास्क 10-घ: यह अब चार्ट के अंदर नहीं, चार्ट के ऊपर-दाएँ कोने के बाहर बनी
@@ -2315,7 +2408,7 @@
     var page = function (inner, last) { return '<div class="pPage">' + inner + (last ? foot : '') + '</div>'; };
     var two = function (l, r) { return '<div class="pTwoCol"><div class="pSide">' + l + '</div><div class="pSide">' + r + '</div></div>'; };
     var m1 = RMODE;                       // 30+ → AP, 30− → BP (openResult में तय)
-    var p1 = page(brand + '<div class="pMetaBox">' + meta + '</div>' + '<div class="ppChartBox pChartSingle">' + chartSvg + midBandHtml(m1) + '<div class="pCap">' + cap + '</div></div>');
+    var p1 = page(brand + '<div class="pMetaBox">' + meta + '</div>' + '<div class="ppChartBox pChartSingle">' + chartSvg + parivHtml() + midBandHtml(m1) + '<div class="pCap">' + cap + '</div></div>');
     var topLab = function (txt) { return '<div class="pComboTop">' + txt + '</div>'; };
     var p2 = page(two(topLab(L('भाव Combination 159', 'BHAVA Combination 159')) + printBhavaBlock(m1, '159'),
                       topLab(L('ग्रह Combination 1579', 'PLANET Combination 1579')) + printPlanetBlock(m1, '1579') + printPlanetBlock311(m1)));
@@ -3448,18 +3541,77 @@
     $('openQ').addEventListener('input', renderOpenList);
     $('openClose').addEventListener('click', closeOpenModal);
     $('openModal').addEventListener('mousedown', function (ev) { if (ev.target === this) closeOpenModal(); });
-    // 1.0.4 / टास्क 02: देश बदला → उसका राज्य-खाना + उसका डिफ़ॉल्ट टाइम-ज़ोन
+    // ---------- 1.0.4 / टास्क 03: देश का एक ही खाना ----------
+    // टाइप/क्लिक → नीचे सूची; माउस, ↑↓, Enter, Esc — जन्म-स्थान जैसा ही बर्ताव
+    var cTxt = $('fCountryTxt'), cBox = $('countrySugg');
+    var CTRY_HL = -1;
+    function paintCountryHl() {
+      if (!cBox) return;
+      var items = cBox.querySelectorAll('.sItem[data-ci]');
+      for (var i = 0; i < items.length; i++) items[i].classList.toggle('on', i === CTRY_HL);
+      var cur = items[CTRY_HL];
+      if (cur && cur.scrollIntoView) cur.scrollIntoView({ block: 'nearest' });
+    }
+    function openCountryList(q) { CTRY_HL = -1; renderCountrySugg(q); paintCountryHl(); }
+    function commitCountryText() {
+      var q = String(cTxt.value || '').trim();
+      var cur = countryLabelOf($('fCountry').value);
+      if (!q || q === cur) { cTxt.value = cur; hideCountrySugg(); return; }
+      var items = countryItems(q), hit = null;
+      for (var i = 0; i < items.length; i++) {
+        if (items[i].en.toLowerCase() === q.toLowerCase() || items[i].val.toLowerCase() === q.toLowerCase()) { hit = items[i]; break; }
+      }
+      if (!hit && items.length === 1) hit = items[0];
+      if (hit) pickCountry(hit.val);
+      else { cTxt.value = cur; hideCountrySugg(); }      // कुछ न मिले → पुराना देश ही रहे
+    }
+    if (cTxt && cBox) {
+      cTxt.addEventListener('focus', function () { openCountryList(''); });
+      cTxt.addEventListener('click', function () {
+        if (cBox.hidden) openCountryList(String(cTxt.value || '') === countryLabelOf($('fCountry').value) ? '' : cTxt.value);
+      });
+      cTxt.addEventListener('input', function () { openCountryList(this.value); });
+      cTxt.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          if (cBox.hidden) openCountryList(this.value);
+          CTRY_HL = Math.min(CTRY_HL + 1, CTRY_ITEMS.length - 1); paintCountryHl();
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          CTRY_HL = Math.max(CTRY_HL - 1, 0); paintCountryHl();
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          if (CTRY_HL >= 0 && CTRY_ITEMS[CTRY_HL]) pickCountry(CTRY_ITEMS[CTRY_HL].val);
+          else if (CTRY_ITEMS.length) pickCountry(CTRY_ITEMS[0].val);
+          else commitCountryText();
+        } else if (e.key === 'Escape') {
+          hideCountrySugg(); cTxt.value = countryLabelOf($('fCountry').value);
+        } else if (e.key === 'Tab') {
+          commitCountryText();
+        }
+      });
+      cTxt.addEventListener('blur', function () {
+        setTimeout(function () { if (!cBox.hidden) { hideCountrySugg(); commitCountryText(); } }, 180);
+      });
+      cBox.addEventListener('mousedown', function (ev) {
+        var it = ev.target.closest ? ev.target.closest('.sItem') : null;
+        if (!it || !it.getAttribute('data-ci')) return;
+        ev.preventDefault();
+        pickCountry(CTRY_ITEMS[+it.getAttribute('data-ci')].val);
+      });
+    }
+    // देश बदला — यही एक जगह: राज्य, डिफ़ॉल्ट टाइम-ज़ोन, शहर-सूची, offset
     $('fCountry').addEventListener('change', function () {
+      if ($('fCountryTxt')) $('fCountryTxt').value = countryLabelOf(this.value);
+      hideCountrySugg();
       rebuildStates('');
-      var dtz = defaultTzOfCountry();
-      if (!GMT_TYPED) { if (dtz) setTz(dtz, true); GMT_AUTO = true; SAVED_DST = 0; }
+      if (!GMT_TYPED) {
+        var dtz0 = defaultTzOfCountry();
+        if (dtz0) setTz(dtz0, true);
+        GMT_AUTO = true; SAVED_DST = 0;
+      }
       renderSugg($('fPlace').value);
       applyTzOffset();
-    });
-    if ($('fCountryQ')) $('fCountryQ').addEventListener('input', function () {
-      fillCountries(this.value);
-      var sel = $('fCountry');
-      if (sel.options.length === 1) { sel.value = sel.options[0].value; sel.dispatchEvent(new Event('change')); }
     });
     $('fState').addEventListener('change', function () {
       if ($('fStateTxt')) $('fStateTxt').hidden = this.value !== '__other__';

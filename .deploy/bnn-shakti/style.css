@@ -568,10 +568,15 @@ body{min-width:980px}
    चार्ट (408,131,552,552) ज़रा नहीं खिसकता: पेटी position:absolute है। */
 #printSheet .ppChartBox{position:relative}
 #printSheet .pMid{position:absolute;top:0;right:0;z-index:2;background:#fcd9c4;border:1px solid #b4643a;
-  border-radius:4px;padding:2px 7px 3px;text-align:center;line-height:1.25;max-width:64mm}
+  border-radius:4px;padding:2px 7px 3px;text-align:center;line-height:1.25;max-width:64mm;min-width:34mm}
 #printSheet .pMid .pmc{font-size:13.5px;font-weight:800;color:#5b2b10;letter-spacing:.3px;white-space:nowrap}
 #printSheet .pMid .pmn{font-size:11.5px;font-weight:600;color:#8a5a3a}
 #printSheet .pMid .pmt{font-size:11.5px;font-weight:600;color:#7a4a2c}
+/* 1.0.4 / टास्क 03: परिवर्तन की पेटी — चार्ट के ऊपर-बाएँ, मध्य-बिंदु जैसी ही नाप/अक्षर */
+#printSheet .pPar{position:absolute;top:0;left:0;z-index:2;background:#fff7e6;border:1px solid #d9a95f;
+  border-radius:4px;padding:2px 7px 3px;text-align:center;line-height:1.25;max-width:64mm;min-width:34mm}
+#printSheet .pPar .pmt{font-size:11.5px;font-weight:600;color:#8a5a12}
+#printSheet .pPar .pmc{font-size:13.5px;font-weight:800;color:#7a3d0e;letter-spacing:.2px}
 
 /* ---------- राउंड 67 / टास्क 12: संस्करण कहीं भी दिखे (ऊपर की पट्टी + brand-डिब्बा) ---------- */
 .brand .verBadge{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:999px;background:#2c3442;
@@ -594,3 +599,8 @@ body{min-width:980px}
 .tzb{font-family:inherit;font-size:12.5px;font-weight:700;padding:4px 11px;border-radius:999px;border:1px solid #c9a24a;background:#fff8e6;color:#7a5a22;cursor:pointer}
 .tzb:hover{background:#fdf0d5}
 .tzb.on{background:#d97706;border-color:#d97706;color:#fff}
+
+/* ---------- 1.0.4 / टास्क 03: देश का एक ही खाना + सादा सहायता-आइकन ---------- */
+.sugg.full{width:100%}
+.topbar .btn .bi{vertical-align:-2px;margin-right:6px;opacity:.95}
+#fState:disabled{background:#f2ede2;color:#8a8070}

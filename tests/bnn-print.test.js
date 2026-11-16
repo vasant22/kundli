@@ -225,17 +225,18 @@ describe.skipIf(!hasApp)('ऐप का print sheet — 3-11 + मध्य ब�
     expect(p311.textContent).not.toMatch(/\d+ · /)
   })
 
-  it('पेटी — एक ग्रह: कोड + शीर्षक + दोनों बिंदु', async () => {
+  // 1.0.4 / टास्क 03: पेटी में अब शीर्षक ऊपर, नीचे सिर्फ़ कोड (या “—”) — अंश-पंक्ति हटी
+  it('पेटी — एक ग्रह: शीर्षक ऊपर, फिर कोड; अंश-पंक्ति नहीं', async () => {
     const w = await boot(makeResult({ mid: { points: [115.5, 295.5], members: [{ key: 'jupiter', gap: 0.3 }], effective: true } }))
     const sheet = printSheet(w)
     const band = sheet.querySelector('.pMid')
     expect(band).toBeTruthy()
-    const txt = band.textContent
-    expect(txt).toContain('JUP')
-    expect(txt).toContain('राहु-केतु मध्य बिंदु')
-    expect(txt).toContain('कर्क 25°30′')      // 115.5° = कर्क 25°30′
-    expect(txt).toContain('मकर 25°30′')
-    expect(txt).not.toContain('एक से अधिक')
+    const lines = Array.from(band.children).map((d) => d.textContent)
+    expect(lines[0]).toBe('राहु-केतु मध्य बिंदु')     // शीर्षक सबसे ऊपर, “±3°” नहीं
+    expect(lines[1]).toBe('JUP')
+    expect(lines.length).toBe(2)
+    expect(band.textContent).not.toContain('कर्क 25°30′')   // अंश अब नहीं
+    expect(band.textContent).not.toContain('एक से अधिक')
   })
 
   it('पेटी — दो ग्रह: "MAR . SAT" + "एक से अधिक — प्रभाव नहीं"', async () => {
@@ -244,8 +245,8 @@ describe.skipIf(!hasApp)('ऐप का print sheet — 3-11 + मध्य ब�
     const txt = sheet.querySelector('.pMid').textContent
     expect(txt).toContain('MAR . SAT')
     expect(txt).toContain('एक से अधिक — प्रभाव नहीं')
-    expect(txt).toContain('सिंह 21°15′')
-    expect(txt).toContain('कुम्भ 21°15′')
+    expect(txt).not.toContain('सिंह 21°15′')      // अंश अब नहीं
+    expect(txt).not.toContain('कुम्भ 21°15′')
   })
 
   it('पेटी — कोई नहीं: ख़ाली पेटी, पर शीर्षक व दोनों बिंदु रहते हैं', async () => {
@@ -254,10 +255,11 @@ describe.skipIf(!hasApp)('ऐप का print sheet — 3-11 + मध्य ब�
     const band = sheet.querySelector('.pMid')
     expect(band).toBeTruthy()
     const lines = Array.from(band.children).map((d) => d.textContent)
-    expect(lines.length).toBe(2)                       // कोड-पंक्ति ही नहीं (ख़ाली पेटी)
-    expect(lines[0]).toContain('राहु-केतु मध्य बिंदु')
-    expect(lines[1]).toContain('वृष 11°48′')
+    expect(lines.length).toBe(2)                       // शीर्षक + “—”
+    expect(lines[0]).toBe('राहु-केतु मध्य बिंदु')
+    expect(lines[1]).toBe('—')
     expect(lines.join(' ')).not.toContain('एक से अधिक')
+    expect(lines.join(' ')).not.toContain('वृष 11°48′')
   })
 
   it('गोचर मोड में भी print में NATAL की 3-11 और पेटी', async () => {
