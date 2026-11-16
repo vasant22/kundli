@@ -16,7 +16,7 @@ const HELP = path.resolve(__dirname, '../../../bnn-kundli-windows/app/help.js')
 const hasHelp = fs.existsSync(HELP)
 
 function boot() {
-  const dom = new JSDOM('<!doctype html><html><body><button id="btnHelp">? सहायता</button></body></html>', { url: 'http://localhost/' })
+  const dom = new JSDOM('<!doctype html><html><body><button id="btnHelp">❓ सहायता</button></body></html>', { url: 'http://localhost/' })
   const w = dom.window
   const code = fs.readFileSync(HELP, 'utf8')
   // help.js एक classic script है — नक़ली window/document पर चलाओ
@@ -93,7 +93,7 @@ describe.runIf(hasHelp)('सहायता — फ़ोकस खिड़क�
     last.focus()
     doc.dispatchEvent(new w.KeyboardEvent('keydown', { key: 'Tab', bubbles: true }))
     expect(doc.activeElement).toBe(first)
-    // Esc → बंद, और फ़ोकस "? सहायता" बटन पर
+    // Esc → बंद, और फ़ोकस "❓ सहायता" बटन पर
     doc.dispatchEvent(new w.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
     expect(doc.getElementById('helpModal').hidden).toBe(true)
     expect(doc.activeElement.id).toBe('btnHelp')
