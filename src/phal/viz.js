@@ -94,8 +94,10 @@ export function chartLayout({ size = 300, lagnaRashi, planets, theme = 'light' }
     // अंश (degrees) सिर्फ़ खुले भावों में — 3+ ग्रह हों तो सिर्फ़ badge (वरना
     // अंश पड़ोसी badge/राशि-अंक से टकराते हैं; अंश तालिका में हमेशा है).
     const withDeg = theme !== 'dark' && n <= 2
-    const gapX = R * (withDeg ? 3.6 : theme === 'dark' ? 2.2 : 2.45)
-    const gapY = R * (withDeg ? 3.6 : theme === 'dark' ? 2.2 : 2.45)
+    // 5 या अधिक ग्रह: badge 80% — भाव की रेखा/राशि-अंक को न छुए
+    const r = n >= 5 ? R * 0.8 : R
+    const gapX = r * (withDeg ? 3.6 : theme === 'dark' ? 2.2 : 2.45)
+    const gapY = r * (withDeg ? 3.6 : theme === 'dark' ? 2.2 : 2.45)
     const cols = VERT.includes(+hs) ? (n > 3 ? 2 : 1) : HORZ.includes(+hs) ? Math.min(n, 3) : (n > 2 ? 2 : n)
     const rows = Math.ceil(n / cols)
     list.forEach((p, i) => {
@@ -104,14 +106,14 @@ export function chartLayout({ size = 300, lagnaRashi, planets, theme = 'light' }
         key: p.key, ab: p.ab, house: +hs, withDeg,
         x: cx + (c - (cols - 1) / 2) * gapX,
         y: cy + (rw - (rows - 1) / 2) * gapY,
-        r: R,
+        r,
       })
     })
   }
   return out
 }
 
-export function northChart({ size = 300, lagnaRashi, planets, theme = 'light' }) {
+export function northChart({ size = 300, lagnaRashi, planets, theme = 'light', centerLabel = 'लग्न' }) {
   const S = size
   const dark = theme === 'dark'
   const line = dark ? C.gold : C.nisha
@@ -139,7 +141,7 @@ export function northChart({ size = 300, lagnaRashi, planets, theme = 'light' })
   svg.appendChild(el('text', {
     x: ltx, y: lty - S * 0.105, 'text-anchor': 'middle', 'font-size': S * 0.033,
     'font-weight': 700, fill: C.marigold, 'font-family': HEAD,
-  }, 'लग्न'))
+  }, centerLabel))
 
   for (const b of chartLayout({ size, lagnaRashi, planets, theme })) {
     svg.appendChild(el('circle', { cx: b.x, cy: b.y, r: b.r, fill: colorOf(b.key), stroke: dark ? '#fff' : 'none', 'stroke-width': 1 }))
@@ -204,7 +206,7 @@ export function southChart({ size = 300, planets, theme = 'light' }) {
 // विंशोपक बल की पट्टियाँ — हर ग्रह अपने रंग में
 export function vimshopakaBars(items, { max = 20 } = {}) {
   const w = 96, rowH = 8.4, lab = 17, h = items.length * rowH + 6
-  const svg = el('svg', { viewBox: `0 0 ${w} ${h}`, width: '100%', class: 'phal-viz', role: 'img', 'aria-label': 'विंशोपक बल' })
+  const svg = el('svg', { viewBox: `0 0 ${w} ${h}`, width: '100%', class: 'phal-viz phal-viz-bars', role: 'img', 'aria-label': 'विंशोपक बल' })
   const x = (v) => lab + (w - lab - 14) * v / max
   for (const t of [5, 10, 15]) {
     svg.appendChild(el('line', { x1: x(t), x2: x(t), y1: 0, y2: h - 4, stroke: '#D8D5E3', 'stroke-width': 0.25, 'stroke-dasharray': '1 1' }))
@@ -303,5 +305,76 @@ export function starfield(w = 210, h = 297, count = 150) {
       fill: '#fff', opacity: (rnd() * 0.6 + 0.15).toFixed(2),
     }))
   }
+  return svg
+}
+
+// साढ़ेसाती / ढैया की पट्टी — हर चक्र एक लगातार पट्टी, भीतर तीन चरण शनि-रंग के
+// तीन shade में; वक्री से आए छोटे अंतराल पिछले चरण के हल्के रंग से भरे रहते हैं।
+// पट्टी पर अक्षर सिर्फ़ तब, जब हिस्सा 12mm से चौड़ा हो (viewBox की 1 इकाई ≈ 1mm)।
+const SA_SHADE = { 12: '#8E9AC9', 1: '#3949AB', 2: '#5C6BC0' }
+const SA_SOFT = { 12: '#D3D9EE', 1: '#B7BFE4', 2: '#C4CCEB' }
+const SA_LABEL = { 12: '१', 1: '२', 2: '३' }
+
+export function sadesatiChart({ cycles = [], dhaiya = [], fromMs, toMs, nowMs, label = 'आप यहाँ हैं' }) {
+  const W = 178, H = 44
+  const x = (ms) => (ms - fromMs) / (toMs - fromMs) * W
+  const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, width: '100%', class: 'phal-viz', role: 'img', 'aria-label': 'साढ़ेसाती और ढैया की पट्टी' })
+
+  // साढ़ेसाती: हर चक्र की पूरी पट्टी (6 → 16)
+  for (const c of cycles) {
+    const x1 = Math.max(0, x(c.fromMs)), x2 = Math.min(W, x(c.toMs))
+    if (x2 <= x1) continue
+    svg.appendChild(el('rect', { x: x1, y: 6, width: Math.max(0.8, x2 - x1), height: 10, rx: 1.4, fill: '#EEF1FB' }))
+    const phases = [...(c.phases ?? [])].sort((a, b) => a.fromMs - b.fromMs)
+    let prev = null
+    for (const ph of phases) {
+      // वक्री का अंतराल: पिछले चरण के हल्के रंग से भरा (ख़ाली नहीं)
+      if (prev && ph.fromMs > prev.toMs) {
+        const gx1 = x(prev.toMs), gx2 = x(ph.fromMs)
+        if (gx2 > gx1) svg.appendChild(el('rect', { x: gx1, y: 6, width: gx2 - gx1, height: 10, fill: SA_SOFT[prev.phase] ?? SA_SOFT[1] }))
+      }
+      const px1 = Math.max(0, x(ph.fromMs)), px2 = Math.min(W, x(ph.toMs))
+      if (px2 > px1) {
+        svg.appendChild(el('rect', { x: px1, y: 6, width: px2 - px1, height: 10, fill: SA_SHADE[ph.phase] ?? SA_SHADE[1] }))
+        if (px2 - px1 > 12) {
+          svg.appendChild(el('text', {
+            x: (px1 + px2) / 2, y: 13, 'text-anchor': 'middle', 'font-size': 3.4, fill: '#fff',
+            'font-weight': 800, 'font-family': HEAD,
+          }, SA_LABEL[ph.phase] ?? ''))
+        }
+      }
+      prev = ph
+    }
+  }
+  // ढैया: पतली, हल्की पट्टी (21 → 25)
+  for (const d of dhaiya) {
+    const x1 = Math.max(0, x(d.fromMs)), x2 = Math.min(W, x(d.toMs))
+    if (x2 <= x1) continue
+    svg.appendChild(el('rect', { x: x1, y: 21, width: Math.max(0.6, x2 - x1), height: 4, rx: 1, fill: '#C3CAE8' }))
+    if (x2 - x1 > 12) {
+      svg.appendChild(el('text', { x: (x1 + x2) / 2, y: 24, 'text-anchor': 'middle', 'font-size': 2.6, fill: C.nisha, 'font-weight': 700, 'font-family': HEAD }, 'ढैया'))
+    }
+  }
+  // वर्ष: पट्टी के नीचे (साढ़ेसाती के चक्रों की सीमाएँ)
+  const marks = []
+  for (const c of cycles) { marks.push(c.fromMs, c.toMs) }
+  marks.sort((a, b) => a - b)
+  let lastX = -100
+  for (const ms of marks) {
+    const mx = x(ms)
+    if (mx < 4 || mx > W - 4) continue
+    if (mx - lastX < 10) continue
+    svg.appendChild(el('line', { x1: mx, x2: mx, y1: 16, y2: 18, stroke: '#D8D5E3', 'stroke-width': 0.3 }))
+    svg.appendChild(el('text', { x: mx, y: 33, 'text-anchor': 'middle', 'font-size': 2.7, fill: C.muted }, String(new Date(ms).getUTCFullYear())))
+    lastX = mx
+  }
+  // "आप यहाँ हैं"
+  const nx = x(nowMs)
+  if (nx >= 0 && nx <= W) {
+    svg.appendChild(el('line', { x1: nx, x2: nx, y1: 2, y2: 38, stroke: C.nisha, 'stroke-width': 0.6 }))
+    svg.appendChild(el('path', { d: `M${nx - 1.6},1 L${nx + 1.6},1 L${nx},3.2 Z`, fill: C.marigold }))
+    svg.appendChild(el('text', { x: nx, y: 43, 'text-anchor': 'middle', 'font-size': 2.9, fill: C.marigold, 'font-weight': 800, 'font-family': HEAD }, label))
+  }
+  svg.appendChild(el('line', { x1: 0, x2: W, y1: 39.5, y2: 39.5, stroke: '#E6E2EE', 'stroke-width': 0.3 }))
   return svg
 }

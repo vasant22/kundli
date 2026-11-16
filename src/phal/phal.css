@@ -192,6 +192,12 @@
 .phal-doc .msg .btn { display: inline-block; margin-top: 10px; padding: 10px 18px; border-radius: 10px; background: var(--marigold); color: #fff; text-decoration: none; font-weight: 600; }
 .phal-doc body:not(.ready) #report { display: none; }
 
+/* screen पर ग्राफ़ बहुत न फैलें (print में कोई बदलाव नहीं) */
+@media screen {
+  .phal .phal-viz { max-width: 900px; }
+  .phal .phal-viz-bars { max-width: 560px; }
+}
+
 /* ---------- print ---------- */
 @page {
   size: A4;

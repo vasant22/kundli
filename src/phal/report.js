@@ -7,7 +7,7 @@
 
 import * as TX from './text-hi.js'
 import { ordinalHi, grahaHi, rashiHi, grahaList, degMinHi } from './text.js'
-import { GRAHA_AB, rashiImg, northChart, southChart, vimshopakaBars, dashaTimeline, savBars, bavHeatmap, starfield } from './viz.js'
+import { GRAHA_AB, rashiImg, northChart, southChart, vimshopakaBars, dashaTimeline, savBars, bavHeatmap, sadesatiChart, starfield } from './viz.js'
 import { TITHIS, YOGAS, KARANAS, VAARAS, NAKSHATRAS } from '../i18n.js'
 
 const esc = (s) =>
@@ -155,12 +155,12 @@ const birth2 = (n) => String(n ?? 0).padStart(2, '0')
 // --- अध्याय 4: मुख्य कुंडलियाँ ---------------------------------------------
 function charts(data) {
   const p = vizPlanets(data.planets, { degrees: true })
-  const d1 = northChart({ size: 300, lagnaRashi: data.summary.lagnaRashi, planets: p })
+  const d1 = northChart({ size: 300, lagnaRashi: data.summary.lagnaRashi, planets: p, centerLabel: 'लग्न' })
   // चंद्र-कुंडली: चंद्र-राशि को लग्न मानकर वही ग्रह
-  const chandra = northChart({ size: 300, lagnaRashi: data.summary.moonRashi, planets: p })
+  const chandra = northChart({ size: 300, lagnaRashi: data.summary.moonRashi, planets: p, centerLabel: 'चंद्र' })
   const d9rashi = data.vargas.charts[9]
   const d9planets = data.planets.map((x) => ({ key: x.key, ab: GRAHA_AB[x.key], rashi: d9rashi.planets[x.key], retro: x.retro }))
-  const d9 = northChart({ size: 300, lagnaRashi: d9rashi.lagna, planets: d9planets })
+  const d9 = northChart({ size: 300, lagnaRashi: d9rashi.lagna, planets: d9planets, centerLabel: 'नवांश लग्न' })
   const south = southChart({ size: 300, planets: p })
   // सुदर्शन दृष्टि — दो हिस्सों में साथ-साथ (6+6 पंक्तियाँ), ताकि अध्याय एक पन्ने पर रहे
   const sudRows = data.avakahada.sudarshan
@@ -252,7 +252,7 @@ function vargas(data) {
       ? `जन्म-समय ${Math.min(...[sens.backSec, sens.forwardSec].filter((x) => x !== null))} सेकंड आगे-पीछे होने पर यह वर्ग बदल सकता है।`
       : `जन्म-समय ${data.vargas.sensitivityLimitSec / 60} मिनट आगे-पीछे होने पर भी यह वर्ग नहीं बदलता।`
     const pl = data.planets.map((x) => ({ key: x.key, ab: GRAHA_AB[x.key], rashi: ch.planets[x.key], retro: x.retro }))
-    const svg = northChart({ size: 240, lagnaRashi: ch.lagna, planets: pl })
+    const svg = northChart({ size: 240, lagnaRashi: ch.lagna, planets: pl, centerLabel: `D${n} लग्न` })
     return `<div class="varga"><div>${svg.outerHTML}</div><div>
       <div class="vh">${esc(info.hi)}</div><p>${esc(tx.t)}</p><p class="muted">${esc(sensTxt)}</p></div></div>`
   }).join('')
@@ -386,19 +386,40 @@ function sadesati(data) {
   const s = data.sadesati
   const birthMs = data.meta.birthMs
   const endMs = birthMs + 100 * 365.25 * 86400000
-  const SHADE = { 12: '#8E9AC9', 1: '#3949AB', 2: '#5C6BC0' }
-  const rows = []
-  for (const c of s.sadesatiCycles ?? []) {
-    for (const ph of c.phases ?? []) rows.push({ key: 'sa', hi: 'साढ़ेसाती', ab: 'श', fromMs: ph.fromMs, toMs: ph.toMs, color: SHADE[ph.phase] ?? '#3949AB' })
-  }
-  for (const c of s.dhaiyaCycles ?? []) rows.push({ key: 'sa', hi: 'ढैया', ab: 'ढै', fromMs: c.fromMs, toMs: c.toMs, color: '#C3CAE8' })
-  rows.sort((a, b) => a.fromMs - b.fromMs)
+  const cycles = s.sadesatiCycles ?? []
+  const dhaiya = s.dhaiyaCycles ?? []
   const now = s.current
   const curTx = now
     ? (now.kind === 'sadesati'
       ? TX.DOSHA_TEXT[`sadesati${now.runningPhase?.phase === 12 ? 1 : now.runningPhase?.phase === 1 ? 2 : 3}`]
       : TX.DOSHA_TEXT.dhaiya)
     : null
+  const phaseName = (ph) => (ph === 12 ? 'पहला चरण' : ph === 1 ? 'दूसरा चरण' : 'तीसरा चरण')
+  const DAY = 86400000
+
+  // हर चक्र: एक पंक्ति + भीतर तीनों चरणों की तारीख़ें + वक्री-वापसी का नोट
+  const cycleRows = cycles.map((c, i) => {
+    const phases = [...(c.phases ?? [])].sort((a, b) => a.fromMs - b.fromMs)
+    const byPhase = new Map()
+    for (const ph of phases) {
+      const cur = byPhase.get(ph.phase)
+      if (!cur) byPhase.set(ph.phase, { phase: ph.phase, fromMs: ph.fromMs, toMs: ph.toMs })
+      else cur.toMs = Math.max(cur.toMs, ph.toMs)
+    }
+    const phaseTxt = [...byPhase.values()].sort((a, b) => a.fromMs - b.fromMs)
+      .map((p) => `${phaseName(p.phase)} ${dateHi(p.fromMs)} – ${dateHi(p.toMs)}`).join(' · ')
+    const gaps = []
+    for (let k = 1; k < phases.length; k++) {
+      const gap = phases[k].fromMs - phases[k - 1].toMs
+      if (gap > 30 * DAY) gaps.push(`${dateHi(phases[k - 1].toMs)} से ${dateHi(phases[k].fromMs)}`)
+    }
+    const gapTxt = gaps.length ? `<br><small class="muted">बीच में ${esc(gaps.join(' · '))} शनि पीछे लौटा</small>` : ''
+    return `<tr><td><b>साढ़ेसाती ${dev(i + 1)}</b><br><small>${dateHi(c.fromMs)} से ${dateHi(c.toMs)}</small></td>
+      <td><small>${esc(phaseTxt)}</small>${gapTxt}</td></tr>`
+  }).join('')
+  const dhaiyaRows = dhaiya.map((d) => `<tr><td><b>ढैया</b><br><small>${dateHi(d.fromMs)} से ${dateHi(d.toMs)}</small></td>
+      <td><small>शनि जन्म-चंद्र से ${H(d.phases?.[0]?.phase ?? 4)}</small></td></tr>`).join('')
+
   const g = data.gochar
   const cards = Object.keys(g.main).map((k) => {
     const p = g.main[k]
@@ -407,10 +428,12 @@ function sadesati(data) {
         <span class="sav" style="margin-left:auto">चंद्र से ${H(p.houseFromMoon)}</span></div>
       <p>${tx ? `${esc(tx.t)} ${tone(tx.tone)}` : `<span class="muted">लग्न से ${H(p.houseFromLagna)} · </span>${tone(p.shubhaFromMoon ? 'shubh' : 'savdhan')}`}</p></div>`
   }).join('')
+
   return `${now ? `<p><b>अभी ${esc(now.label)} चल रही है।</b> ${esc(curTx?.t ?? '')}</p>` : '<p><b>अभी साढ़ेसाती या ढैया नहीं चल रही।</b></p>'}
     <h3>साढ़ेसाती और ढैया — पूरा जीवन</h3>
-    ${dashaTimeline(rows, { fromMs: birthMs, toMs: endMs, nowMs: data.meta.nowMs }).outerHTML}
-    <div class="legend"><span><i style="background:#8E9AC9"></i>साढ़ेसाती — पहला चरण</span><span><i style="background:#3949AB"></i>दूसरा चरण</span><span><i style="background:#5C6BC0"></i>तीसरा चरण</span><span><i style="background:#C3CAE8"></i>ढैया</span></div>
+    ${sadesatiChart({ cycles, dhaiya, fromMs: birthMs, toMs: endMs, nowMs: data.meta.nowMs }).outerHTML}
+    <div class="legend"><span><i style="background:#8E9AC9"></i>पहला चरण</span><span><i style="background:#3949AB"></i>दूसरा चरण</span><span><i style="background:#5C6BC0"></i>तीसरा चरण</span><span><i style="background:#C3CAE8"></i>ढैया</span></div>
+    <table style="margin-top:2mm"><tbody>${cycleRows}${dhaiyaRows}</tbody></table>
     <h3>आज का गोचर (जन्म-चंद्र से)</h3><div class="bhavgrid" style="grid-template-columns:1fr 1fr">${cards}</div>`
 }
 
@@ -556,7 +579,7 @@ export function renderOnline(data) {
   if (!data || data.error) return '<p class="muted">फलादेश नहीं बन सका।</p>'
   const chips = CH.map((c) => `<a class="po-chip" href="#po-${c.id}">${esc(c.title)}</a>`).join('')
   const body = CH.map((c, i) => `<details id="po-${c.id}" ${i < 2 ? 'open' : ''}>
-      <summary><span class="n">${dev(c.num)}</span>${esc(c.title)}<span class="arrow">›</span></summary>
+      <summary><span class="n">${dev(i + 1)}</span>${esc(c.title)}<span class="arrow">›</span></summary>
       <div class="po-body"><p class="muted">${esc(c.intro)}</p>${c.body(data)}</div>
     </details>`).join('')
   return `<div class="po-chips">${chips}</div>${body}`

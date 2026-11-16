@@ -973,3 +973,16 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - **जाँच:** tests **1090 ✓** (22 नए: viz, western-चिह्न regex, lazy-load, print=1, rashi-चित्र) · 3 PDF × 20 पन्ने · हर अध्याय के desktop 1280 + phone 390 screenshots ·
   live Cache-Control: js/css `max-age=315360000` (CF HIT), wasm/fonts `public, max-age=2592000`, HTML कोई नहीं।
 - **deploy नहीं** — Vas22 जी की हाँ बाक़ी।
+
+### 2026-11-16 — फलादेश PDF / टास्क 05-ख (आख़िरी छोटे सुधार + licence की सफ़ाई)
+- **राशि-चित्र public repo से बाहर:** असली copy `~/.openclaw-autoclaw/workspace/private-assets/rashi/`; `predev`/`prebuild`
+  (`scripts/copy-private-images.mjs`) से `public/rashi/` में आते हैं; `.gitignore` में `public/rashi/` व `.deploy/**/rashi/`;
+  deploy-`tar` में भी नहीं (build-server-layout का `--exclude`) — upload के निर्देश में अलग क़दम। `git ls-files`/`git log origin/main..HEAD` में `rashi` 0.
+  पिछले दो commits (fa56971, d8efa34) `git reset --soft origin/main` से हटाकर एक साफ़ commit (`ca7d840`) में फिर बनाए।
+- **साढ़ेसाती/ढैया की पट्टी ठीक:** हर चक्र एक लगातार पट्टी (वक्री के अंतराल पिछले चरण के हल्के रंग में भरे), भीतर तीन चरण तीन shade में,
+  ढैया अलग पतली हल्की पट्टी, अक्षर सिर्फ़ 12mm से चौड़े हिस्से पर, वर्ष नीचे। नीचे तालिका: हर चक्र की एक पंक्ति + तीनों चरणों की तारीख़ें +
+  "बीच में … शनि पीछे लौटा" का नोट; ढैया की अलग पंक्तियाँ (अब 8 चक्र, 20 टुकड़े नहीं)।
+- **चार्ट-लेबल:** D1 "लग्न", चंद्र कुंडली "चंद्र", D9 "नवांश लग्न", वर्ग-चार्ट "D10 लग्न"।
+- **Online:** अध्याय १ से गिनती (PDF में 2 से); screen पर SVG ग्राफ़: विंशोपक 560px, बाक़ी 900px (print अछूता)।
+- **5+ ग्रह वाले भाव में badge 80%**; test: 10 कुंडलियों में हर badge का पूरा गोला भाव के polygon के अंदर + राशि-अंक से ≥1 त्रिज्या दूर।
+- **PDF 21 पन्ने** (साढ़ेसाती की तालिका से एक पन्ना बढ़ा) · tests **1095 ✓** · deploy नहीं।
