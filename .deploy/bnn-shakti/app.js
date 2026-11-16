@@ -1698,7 +1698,8 @@
     return pick ? { cx: pick.cx, cy: pick.cy } : { cx: best.cx, cy: best.cy };
   }
 
-  function northSvgString(midMode) {
+  function northSvgString(midMode, opts) {
+    var noTr = !!(opts && opts.noTransit);   // 1.0.4 / टास्क 04: PNG में गोचर-ग्रह नहीं
     var b = RESULT.bnn, asc = b.ascendant.rashi;
     var byH = {};
     b.planets.forEach(function (p) { var h = ((p.rashi - asc + 12) % 12) + 1; (byH[h] = byH[h] || []).push(p); });
@@ -1726,12 +1727,13 @@
       });
       T += '</g>';
     }
-    var tg = northTransitLines(asc).map(function (L) { return '<text x="' + L.x + '" y="' + L.y + '" font-size="11" font-weight="600" text-anchor="' + L.anchor + '" fill="' + L.c + '">' + L.t + '</text>'; }).join('');
+    var tg = noTr ? '' : northTransitLines(asc).map(function (L) { return '<text data-tr="1" x="' + L.x + '" y="' + L.y + '" font-size="11" font-weight="600" text-anchor="' + L.anchor + '" fill="' + L.c + '">' + L.t + '</text>'; }).join('');
     var panelTxt = panelLinesTxt(170, 170, 1, chartPanelData());
     var mb = midMode ? midBandSvg('north', midMode) : '';
     return '<svg class="nchart" xmlns="http://www.w3.org/2000/svg" viewBox="-72 -72 484 484" width="560" height="560"><g font-family="sans-serif">' + tg + '<rect x="3" y="3" width="334" height="334" fill="#fffdf7" stroke="#c9a24a" stroke-width="1.6"/><line x1="3" y1="3" x2="337" y2="337" stroke="#c9a24a" stroke-width="1.2"/><line x1="337" y1="3" x2="3" y2="337" stroke="#c9a24a" stroke-width="1.2"/><polygon points="170,3 337,170 170,337 3,170" fill="none" stroke="#c9a24a" stroke-width="1.2"/><rect x="88" y="88" width="164" height="164" rx="10" fill="#fffdf3" stroke="#e3d2a6"/>' + panelTxt + T + mb + '</g></svg>';
   }
-  function southSvgString(midMode) {
+  function southSvgString(midMode, opts) {
+    var noTr = !!(opts && opts.noTransit);   // 1.0.4 / टास्क 04: PNG में गोचर-ग्रह नहीं
     var b = RESULT.bnn, asc = b.ascendant.rashi;
     var byR = {};
     b.planets.forEach(function (p) { (byR[p.rashi] = byR[p.rashi] || []).push(p); });
@@ -1758,7 +1760,7 @@
     }
     s += '<rect x="135" y="135" width="270" height="270" fill="#fffdf3" stroke="#e3d2a6"/>';
     s += panelLinesTxt(270, 270, 1.3, chartPanelData());
-    var tg = southTransitLines(asc).map(function (L) { return '<text x="' + L.x + '" y="' + L.y + '" font-size="16" font-weight="600" text-anchor="' + L.anchor + '" fill="' + L.c + '">' + L.t + '</text>'; }).join('');
+    var tg = noTr ? '' : southTransitLines(asc).map(function (L) { return '<text data-tr="1" x="' + L.x + '" y="' + L.y + '" font-size="16" font-weight="600" text-anchor="' + L.anchor + '" fill="' + L.c + '">' + L.t + '</text>'; }).join('');
     var mb = midMode ? midBandSvg('south', midMode) : '';
     return '<svg class="nchart" xmlns="http://www.w3.org/2000/svg" viewBox="-132 -72 804 736" width="804" height="736"><g font-family="sans-serif">' + tg + s + mb + '</g></svg>';
   }
@@ -2467,50 +2469,69 @@
     ctx.arcTo(x, y, x + w, y, r);
     ctx.closePath();
   }
+  // 1.0.4 / टास्क 04: दोनों तालिकाओं का लेबल-खाना — सबसे चौड़ा लेबल + 16px.
+  // measure(t) = उस पाठ की चौड़ाई देने वाला फंक्शन (canvas या जाँच में नक़ली)।
+  var PNG_LAB_PAD = 16;
+  function pngLabelPlan(measure) {
+    var widest = '', wmax = 0, n, t;
+    for (n = 1; n <= 12; n++) {
+      t = 'B' + pad2(n);
+      var w1 = measure(t);
+      if (w1 > wmax) { wmax = w1; widest = t; }
+    }
+    var order = (RESULT && RESULT.order) || [];
+    var labs = (RESULT && RESULT.labels && RESULT.labels[RMODE]) || {};
+    order.forEach(function (k) {
+      var np = null;
+      (RESULT.bnn.planets || []).forEach(function (pp) { if (pp.key === k) np = pp; });
+      var lb = labs[k];
+      var t2 = (SHORT[k] || k) + ((np && np.retro && k !== 'rahu' && k !== 'ketu') ? '#' : '') + (lb != null ? '-' + lb : '');
+      var w2 = measure(t2);
+      if (w2 > wmax) { wmax = w2; widest = t2; }
+    });
+    return { labW: Math.ceil(wmax) + PNG_LAB_PAD, widest: widest, widestW: wmax };
+  }
+  window.BNN_pngLabelPlan = pngLabelPlan;      // जाँच के लिए (नुक़सान नहीं)
+  window.BNN_svgStr = { north: northSvgString, south: southSvgString };   // जाँच के लिए
+
   async function exportAllChartPng(test) {
     if (!RESULT || !RESULT_REC) { toast(L('पहले "कुंडली देखें" से कुंडली खोलें', 'First open a kundli via "View Kundli"')); return; }
     try {
       toast(L('⏳ PNG बन रहा है…', '⏳ Making PNG…'));
-      var isSouthPng = (typeof RCHART !== 'undefined' && RCHART === 'south');   // राउंड 52: जो स्क्रीन पर, वही PNG में
-      var nImg = await svgToImg(isSouthPng ? southSvgString(RMODE) : northSvgString(RMODE));   // राउंड 66-ख: पेटी सहित
-      var W = 1600, M = 30, CH = 730;
+      var isSouthPng = (typeof RCHART !== 'undefined' && RCHART === 'south');
+      // ---------- 1.0.4 / टास्क 04: PNG का नया ढाँचा ----------
+      //   • चार्ट में गोचर-ग्रह नहीं (जो स्क्रीन पर हैं वही natal), और header में “गोचर” पंक्ति भी नहीं
+      //   • चार्ट बड़ा (900px) और दाईं तालिकाओं के सामने लंबवत बीच में
+      //   • दोनों पेटियाँ canvas में (चार्ट के ठीक ऊपर, बाएँ-दाएँ, बराबर), 3-11 तालिका PNG में नहीं
+      var nImg = await svgToImg(isSouthPng ? southSvgString(null, { noTransit: true }) : northSvgString(null, { noTransit: true }));
+      var W = 2000, M = 40;
+      var CH = 900;                                            // चार्ट की चौड़ाई (पहले 730)
+      var chH = isSouthPng ? Math.round(CH * 736 / 804) : CH;  // दक्षिणी का अनुपात वही
       var rec = RESULT_REC;
       var canvas = document.createElement('canvas');
-      canvas.width = W; canvas.height = 2200;
+      canvas.width = W; canvas.height = 2800;
       var ctx = canvas.getContext('2d');
       ctx.fillStyle = '#fffdf6'; ctx.fillRect(0, 0, W, canvas.height);
       ctx.textAlign = 'left';
-      ctx.fillStyle = '#8f1d14'; ctx.font = 'bold 27px sans-serif';
-      ctx.fillText((rec.name || '—') + ' — BNN ALL CHART', M, 50);
-      ctx.fillStyle = '#5c4a24'; ctx.font = '15px sans-serif';
+      ctx.fillStyle = '#8f1d14'; ctx.font = 'bold 30px sans-serif';
+      ctx.fillText((rec.name || '—') + ' — BNN ALL CHART', M, 54);
+      ctx.fillStyle = '#5c4a24'; ctx.font = '16px sans-serif';
       var exPairs = RESULT.exchanges.map(function (p) { return planetName(p[0]) + '<>' + planetName(p[1]); }).join('  ·  ');
       var exLine = (exPairs || L('परिवर्तन: कोई नहीं', 'Parivartan: None')) + ' — ' + (RMODE === 'AP' ? 'AFTER PARIVARDHANAI (AP)' : 'BEFORE PARIVARDHANAI (BP)');
-      ctx.fillText(exLine, M, 76);
-      ctx.textAlign = 'right';
-      ctx.fillStyle = '#8f1d14'; ctx.font = 'bold 18px sans-serif';
-      ctx.fillText('mybapuji.com · BNN चार्ट', W - M, 44);
-      ctx.fillStyle = '#6b5b3a'; ctx.font = '14px sans-serif';
-      ctx.fillText(L('गोचर / Transit: ', 'गोचर / Transit: ') + (RESULT.transitWall ? fmtWall(RESULT.transitWall) : '—'), W - M, 68);
+      ctx.fillText(exLine, M, 84);
       // 1.0.4 / टास्क 02: जन्म-विवरण + जो offset लगा — PNG में भी
-      ctx.fillStyle = '#5c4a24'; ctx.font = '15px sans-serif'; ctx.textAlign = 'left';
-      ctx.fillText(rec.date + ' ' + rec.time + ' · ' + (recPlace(rec) || '') + (recState(rec) ? ', ' + recState(rec) : '') + ' · GMT ' + offsetLineText(rec), M, 96);
-      var cx = M, cy = 118;
-      var chH = isSouthPng ? Math.round(CH * 706 / 740) : CH;
-      ctx.drawImage(nImg, cx, cy, CH, chH);
-      if (RESULT.exchanges.length) {
-        var exL = RESULT.exchanges.map(function (p) { return planetName(p[0]) + '<>' + planetName(p[1]); });
-        var bx = cx + 10, by = cy + 10, bw = 220, bh = 14 + exL.length * 26;
-        ctx.fillStyle = '#fff3dd'; ctx.strokeStyle = '#e8a13c'; ctx.lineWidth = 1.5;
-        roundRectC(ctx, bx, by, bw, bh, 6); ctx.fill(); ctx.stroke();
-        ctx.fillStyle = '#7a2e00'; ctx.font = 'bold 16px sans-serif'; ctx.textAlign = 'center';
-        exL.forEach(function (t, i) { ctx.fillText(t, bx + bw / 2, by + 26 + i * 26); });
-        ctx.textAlign = 'left';
-      }
-      ctx.fillStyle = '#6b5b3a'; ctx.font = '14px sans-serif'; ctx.textAlign = 'center';
-      ctx.fillText(isSouthPng ? 'SOUTH INDIAN STYLE' : 'NORTH INDIAN STYLE', cx + CH / 2, cy + chH + 26);
+      ctx.fillStyle = '#5c4a24'; ctx.font = '15px sans-serif';
+      ctx.fillText(rec.date + ' ' + rec.time + ' · ' + (recPlace(rec) || '') + (recState(rec) ? ', ' + recState(rec) : '') + ' · GMT ' + offsetLineText(rec), M, 110);
+      ctx.textAlign = 'right';
+      ctx.fillStyle = '#8f1d14'; ctx.font = 'bold 20px sans-serif';
+      ctx.fillText('mybapuji.com · BNN चार्ट', W - M, 48);
       ctx.textAlign = 'left';
-      var x0 = cx + CH + 40, cw = W - x0 - M;
-      var yC = cy - 8, rh = 30, labW = 64;
+
+      var topY = 150;
+      var BOXH = 66, BOXGAP = 18;                              // पेटी की ऊँचाई + चार्ट से अंतर
+      var boxW = Math.round((CH - 18) / 2);                    // दोनों बराबर, चार्ट के किनारों पर
+      var x0 = M + CH + 52, cw = W - x0 - M;
+      var RH = 36, F = 19, FT = 22;                            // पंक्ति 30→36, अक्षर 16→19, शीर्षक 20→22
       function entP(e, idx, pmode) {
         if (!e) return null;
         var cls = idx === 0 ? 'b' : (((e.type === 'planet' && e.key === 'saturn') || vakriMember(e, pmode)) ? 'g' : (e.percent >= 20 ? 'g' : 'o'));
@@ -2520,116 +2541,12 @@
         return { t: t, c: col };
       }
       function titleBar(txt, y) {
-        ctx.fillStyle = '#8f1d14'; ctx.font = 'bold 20px sans-serif'; ctx.textAlign = 'left';
+        ctx.fillStyle = '#8f1d14'; ctx.font = 'bold ' + FT + 'px sans-serif'; ctx.textAlign = 'left';
         ctx.fillText(txt, x0, y);
-        return y + 12;
+        return y + 14;
       }
-      var bc = RESULT.tables.bhava[RMODE], n, i;
-      var maxB = 0;
-      for (n = 1; n <= 12; n++) { var l1 = (bc[String(n)].list159 || []).length; if (l1 > maxB) maxB = l1; }
-      var yy = titleBar('BHAVA COMBINATION — NATAL — 1-5-9 — ' + RMODE, yC + 18) + 14;
-      ctx.font = 'bold 16px sans-serif';
-      var bwMax = 0;
-      for (n = 1; n <= 12; n++) {
-        var lv0 = bc[String(n)].list159 || [];
-        for (i = 0; i < lv0.length; i++) { var ev0 = entP(lv0[i], i); if (ev0) bwMax = Math.max(bwMax, ctx.measureText(ev0.t).width); }
-      }
-      var cellW = Math.min((cw - labW) / maxB, Math.max(72, Math.ceil(bwMax) + 16));
-      var bW = labW + maxB * cellW;
-      var bStart = yy;
-      for (n = 1; n <= 12; n++) {
-        ctx.fillStyle = '#b3261e'; ctx.font = 'bold 16px sans-serif';
-        ctx.fillText('B' + pad2(n), x0 + 4, yy + 20);
-        var list = bc[String(n)].list159 || [];
-        for (i = 0; i < maxB; i++) {
-          var en = entP(list[i], i);
-          if (en) { ctx.fillStyle = en.c; ctx.font = 'bold 16px sans-serif'; ctx.fillText(en.t, x0 + labW + i * cellW + 6, yy + 20); }
-        }
-        ctx.strokeStyle = '#f0e7d2'; ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(x0, yy + rh - 6); ctx.lineTo(x0 + bW, yy + rh - 6); ctx.stroke();
-        yy += rh;
-      }
-      (function () {                         // राउंड 52: भाव-तालिका की खड़ी लकीरें
-        var top = bStart - 6, bot = yy - 6;
-        ctx.strokeStyle = '#e6d9bd'; ctx.lineWidth = 1;
-        for (var c2 = 0; c2 <= maxB; c2++) {
-          var vx = Math.min(x0 + labW + c2 * cellW, x0 + bW);
-          ctx.beginPath(); ctx.moveTo(vx, top); ctx.lineTo(vx, bot); ctx.stroke();
-        }
-      })();
-      var pc = RESULT.tables.planet[RMODE];
+      var bc = RESULT.tables.bhava[RMODE], pc = RESULT.tables.planet[RMODE];
       var astro = (RESULT.astro && RESULT.astro[RMODE]) || {};
-      var maxP = 0;
-      RESULT.order.forEach(function (k) { var l = ((pc[k] || {}).list1579 || []).length; if (l > maxP) maxP = l; });
-      var cols = Math.max(7, maxP);
-      ctx.font = 'bold 16px sans-serif';
-      var pwMax = 0;
-      RESULT.order.forEach(function (k0) {
-        ((pc[k0] || {}).list1579 || []).forEach(function (e0, i0) { var ep0 = entP(e0, i0); if (ep0) pwMax = Math.max(pwMax, ctx.measureText(ep0.t).width); });
-      });
-      var partW = 64;   // partner कॉलम
-      var pW = Math.min(Math.round((cw - labW - partW) / cols), Math.max(66, Math.ceil(pwMax) + 14));
-      yy = titleBar('PLANET COMBINATION — NATAL — 1-5-7-9 — ' + RMODE, yy + 34) + 14;
-      var pStart = yy;
-      RESULT.order.forEach(function (k) {
-        var np = null;
-        RESULT.bnn.planets.forEach(function (p) { if (p.key === k) np = p; });
-        ctx.fillStyle = '#b3261e'; ctx.font = 'bold 16px sans-serif';
-        var lbK = (RESULT.labels && RESULT.labels[RMODE]) ? RESULT.labels[RMODE][k] : null;   // भाग E: PNG में जन्म का ही अंक
-        ctx.fillText((SHORT[k] || k) + ((np && np.retro && k !== 'rahu' && k !== 'ketu') ? '#' : '') + (lbK != null ? '-' + lbK : ''), x0 + 4, yy + 20);
-        var lst = (pc[k] || {}).list1579 || [];
-        for (var j = 0; j < cols; j++) {
-          var ep = entP(lst[j], j, RMODE);
-          if (ep) { ctx.fillStyle = ep.c; ctx.font = 'bold 16px sans-serif'; ctx.fillText(ep.t, x0 + labW + j * pW + 4, yy + 20); }
-        }
-        var partner = astro[k];
-        if (partner) {
-          ctx.fillStyle = '#8e24aa'; ctx.font = 'bold 16px sans-serif';
-          ctx.fillText((SHORT[partner] || partner), x0 + labW + cols * pW + 14, yy + 20);
-        }
-        ctx.strokeStyle = '#f0e7d2'; ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(x0, yy + rh - 6); ctx.lineTo(x0 + labW + cols * pW + partW, yy + rh - 6); ctx.stroke();
-        yy += rh;
-      });
-      (function () {                         // राउंड 52: ग्रह-तालिका + partner कॉलम की खड़ी लकीरें
-        var top = pStart - 6, bot = yy - 6;
-        ctx.strokeStyle = '#e6d9bd'; ctx.lineWidth = 1;
-        for (var c3 = 0; c3 <= cols; c3++) {
-          var vx = Math.min(x0 + labW + c3 * pW, x0 + cw);
-          ctx.beginPath(); ctx.moveTo(vx, top); ctx.lineTo(vx, bot); ctx.stroke();
-        }
-        var px = x0 + labW + cols * pW;
-        ctx.beginPath(); ctx.moveTo(px, top); ctx.lineTo(px, bot); ctx.stroke();
-        var px2 = px + partW;
-        ctx.beginPath(); ctx.moveTo(px2, top); ctx.lineTo(px2, bot); ctx.stroke();
-      })();
-      // राउंड 66 / टास्क 10-ख: 3-11 तालिका — PLANET 1579 के नीचे (print जैसा ढाँचा)
-      var tg3 = (RESULT.tables.r311 && RESULT.tables.r311[RMODE]) || {};
-      var mx3 = 0;
-      RESULT.order.forEach(function (k) { var l = (tg3[k] || []).length; if (l > mx3) mx3 = l; });
-      var cols3 = Math.max(3, mx3);
-      var cw3 = Math.min(150, Math.round((cw - labW - 8) / cols3));
-      yy = titleBar('PLANET COMBINATION — NATAL — 3-11 — ' + RMODE, yy + 34) + 14;
-      var t3Start = yy;
-      RESULT.order.forEach(function (k) {
-        ctx.fillStyle = '#b3261e'; ctx.font = 'bold 16px sans-serif';
-        ctx.fillText(pLabNat(k), x0 + 4, yy + 20);
-        (tg3[k] || []).forEach(function (e, j) {
-          ctx.fillStyle = '#1d4ed8'; ctx.font = 'bold 16px sans-serif';
-          ctx.fillText(pCode(e.key), x0 + labW + j * cw3 + 4, yy + 20);
-        });
-        ctx.strokeStyle = '#f0e7d2'; ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(x0, yy + rh - 6); ctx.lineTo(x0 + labW + cols3 * cw3, yy + rh - 6); ctx.stroke();
-        yy += rh;
-      });
-      (function () {                         // 3-11 तालिका की खड़ी लकीरें
-        var top = t3Start - 6, bot = yy - 6;
-        ctx.strokeStyle = '#e6d9bd'; ctx.lineWidth = 1;
-        for (var c4 = 0; c4 <= cols3; c4++) {
-          var vx4 = Math.min(x0 + labW + c4 * cw3, x0 + cw);
-          ctx.beginPath(); ctx.moveTo(vx4, top); ctx.lineTo(vx4, bot); ctx.stroke();
-        }
-      })();
       var d = RESULT.dasha;
       var runLines = [];
       var mi = d.running && d.running.mahaIndex;
@@ -2640,19 +2557,139 @@
       var ahs = (d.running && d.running.andhirams) || [];
       var ai = d.running && d.running.andhiramIndex;
       if (ai != null && ahs[ai] && ahs[ai].lord) runLines.push(planetName(ahs[ai].lord) + L(' अंतर: ', ' ANDHIRAM: ') + fmtISO(ahs[ai].startISO) + ' → ' + fmtISO(ahs[ai].endISO));
-      var boxY = yy + 10, boxH = 34 + runLines.length * 26;
+
+      // ---- (क) दोनों तालिकाओं का लेबल-खाना नापकर ----
+      // 1.0.4 / टास्क 04 का bug: labW 64 पर जमा था, इसलिए “JUP#-20” जैसे लेबल पहले सदस्य से
+      // टकराते थे। अब दोनों तालिकाओं का सबसे चौड़ा लेबल नापकर उसमें 16px जोड़ते हैं — दोनों
+      // तालिकाओं का पहला सदस्य एक ही खड़ी रेखा से शुरू होता है।
+      var n, i;
+      ctx.font = 'bold ' + F + 'px sans-serif';
+      var labPlan = pngLabelPlan(function (t) { return ctx.measureText(t).width; });
+      var labW = labPlan.labW;                                 // = सबसे चौड़ा लेबल + 16
+
+      // ---- (ख) स्तंभों की चौड़ाई ----
+      var maxB = 0;
+      for (n = 1; n <= 12; n++) { var l1 = (bc[String(n)].list159 || []).length; if (l1 > maxB) maxB = l1; }
+      var bwMax = 0;
+      for (n = 1; n <= 12; n++) {
+        var lv0 = bc[String(n)].list159 || [];
+        for (i = 0; i < lv0.length; i++) { var ev0 = entP(lv0[i], i); if (ev0) bwMax = Math.max(bwMax, ctx.measureText(ev0.t).width); }
+      }
+      maxB = Math.max(1, maxB);
+      var cellW = Math.min((cw - labW) / maxB, Math.max(84, Math.ceil(bwMax) + 18));
+      var maxP = 0;
+      RESULT.order.forEach(function (k) { var l = ((pc[k] || {}).list1579 || []).length; if (l > maxP) maxP = l; });
+      var cols = Math.max(7, maxP);
+      var pwMax = 0;
+      RESULT.order.forEach(function (k0) {
+        ((pc[k0] || {}).list1579 || []).forEach(function (e0, i0) { var ep0 = entP(e0, i0); if (ep0) pwMax = Math.max(pwMax, ctx.measureText(ep0.t).width); });
+      });
+      var partW = 78;
+      var pW = Math.min(Math.round((cw - labW - partW) / cols), Math.max(72, Math.ceil(pwMax) + 16));
+
+      // ---- (ग) दाईं तरफ़ की कुल ऊँचाई → चार्ट को बीच में बैठाने के लिए ----
+      var rightH = 34 + 12 * RH + 40 + 34 + RESULT.order.length * RH + 12 + (34 + Math.max(1, runLines.length) * 26);
+      var leftH = BOXH + BOXGAP + chH + 34;
+      var leftTop = topY + Math.max(0, Math.round((rightH - leftH) / 2));
+
+      // ---- (घ) दोनों पेटियाँ (चार्ट के ऊपर, किनारों से सटी, बराबर) ----
+      function pngBox(x, y, w, bg, bd, titleTxt, valTxt, noteTxt, tcol, vcol) {
+        ctx.fillStyle = bg; ctx.strokeStyle = bd; ctx.lineWidth = 2;
+        roundRectC(ctx, x, y, w, BOXH, 8); ctx.fill(); ctx.stroke();
+        ctx.textAlign = 'center';
+        ctx.fillStyle = tcol; ctx.font = 'bold 15px sans-serif';
+        ctx.fillText(titleTxt, x + w / 2, y + 22);
+        ctx.fillStyle = vcol; ctx.font = 'bold 18px sans-serif';
+        ctx.fillText(valTxt, x + w / 2, y + 45);
+        if (noteTxt) { ctx.fillStyle = '#8a5a3a'; ctx.font = '600 13px sans-serif'; ctx.fillText(noteTxt, x + w / 2, y + 60); }
+        ctx.textAlign = 'left';
+      }
+      var mpd = midBandData(RMODE);
+      pngBox(M, leftTop, boxW, '#fff7e6', '#d9a95f', L('परिवर्तन', 'Parivartan'), parivText(), '', '#8a5a12', '#7a3d0e');
+      pngBox(M + CH - boxW, leftTop, boxW, '#fcd9c4', '#b4643a', L('राहु-केतु मध्य बिंदु', 'Rahu-Ketu Midpoint'),
+        (mpd && mpd.codes) ? mpd.codes : '—', (mpd && mpd.more) ? L('एक से अधिक — प्रभाव नहीं', 'More than one — no effect') : '', '#7a4a2c', '#5b2b10');
+
+      // ---- (च) चार्ट ----
+      var cy = leftTop + BOXH + BOXGAP;
+      ctx.drawImage(nImg, M, cy, CH, chH);
+      ctx.fillStyle = '#6b5b3a'; ctx.font = '15px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText(isSouthPng ? 'SOUTH INDIAN STYLE' : 'NORTH INDIAN STYLE', M + CH / 2, cy + chH + 28);
+      ctx.textAlign = 'left';
+
+      // ---- (छ) भाव तालिका ----
+      var yy = titleBar('BHAVA COMBINATION — NATAL — 1-5-9 — ' + RMODE, topY + 18) + 18;
+      var bStart = yy, bW = labW + maxB * cellW;
+      for (n = 1; n <= 12; n++) {
+        ctx.fillStyle = '#b3261e'; ctx.font = 'bold ' + F + 'px sans-serif';
+        ctx.fillText('B' + pad2(n), x0 + 4, yy + 24);
+        var list = bc[String(n)].list159 || [];
+        for (i = 0; i < maxB; i++) {
+          var en = entP(list[i], i);
+          if (en) { ctx.fillStyle = en.c; ctx.font = 'bold ' + F + 'px sans-serif'; ctx.fillText(en.t, x0 + labW + i * cellW + 8, yy + 24); }
+        }
+        ctx.strokeStyle = '#f0e7d2'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(x0, yy + RH - 6); ctx.lineTo(x0 + bW, yy + RH - 6); ctx.stroke();
+        yy += RH;
+      }
+      (function () {
+        var top = bStart - 8, bot = yy - 6;
+        ctx.strokeStyle = '#e6d9bd'; ctx.lineWidth = 1;
+        for (var c2 = 0; c2 <= maxB; c2++) {
+          var vx = Math.min(x0 + labW + c2 * cellW, x0 + bW);
+          ctx.beginPath(); ctx.moveTo(vx, top); ctx.lineTo(vx, bot); ctx.stroke();
+        }
+      })();
+
+      // ---- (ज) ग्रह तालिका ----
+      yy = titleBar('PLANET COMBINATION — NATAL — 1-5-7-9 — ' + RMODE, yy + 44) + 18;
+      var pStart = yy;
+      RESULT.order.forEach(function (k) {
+        var np = null;
+        RESULT.bnn.planets.forEach(function (p) { if (p.key === k) np = p; });
+        ctx.fillStyle = '#b3261e'; ctx.font = 'bold ' + F + 'px sans-serif';
+        var lbK = (RESULT.labels && RESULT.labels[RMODE]) ? RESULT.labels[RMODE][k] : null;
+        ctx.fillText((SHORT[k] || k) + ((np && np.retro && k !== 'rahu' && k !== 'ketu') ? '#' : '') + (lbK != null ? '-' + lbK : ''), x0 + 4, yy + 24);
+        var lst = (pc[k] || {}).list1579 || [];
+        for (var j = 0; j < cols; j++) {
+          var ep = entP(lst[j], j, RMODE);
+          if (ep) { ctx.fillStyle = ep.c; ctx.font = 'bold ' + F + 'px sans-serif'; ctx.fillText(ep.t, x0 + labW + j * pW + 8, yy + 24); }
+        }
+        var partner = astro[k];
+        if (partner) {
+          ctx.fillStyle = '#8e24aa'; ctx.font = 'bold ' + F + 'px sans-serif';
+          ctx.fillText((SHORT[partner] || partner), x0 + labW + cols * pW + 16, yy + 24);
+        }
+        ctx.strokeStyle = '#f0e7d2'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(x0, yy + RH - 6); ctx.lineTo(x0 + labW + cols * pW + partW, yy + RH - 6); ctx.stroke();
+        yy += RH;
+      });
+      (function () {
+        var top = pStart - 8, bot = yy - 6;
+        ctx.strokeStyle = '#e6d9bd'; ctx.lineWidth = 1;
+        for (var c3 = 0; c3 <= cols; c3++) {
+          var vx = Math.min(x0 + labW + c3 * pW, x0 + cw);
+          ctx.beginPath(); ctx.moveTo(vx, top); ctx.lineTo(vx, bot); ctx.stroke();
+        }
+        var px = x0 + labW + cols * pW;
+        ctx.beginPath(); ctx.moveTo(px, top); ctx.lineTo(px, bot); ctx.stroke();
+        var px2 = px + partW;
+        ctx.beginPath(); ctx.moveTo(px2, top); ctx.lineTo(px2, bot); ctx.stroke();
+      })();
+      // 1.0.4 / टास्क 04: PNG में 3-11 तालिका नहीं (स्क्रीन व print/PDF में बनी रहती है)
+
+      var boxY = yy + 12, boxH = 34 + Math.max(1, runLines.length) * 26;
       ctx.fillStyle = '#fff8e6'; ctx.strokeStyle = '#d9a95f'; ctx.lineWidth = 1.5;
       roundRectC(ctx, x0, boxY, cw, boxH, 8); ctx.fill(); ctx.stroke();
-      ctx.fillStyle = '#7a2e00'; ctx.font = 'bold 17px sans-serif';
-      ctx.fillText(L('चल रही दशा / RUNNING', 'चल रही दशा / RUNNING'), x0 + 14, boxY + 24);
-      ctx.font = 'bold 15px sans-serif'; ctx.fillStyle = '#5c4a24';
-      runLines.forEach(function (t, i2) { ctx.fillText(t, x0 + 14, boxY + 50 + i2 * 26); });
-      var yEnd = Math.max(cy + chH + 50, boxY + boxH + 20);
+      ctx.fillStyle = '#7a2e00'; ctx.font = 'bold 19px sans-serif';
+      ctx.fillText(L('चल रही दशा / RUNNING', 'चल रही दशा / RUNNING'), x0 + 14, boxY + 26);
+      ctx.font = 'bold 16px sans-serif'; ctx.fillStyle = '#5c4a24';
+      runLines.forEach(function (t, i2) { ctx.fillText(t, x0 + 14, boxY + 54 + i2 * 26); });
+      var yEnd = Math.max(cy + chH + 54, boxY + boxH + 20);
       ctx.textAlign = 'center';
-      ctx.fillStyle = '#8f1d14'; ctx.font = 'bold 14px sans-serif';
+      ctx.fillStyle = '#8f1d14'; ctx.font = 'bold 15px sans-serif';
       ctx.fillText('mybapuji.com - निशुल्क ज्योतिष सामग्री: कुंडली · कुंडली मिलान · पंचांग · BNN चार्ट', W / 2, yEnd + 8);
       ctx.fillStyle = '#6b5b3a'; ctx.font = '13px sans-serif';
-      ctx.fillText(APP_LABEL + ' · info@mybapuji.com', W / 2, yEnd + 28);
+      ctx.fillText(APP_LABEL + ' · info@mybapuji.com', W / 2, yEnd + 30);
       var outH = Math.round(yEnd + 44);
       var out = document.createElement('canvas');
       out.width = W; out.height = outH;
