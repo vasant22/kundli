@@ -411,11 +411,18 @@ function beginPhalOnline(host, values, conversion, coords) {
       host.innerHTML = '<p class="po-note">विस्तृत फलादेश यहाँ नहीं खुल सका — ऊपर दिए बटन से PDF खोलें।</p>'
     }
   }
+  const near = () => {
+    const r = host.getBoundingClientRect()
+    return r.top < window.innerHeight + 600 && r.bottom > -600
+  }
   if (typeof IntersectionObserver === 'undefined') { start(); return }
   const io = new IntersectionObserver((entries) => {
-    if (entries.some((e) => e.isIntersecting)) { io.disconnect(); start() }
+    if (entries.some((e) => e.isIntersecting)) { io.disconnect(); window.removeEventListener('scroll', onScroll); start() }
   }, { rootMargin: '600px' })
+  const onScroll = () => { if (!near()) return; window.removeEventListener('scroll', onScroll); io.disconnect(); start() }
   io.observe(host)
+  // page दोबारा render होने पर observer कभी नहीं चलता — सीधे भी जाँचें
+  if (near()) { io.disconnect(); start() } else window.addEventListener('scroll', onScroll, { passive: true })
 }
 
 function buildDetailsText(values) {
