@@ -178,6 +178,17 @@ describe('साढ़ेसाती की पट्टी (टास्क 05
     expect(years).toEqual([[2002, 2009], [2032, 2039], [2061, 2068]])
   })
 
+  it('चक्र के भीतर वक्री से लौटना नोट में आता है (05-ग §0)', () => {
+    const { cycleData } = ctx()
+    const notes = cycleData[0].notes ?? []
+    const retro = notes.filter((n) => n.dir === 'retro')
+    // 1985: 2005 में शनि फिर मिथुन (2) में, 2007 में फिर कर्क (3) में लौटा
+    expect(retro.some((n) => n.rashi === 2)).toBe(true)
+    expect(retro.some((n) => n.rashi === 3)).toBe(true)
+    // चरणों की तारीख़ें नहीं बदलीं (पहला प्रवेश वाला नियम)
+    expect(cycleData[0].phases.map((ph) => ph.phase)).toEqual([12, 1, 2])
+  })
+
   it('12mm से छोटे हिस्से पर कोई अक्षर नहीं', () => {
     const { cycleData, birth, end } = ctx()
     const svg = sadesatiChart({ cycles: cycleData, dhaiya: data.sadesati.dhaiyaCycles, fromMs: birth, toMs: end, nowMs: data.meta.nowMs })

@@ -400,6 +400,7 @@ function sadesati(data) {
   // हर चक्र: एक पंक्ति + तीनों चरणों की तारीख़ें + शनि के लौटने का नोट
   const noteText = (n, kindName) => {
     const r = rashiHi(n.rashi)
+    if (n.dir === 'retro') return `बीच में ${dateHi(n.fromMs)} से ${dateHi(n.toMs)} शनि फिर ${r} में लौटा`
     if (n.dir === 'back') return `बीच में ${dateHi(n.fromMs)} से ${dateHi(n.toMs)} शनि पीछे ${r} में लौटा`
     if (n.dir === 'forward') return `बीच में ${dateHi(n.fromMs)} से ${dateHi(n.toMs)} शनि आगे ${r} में गया, फिर लौटा (${kindName} में थोड़ा विराम)`
     return `बीच में ${dateHi(n.fromMs)} से ${dateHi(n.toMs)} शनि ${r} में रहा (थोड़ा विराम)`

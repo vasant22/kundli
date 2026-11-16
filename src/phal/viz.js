@@ -402,7 +402,7 @@ const SA_SOFT = { 12: '#D3D9EE', 1: '#B7BFE4', 2: '#C4CCEB' }
 const SA_LABEL = { 12: '१', 1: '२', 2: '३' }
 
 export function sadesatiChart({ cycles = [], dhaiya = [], fromMs, toMs, nowMs, label = 'आप यहाँ हैं' }) {
-  const W = 178, H = 36
+  const W = 178, H = 34
   const x = (ms) => (ms - fromMs) / (toMs - fromMs) * W
   const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, width: '100%', class: 'phal-viz', role: 'img', 'aria-label': 'साढ़ेसाती और ढैया की पट्टी' })
 
@@ -451,16 +451,16 @@ export function sadesatiChart({ cycles = [], dhaiya = [], fromMs, toMs, nowMs, l
     if (mx < 4 || mx > W - 4) continue
     if (mx - lastX < 10) continue
     svg.appendChild(el('line', { x1: mx, x2: mx, y1: 16, y2: 18, stroke: '#D8D5E3', 'stroke-width': 0.3 }))
-    svg.appendChild(el('text', { x: mx, y: 29.5, 'text-anchor': 'middle', 'font-size': 2.7, fill: C.muted }, String(new Date(ms).getUTCFullYear())))
+    svg.appendChild(el('text', { x: mx, y: 28, 'text-anchor': 'middle', 'font-size': 2.7, fill: C.muted }, String(new Date(ms).getUTCFullYear())))
     lastX = mx
   }
   // "आप यहाँ हैं"
   const nx = x(nowMs)
   if (nx >= 0 && nx <= W) {
-    svg.appendChild(el('line', { x1: nx, x2: nx, y1: 2, y2: 31.5, stroke: C.nisha, 'stroke-width': 0.6 }))
+    svg.appendChild(el('line', { x1: nx, x2: nx, y1: 2, y2: 29.5, stroke: C.nisha, 'stroke-width': 0.6 }))
     svg.appendChild(el('path', { d: `M${nx - 1.6},1 L${nx + 1.6},1 L${nx},3.2 Z`, fill: C.marigold }))
-    svg.appendChild(el('text', { x: nx, y: 35, 'text-anchor': 'middle', 'font-size': 2.9, fill: C.marigold, 'font-weight': 800, 'font-family': HEAD }, label))
+    svg.appendChild(el('text', { x: nx, y: 33, 'text-anchor': 'middle', 'font-size': 2.9, fill: C.marigold, 'font-weight': 800, 'font-family': HEAD }, label))
   }
-  svg.appendChild(el('line', { x1: 0, x2: W, y1: 32.5, y2: 32.5, stroke: '#E6E2EE', 'stroke-width': 0.3 }))
+  svg.appendChild(el('line', { x1: 0, x2: W, y1: 30.5, y2: 30.5, stroke: '#E6E2EE', 'stroke-width': 0.3 }))
   return svg
 }

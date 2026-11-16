@@ -165,11 +165,23 @@ export function computeSadesati(swe, { moonRashi, birthMs, years = 100, stepDays
     const notes = []
     for (let i = 1; i < kindRuns.length; i++) {
       const gap = kindRuns[i].fromMs - kindRuns[i - 1].toMs
-      if (gap <= 30 * MS_DAY) continue
-      const rashi = saturnRashiAt(swe, msToJd((kindRuns[i - 1].toMs + kindRuns[i].fromMs) / 2))
-      const dir = rashi === (first + 11) % 12 ? 'back' : rashi === (last + 1) % 12 ? 'forward' : 'pause'
-      notes.push({ fromMs: kindRuns[i - 1].toMs, toMs: kindRuns[i].fromMs, rashi, dir })
+      if (gap > 30 * MS_DAY) {
+        const rashi = saturnRashiAt(swe, msToJd((kindRuns[i - 1].toMs + kindRuns[i].fromMs) / 2))
+        const dir = rashi === (first + 11) % 12 ? 'back' : rashi === (last + 1) % 12 ? 'forward' : 'pause'
+        notes.push({ fromMs: kindRuns[i - 1].toMs, toMs: kindRuns[i].fromMs, rashi, dir })
+      }
+      // चक्र के भीतर वक्री: शनि पिछली राशि में लौटा (1 → 12, 2 → 1) — तारीख़ें
+      // उसी लौटने वाले टुकड़े की; चरणों की तारीख़ें नहीं बदलतीं.
+      const pi = order.indexOf(kindRuns[i - 1].phase)
+      const ci = order.indexOf(kindRuns[i].phase)
+      if (ci >= 0 && pi >= 0 && ci < pi) {
+        notes.push({
+          fromMs: kindRuns[i].fromMs, toMs: kindRuns[i].toMs,
+          rashi: (moonRashi + kindRuns[i].phase - 1) % 12, dir: 'retro',
+        })
+      }
     }
+    notes.sort((a, b) => a.fromMs - b.fromMs)
     return { ...c, phases, notes }
   }
   const runHi = (kind, phase) => {

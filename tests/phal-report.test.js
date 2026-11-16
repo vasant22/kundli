@@ -217,6 +217,12 @@ describe('दशा — व्यक्तिगत दशाफल (टास�
     expect(line).not.toContain('{')
   })
 
+  it('साढ़ेसाती में वक्री से लौटने के नोट (मिथुन/कर्क) छपते हैं', () => {
+    const html = renderReport(buildPhalData(swe, BIRTH_1985, { nowMs: Date.UTC(2026, 11, 14) }))
+    expect(html).toContain('शनि फिर मिथुन में लौटा')
+    expect(html).toContain('शनि फिर कर्क में लौटा')
+  })
+
   it('1985 की चल रही दशा (शुक्र/राहु) रिपोर्ट में खुलकर आती है', () => {
     const d = buildPhalData(swe, BIRTH_1985, { nowMs: Date.UTC(2026, 10, 11) })
     expect(d.dasha.current.maha.key).toBe('venus')
