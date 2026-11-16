@@ -411,6 +411,8 @@ function beginPhalOnline(host, values, conversion, coords) {
       host.innerHTML = '<p class="po-note">विस्तृत फलादेश यहाँ नहीं खुल सका — ऊपर दिए बटन से PDF खोलें।</p>'
     }
   }
+  // पहले कभी खुल चुका है (chunk cache में) → तुरंत खोलो
+  if (globalThis.__phalOnlineReady) { start(); return }
   const near = () => {
     const r = host.getBoundingClientRect()
     return r.top < window.innerHeight + 600 && r.bottom > -600

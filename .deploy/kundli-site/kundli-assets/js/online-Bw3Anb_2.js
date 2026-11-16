@@ -6,4 +6,4 @@ import{c as e}from"./astro-Bb-V9OEA.js";import{a as t}from"./timeutil-D7IgO8sO.j
     </div>
     ${l?`<p class="po-note">${l}</p>`:``}
     ${i(h)}
-  </div>`)}export{o as mountPhalOnline};
+  </div>`)}globalThis.__phalOnlineReady=!0;export{o as mountPhalOnline};

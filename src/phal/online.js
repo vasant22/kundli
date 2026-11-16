@@ -53,3 +53,7 @@ export async function mountPhalOnline(host, { search, pdfHref, name = '', hindiO
     ${renderOnline(data)}
   </div>`
 }
+
+// एक बार mount हो गया तो chunk/fonts cache में हैं — अगली बार (page दोबारा render)
+// section तुरंत खोलो, observer का इंतज़ार नहीं.
+globalThis.__phalOnlineReady = true
