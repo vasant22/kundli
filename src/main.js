@@ -393,12 +393,13 @@ function phalUrl(values, conversion, coords) {
 // विस्तृत फलादेश का online section — JS chunk तभी load होता है जब जातक यहाँ तक
 // scroll करे (देखें beginPhalOnline). जो वहाँ तक नहीं जाता, उसके लिए कुछ नहीं.
 function beginPhalOnline(host, values, conversion, coords) {
-  // एक बार में एक ही mount; page दोबारा render हो तो जो host अभी DOM में है उसी में भरो
   const start = async () => {
+    // host के हिसाब से एक बार — page दोबारा render हो तो नया host ख़ुद mount होगा
     if (host.dataset.phalMounted) return
     host.dataset.phalMounted = '1'
     try {
       const { mountPhalOnline } = await import('./phal/online.js')
+      // page दोबारा render हुआ हो तो जो host अभी DOM में है उसी में भरो
       const target = document.querySelector('#phal-online')
       if (!target || target.dataset.phalMountedFinal) return
       target.dataset.phalMountedFinal = '1'
@@ -415,6 +416,7 @@ function beginPhalOnline(host, values, conversion, coords) {
       target.innerHTML = '<p class="po-note">विस्तृत फलादेश यहाँ नहीं खुल सका — ऊपर दिए बटन से PDF खोलें।</p>'
     }
   }
+  // पहले कभी खुल चुका है (chunk cache में) → तुरंत खोलो
   if (globalThis.__phalOnlineReady) { start(); return }
   const near = () => {
     const r = host.getBoundingClientRect()
@@ -426,10 +428,439 @@ function beginPhalOnline(host, values, conversion, coords) {
   }, { rootMargin: '600px' })
   const onScroll = () => { if (!near()) return; window.removeEventListener('scroll', onScroll); io.disconnect(); start() }
   io.observe(host)
+  // page दोबारा render होने पर observer कभी नहीं चलता — सीधे भी जाँचें
   if (near()) { io.disconnect(); start() } else window.addEventListener('scroll', onScroll, { passive: true })
 }
 
-// विस्तृत फलादेश — मौजूदा result के नीचे, screen-लगाव में (कोई ऊपरी हिस्सा नहीं बदलता)
+function buildDetailsText(values) {
+  const k = values.kundli
+  const meta = chartMeta(values)
+  const lines = ['कुंडली / Kundli', '']
+  if (values.name) lines.push(`${t('summary.name')}: ${values.name}`)
+  lines.push(`${t('summary.date')}: ${meta.dateText}`)
+  lines.push(`${t('summary.time')}: ${meta.timeText}`)
+  lines.push(`${t('summary.place')}: ${meta.placeText}`)
+  lines.push(`${t('summary.lagna')}: ${rashiLabel(k.ascendant.rashi)}`)
+  lines.push(`${t('summary.ayanamsa')}: ${formatDegMin(k.ayanamsa)}`)
+  lines.push('')
+  k.planets.forEach((p) => {
+    lines.push(
+      `${grahaLabel(p.key)} — ${rashiLabel(p.rashi)} — ${formatDegMinSec(p.degInSign)} — ` +
+        `${nakshatraLabel(p.nakshatra)} ${t('table.pada')} ${p.pada} — ${t('table.house')} ${p.house}` +
+        (p.retro ? ` — ${t('k.retro')}` : '')
+    )
+  })
+  return lines.join('\n')
+}
+
+// ---------------------------------------------------------------------------
+// Language (Hindi default ⇄ English)
+// ---------------------------------------------------------------------------
+// 12 month chips (a radio group) — easier to tap on phones than a dropdown.
+function buildMonthChips() {
+  const wrap = document.querySelector('#f-month')
+  wrap.replaceChildren()
+  months().forEach((name, i) => {
+    const label = document.createElement('label')
+    const input = document.createElement('input')
+    input.type = 'radio'
+    input.name = 'month'
+    input.value = String(i + 1)
+    const span = document.createElement('span')
+    span.textContent = name
+    label.append(input, span)
+    wrap.append(label)
+  })
+}
+
+// Re-label the chips in the current language (the chosen month is kept).
+function updateMonthLabels() {
+  const names = months()
+  document.querySelectorAll('#f-month label span').forEach((span, i) => {
+    span.textContent = names[i]
+  })
+}
+
+function applyLanguage() {
+  document.documentElement.lang = getLang()
+  document.title = t('app.docTitle')
+
+  document.querySelectorAll('[data-i18n]').forEach((el) => {
+    el.textContent = t(el.dataset.i18n)
+  })
+  document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
+    el.placeholder = t(el.dataset.i18nPlaceholder)
+  })
+
+  updateMonthLabels()
+  langToggle.textContent = t('lang.switchTo')
+  if (!searchNote.hidden && lastNoteKey) searchNote.textContent = t(lastNoteKey)
+  renderConfirm()
+
+  // Keep visible errors / summary in the current language as well.
+  if (Object.keys(lastErrors).length > 0) showErrors(lastErrors)
+  if (lastValues) showSummary(lastValues, false)
+}
+
+// ---------------------------------------------------------------------------
+// Read the form (the shared validation rules live in src/birthvalidate.js —
+// one copy used by this page, /match/ and the homepage Kundli mini-widget)
+// ---------------------------------------------------------------------------
+function readForm() {
+  const raw = (id) => document.getElementById(id).value.trim()
+  const checkedGender = document.querySelector('input[name="gender"]:checked')
+  return {
+    name: raw('f-name'),
+    gender: checkedGender ? checkedGender.value : '',
+    day: raw('f-day'),
+    month: document.querySelector('input[name="month"]:checked')?.value ?? '',
+    year: raw('f-year'),
+    hour: raw('f-hour'),
+    minute: raw('f-minute'),
+    second: raw('f-second'),
+    offset: raw('f-offset'),
+    place: raw('f-place'),
+    selectedPlace,
+    manual: { lat: raw('f-lat'), lon: raw('f-lon'), tz: raw('f-tz') },
+  }
+}
+
+function showErrors(errors) {
+  document.querySelectorAll('.err').forEach((el) => {
+    el.textContent = ''
+  })
+  document.querySelectorAll('.has-error').forEach((el) => el.classList.remove('has-error'))
+
+  Object.entries(errors).forEach(([key, message]) => {
+    const errEl = document.getElementById(`err-${key}`)
+    if (!errEl) return
+    errEl.textContent = message
+    const field = errEl.closest('.field')
+    if (field) field.classList.add('has-error')
+  })
+}
+
+// ---------------------------------------------------------------------------
+// Summary card (temporary until real results arrive in phases 5–8)
+// ---------------------------------------------------------------------------
+function showSummary(values, scroll) {
+  const pad = (n) => String(n).padStart(2, '0')
+  const dateText = `${toInt(values.day)} ${t('month.' + toInt(values.month))} ${toInt(values.year)}`
+  const timeText = `${pad(toInt(values.hour))}:${pad(toInt(values.minute))}:${pad(values.second === '' ? 0 : toInt(values.second))}`
+
+  output.hidden = false
+  output.replaceChildren()
+
+  const card = document.createElement('div')
+  card.className = 'card summary'
+  if (values.kundli && !values.kundli.error) {
+    // Print/PDF letter-head: title + both site links inside a neat box.
+    const printHead = document.createElement('div')
+    printHead.className = 'print-only print-head'
+    const printTitle = document.createElement('p')
+    printTitle.className = 'print-title'
+    printTitle.textContent = 'कुंडली / Kundli'
+    const printLinks = document.createElement('p')
+    printLinks.className = 'print-links'
+    const siteLink = document.createElement('a')
+    siteLink.href = 'https://www.mybapuji.com'
+    siteLink.target = '_blank'
+    siteLink.rel = 'noopener'
+    siteLink.textContent = 'mybapuji.com'
+    const linksSep = document.createElement('span')
+    linksSep.className = 'print-links-sep'
+    linksSep.textContent = '·'
+    const kundliLink = document.createElement('a')
+    kundliLink.href = absoluteUrl(PAGES.kundli)
+    kundliLink.target = '_blank'
+    kundliLink.rel = 'noopener'
+    kundliLink.textContent = 'mybapuji.com/kundli/'
+    printLinks.append(siteLink, linksSep, kundliLink)
+    printHead.append(printTitle, printLinks)
+    card.append(printHead)
+  }
+
+  const heading = document.createElement('h2')
+  heading.className = 'summary-title'
+  heading.textContent = t('summary.title')
+  card.append(heading)
+
+  const list = document.createElement('dl')
+  const addRow = (label, value) => {
+    const dt = document.createElement('dt')
+    dt.textContent = label
+    const dd = document.createElement('dd')
+    dd.textContent = value
+    list.append(dt, dd)
+  }
+  addRow(t('summary.name'), values.name || '—')
+  addRow(t('summary.gender'), t(`gender.${values.gender}`))
+  addRow(t('summary.date'), dateText)
+  addRow(t('summary.time'), timeText)
+
+  // UTC conversion details (Phase 4).
+  const conv = values.converted
+  if (conv) {
+    let tzText
+    if (values.offset !== '') {
+      tzText = `${conv.offsetText} (${t('summary.manualOffset')})`
+    } else if (parseUtcOffset(conv.zone) !== null) {
+      tzText = `UTC${conv.offsetText}`
+    } else {
+      tzText = `${conv.zone} (UTC${conv.offsetText})`
+    }
+    addRow(t('summary.tz'), tzText)
+    const u = conv.utc
+    addRow(
+      t('summary.utc'),
+      `${u.day} ${t('month.' + u.month)} ${u.year}, ${pad(u.hour)}:${pad(u.minute)}:${pad(u.second)} UTC`
+    )
+  }
+
+  // Location row(s): the picked place if any, plus coordinates + timezone.
+  const place = values.selectedPlace
+  const placeLabel = place
+    ? [place.name, place.admin1, place.country].filter(Boolean).join(', ')
+    : values.place
+  addRow(t('summary.place'), placeLabel || '—')
+
+  const manualUsed =
+    values.manual && values.manual.lat !== '' && values.manual.lon !== '' && values.manual.tz !== ''
+  if (manualUsed) {
+    addRow(t('summary.coords'), `${values.manual.lat}, ${values.manual.lon} · ${values.manual.tz}`)
+  } else if (place) {
+    addRow(t('summary.coords'), `${place.latitude}, ${place.longitude} · ${place.timezone}`)
+  }
+  card.append(list)
+
+  // The calculated chart (Phase 5): lagna, ayanamsa + a compact planet list.
+  const kundli = values.kundli
+  if (kundli && !kundli.error) {
+    const asc = kundli.ascendant
+    addRow(t('summary.lagna'), `${rashiLabel(asc.rashi)} · ${formatDegMin(asc.degInSign)}`)
+    addRow(t('summary.ayanamsa'), formatDegMin(kundli.ayanamsa))
+
+    // Charts: D1 + Navamsa (D9) side by side, plus Bhava Chalit.
+    const chartWrap = document.createElement('div')
+    chartWrap.className = 'chart-wrap'
+    const toggleBar = document.createElement('div')
+    toggleBar.className = 'chart-toggle'
+    const northBtn = document.createElement('button')
+    northBtn.type = 'button'
+    northBtn.dataset.style = 'north'
+    northBtn.textContent = t('chart.north')
+    const southBtn = document.createElement('button')
+    southBtn.type = 'button'
+    southBtn.dataset.style = 'south'
+    southBtn.textContent = t('chart.south')
+    const chartGrid = document.createElement('div')
+    chartGrid.className = 'chart-grid'
+    const d9 = navamsaKundli(kundli)
+    const chalitFrame = chalitChartFrame(kundli)
+    const makeCell = (captionKey, build) => {
+      const cell = document.createElement('div')
+      cell.className = 'chart-cell'
+      const caption = document.createElement('p')
+      caption.className = 'chart-caption'
+      caption.textContent = t(captionKey)
+      const box = document.createElement('div')
+      box.className = 'chart-box'
+      box.append(build())
+      cell.append(caption, box)
+      return cell
+    }
+    const paintChart = () => {
+      const south = values.chartStyle === 'south'
+      chartGrid.replaceChildren()
+      chartGrid.append(
+        makeCell('chart.d1', () =>
+          south ? buildSouthChart(kundli, chartMeta(values), { varga: 'D1' }) : buildNorthChart(kundli, { varga: 'D1' })
+        ),
+        makeCell('chart.d9', () =>
+          south ? buildSouthChart(d9, chartMeta(values), { varga: 'D9' }) : buildNorthChart(d9, { varga: 'D9' })
+        )
+      )
+      if (chalitFrame) {
+        chartGrid.append(
+          makeCell('chart.chalit', () =>
+            buildNorthChart(chalitFrame, {
+              houseRashis: kundli.chalit.houseSigns,
+              ascMarker: false,
+              varga: 'CHALIT',
+            })
+          )
+        )
+      }
+      northBtn.classList.toggle('active', !south)
+      southBtn.classList.toggle('active', south)
+      northBtn.setAttribute('aria-pressed', String(!south))
+      southBtn.setAttribute('aria-pressed', String(south))
+    }
+    northBtn.addEventListener('click', () => {
+      values.chartStyle = 'north'
+      paintChart()
+    })
+    southBtn.addEventListener('click', () => {
+      values.chartStyle = 'south'
+      paintChart()
+    })
+    toggleBar.append(northBtn, southBtn)
+    chartWrap.append(toggleBar, chartGrid)
+    card.append(chartWrap)
+    paintChart()
+
+    // Full bilingual planet table (Phase 8).
+    const tableTitle = document.createElement('p')
+    tableTitle.className = 'kundli-table-title'
+    tableTitle.textContent = t('summary.planets')
+    const tableWrap = document.createElement('div')
+    tableWrap.className = 'table-wrap'
+    const table = document.createElement('table')
+    table.className = 'kundli-table planet-table'
+    const thead = document.createElement('thead')
+    const headerRow = document.createElement('tr')
+    for (const key of ['table.planet', 'table.rashi', 'table.degree', 'table.nakshatra', 'table.house', 'table.retro']) {
+      const th = document.createElement('th')
+      th.textContent = t(key)
+      headerRow.append(th)
+    }
+    thead.append(headerRow)
+    table.append(thead)
+    const tbody = document.createElement('tbody')
+    const addPlanetRow = (nameText, body) => {
+      const tr = document.createElement('tr')
+      const cells = [
+        nameText,
+        rashiLabel(body.rashi),
+        formatDegMinSec(body.degInSign),
+        `${nakshatraLabel(body.nakshatra)} · ${t('table.pada')} ${body.pada}`,
+        String(body.house),
+        body.retro ? t('k.retro') : '—',
+      ]
+      for (const cellText of cells) {
+        const td = document.createElement('td')
+        td.textContent = cellText
+        tr.append(td)
+      }
+      return tr
+    }
+    tbody.append(addPlanetRow(t('table.asc'), kundli.ascendant))
+    kundli.planets.forEach((p) => tbody.append(addPlanetRow(grahaLabel(p.key), p)))
+    table.append(tbody)
+    tableWrap.append(table)
+    card.append(tableTitle, tableWrap)
+
+    // Vimshottari Dasha (from the Moon's nakshatra).
+    const moon = kundli.planets.find((p) => p.key === 'moon')
+    if (moon && values.converted) {
+      const u = values.converted.utc
+      const birthMs = Date.UTC(u.year, u.month - 1, u.day, u.hour, u.minute, u.second)
+      const dasha = computeVimshottari(moon.longitude, birthMs)
+      const dashaTitle = document.createElement('p')
+      dashaTitle.className = 'kundli-table-title'
+      dashaTitle.textContent = t('summary.dasha')
+      const dashaWrap = document.createElement('div')
+      dashaWrap.className = 'table-wrap'
+      dashaWrap.append(dashaTable(dasha.mahadashas, dasha.currentIdx, t('dasha.md')))
+      const md = dasha.mahadashas[dasha.currentIdx]
+      const ad = dasha.antardashas[dasha.currentAdIdx]
+      const nowLine = document.createElement('p')
+      nowLine.className = 'note dasha-now'
+      nowLine.textContent = `${t('dasha.nowLine')}${grahaLabel(md.key)} ${t('dasha.md')} / ${grahaLabel(ad.key)} ${t('dasha.ad')} (${fmtDate(ad.toMs)} ${t('dasha.till')})`
+      const adTitle = document.createElement('p')
+      adTitle.className = 'kundli-table-title'
+      adTitle.textContent = `${t('dasha.ad')} — ${grahaLabel(md.key)} ${t('dasha.md')}`
+      const adWrap = document.createElement('div')
+      adWrap.className = 'table-wrap'
+      adWrap.append(dashaTable(dasha.antardashas, dasha.currentAdIdx, t('dasha.ad')))
+      const dashaBasis = document.createElement('p')
+      dashaBasis.className = 'note'
+      dashaBasis.textContent = t('dasha.basis')
+      card.append(dashaTitle, dashaWrap, nowLine, adTitle, adWrap, dashaBasis)
+    }
+
+    // Actions: PNG / Print / Copy details (Phase 8).
+    const actions = document.createElement('div')
+    actions.className = 'actions'
+    const actionMsg = document.createElement('p')
+    actionMsg.className = 'note'
+    actionMsg.setAttribute('aria-live', 'polite')
+    actionMsg.hidden = true
+    const pngBtn = document.createElement('button')
+    pngBtn.type = 'button'
+    pngBtn.className = 'secondary'
+    pngBtn.dataset.action = 'png'
+    pngBtn.textContent = t('btn.downloadPng')
+    pngBtn.addEventListener('click', () =>
+      downloadChartPng(values, () => {
+        actionMsg.textContent = t('msg.pngFailed')
+        actionMsg.hidden = false
+      })
+    )
+    const printBtn = document.createElement('button')
+    printBtn.type = 'button'
+    printBtn.className = 'secondary'
+    printBtn.dataset.action = 'print'
+    printBtn.textContent = t('btn.print')
+    printBtn.addEventListener('click', () => window.print())
+    const copyBtn = document.createElement('button')
+    copyBtn.type = 'button'
+    copyBtn.className = 'secondary'
+    copyBtn.dataset.action = 'copy'
+    copyBtn.textContent = t('btn.copy')
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(buildDetailsText(values))
+        actionMsg.textContent = t('msg.copied')
+      } catch (err) {
+        console.error('Copy failed:', err)
+        actionMsg.textContent = t('msg.copyFailed')
+      }
+      actionMsg.hidden = false
+    })
+    const pdfHint = document.createElement('p')
+    pdfHint.className = 'note pdf-hint'
+    pdfHint.textContent = t('actions.pdfHint')
+    actions.append(pngBtn, printBtn, copyBtn, actionMsg, pdfHint)
+    card.append(actions)
+
+    // 📄 विस्तृत फलादेश (PDF) — नई tab में पूरा पराशरी फलादेश
+    const phalCoords = resolveCoordinates(values)
+    if (phalCoords && computeConversion(values)) {
+      const phalBox = document.createElement('div')
+      phalBox.className = 'phal-cta'
+      const phalLink = document.createElement('a')
+      phalLink.className = 'phal-btn'
+      phalLink.dataset.action = 'phal'
+      phalLink.target = '_blank'
+      phalLink.rel = 'noopener'
+      phalLink.href = phalUrl(values, computeConversion(values), phalCoords)
+      phalLink.textContent = t('btn.phal')
+      const phalHint = document.createElement('p')
+      phalHint.className = 'note phal-hint'
+      phalHint.textContent = t('phal.hint')
+      phalBox.append(phalLink, phalHint)
+      card.append(phalBox)
+    }
+  }
+
+  const note = document.createElement('p')
+  note.className = 'note summary-note'
+  if (values.kundliError) {
+    note.textContent = t('summary.engineError')
+  } else if (kundli && kundli.error === 'polar') {
+    note.textContent = t('err.polar')
+  } else if (values.kundliPending) {
+    note.textContent = t('summary.calculating')
+  } else {
+    note.textContent = t('summary.note')
+    note.classList.add('summary-note-ok') // print/PDF में यह लाइन छिपती है
+  }
+  card.append(note)
+
+  output.append(card)
+
+  // विस्तृत फलादेश — मौजूदा result के नीचे, screen-लगाव में (कोई ऊपरी हिस्सा नहीं बदलता)
   const onlineCoords = resolveCoordinates(values)
   const onlineConv = computeConversion(values)
   if (onlineCoords && onlineConv && !values.kundliError) {
