@@ -1015,3 +1015,11 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - `/kundli-phal/` का "तैयार हो रहा है…" report बनते ही छिपता है (`.phal-doc.ready .loading`).
 - Phone 390 पहली load: 36 unique files / **3055.9 KB**, इसमें फलादेश 19 files / **427.4 KB** (chunk 46 · CSS 4 · 12 चित्र 216 · 4 fonts 157)।
 - tests **1099 ✓** · commit `d129494` · deploy (backup `kundli-before-06b-20261116-023655`, 4.2 MB/64 files) · live PDF 20 पन्ने · बाक़ी pages 200।
+
+### 2026-11-16 — GitHub CI सुधार (error-mail बंद)
+- कारण: `.github/workflows/deploy.yml` हर push पर `npm test` चलाता है; `phal-viz` का "राशि-चित्र 12 files" test CI पर fail होता था
+  (चित्र licence के कारण repo में नहीं — टास्क 05-ख)। अब वह **file-जाँच** `it.skipIf(!hasRashiFiles)` से CI पर छूटती है (साफ़ नाम/संदेश),
+  और `alt=""`/width/height की HTML-जाँच हर हाल में चलती है। 12-11 के बाद के सारे pushes fail हो रहे थे → अब हरा।
+- साथ में `hideBrokenImages()` (`viz.js`): `.phal` के अंदर कोई चित्र न मिले तो टूटी-image का निशान नहीं दिखता (capture-phase `error`)।
+- **साफ़ clone जाँच** (`/tmp/kundli-ci-check`, बिना private-assets): `npm ci` ✓ · `npm test` → **0 fail** (65 files pass, 14 skip — BNN-app वाली जो repo के बाहर की build माँगती हैं; 1015 pass, 103 skip) · `npm run build` ✓।
+- GitHub run `692184f` → **success** (https://github.com/vasant22/kundli/actions/runs/43817829610)।
