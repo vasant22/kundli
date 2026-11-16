@@ -957,3 +957,19 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - deploy-सूची का `chown/chmod` `kundli-phal` को छोड़ रहा था → जोड़ा; `.deploy/kundli-site.tar.gz` (3.38 MB) में `kundli-phal/index.html`।
 - code/टिप्पणी/docs से व्यक्ति-नाम हटे ("स्वीकृत तालिका/स्वीकृति")। oracle की unzip copy हटाई, zip जस की तस।
 - tests **1068 ✓** (3 todo) · build ✓ · commits `bac7d5d` (03-ख) + `cb906aa` (04), local — **deploy नहीं**।
+
+### 2026-11-14 — फलादेश PDF / टास्क 05 (design-kit संस्करण 3 + online फलादेश)
+- **नया रंग-रूप:** design-kit के tokens/components हूबहू — रात्रि-नील मुखपृष्ठ (full-bleed, तारे, सुनहरी कुंडली, "लग्न" केसरिया),
+  हर ग्रह का रंग + हिंदी अक्षर badge (सू/चं/मं/बु/गु/शु/श/रा/के), tone तीन रंगों में, Baloo 2 शीर्षक + Noto पाठ (self-hosted)।
+- **चित्र:** नया `src/phal/viz.js` — `northChart` (dark/light), `southChart`, `vimshopakaBars`, `dashaTimeline`, `savBars`,
+  `bavHeatmap`, `starfield`। `northChart` light में अंश भी (3+ ग्रह वाले भाव में सिर्फ़ badge, वरना टकराव)।
+- **12 राशि-चित्र:** `public/rashi/` → `/kundli-assets/rashi/` (deploy-सूची में जोड़ा); मुखपृष्ठ, tiles, ग्रह-तालिका, भाव-कार्ड, SAV-ग्राफ़ में।
+- **अध्याय:** 14 सब नई भाषा में — भाव 3×4 कार्ड, ग्रह-कार्ड (रंगीन rail), योग-कार्ड, दशा-पट्टियाँ ("आप यहाँ हैं"), अष्टकवर्ग ग्राफ़, उपाय-कार्ड।
+- **print:** `@page { margin:16/16/18 }` + margin-boxes (नाम, mybapuji, पृष्ठ-संख्या **देवनागरी** में), `@page :first { margin:0 }` (मुखपृष्ठ पर कुछ नहीं),
+  `print-color-adjust: exact`। **PDF 20 पन्ने** (1985/1990/कालसर्प सब)।
+- **online section:** kundli पेज पर result के नीचे "विस्तृत फलादेश" — chips + `<details>` (पहले दो खुले), **lazy chunk** (IntersectionObserver, rootMargin 600px)।
+  पहली load पर chunk/fonts/चित्र कुछ नहीं; section तक scroll पर +21 files ≈ 432 KB (raw) — report-chunk 195 KB, CSS 18 KB, 12 चित्र 221 KB, 4 Baloo fonts 157 KB।
+  मुख्य bundle 22.55 → **23.94 kB** (+1.39 kB)। PDF बटन `&print=1` → fonts/सारे चित्र तैयार होने पर print ख़ुद खुलता है (5s की सीमा)।
+- **जाँच:** tests **1090 ✓** (22 नए: viz, western-चिह्न regex, lazy-load, print=1, rashi-चित्र) · 3 PDF × 20 पन्ने · हर अध्याय के desktop 1280 + phone 390 screenshots ·
+  live Cache-Control: js/css `max-age=315360000` (CF HIT), wasm/fonts `public, max-age=2592000`, HTML कोई नहीं।
+- **deploy नहीं** — Vas22 जी की हाँ बाक़ी।

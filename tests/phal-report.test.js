@@ -32,7 +32,7 @@ const BIRTH = {
 describe('renderReport', () => {
   it('चौदहों अध्याय बनते हैं और नाम भर जाता है', () => {
     const html = renderReport(buildPhalData(swe, BIRTH, { nowMs: Date.UTC(2026, 10, 11) }))
-    for (const title of ['जन्म कुंडली फलादेश', 'विषय-सूची', 'एक नज़र में', 'जन्म-विवरण और अवकहड़ा',
+    for (const title of ['जन्म कुंडली फलादेश', 'विषय-सूची', 'एक नज़र में', 'जन्म-विवरण, पंचांग और अवकहड़ा',
       'मुख्य कुंडलियाँ', 'ग्रह और उनकी स्थिति', 'बारह भाव', 'षोडश वर्ग', 'षष्ट्यंश (D60)',
       'योग और दोष', 'विंशोत्तरी दशा', 'साढ़ेसाती, ढैया और आज का गोचर', 'अष्टकवर्ग',
       'उपाय और रत्न', 'शब्दकोश और गणना-पद्धति']) {
@@ -43,17 +43,18 @@ describe('renderReport', () => {
     expect(html).toContain('॥ शुभमस्तु ॥')
   })
 
-  it('हर अध्याय की शुरुआत में "यह भाग" वाली पेटी है', () => {
+  it('चौदह अध्याय, हर एक की अपनी परिचय-पेटी', () => {
     const html = renderReport(buildPhalData(swe, BIRTH, { nowMs: Date.UTC(2026, 10, 11) }))
-    const chapters = (html.match(/<section class="chapter/g) ?? []).length
-    expect(chapters).toBeGreaterThanOrEqual(13)
-    // हर अध्याय (विषय-सूची सहित) की अपनी "यह भाग क्या बताता है" पेटी
-    expect((html.match(/class="ch-intro"/g) ?? []).length).toBe(chapters)
+    const chapters = (html.match(/<section class="ch"/g) ?? []).length
+    expect(chapters).toBe(14)
+    expect((html.match(/<p class="intro">/g) ?? []).length).toBe(chapters)
+    // अध्याय के नंबर देवनागरी में (१, २ …), अंक-रूप नहीं
+    expect(html).toContain('<div class="num">१४</div>')
   })
 
   it('tone-चिह्न रंग के साथ शब्द भी दिखाते हैं', () => {
     const html = renderReport(buildPhalData(swe, BIRTH, { nowMs: Date.UTC(2026, 10, 11) }))
-    expect(html).toMatch(/tone-(shubh|mishr|savdhan)/)
+    expect(html).toMatch(/class="tone [smc]"/)
     expect(html).toMatch(/शुभ|मिश्र|सावधानी/)
   })
 

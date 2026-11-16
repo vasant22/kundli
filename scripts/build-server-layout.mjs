@@ -39,6 +39,7 @@ const MAP = [
   ['js', 'kundli-assets/js'],
   ['wasm', 'kundli-assets/wasm'],
   ['fonts', 'kundli-assets/fonts'],
+  ['rashi', 'kundli-assets/rashi'],
   ['favicon-32.png', 'kundli-assets/favicon-32.png'],
   ['favicon.png', 'kundli-assets/favicon.png'],
 ]
@@ -116,6 +117,11 @@ async function main() {
     try {
       await cp(src, dest, { recursive: true })
     } catch (err) {
+      // राशि-चित्र licence वाले हैं — private-assets में न हों तो build रुके नहीं
+      if (from === 'rashi') {
+        console.warn(`  ⚠️ ${from} → ${to}: चित्र नहीं मिले (private-assets/rashi) — page बिना चित्र के बनेगा`)
+        continue
+      }
       console.error(`  ✗ ${from} → ${to}: ${err.message}`)
       process.exit(1)
     }
@@ -129,7 +135,11 @@ async function main() {
 
   // ⚠️ macOS tar embeds the LOCAL uid/gid (501/games) plus AppleDouble `._`
   // files. COPYFILE_DISABLE=1 drops the `._` clutter.
+  // राशि-चित्र tarball में नहीं जाते (licence: अलग files के रूप में बाँटना मना है;
+  // repo भी public है)। Deploy में इन्हें private-assets/rashi/ से अलग चढ़ाएँ —
+  // नीचे के निर्देश में step 3-ख देखें।
   execFileSync('tar', ['-czf', fileURLToPath(new URL('kundli-site.tar.gz', OUT)),
+                       '--exclude', 'kundli-site/kundli-assets/rashi',
                        '-C', fileURLToPath(OUT), 'kundli-site'],
                { env: { ...process.env, COPYFILE_DISABLE: '1' } })
 
@@ -156,6 +166,11 @@ async function main() {
   #    WordPress site. A per-entry copy leaves public_html untouched.
   D=/home/my4bap21/public_html
   for e in /tmp/ksite/kundli-site/*; do cp -a "$e" "$D/"; done
+
+  # 3-ख. राशि-चित्र अलग से (tarball में नहीं — licence)। यह क़दम तभी चलेगा जब
+  #      private-assets/rashi/ आपके पास हो; यहाँ cp -a से per-entry copy.
+  mkdir -p $D/kundli-assets/rashi
+  for f in ~/.openclaw-autoclaw/workspace/private-assets/rashi/*.webp; do cp -a "$f" "$D/kundli-assets/rashi/"; done
 
   # 4. ownership + permissions
   chown -R my4bap21:my4bap21 $D/kundli $D/kundli-milan $D/kundli-phal $D/panchang $D/bnn-chart $D/kundli-assets

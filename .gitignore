@@ -21,3 +21,9 @@ public/wasm/
 
 # tool artifacts (stray copies some editors drop next to the file)
 tests/.zwork/
+
+# राशि-चित्र: खरीदे हुए licence वाले हैं — public repo में नहीं (टास्क 05-ख).
+# असली copy: ~/.openclaw-autoclaw/workspace/private-assets/rashi/ → prebuild/predev
+# scripts/copy-private-images.mjs से public/rashi/ में आती है.
+public/rashi/
+.deploy/**/rashi/

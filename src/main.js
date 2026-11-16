@@ -371,7 +371,7 @@ function downloadChartPng(values, onError) {
 
 // Plain-text version of the results (for the Copy button, Phase 8).
 // फलादेश page का link — वही prefill format जो prefill.js पढ़ता है.
-function phalUrl(values, conversion, coords) {
+function phalQuery(values, conversion, coords) {
   const q = new URLSearchParams()
   if (values.name) q.set('name', values.name)
   if (values.gender) q.set('gender', values.gender)
@@ -384,7 +384,38 @@ function phalUrl(values, conversion, coords) {
   if (values.place) q.set('place', values.place)
   if (coords) { q.set('lat', String(coords.latitude)); q.set('lng', String(coords.longitude)) }
   if (conversion?.zone) q.set('tz', conversion.zone)
-  return `../kundli-phal/?${q.toString()}`
+  return q
+}
+function phalUrl(values, conversion, coords) {
+  return `../kundli-phal/?${phalQuery(values, conversion, coords).toString()}`
+}
+
+// विस्तृत फलादेश का online section — JS chunk तभी load होता है जब जातक यहाँ तक
+// scroll करे (देखें beginPhalOnline). जो वहाँ तक नहीं जाता, उसके लिए कुछ नहीं.
+let phalOnlineStarted = false
+function beginPhalOnline(host, values, conversion, coords) {
+  const start = async () => {
+    if (phalOnlineStarted) return
+    phalOnlineStarted = true
+    try {
+      const { mountPhalOnline } = await import('./phal/online.js')
+      await mountPhalOnline(host, {
+        search: `?${phalQuery(values, conversion, coords).toString()}`,
+        pdfHref: `${phalUrl(values, conversion, coords)}&print=1`,
+        name: values.name,
+        hint: t('phal.onlineHint'),
+        hindiOnlyNote: getLang() === 'en' ? t('phal.englishNote') : '',
+      })
+    } catch (err) {
+      console.error('phal online failed', err)
+      host.innerHTML = '<p class="po-note">विस्तृत फलादेश यहाँ नहीं खुल सका — ऊपर दिए बटन से PDF खोलें।</p>'
+    }
+  }
+  if (typeof IntersectionObserver === 'undefined') { start(); return }
+  const io = new IntersectionObserver((entries) => {
+    if (entries.some((e) => e.isIntersecting)) { io.disconnect(); start() }
+  }, { rootMargin: '600px' })
+  io.observe(host)
 }
 
 function buildDetailsText(values) {
@@ -814,6 +845,19 @@ function showSummary(values, scroll) {
   card.append(note)
 
   output.append(card)
+
+  // विस्तृत फलादेश — मौजूदा result के नीचे, screen-लगाव में (कोई ऊपरी हिस्सा नहीं बदलता)
+  const onlineCoords = resolveCoordinates(values)
+  const onlineConv = computeConversion(values)
+  if (onlineCoords && onlineConv && !values.kundliError) {
+    const host = document.createElement('section')
+    host.id = 'phal-online'
+    host.className = 'phal-online'
+    host.innerHTML = '<p class="po-note">विस्तृत फलादेश यहाँ खुलेगा…</p>'
+    output.append(host)
+    beginPhalOnline(host, values, onlineConv, onlineCoords)
+  }
+
   // scrollIntoView is not available in every environment (e.g. test runners)
   if (scroll && typeof output.scrollIntoView === 'function') {
     output.scrollIntoView({ behavior: 'smooth', block: 'start' })

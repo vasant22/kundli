@@ -1,141 +1,122 @@
-// report.js — फलादेश report बनाने वाला हिस्सा (HTML, कोई गणना नहीं).
+// report.js — फलादेश का HTML (design-kit संस्करण 3).
 //
-// सारा data `buildPhalData()` से आता है और सारा text `text-hi.js` से — यहाँ
-// सिर्फ़ जोड़कर page बनाया जाता है. हर अध्याय नए पन्ने से शुरू होता है और उसकी
-// पहली पेटी में "यह भाग क्या बताता है" होती है.
+// सारा data buildPhalData() से और सारा text text-hi.js से — यहाँ सिर्फ़ जोड़कर
+// page बनाया जाता है. दो रूप:
+//   renderReport(data)      → /kundli-phal/ का पूरा पन्ना (print/PDF)
+//   renderOnline(data)      → kundli पेज का "विस्तृत फलादेश" section (details)
 
-import { buildNorthChart, buildSouthChart } from '../charts.js'
-import { RASHIS, GRAHAS, NAKSHATRAS } from '../i18n.js'
 import * as TX from './text-hi.js'
 import { ordinalHi, grahaHi, rashiHi, grahaList, degMinHi } from './text.js'
+import { GRAHA_AB, rashiImg, northChart, southChart, vimshopakaBars, dashaTimeline, savBars, bavHeatmap, starfield } from './viz.js'
+import { TITHIS, YOGAS, KARANAS, VAARAS, NAKSHATRAS } from '../i18n.js'
 
 const esc = (s) =>
   String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 
-const KEY_BY = { sun: 'su', moon: 'mo', mars: 'ma', mercury: 'me', jupiter: 'ju', venus: 've', saturn: 'sa', rahu: 'ra', ketu: 'ke' }
-const TONE_WORD = { shubh: 'शुभ', mishr: 'मिश्र', savdhan: 'सावधानी' }
-
-function toneBadge(tone) {
-  if (!tone) return ''
-  return `<span class="tone tone-${tone}"><i aria-hidden="true"></i>${TONE_WORD[tone]}</span>`
-}
-
-// "चौथे भाव" — कहीं "4वें" न लिखा जाए
+const VAR = { sun: 'su', moon: 'mo', mars: 'ma', mercury: 'me', jupiter: 'ju', venus: 've', saturn: 'sa', rahu: 'ra', ketu: 'ke' }
+const DEV = '०१२३४५६७८९'
+const dev = (n) => String(n).replace(/\d/g, (d) => DEV[+d])
 const H = (n) => ordinalHi(n, 'भाव')
+const TONE_WORD = { shubh: 'शुभ', mishr: 'मिश्र', savdhan: 'सावधानी' }
+const TONE_CLS = { shubh: 's', mishr: 'm', savdhan: 'c' }
+
+const tone = (t) => (t && TONE_WORD[t] ? `<span class="tone ${TONE_CLS[t]}">${TONE_WORD[t]}</span>` : '')
+const gb = (key) => `<span class="gb" style="background:var(--${VAR[key] || 'nisha'})">${GRAHA_AB[key] || '—'}</span>`
+
 const dateHi = (ms) => {
   const d = new Date(ms)
   const p = (x) => String(x).padStart(2, '0')
   return `${p(d.getUTCDate())}-${p(d.getUTCMonth() + 1)}-${d.getUTCFullYear()}`
 }
-// अंश-मिनट का सारा काम text.js के degMinHi से — वहाँ पहले कुल मिनट गोल होते हैं,
-// इसलिए "20° 60′" नहीं बनता और राशि-सीमा भी नहीं टूटती.
-const degStr = (d) => degMinHi(d)
+const dateLong = (ms) => {
+  const d = new Date(ms)
+  const p = (x) => String(x).padStart(2, '0')
+  return `${p(d.getUTCDate())}-${p(d.getUTCMonth() + 1)}-${d.getUTCFullYear()}`
+}
+const year = (ms) => new Date(ms).getUTCFullYear()
 
-function chartKundli(data, vargaChart = null) {
-  const planets = data.planets.map((p) => {
-    const rashi = vargaChart ? vargaChart.planets[p.key] : p.rashi
-    return {
-      key: p.key,
-      short: GRAHAS.find((g) => g.key === p.key)?.short ?? p.key,
-      rashi,
-      house: vargaChart
-        ? ((rashi - vargaChart.lagna + 12) % 12) + 1
-        : p.house,
-      degInSign: vargaChart ? 0 : p.degInSign,
-      retro: p.retro,
-    }
-  })
-  return { ascendant: { rashi: vargaChart ? vargaChart.lagna : data.ascendant.rashi }, planets }
+// चार्ट के लिए ग्रह-सूची
+function vizPlanets(planets, { degrees = false } = {}) {
+  return planets.map((p) => ({
+    key: p.key, ab: GRAHA_AB[p.key], rashi: p.rashi, retro: p.retro,
+    degStr: degrees ? degMinHi(p.degInSign).replace(' ', '') : undefined,
+  }))
 }
 
-function chapter(id, num, title, intro) {
-  return `<section class="chapter" id="${id}">
-  <header class="ch-head"><span class="ch-num">${num}</span><h2>${esc(title)}</h2></header>
-  <p class="ch-intro">${esc(intro)}</p>`
-}
-const endChapter = () => '</section>'
+// --- अध्याय 1: विषय-सूची ---------------------------------------------------
+const TOC = [
+  ['s2', 'आपकी कुंडली एक नज़र में'],
+  ['s3', 'जन्म-विवरण, पंचांग और अवकहड़ा'],
+  ['s4', 'मुख्य कुंडलियाँ'],
+  ['s5', 'ग्रह और उनकी स्थिति'],
+  ['s6', 'बारह भाव'],
+  ['s7', 'षोडश वर्ग'],
+  ['s8', 'षष्ट्यंश (D60)'],
+  ['s9', 'योग और दोष'],
+  ['s10', 'विंशोत्तरी दशा'],
+  ['s11', 'साढ़ेसाती, ढैया और आज का गोचर'],
+  ['s12', 'अष्टकवर्ग'],
+  ['s13', 'उपाय और रत्न'],
+  ['s14', 'शब्दकोश और गणना-पद्धति'],
+]
 
-function table(headers, rows, cls = '') {
-  return `<table class="tbl ${cls}"><thead><tr>${headers.map((h) => `<th>${esc(h)}</th>`).join('')}</tr></thead>
-<tbody>${rows.map((r) => `<tr>${r.map((c) => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`
-}
-
-// --- अध्याय 1: मुखपृष्ठ ------------------------------------------------------
-function cover(data) {
-  const m = data.meta
-  const name = m.name?.trim() || 'जातक'
-  const birth = m.local
-    ? `${String(birth2(m.local.day))}-${String(birth2(m.local.month))}-${m.local.year}, ${String(birth2(m.local.hour))}:${String(birth2(m.local.minute))}`
-    : '—'
-  const place = m.place || '—'
-  const lagna = data.summary.lagnaName
-  const chart = buildNorthChart(chartKundli(data), { varga: 'D1', ariaLabel: 'लग्न कुंडली' })
-  return `<section class="cover">
-  <div class="cover-rule"></div>
-  <p class="cover-brand">mybapuji.com</p>
-  <h1>जन्म कुंडली फलादेश</h1>
-  <p class="cover-name">${esc(name)}</p>
-  <p class="cover-birth">${esc(birth)} · ${esc(place)}</p>
-  <div class="cover-chart">${chart.outerHTML}</div>
-  <div class="cover-boxes">
-    ${coverBox('लग्न', lagna.hi)}
-    ${coverBox('राशि', data.summary.moonName.hi)}
-    ${coverBox('नक्षत्र', data.summary.nakshatraName.hi)}
-    ${coverBox('चल रही दशा', grahaHi(data.summary.mahadasha))}
-  </div>
-  <p class="cover-note">पराशरी पद्धति · लाहिरी अयनांश · पूरी गणना आपके ही browser में</p>
-</section>`
-}
-const birth2 = (n) => String(n ?? 0).padStart(2, '0')
-const coverBox = (label, value) => `<div class="cbox"><span>${esc(label)}</span><b>${esc(value)}</b></div>`
-
-// --- विषय-सूची ---------------------------------------------------------------
 function contents() {
-  const items = [
-    ['s2', 'एक नज़र में'], ['s3', 'जन्म-विवरण और अवकहड़ा'], ['s4', 'मुख्य कुंडलियाँ'],
-    ['s5', 'ग्रह और उनकी स्थिति'], ['s6', 'बारह भाव'], ['s7', 'षोडश वर्ग'], ['s8', 'षष्ट्यंश (D60)'],
-    ['s9', 'योग और दोष'], ['s10', 'विंशोत्तरी दशा'], ['s11', 'साढ़ेसाती और गोचर'],
-    ['s12', 'अष्टकवर्ग'], ['s13', 'उपाय और रत्न'], ['s14', 'शब्दकोश और पद्धति'],
-  ]
-  return `<section class="chapter contents">
-  <header class="ch-head"><span class="ch-num">1</span><h2>विषय-सूची</h2></header>
-  <p class="ch-intro">यह फलादेश चौदह भागों में है — हर भाग नए पन्ने से शुरू होता है।</p>
-  <ol class="toc">${items.map(([id, t], i) => `<li><span>${i + 2}</span> ${esc(t)}</li>`).join('')}</ol>
-</section>`
+  return `<section class="ch" id="s1"><header class="chap"><div class="num">${dev(1)}</div><h2>विषय-सूची</h2>
+  <p class="intro">यह फलादेश चौदह भागों में है — हर भाग नए पन्ने से शुरू होता है।</p></header>
+  <ol class="toc">${TOC.map(([id, t], i) => `<li><a href="#${id}"><span>${dev(i + 2)}</span>${esc(t)}</a></li>`).join('')}</ol></section>`
 }
 
-// --- अध्याय 2: एक नज़र में ---------------------------------------------------
+// --- अध्याय 2: एक नज़र में -------------------------------------------------
 function glance(data) {
   const st = data.strength.planets
   const sorted = Object.entries(st).sort((a, b) => b[1].total - a[1].total)
-  const strong = sorted.slice(0, 2).map(([k, v]) => `${grahaHi(k)} (${v.total})`).join(', ')
-  const weak = sorted.slice(-2).map(([k, v]) => `${grahaHi(k)} (${v.total})`).join(', ')
+  const strongest = sorted[0]
+  const strongPlanet = data.planets.find((p) => p.key === strongest[0])
   const cur = data.dasha.current
-  const yogas = data.yogas.present.slice(0, 4).map((y) => y.hi).join(', ') || '—'
-  const doshas = [
-    data.doshas.mangal?.present ? 'मंगल दोष' : null,
-    data.doshas.kaalSarpa.present ? 'कालसर्प' : null,
-    data.doshas.guruChandal.present ? 'गुरु-चांडाल' : null,
-    data.sadesati.current ? data.sadesati.current.label : null,
-  ].filter(Boolean).join(', ') || 'कोई विशेष दोष नहीं'
-  return chapter('s2', '2', 'एक नज़र में', 'इस भाग में पूरी कुंडली का सार है — लग्न, राशि, नक्षत्र, बलवान और कमज़ोर ग्रह, चल रही दशा और मुख्य योग-दोष।') +
-    table(['विषय', 'संक्षेप'], [
-      ['लग्न', `${esc(data.summary.lagnaName.hi)}${toneBadge('mishr')}`],
-      ['चंद्र-राशि', esc(data.summary.moonName.hi)],
-      ['जन्म-नक्षत्र', `${esc(data.summary.nakshatraName.hi)} (${esc(ordinalHi(data.summary.pada, 'पाद'))})`],
-      ['बलवान ग्रह', esc(strong)],
-      ['अपेक्षाकृत कमज़ोर', esc(weak)],
-      ['चल रही दशा', `${esc(grahaHi(cur.maha.key))} — ${esc(grahaHi(cur.antar.key))} — ${esc(grahaHi(cur.pratyantar.key))}`],
-      ['मुख्य योग', esc(yogas)],
-      ['दोष / साढ़ेसाती', esc(doshas)],
-    ]) +
-    // लग्न, चंद्र-राशि और जन्म-नक्षत्र का स्वभाव — text-hi.js की LAGNA/MOON_RASHI/NAKSHATRA entries
-    `<h3>स्वभाव</h3>` +
-    [TX.LAGNA[data.summary.lagnaRashi + 1], TX.MOON_RASHI[data.summary.moonRashi + 1], TX.NAKSHATRA[data.summary.nakshatra]]
-      .filter(Boolean)
-      .map((e) => `<p>${esc(e.t)} ${toneBadge(e.tone)}</p>`)
-      .join('') +
-    endChapter()
+  const md = data.dasha.mahadashas.find((m) => m.key === cur.maha.key && m.fromMs === cur.maha.fromMs) ?? { fromMs: cur.maha.fromMs, toMs: cur.maha.toMs }
+  const pct = Math.max(0, Math.min(100, Math.round((data.meta.nowMs - md.fromMs) / (md.toMs - md.fromMs) * 100)))
+  const lagna = data.summary.lagnaRashi
+  const moon = data.summary.moonRashi
+  const lagnaLord = data.houses[0].lord
+  const yogas = data.yogas.list.filter((y) => y.present || (y.id === 'adhi' && y.partial)).slice(0, 6)
+  const vim = sorted.map(([k, v]) => ({ key: k, hi: grahaHi(k), value: v.total }))
+  const lagnaLordPlanet = data.planets.find((p) => p.key === lagnaLord)
+  return `<div class="tiles">
+    <div class="tile has-img"><div class="k">लग्न</div><div class="v">${esc(rashiHi(lagna))}</div>
+      <div class="d">स्वामी ${esc(grahaHi(lagnaLord))}, ${H(lagnaLordPlanet.house)} में</div>
+      <img class="rimg" src="${rashiImg(lagna)}" alt="" width="57" height="57"></div>
+    <div class="tile has-img"><div class="k">चंद्र राशि</div><div class="v">${esc(rashiHi(moon))}</div>
+      <div class="d">चंद्र ${H(data.planets.find((p) => p.key === 'moon').house)} में</div>
+      <img class="rimg" src="${rashiImg(moon)}" alt="" width="57" height="57"></div>
+    <div class="tile"><div class="k">जन्म-नक्षत्र</div><div class="v">${esc(data.summary.nakshatraName.hi)}</div>
+      <div class="d">${esc(ordinalHi(data.summary.pada, 'चरण'))} · स्वामी ${esc(grahaHi(data.avakahada.nakshatra.lord))}</div>
+      ${gb(data.avakahada.nakshatra.lord).replace('class="gb"', 'class="gb" style="position:absolute;right:1mm;top:1.5mm;background:var(--' + VAR[data.avakahada.nakshatra.lord] + ')"')}</div>
+    <div class="tile"><div class="k">सबसे बलवान ग्रह</div><div class="v">${esc(grahaHi(strongest[0]))}</div>
+      <div class="d">विंशोपक ${strongest[1].total} / 20 · ${esc(strongest[1].bandHi)}</div>
+      <span class="bg" style="background:var(--${VAR[strongest[0]]})">${GRAHA_AB[strongest[0]]}</span></div>
+  </div>
+
+  <div class="dashcard">
+    <div class="orb" style="background:var(--${VAR[cur.maha.key]})">${GRAHA_AB[cur.maha.key]}</div>
+    <div>
+      <div class="t">अभी ${esc(grahaHi(cur.maha.key))} की महादशा, ${esc(grahaHi(cur.antar.key))} की अंतर्दशा</div>
+      <div class="saransh">${dashaPersonalLine(cur.maha.key, dashaInfo(data, cur.maha.key))} ${tone(dashaInfo(data, cur.maha.key).cell?.tone ?? 'mishr')}</div>
+      <div class="bar"><i style="width:${pct}%;background:var(--${VAR[cur.maha.key]})"></i></div>
+      <div class="meta"><span>${dateHi(md.fromMs)} से</span><span>${dev(pct)}% बीती</span><span>${dateHi(md.toMs)} तक</span></div>
+    </div>
+  </div>
+
+  <div class="two">
+    <div><h3>ग्रहों का बल (विंशोपक, 20 में से)</h3>${vimshopakaBars(vim).outerHTML}
+      <div class="legend"><span>रेखाएँ: 5 क्षीण · 10 मध्यम · 15 पूर्ण</span></div></div>
+    <div><h3>मुख्य योग</h3><div class="yogas">${yogas.map((y) => {
+      const parts = yogaTextParts(y)
+      const head = parts[0]?.t ?? ''
+      const extra = parts.slice(1).map((p) => p.t).join(' ')
+      const cls = y.id === 'adhi' && y.partial ? 'm' : (parts[0]?.tone === 'savdhan' ? 'c' : parts[0]?.tone === 'mishr' ? 'm' : 's')
+      return `<div class="yoga ${cls}"><b>${esc(y.hi)}</b>${esc(head)}${extra ? ' ' + esc(extra) : ''}</div>`
+    }).join('') || '<p class="muted">इस कुंडली में कोई विशेष योग नहीं बनता।</p>'}</div></div>
+  </div>`
 }
 
 // --- अध्याय 3: जन्म-विवरण, पंचांग, अवकहड़ा ---------------------------------
@@ -143,147 +124,126 @@ function details(data) {
   const m = data.meta
   const av = data.avakahada
   const p = av.panchang
-  const rows = [
-    ['नाम', esc(m.name || '—')],
-    ['जन्म तिथि', m.local ? `${birth2(m.local.day)}-${birth2(m.local.month)}-${m.local.year}` : '—'],
-    ['जन्म समय', m.local ? `${birth2(m.local.hour)}:${birth2(m.local.minute)}` : '—'],
-    ['जगह', esc(m.place || '—')],
-    ['अयनांश (लाहिरी)', `${data.meta.ayanamsa.toFixed(3)}°`],
-  ]
+  const tiles = `<div class="tiles">
+    <div class="tile"><div class="k">जन्म तिथि</div><div class="v">${m.local ? `${birth2(m.local.day)}-${birth2(m.local.month)}-${m.local.year}` : '—'}</div><div class="d">${esc(m.place || '—')}</div></div>
+    <div class="tile"><div class="k">जन्म समय</div><div class="v">${m.local ? `${birth2(m.local.hour)}:${birth2(m.local.minute)}` : '—'}</div><div class="d">${esc(m.timeZone || '')}</div></div>
+    <div class="tile"><div class="k">अयनांश</div><div class="v">${data.meta.ayanamsa.toFixed(2)}°</div><div class="d">लाहिरी</div></div>
+    <div class="tile"><div class="k">आत्मकारक</div><div class="v">${esc(grahaHi(av.atmakaraka.key))}</div><div class="d">कारकांश ${esc(rashiHi(av.karakamsha))}</div></div>
+  </div>`
+  const rows = []
   if (p && !p.error) {
-    rows.push(['तिथि', esc(`${p.tithi?.paksha === 'krishna' ? 'कृष्ण' : 'शुक्ल'} ${p.tithi?.index ?? '—'}`)])
-    rows.push(['नक्षत्र / योग', esc(`${p.nakshatra?.index ?? '—'} / ${p.yoga?.index ?? '—'}`)])
+    rows.push(['वार', esc(VAARAS[p.vaar]?.hi ?? '—')])
+    rows.push(['तिथि', esc(`${p.tithi?.paksha === 'krishna' ? 'कृष्ण' : 'शुक्ल'} ${TITHIS[(p.tithi?.index ?? 1) - 1]?.hi ?? '—'}`)])
+    rows.push(['नक्षत्र', esc(NAKSHATRAS[(p.nakshatra?.index ?? 1) - 1]?.hi ?? '—')])
+    rows.push(['योग', esc(YOGAS[(p.yoga?.index ?? 1) - 1]?.hi ?? '—')])
+    rows.push(['करण', esc(KARANAS[p.karana?.numbers?.[0] ?? 0]?.hi ?? '—')])
     rows.push(['सूर्योदय', esc(p.sunrise || '—')])
   }
   rows.push(['वर्ण · वश्य', esc(`${av.varna.hi} · ${av.vashya.hi}`)])
   rows.push(['योनि · गण · नाड़ी', esc(`${av.yoni.hi} · ${av.gana.hi} · ${av.nadi.hi}`)])
-  rows.push(['नाम-अक्षर', esc(`${av.nakshatra.letter} (${av.nakshatra.name.hi}, ${ordinalHi(av.nakshatra.pada, 'पाद')})`)])
+  rows.push(['नाम-अक्षर', esc(`${av.nakshatra.letter} (${av.nakshatra.name.hi}, ${ordinalHi(av.nakshatra.pada, 'चरण')})`)])
   rows.push(['राशि-स्वामी', esc(av.rashi.lordLabel.hi)])
   rows.push(['नक्षत्र-स्वामी', esc(av.nakshatra.lordLabel.hi)])
-  rows.push(['आत्मकारक', esc(`${grahaHi(av.atmakaraka.key)} · कारकांश ${rashiHi(av.karakamsha)}`)])
-  return chapter('s3', '3', 'जन्म-विवरण और अवकहड़ा', TX.CHAPTER_INTRO.panchang) +
-    table(['विवरण', 'मान'], rows) + endChapter()
+  const swabhav = [TX.LAGNA[data.summary.lagnaRashi + 1], TX.MOON_RASHI[data.summary.moonRashi + 1], TX.NAKSHATRA[data.summary.nakshatra]]
+    .filter(Boolean)
+    .map((e) => `<p class="saransh">${esc(e.t)} ${tone(e.tone)}</p>`).join('')
+  return `${tiles}<h3>पंचांग और अवकहड़ा</h3><table><tbody>${rows.map(([a, b]) => `<tr><th style="width:34%">${a}</th><td>${b}</td></tr>`).join('')}</tbody></table>
+    <h3>स्वभाव</h3>${swabhav}`
 }
+const birth2 = (n) => String(n ?? 0).padStart(2, '0')
 
-// --- अध्याय 4: कुंडलियाँ ----------------------------------------------------
+// --- अध्याय 4: मुख्य कुंडलियाँ ---------------------------------------------
 function charts(data) {
-  const d1 = chartKundli(data)
-  const d9 = chartKundli(data, data.vargas.charts[9])
-  const north = buildNorthChart(d1, { varga: 'D1', ariaLabel: 'लग्न कुंडली (D1)' })
-  // वर्ग-चार्ट में अंश नहीं दिखते (D9 में तो degInSign 0 होता है — "0°00'" छपता था)
-  const nav = buildNorthChart(d9, { varga: 'D9', showDegrees: false, ariaLabel: 'नवांश (D9)' })
-  const south = buildSouthChart(d1, {}, { varga: 'D1', ariaLabel: 'दक्षिण भारतीय कुंडली' })
-  // सुदर्शन दृष्टि — वही बारह भाव, लग्न/चंद्र/सूर्य तीनों से. दो आधे हिस्सों में
-  // साथ-साथ (6+6 पंक्तियाँ), ताकि अध्याय एक ही पन्ने पर रहे.
+  const p = vizPlanets(data.planets, { degrees: true })
+  const d1 = northChart({ size: 300, lagnaRashi: data.summary.lagnaRashi, planets: p })
+  // चंद्र-कुंडली: चंद्र-राशि को लग्न मानकर वही ग्रह
+  const chandra = northChart({ size: 300, lagnaRashi: data.summary.moonRashi, planets: p })
+  const d9rashi = data.vargas.charts[9]
+  const d9planets = data.planets.map((x) => ({ key: x.key, ab: GRAHA_AB[x.key], rashi: d9rashi.planets[x.key], retro: x.retro }))
+  const d9 = northChart({ size: 300, lagnaRashi: d9rashi.lagna, planets: d9planets })
+  const south = southChart({ size: 300, planets: p })
+  // सुदर्शन दृष्टि — दो हिस्सों में साथ-साथ (6+6 पंक्तियाँ), ताकि अध्याय एक पन्ने पर रहे
   const sudRows = data.avakahada.sudarshan
-  const sudHalf = Math.ceil(sudRows.length / 2)
+  const half = Math.ceil(sudRows.length / 2)
   const sudTable = (rows) => table(['भाव', 'लग्न से', 'चंद्र से', 'सूर्य से'],
-    rows.map((r) => [
-      esc(ordinalHi(r.house)), esc(rashiHi(r.fromLagna)), esc(rashiHi(r.fromMoon)), esc(rashiHi(r.fromSun)),
-    ]), 'compact')
-  const sud = `<div class="split-tables">${sudTable(sudRows.slice(0, sudHalf))}${sudTable(sudRows.slice(sudHalf))}</div>`
-  return chapter('s4', '4', 'मुख्य कुंडलियाँ', TX.CHAPTER_INTRO.sudarshan) +
-    `<div class="chart-grid">
-      <figure class="phal-chart"><figcaption>लग्न कुंडली (D1)</figcaption>${north.outerHTML}</figure>
-      <figure class="phal-chart"><figcaption>नवांश (D9)</figcaption>${nav.outerHTML}</figure>
+    rows.map((r) => [esc(ordinalHi(r.house)), esc(rashiHi(r.fromLagna)), esc(rashiHi(r.fromMoon)), esc(rashiHi(r.fromSun))]))
+  const sud = `<div class="split-tables">${sudTable(sudRows.slice(0, half))}${sudTable(sudRows.slice(half))}</div>`
+  return `<div class="chartrow">
+      <figure class="chartbox"><figcaption>लग्न कुंडली (D1)</figcaption>${d1.outerHTML}</figure>
+      <figure class="chartbox"><figcaption>चंद्र कुंडली</figcaption>${chandra.outerHTML}</figure>
+      <figure class="chartbox"><figcaption>नवांश (D9)</figcaption>${d9.outerHTML}</figure>
+      <figure class="chartbox"><figcaption>दक्षिण भारतीय (D1)</figcaption>${south.outerHTML}</figure>
     </div>
-    <figure class="phal-chart wide"><figcaption>दक्षिण भारतीय शैली (D1)</figcaption>${south.outerHTML}</figure>
-    <h3>सुदर्शन दृष्टि</h3>
-    <p class="muted">वही बारह भाव — लग्न, जन्म-चंद्र और सूर्य, तीनों से।</p>${sud}` + endChapter()
+    <h3>सुदर्शन दृष्टि</h3>${sud}`
 }
 
-// --- अध्याय 5: ग्रह ---------------------------------------------------------
-// एक ग्रह के हर स्वामित्व-भाव का अलग फल: LORD_IN_HOUSE[स्वामित्व-भाव][बैठा-भाव].
-// (पहले बैठने वाले भाव को ही स्वामित्व मान लिया जाता था — टास्क 03-ख का सुधार.)
-// राहु-केतु किसी राशि के स्वामी नहीं होते, इसलिए उनके लिए ख़ाली सूची।
-export function lordPlacements(planet) {
-  if (planet.key === 'rahu' || planet.key === 'ketu') return []
-  return (planet.owns ?? [])
-    .map((own) => ({ own, inHouse: planet.house, tx: TX.LORD_IN_HOUSE[own]?.[planet.house] ?? null }))
-    .filter((x) => x.tx)
-}
-
+// --- अध्याय 5: ग्रह -------------------------------------------------------
 function planets(data) {
-  const rows = data.planets.map((p) => [
-    `${esc(p.name.hi)}${p.retro ? ' <small>(व)</small>' : ''}${data.positions[p.key].combustion.combust ? ' <small>(अ)</small>' : ''}`,
-    esc(p.rashiName.hi),
-    esc(degStr(p.degInSign)),
-    esc(`${p.nakshatraName.hi}-${p.pada}`),
-    H(p.house),
-    esc(p.summary),
-    p.vimshopaka == null ? '—' : `${p.vimshopaka} <small>${esc(p.vimshopakaBand)}</small>`,
-  ])
-  let html = chapter('s5', '5', 'ग्रह और उनकी स्थिति', TX.CHAPTER_INTRO.grahas) +
-    table(['ग्रह', 'राशि', 'अंश', 'नक्षत्र-पाद', 'भाव', 'स्थिति', 'विंशोपक'], rows)
-
-  for (const p of data.planets) {
-    const k = KEY_BY[p.key]
+  const rows = data.planets.map((p) => {
+    const dig = data.positions[p.key].dignity
+    const cls = digWordCls(dig.level)
+    const extra = [p.retro ? 'वक्री' : null, data.positions[p.key].combustion.combust ? 'अस्त' : null].filter(Boolean).join(' · ')
+    return `<tr>
+      <td><span class="gname">${gb(p.key)}${esc(p.name.hi)}</span></td>
+      <td><img class="ri" src="${rashiImg(p.rashi)}" alt="" width="24" height="24"${LAZY}>${esc(p.rashiName.hi)}</td>
+      <td>${esc(degMinHi(p.degInSign))}</td>
+      <td>${esc(p.nakshatraName.hi)}-${p.pada}</td>
+      <td>${H(p.house)}</td>
+      <td><span class="dig ${cls}">${esc(digWord(dig.level))}</span>${extra ? `<br><small>${esc(extra)}</small>` : ''}</td>
+      <td>${p.vimshopaka == null ? '—' : `${p.vimshopaka} <small>${esc(p.vimshopakaBand)}</small>`}</td>
+    </tr>`
+  }).join('')
+  const cards = data.planets.map((p) => {
+    const k = VAR[p.key]
     const inHouse = TX.PLANET_IN_HOUSE[k][p.house]
     const dig = data.positions[p.key].dignity
     const digTx = TX.DIGNITY_NOTES[dig.level]
-    html += `<div class="pblock">
-      <h3>${esc(p.name.hi)} — ${H(p.house)}, ${esc(p.rashiName.hi)}</h3>
-      <p class="muted">${esc(TX.KARAKATVA[k].t)}</p>
-      <p>${esc(inHouse.t)} ${toneBadge(inHouse.tone)}</p>
-      ${digTx ? `<p class="muted">${esc(digTx.t)} ${toneBadge(digTx.tone)}</p>` : ''}
-      ${lordPlacements(p).map((lp) =>
-        `<p class="muted">${H(lp.own)} का स्वामी होकर ${H(lp.inHouse)} में: ${esc(lp.tx.t)} ${toneBadge(lp.tx.tone)}</p>`
-      ).join('')}
-    </div>`
-  }
-  // विंशोपक बल की तालिका (20 में से)
-  const st = data.strength.planets
-  const powerRows = Object.entries(st).sort((a, b) => b[1].total - a[1].total).map(([k, v]) => [
-    esc(grahaHi(k)), `${v.total} / 20`, esc(v.bandHi),
-  ])
-  html += `<h3>विंशोपक बल</h3>` + table(['ग्रह', 'बल', 'श्रेणी'], powerRows) +
-    `<p class="muted">15 से अधिक पूर्ण, 10–15 मध्यम, 5–10 अल्प, 5 से कम क्षीण। यह अंक सोलहों वर्गों से बनता है।</p>`
-
-  // दृष्टि (aspects)
-  const dr = data.yogas.drishti.map((r) => [
-    esc(grahaHi(r.key)),
-    r.relativeHouses.map((h) => ordinalHi(h)).join(', '),
-    r.housesFromLagna.map((h) => ordinalHi(h)).join(', '),
-    r.planets.length ? esc(r.planets.map(grahaHi).join(', ')) : '—',
-    esc(r.label),
-  ])
-  html += `<h3>दृष्टि</h3>` + table(['ग्रह', 'अपने भाव से', 'लग्न से', 'जिन पर दृष्टि', 'मान्यता'], dr)
-
-  return html + endChapter()
+    const lordLines = lordPlacements(p).map((lp) =>
+      `<li><span class="lbl">${esc(`${ordinalHi(lp.own)} भाव का स्वामी होकर ${H(lp.inHouse)} में:`)}</span> ${esc(lp.tx.t)} ${tone(lp.tx.tone)}</li>`).join('')
+    const comb = data.positions[p.key].combustion.combust
+    return `<div class="pcard"><div class="rail" style="background:var(--${k})"><span class="ab">${GRAHA_AB[p.key]}</span><small>${esc(p.name.hi)}</small></div>
+      <div class="body"><div class="hd"><b>${esc(p.name.hi)}</b><span>${H(p.house)} · ${esc(p.rashiName.hi)} · ${esc(p.nakshatraName.hi)}-${p.pada}</span>
+        <span class="dig ${digWordCls(dig.level)}">${esc(digWord(dig.level))}</span></div>
+        <div class="kar">${esc(TX.KARAKATVA[k].t)}</div>
+        <ul><li>${esc(inHouse.t)} ${tone(inHouse.tone)}</li>
+          ${digTx ? `<li><span class="lbl">स्थिति:</span> ${esc(digTx.t)} ${tone(digTx.tone)}</li>` : ''}
+          ${comb ? `<li><span class="lbl">अस्त:</span> ${esc(TX.DIGNITY_NOTES.combust.t)} ${tone('savdhan')}</li>` : ''}
+          ${lordLines}</ul></div></div>`
+  }).join('')
+  const dr = data.yogas.drishti.map((r) => `<tr>
+      <td><span class="gname">${gb(r.key)}${esc(grahaHi(r.key))}</span></td>
+      <td>${r.relativeHouses.map((h) => ordinalHi(h)).join(', ')}</td>
+      <td>${r.housesFromLagna.map((h) => ordinalHi(h)).join(', ')}</td>
+      <td>${r.planets.length ? esc(r.planets.map(grahaHi).join(', ')) : '—'}</td></tr>`).join('')
+  return `<table><thead><tr><th>ग्रह</th><th>राशि</th><th>अंश</th><th>नक्षत्र</th><th>भाव</th><th>स्थिति</th><th>विंशोपक</th></tr></thead><tbody>${rows}</tbody></table>
+    <h3>ग्रह-वार फल</h3>${cards}
+    <h3>दृष्टि</h3><table><thead><tr><th>ग्रह</th><th>अपने भाव से</th><th>लग्न से</th><th>जिन पर दृष्टि</th></tr></thead><tbody>${dr}</tbody></table>`
 }
 
-// --- अध्याय 6: बारह भाव -----------------------------------------------------
+// --- अध्याय 6: बारह भाव ----------------------------------------------------
 function houses(data) {
   const av = data.ashtakavarga
-  const rows = data.houses.map((h) => {
+  const cards = data.houses.map((h) => {
     const lordHouse = data.planets.find((p) => p.key === h.lord)?.house ?? 1
     const lordTx = TX.LORD_IN_HOUSE[h.house][lordHouse]
-    const bav = av.sav.byHouse[h.house - 1]
-    return [
-      H(h.house),
-      esc(h.rashiName.hi),
-      `${esc(h.lordName.hi)} → ${H(lordHouse)}`,
-      h.planets.length ? esc(h.planets.map(grahaHi).join(', ')) : '—',
-      `${bav}`,
-      `${esc(lordTx.t)} ${toneBadge(lordTx.tone)}`,
-    ]
-  })
-  return chapter('s6', '6', 'बारह भाव', TX.CHAPTER_INTRO.bhav) +
-    table(['भाव', 'राशि', 'स्वामी', 'बैठे ग्रह', 'सर्वाष्टक', 'भाव-फल'], rows, 'wide-last') +
-    `<p class="muted">सर्वाष्टक बिंदु: 12 से अधिक = मज़बूत, 25 से अधिक = बहुत मज़बूत; 8 से कम = कमज़ोर माना जाता है।</p>` +
-    endChapter()
+    const sav = av.sav.byHouse[h.house - 1]
+    const pips = h.planets.length
+      ? h.planets.map((k) => `<span class="gb" style="background:var(--${VAR[k]});width:5.2mm;height:5.2mm;font-size:7.4pt" title="${esc(grahaHi(k))}">${GRAHA_AB[k]}</span>`).join('')
+      : '<span class="muted">कोई ग्रह नहीं</span>'
+    return `<div class="bcard">
+      <div class="hd"><span class="bno">${dev(h.house)}</span><span class="rashi">${esc(h.rashiName.hi)} (${h.rashi + 1})</span>
+        <img class="ri" src="${rashiImg(h.rashi)}" alt="" width="24" height="24"${LAZY} style="margin-left:auto"></div>
+      <div class="pips"><span class="sav lord">स्वामी <span class="gb" style="background:var(--${VAR[h.lord]});width:4.6mm;height:4.6mm;font-size:6.8pt">${GRAHA_AB[h.lord]}</span></span><span class="sav">सर्वाष्टक ${sav}</span>${pips}</div>
+      <p>${esc(lordTx.t)} ${tone(lordTx.tone)}</p>
+    </div>`
+  }).join('')
+  return `<div class="bhavgrid">${cards}</div>
+    <p class="muted" style="margin-top:2mm">सर्वाष्टक बिंदु: 12 से अधिक = मज़बूत, 25 से अधिक = बहुत मज़बूत; 8 से कम = कमज़ोर माना जाता है।</p>`
 }
 
-// --- अध्याय 7: षोडश वर्ग ----------------------------------------------------
+// --- अध्याय 7: षोडश वर्ग ---------------------------------------------------
 function vargas(data) {
-  let html = chapter('s7', '7', 'षोडश वर्ग', TX.CHAPTER_INTRO.vargas)
-  // सोलहों वर्गों का लग्न पहले एक तालिका में (सार), फिर हर वर्ग की पंक्ति —
-  // इससे तालिका अकेली अगले पन्ने पर नहीं रह जाती.
-  const lagnaRows = data.vargas.order.map((n) => [
-    `D${n}`, esc(data.vargas.info[n].hi.replace(/ \(D\d+\)/, '')), esc(rashiHi(data.vargas.charts[n].lagna)),
-  ])
-  html += `<h3>सोलहों वर्ग — लग्न</h3>` + table(['वर्ग', 'नाम', 'लग्न'], lagnaRows)
-  for (const n of data.vargas.order) {
+  const cells = data.vargas.order.map((n) => {
     const ch = data.vargas.charts[n]
     const info = data.vargas.info[n]
     const tx = TX.VARGA_TEXT[n]
@@ -291,30 +251,26 @@ function vargas(data) {
     const sensTxt = sens && (sens.backSec !== null || sens.forwardSec !== null)
       ? `जन्म-समय ${Math.min(...[sens.backSec, sens.forwardSec].filter((x) => x !== null))} सेकंड आगे-पीछे होने पर यह वर्ग बदल सकता है।`
       : `जन्म-समय ${data.vargas.sensitivityLimitSec / 60} मिनट आगे-पीछे होने पर भी यह वर्ग नहीं बदलता।`
-    const svg = buildNorthChart(chartKundli(data, ch), { varga: `D${n}`, showDegrees: false, ariaLabel: info.hi })
-    html += `<div class="varga-row">
-      <figure class="phal-chart small">${svg.outerHTML}</figure>
-      <div><h3>${esc(info.hi)}</h3><p>${esc(tx.t)}</p><p class="muted">${esc(sensTxt)}</p></div>
-    </div>`
-  }
-  return html + endChapter()
+    const pl = data.planets.map((x) => ({ key: x.key, ab: GRAHA_AB[x.key], rashi: ch.planets[x.key], retro: x.retro }))
+    const svg = northChart({ size: 240, lagnaRashi: ch.lagna, planets: pl })
+    return `<div class="varga"><div>${svg.outerHTML}</div><div>
+      <div class="vh">${esc(info.hi)}</div><p>${esc(tx.t)}</p><p class="muted">${esc(sensTxt)}</p></div></div>`
+  }).join('')
+  return `<div class="vargagrid">${cells}</div>`
 }
 
-// --- अध्याय 8: D60 ----------------------------------------------------------
+// --- अध्याय 8: D60 ---------------------------------------------------------
 function d60(data) {
-  const rows = Object.entries(data.vargas.d60.planets).map(([key, v]) => [
-    esc(grahaHi(key)), `#${v.number}`, esc(v.hi), v.shubha === false ? 'अशुभ' : v.shubha === true ? 'शुभ' : 'मिश्र',
-  ])
-  rows.push(['लग्न', `#${data.vargas.d60.lagna.number}`, esc(data.vargas.d60.lagna.hi),
-    data.vargas.d60.lagna.shubha === false ? 'अशुभ' : data.vargas.d60.lagna.shubha === true ? 'शुभ' : 'मिश्र'])
-  return chapter('s8', '8', 'षष्ट्यंश (D60) और जन्म-समय की सूक्ष्मता', TX.CHAPTER_INTRO.d60) +
-    table(['ग्रह', 'क्रमांक', 'देवता', 'भाव'], rows) +
-    `<p>${esc(TX.D60_NOTE.shubha.t)}</p><p>${esc(TX.D60_NOTE.ashubha.t)}</p>` + endChapter()
+  const row = (label, v, key) => `<tr><td>${key ? `<span class="gname">${gb(key)}${esc(label)}</span>` : esc(label)}</td>
+    <td>#${v.number}</td><td>${esc(v.hi)}</td>
+    <td>${v.shubha === true ? '<span class="tone s">शुभ</span>' : v.shubha === false ? '<span class="tone c">अशुभ</span>' : '<span class="tone m">मिश्र</span>'}</td></tr>`
+  const rows = Object.entries(data.vargas.d60.planets).map(([key, v]) => row(grahaHi(key), v, key)).join('')
+  return `<table><thead><tr><th>ग्रह</th><th>क्रमांक</th><th>देवता</th><th>भाव</th></tr></thead><tbody>${rows}${row('लग्न', data.vargas.d60.lagna, null)}</tbody></table>
+    <p class="muted" style="margin-top:2mm">${esc(TX.D60_NOTE.shubha.t)}</p>
+    <p class="muted">${esc(TX.D60_NOTE.ashubha.t)}</p>`
 }
 
-// --- अध्याय 9: योग और दोष ---------------------------------------------------
-// हर योग का text `base` + शर्त वाले हिस्सों में बँटा है (text-hi.js). शर्त वाला
-// हिस्सा सिर्फ़ तब छपता है जब `detail` में वह स्थिति सच हो (टास्क 03-ख §3).
+// --- अध्याय 9: योग और दोष --------------------------------------------------
 export function yogaTextParts(y) {
   const tx = TX.YOGA_TEXT[y.id]
   if (!tx) return [{ t: y.text, tone: null }]
@@ -332,8 +288,6 @@ export function yogaTextParts(y) {
   return parts
 }
 
-// तालिका में खुलकर वही योग — जो बनते हैं, आंशिक अधियोग, और भंग वाला केमद्रुम.
-// जो नहीं बनते, उनकी नीचे एक ही पंक्ति रहती है।
 export function yogaShown(y) {
   if (y.present) return true
   if (y.id === 'adhi' && y.partial) return true
@@ -344,79 +298,37 @@ export function yogaShown(y) {
 function yogaStatus(y) {
   if (y.id === 'adhi' && y.partial && !y.present) return 'आंशिक'
   if (y.id === 'kemadruma' && !y.present && y.detail?.empty) return 'बनता है, पर भंग'
-  return 'बनता है'
+  return ''
 }
-
-const VIPAREETA_NAMED = ['harsha', 'sarala', 'vimala']
 
 function yogas(data) {
   const shown = data.yogas.list.filter(yogaShown)
   const absent = data.yogas.list.filter((y) => !yogaShown(y)).map((y) => y.hi)
-  const rows = shown.map((y) => [
-    esc(y.hi),
-    `<span class="lbl">${esc(VIPAREETA_NAMED.includes(y.id) ? `${y.label} · विपरीत` : y.label)}</span>`,
-    yogaStatus(y),
-    yogaTextParts(y).map((p) => `${esc(p.t)} ${toneBadge(p.tone)}`).join('<br>'),
-  ])
-  let html = chapter('s9', '9', 'योग और दोष', TX.CHAPTER_INTRO.yogas) +
-    table(['योग', 'मान्यता', 'स्थिति', 'फल'], rows, 'wide-last')
-  if (absent.length) {
-    html += `<p class="muted">इस कुंडली में ये योग नहीं बनते: ${esc(absent.join(', '))}।</p>`
-  }
-
-  html += `<h3>दोष</h3>`
+  const cards = shown.map((y) => {
+    const parts = yogaTextParts(y)
+    const head = parts[0]?.t ?? ''
+    const extra = parts.slice(1).map((p) => p.t).join(' ')
+    const t = parts[0]?.tone
+    const cls = y.id === 'adhi' && !y.present ? 'm' : (t === 'savdhan' ? 'c' : t === 'mishr' ? 'm' : 's')
+    return `<div class="yoga ${cls}"><b>${esc(y.hi)}${yogaStatus(y) ? ` <small>(${esc(yogaStatus(y))})</small>` : ''}</b>${esc(head)}${extra ? ' ' + esc(extra) : ''}</div>`
+  }).join('') || '<p class="muted">इस कुंडली में कोई विशेष योग नहीं बनता।</p>'
   const d = data.doshas
-  const items = []
-  // मंगल-दोष का नोट उसी कोठरी में छोटे अक्षरों में (अलग पंक्ति/पैरा नहीं — पन्ना बचता है)
+  const doshaCards = []
   if (d.mangal) {
-    items.push([
-      d.mangal.present ? 'मंगल दोष — है' : 'मंगल दोष — नहीं',
-      `${esc(TX.DOSHA_TEXT.mangal.t)}<br><span class="muted">${esc(TX.DOSHA_TEXT.mangalNote.t)}</span>`,
-    ])
+    doshaCards.push(`<div class="rcard" style="border-top-color:var(--ma)"><div class="h">${gb('mars')} मंगल दोष — ${d.mangal.present ? 'है' : 'नहीं'}</div>
+      <p>${esc(TX.DOSHA_TEXT.mangal.t)} ${tone(TX.DOSHA_TEXT.mangal.tone)}</p>
+      <p class="muted">${esc(TX.DOSHA_TEXT.mangalNote.t)}</p></div>`)
   }
-  items.push([d.kaalSarpa.present ? 'कालसर्प — है' : 'कालसर्प — नहीं', TX.DOSHA_TEXT.kaalSarpa.t])
-  items.push([d.guruChandal.present ? 'गुरु-चांडाल — है' : 'गुरु-चांडाल — नहीं', TX.DOSHA_TEXT.guruChandal.t])
-  html += table(['दोष', 'अर्थ'], items.map(([a, b]) => [esc(a), b]), 'wide-last')
-  return html + endChapter()
+  doshaCards.push(`<div class="rcard" style="border-top-color:var(--ra)"><div class="h">${gb('rahu')} कालसर्प — ${d.kaalSarpa.present ? 'है' : 'नहीं'}</div>
+    <p>${esc(TX.DOSHA_TEXT.kaalSarpa.t)} ${tone(TX.DOSHA_TEXT.kaalSarpa.tone)}</p></div>`)
+  doshaCards.push(`<div class="rcard" style="border-top-color:var(--ju)"><div class="h">${gb('jupiter')} गुरु-चांडाल — ${d.guruChandal.present ? 'है' : 'नहीं'}</div>
+    <p>${esc(TX.DOSHA_TEXT.guruChandal.t)} ${tone(TX.DOSHA_TEXT.guruChandal.tone)}</p></div>`)
+  return `<div class="yogas">${cards}</div>
+    ${absent.length ? `<p class="muted" style="margin-top:3mm">इस कुंडली में ये योग नहीं बनते: ${esc(absent.join(', '))}।</p>` : ''}
+    <h3>दोष</h3><div class="remedy">${doshaCards.join('')}</div>`
 }
 
-// --- अध्याय 10: दशा ---------------------------------------------------------
-// "तीसरे और दसवें भाव" — ग्रह जिन भावों का स्वामी है
-function ownerPhrase(owns) {
-  if (!owns.length) return ''
-  if (owns.length === 1) return H(owns[0])
-  return `${ordinalHi(owns[0])} और ${H(owns[owns.length - 1])}`
-}
-
-// "धन, परिवार, वाणी और भोजन" — भाव-विषय बिना अंतिम "।"
-const topicOf = (h) => TX.HOUSE_TOPICS[h].t.replace(/।\s*$/, '')
-const topicPhrase = (owns) => owns.map(topicOf).join(' तथा ')
-
-// दशा-स्वामी की एक-एक पंक्ति — DASHA_TEMPLATE भरकर (टास्क 03-ख §4).
-export function dashaPersonalLine(key, info) {
-  const tpl = TX.DASHA_TEMPLATE
-  if (!info.owns.length) {
-    return tpl.noOwn
-      .replace('{owner}', grahaHi(key))
-      .replace('{sitHouse}', H(info.house))
-      .replace('{sitTopic}', topicOf(info.house))
-  }
-  return tpl.hi
-    .replace('{owner}', grahaHi(key))
-    .replace('{ownHouse}', ownerPhrase(info.owns))
-    .replace('{sitHouse}', H(info.house))
-    .replace('{ownTopic}', topicPhrase(info.owns))
-    .replace('{sitTopic}', topicOf(info.house))
-}
-
-// अंतर्दशा की पंक्ति — वही template का दूसरा रूप.
-export function dashaAntarLine(key, info) {
-  return TX.DASHA_TEMPLATE.antar
-    .replace('{antar}', grahaHi(key))
-    .replace('{antarHouse}', H(info.house))
-    .replace('{antarTopic}', topicOf(info.house))
-}
-
+// --- अध्याय 10: दशा -------------------------------------------------------
 function dashaInfo(data, key) {
   const p = data.planets.find((x) => x.key === key)
   const owns = p?.owns ?? []
@@ -425,131 +337,229 @@ function dashaInfo(data, key) {
   const pos = data.positions[key]
   return { owns, house, cell, dig: pos?.dignity ?? null, combust: Boolean(pos?.combustion?.combust) }
 }
+const topicOf = (h) => TX.HOUSE_TOPICS[h].t.replace(/।\s*$/, '')
+const ownerPhrase = (owns) => (owns.length === 1 ? H(owns[0]) : `${ordinalHi(owns[0])} और ${H(owns[owns.length - 1])}`)
+export function dashaPersonalLine(key, info) {
+  const tpl = TX.DASHA_TEMPLATE
+  if (!info.owns.length) {
+    return tpl.noOwn.replace('{owner}', grahaHi(key)).replace('{sitHouse}', H(info.house)).replace('{sitTopic}', topicOf(info.house))
+  }
+  return tpl.hi.replace('{owner}', grahaHi(key)).replace('{ownHouse}', ownerPhrase(info.owns))
+    .replace('{sitHouse}', H(info.house)).replace('{ownTopic}', info.owns.map(topicOf).join(' तथा ')).replace('{sitTopic}', topicOf(info.house))
+}
+export function dashaAntarLine(key, info) {
+  return TX.DASHA_TEMPLATE.antar.replace('{antar}', grahaHi(key)).replace('{antarHouse}', H(info.house)).replace('{antarTopic}', topicOf(info.house))
+}
 
 function dasha(data) {
   const cur = data.dasha.current
-  const curTx = TX.DASHA[KEY_BY[cur.maha.key]]
-  const md = data.dasha.mahadashas.map((row) => {
-    const i = dashaInfo(data, row.key)
-    const ownLabel = i.owns.length
-      ? `स्वामी: ${i.owns.map((h) => ordinalHi(h)).join(', ')} भाव · बैठा: ${H(i.house)}`
-      : `स्वामी: — · बैठा: ${H(i.house)}`
-    const running = cur.maha.key === row.key && cur.maha.fromMs === row.fromMs
-    return [
-      esc(grahaHi(row.key)), esc(ownLabel), dateHi(row.fromMs), dateHi(row.toMs),
-      running ? '<b>चल रही</b>' : '',
-    ]
-  })
-  const ad = data.dasha.antardashas10y.map((a) => [
-    esc(`${grahaHi(a.mahaKey)} — ${grahaHi(a.key)}`), dateHi(a.fromMs), dateHi(a.toMs),
-  ])
-  // स्थिति (उच्च/नीच/...) और अस्त — tone चिह्न सहित
-  const digLine = (i) => {
-    const out = []
-    const note = i.dig ? TX.DIGNITY_NOTES[i.dig.level] : null
-    if (note) out.push(`<p class="muted">${esc(note.t)} ${toneBadge(note.tone)}</p>`)
-    if (i.combust) out.push(`<p class="muted">${esc(TX.DIGNITY_NOTES.combust.t)} ${toneBadge(TX.DIGNITY_NOTES.combust.tone)}</p>`)
-    return out.join('')
-  }
-  const personal = (key, kind) => {
-    const i = dashaInfo(data, key)
-    const line = kind === 'antar' ? dashaAntarLine(key, i) : dashaPersonalLine(key, i)
-    const label = kind === 'antar' ? 'अंतर्दशा' : 'महादशा'
-    return `<p><b>${label}:</b> ${esc(line)} ${toneBadge(i.cell?.tone ?? 'mishr')}</p>${digLine(i)}`
-  }
-  return chapter('s10', '10', 'विंशोत्तरी दशा', TX.CHAPTER_INTRO.dasha) +
-    `<div class="nowbox"><b>अभी:</b> ${esc(grahaHi(cur.maha.key))} महादशा · ${esc(grahaHi(cur.antar.key))} अंतर्दशा · ${esc(grahaHi(cur.pratyantar.key))} प्रत्यंतर</div>
-     <p>${esc(curTx.t)} ${toneBadge(curTx.tone)}</p>
-     <h3>इस समय की दशा — आपकी कुंडली के अनुसार</h3>
-     ${personal(cur.maha.key, 'maha')}
-     ${personal(cur.antar.key, 'antar')}
-     <h3>महादशा (जन्म से 100 वर्ष)</h3>` +
-    table(['महादशा', 'स्वामी · बैठा', 'से', 'तक', ''], md) +
-    `<h3>अगले 10 वर्ष की अंतर्दशाएँ</h3>` + table(['महादशा — अंतर्दशा', 'से', 'तक'], ad) +
-    endChapter()
+  const birthMs = data.meta.birthMs
+  const endMs = data.dasha.mahadashas[data.dasha.mahadashas.length - 1]?.toMs ?? birthMs
+  const mdRows = data.dasha.mahadashas.map((m) => ({ key: m.key, hi: grahaHi(m.key), ab: GRAHA_AB[m.key], fromMs: m.fromMs, toMs: m.toMs }))
+  const md = data.dasha.mahadashas.find((m) => m.key === cur.maha.key && m.fromMs === cur.maha.fromMs) ?? data.dasha.mahadashas.find((m) => m.key === cur.maha.key)
+  const adRows = (data.dasha.tree?.mahadashas ?? []).find((m) => m.key === cur.maha.key && m.fromMs === cur.maha.fromMs)?.antardashas?.map((a) => ({ key: a.key, hi: grahaHi(a.key), ab: GRAHA_AB[a.key], fromMs: a.fromMs, toMs: a.toMs })) ?? []
+  const curTx = TX.DASHA[VAR[cur.maha.key]]
+  const mi = dashaInfo(data, cur.maha.key)
+  const ai = dashaInfo(data, cur.antar.key)
+  const rows = data.dasha.mahadashas.map((m) => {
+    const i = dashaInfo(data, m.key)
+    const ownLabel = i.owns.length ? `स्वामी: ${i.owns.map((h) => ordinalHi(h)).join(', ')} भाव · बैठा: ${H(i.house)}` : `स्वामी: — · बैठा: ${H(i.house)}`
+    const running = cur.maha.key === m.key && cur.maha.fromMs === m.fromMs
+    return `<tr><td><span class="gname">${gb(m.key)}${esc(grahaHi(m.key))}${running ? ' <span class="tone m">चल रही</span>' : ''}</span></td>
+      <td>${dateHi(m.fromMs)}</td><td>${dateHi(m.toMs)}</td><td class="muted">${esc(ownLabel)}</td></tr>`
+  }).join('')
+  return `<h3>जीवन-पट्टी: जन्म से 100 वर्ष</h3>${dashaTimeline(mdRows, { fromMs: birthMs, toMs: endMs, nowMs: data.meta.nowMs }).outerHTML}
+    ${adRows.length ? `<h3>${esc(grahaHi(cur.maha.key))} महादशा के भीतर की अंतर्दशाएँ</h3>${dashaTimeline(adRows, { fromMs: md.fromMs, toMs: md.toMs, nowMs: data.meta.nowMs }).outerHTML}` : ''}
+    <div class="dashcard" style="margin-top:5mm">
+      <div class="orb" style="background:var(--${VAR[cur.maha.key]})">${GRAHA_AB[cur.maha.key]}</div>
+      <div><div class="t">अभी ${esc(grahaHi(cur.maha.key))} की महादशा · ${esc(grahaHi(cur.antar.key))} की अंतर्दशा</div>
+        <div class="saransh">${esc(dashaPersonalLine(cur.maha.key, mi))} ${tone(mi.cell?.tone ?? 'mishr')}</div>
+        <div class="saransh">${esc(dashaAntarLine(cur.antar.key, ai))} ${tone(ai.cell?.tone ?? 'mishr')}</div>
+        ${curTx ? `<div class="muted" style="margin-top:1mm">${esc(curTx.t)} ${tone(curTx.tone)}</div>` : ''}</div>
+    </div>
+    <h3>महादशाएँ (जन्म से 100 वर्ष)</h3>
+    <table><thead><tr><th>महादशा</th><th>से</th><th>तक</th><th>स्वामी · बैठा</th></tr></thead><tbody>${rows}</tbody></table>`
 }
 
-// --- अध्याय 11: साढ़ेसाती और गोचर -------------------------------------------
+// --- अध्याय 11: साढ़ेसाती, ढैया, गोचर --------------------------------------
 function sadesati(data) {
-  const cyc = (data.sadesati.sadesatiCycles ?? []).map((c) => ['साढ़ेसाती', dateHi(c.fromMs), dateHi(c.toMs)])
-  const dha = (data.sadesati.dhaiya ?? []).map((c) => [c.label, dateHi(c.fromMs), dateHi(c.toMs)])
-  const now = data.sadesati.current
+  const s = data.sadesati
+  const birthMs = data.meta.birthMs
+  const endMs = birthMs + 100 * 365.25 * 86400000
+  const SHADE = { 12: '#8E9AC9', 1: '#3949AB', 2: '#5C6BC0' }
+  const rows = []
+  for (const c of s.sadesatiCycles ?? []) {
+    for (const ph of c.phases ?? []) rows.push({ key: 'sa', hi: 'साढ़ेसाती', ab: 'श', fromMs: ph.fromMs, toMs: ph.toMs, color: SHADE[ph.phase] ?? '#3949AB' })
+  }
+  for (const c of s.dhaiyaCycles ?? []) rows.push({ key: 'sa', hi: 'ढैया', ab: 'ढै', fromMs: c.fromMs, toMs: c.toMs, color: '#C3CAE8' })
+  rows.sort((a, b) => a.fromMs - b.fromMs)
+  const now = s.current
   const curTx = now
     ? (now.kind === 'sadesati'
       ? TX.DOSHA_TEXT[`sadesati${now.runningPhase?.phase === 12 ? 1 : now.runningPhase?.phase === 1 ? 2 : 3}`]
       : TX.DOSHA_TEXT.dhaiya)
     : null
   const g = data.gochar
-  const grow = Object.keys(g.main).map((k) => {
+  const cards = Object.keys(g.main).map((k) => {
     const p = g.main[k]
-    // धीमे ग्रहों (गुरु/शनि/राहु/केतु) के लिए फलदीपिका वाला पूरा वाक्य; बाक़ी के लिए सिर्फ़ चिह्न
-    const tx = TX.GOCHAR[KEY_BY[k]]?.[p.houseFromMoon]
-    const tone = p.shubhaFromMoon ? 'shubh' : 'savdhan'
-    return [esc(grahaHi(k)), esc(rashiHi(p.rashi)), H(p.houseFromMoon), H(p.houseFromLagna),
-      tx ? `${esc(tx.t)} ${toneBadge(tx.tone)}` : toneBadge(tone)]
-  })
-  return chapter('s11', '11', 'साढ़ेसाती, ढैया और आज का गोचर', TX.CHAPTER_INTRO.gochar) +
-    (now
-      ? `<p><b>अभी ${esc(now.label)} चल रही है।</b> ${esc(curTx?.t ?? '')}</p>`
-      : `<p><b>अभी साढ़ेसाती या ढैया नहीं चल रही।</b></p>`) +
-    table(['अवधि', 'से', 'तक'], [...cyc, ...dha]) +
-    `<h3>आज का गोचर (जन्म-चंद्र से)</h3>` +
-    table(['ग्रह', 'राशि', 'चंद्र से', 'लग्न से', 'भाव-फल'], grow) +
-    endChapter()
+    const tx = TX.GOCHAR[VAR[k]]?.[p.houseFromMoon]
+    return `<div class="bcard"><div class="hd">${gb(k)}<span class="rashi">${esc(grahaHi(k))} · ${esc(rashiHi(p.rashi))}</span>
+        <span class="sav" style="margin-left:auto">चंद्र से ${H(p.houseFromMoon)}</span></div>
+      <p>${tx ? `${esc(tx.t)} ${tone(tx.tone)}` : `<span class="muted">लग्न से ${H(p.houseFromLagna)} · </span>${tone(p.shubhaFromMoon ? 'shubh' : 'savdhan')}`}</p></div>`
+  }).join('')
+  return `${now ? `<p><b>अभी ${esc(now.label)} चल रही है।</b> ${esc(curTx?.t ?? '')}</p>` : '<p><b>अभी साढ़ेसाती या ढैया नहीं चल रही।</b></p>'}
+    <h3>साढ़ेसाती और ढैया — पूरा जीवन</h3>
+    ${dashaTimeline(rows, { fromMs: birthMs, toMs: endMs, nowMs: data.meta.nowMs }).outerHTML}
+    <div class="legend"><span><i style="background:#8E9AC9"></i>साढ़ेसाती — पहला चरण</span><span><i style="background:#3949AB"></i>दूसरा चरण</span><span><i style="background:#5C6BC0"></i>तीसरा चरण</span><span><i style="background:#C3CAE8"></i>ढैया</span></div>
+    <h3>आज का गोचर (जन्म-चंद्र से)</h3><div class="bhavgrid" style="grid-template-columns:1fr 1fr">${cards}</div>`
 }
 
 // --- अध्याय 12: अष्टकवर्ग ---------------------------------------------------
 function ashtakavarga(data) {
   const av = data.ashtakavarga
   const keys = ['sun', 'moon', 'mars', 'mercury', 'jupiter', 'venus', 'saturn']
-  const rows = keys.map((k) => [
-    esc(grahaHi(k)), ...av.bav[k].byHouse.map((b) => String(b)), `<b>${av.bav[k].total}</b>`,
-  ])
-  rows.push(['<b>सर्वाष्टक</b>', ...av.sav.byHouse.map((b) => `<b>${b}</b>`), `<b>${av.sav.total}</b>`])
-  return chapter('s12', '12', 'अष्टकवर्ग', TX.CHAPTER_INTRO.ashtakavarga) +
-    table(['ग्रह', ...Array.from({ length: 12 }, (_, i) => `भा${i + 1}`), 'कुल'], rows) +
-    `<p class="muted">हर भाव के बिंदु (भाव 1 से 12 तक)। कुल योग सूर्य 48, चंद्र 49, मंगल 39, बुध 54, गुरु 56, शुक्र 52, शनि 39 — सर्वाष्टक 337।</p>` +
-    endChapter()
+  const rows = keys.map((k) => ({ key: k, hi: grahaHi(k), ab: GRAHA_AB[k], values: av.bav[k].byHouse }))
+  return `<h3>सर्वाष्टकवर्ग: बारह भावों का बल</h3>${savBars(av.sav.byHouse, { lagnaRashi: data.summary.lagnaRashi }).outerHTML}
+    <div class="legend"><span><i style="background:var(--shubh)"></i>28 से अधिक (बलवान)</span><span><i style="background:#C9CCD9"></i>28 या कम</span><span>बिंदीदार रेखा: औसत 28</span></div>
+    <h3>भिन्नाष्टकवर्ग: हर ग्रह के बिंदु</h3>${bavHeatmap(rows).outerHTML}
+    <div class="legend"><span>हल्का = कम बिंदु, गहरा = अधिक बिंदु (0 से 8)</span></div>
+    <p class="muted" style="margin-top:2mm">कुल योग सूर्य 48, चंद्र 49, मंगल 39, बुध 54, गुरु 56, शुक्र 52, शनि 39 — सर्वाष्टक ${av.sav.total}।</p>`
 }
 
-// --- अध्याय 13: उपाय और रत्न -------------------------------------------------
+// --- अध्याय 13: उपाय और रत्न -----------------------------------------------
 function upaya(data) {
   const st = data.strength.planets
-  const weak = Object.entries(st).sort((a, b) => a[1].total - b[1].total).slice(0, 2).map(([k]) => k)
-  const rows = weak.map((k) => [esc(grahaHi(k)), esc(TX.UPAYA[KEY_BY[k]].free)])
+  const weak = Object.entries(st).sort((a, b) => a[1].total - b[1].total).slice(0, 3).map(([k]) => k)
+  const cards = weak.map((k) => {
+    const p = data.planets.find((x) => x.key === k)
+    const dig = data.positions[k].dignity
+    return `<div class="rcard" style="border-top-color:var(--${VAR[k]})">
+      <div class="h">${gb(k)}${esc(grahaHi(k))}</div>
+      <div class="meta"><span>${H(p.house)}</span><span>${esc(digWord(dig.level))}</span><span>विंशोपक ${st[k].total}</span></div>
+      <p>${esc(TX.UPAYA[VAR[k]].free)}</p></div>`
+  }).join('')
   const r = data.ratna
-  const gems = [
-    [r.jeevan.roleHi, grahaHi(r.jeevan.planet), r.jeevan.gem.hi, r.jeevan.warning ? 'सावधानी' : 'ठीक'],
-    [r.bhagya.roleHi, grahaHi(r.bhagya.planet), r.bhagya.gem.hi, r.bhagya.warning ? 'सावधानी' : 'ठीक'],
-    [r.karak.roleHi, grahaHi(r.karak.planet), r.karak.gem.hi, r.karak.warning ? 'सावधानी' : 'ठीक'],
-  ]
-  return chapter('s13', '13', 'उपाय और रत्न', TX.CHAPTER_INTRO.upaya) +
-    `<h3>पहले निःशुल्क उपाय</h3>` + table(['ग्रह', 'उपाय'], rows, 'wide-last') +
-    `<h3>रत्न</h3>` + table(['रत्न', 'ग्रह', 'रत्न', 'स्थिति'], gems.map((g) => [esc(g[0]), esc(g[1]), esc(g[2]), esc(g[3])])) +
-    `<p class="note">${esc(TX.UPAYA.caution)}</p>` + endChapter()
+  return `<h3>पहले निःशुल्क उपाय</h3><div class="remedy">${cards}</div>
+    <div class="gem"><div class="stone" style="background:linear-gradient(135deg,#FFD180,#EF7D1A)"></div>
+      <div><b>जीवन रत्न: ${esc(r.jeevan.gem.hi)} (${esc(grahaHi(r.jeevan.planet))})</b>
+        <div style="font-size:9pt">भाग्य रत्न: ${esc(r.bhagya.gem.hi)} (${esc(grahaHi(r.bhagya.planet))}) · कारक रत्न: ${esc(r.karak.gem.hi)} (${esc(grahaHi(r.karak.planet))})</div>
+        <div style="font-size:8.5pt;color:var(--savdhan);margin-top:1mm">${esc(TX.UPAYA.caution)}</div></div></div>`
 }
 
-// --- अध्याय 14: शब्दकोश और पद्धति -------------------------------------------
-function glossary(data) {
-  const rows = Object.entries(TX.GLOSSARY).map(([, v]) => [esc(v)])
-  const terms = Object.entries(TX.GLOSSARY).map(([, v]) => esc(v))
-  return chapter('s14', '14', 'शब्दकोश और गणना-पद्धति', TX.CHAPTER_INTRO.shabdkosh) +
-    `<dl class="glossary">${terms.map((t) => `<dd>${t}</dd>`).join('')}</dl>
-     <h3>गणना-पद्धति</h3>
-     <p>लाहिरी अयनांश, whole-sign भाव, mean राहु, Swiss Ephemeris (WASM)। साढ़ेसाती और गोचर उसी ephemeris से दिन-प्रतिदिन गिनकर निकाले गए हैं।
-     यह सब आपके ही browser में बनता है — कोई server, कोई tracker नहीं।</p>
-     <p class="closing">॥ शुभमस्तु ॥</p>
-     <p>${esc(TX.CLOSING_NOTE)}</p>
-     <p class="links">mybapuji.com/kundli · mybapuji.com/kundli-milan · mybapuji.com की मुफ़्त ज्योतिष किताबें</p>`
-    + endChapter()
+// --- अध्याय 14: शब्दकोश और पद्धति -----------------------------------------
+function glossary() {
+  const items = Object.values(TX.GLOSSARY).map((line) => {
+    const [term, ...rest] = String(line).split(' — ')
+    const body = rest.join(' — ')
+    return `<div><b>${esc(term)}</b> — ${esc(body)}</div>`
+  }).join('')
+  return `<div class="glossary">${items}</div>
+    <h3>गणना-पद्धति</h3>
+    <p class="muted">लाहिरी अयनांश, whole-sign भाव, mean राहु, Swiss Ephemeris (WASM)। साढ़ेसाती और गोचर उसी ephemeris से दिन-प्रतिदिन गिनकर निकाले गए हैं। यह सब आपके ही browser में बनता है — कोई server, कोई tracker नहीं।</p>
+    <div class="closing"><div class="om">॥ शुभमस्तु ॥</div>
+      <p>${esc(TX.CLOSING_NOTE)}</p>
+      <p style="color:var(--marigold);font-weight:600">mybapuji.com/kundli · कुंडली मिलान · पंचांग · मुफ़्त ज्योतिष पुस्तकें</p></div>`
 }
 
-// --- पूरा report -------------------------------------------------------------
-export function renderReport(data) {
-  if (!data || data.error) return `<p class="err">कुंडली नहीं बन सकी — जन्म-विवरण जाँचें।</p>`
-  return [
-    cover(data), contents(), glance(data), details(data), charts(data), planets(data), houses(data),
-    vargas(data), d60(data), yogas(data), dasha(data), sadesati(data), ashtakavarga(data),
-    upaya(data), glossary(data),
-  ].join('\n')
+// --- मुखपृष्ठ ---------------------------------------------------------------
+function cover(data) {
+  const m = data.meta
+  const name = m.name?.trim() || 'जातक'
+  const birth = m.local
+    ? `${m.local.day} ${monthHi(m.local.month)} ${m.local.year}, ${timeWords(m.local.hour, m.local.minute)}, ${m.place || ''}`
+    : (m.place || '—')
+  const p = data.avakahada.panchang
+  const pan = p && !p.error
+    ? `<div class="pan"><span>वार <b>${esc(VAARAS[p.vaar]?.hi ?? '—')}</b></span>
+        <span>तिथि <b>${esc(`${p.tithi?.paksha === 'krishna' ? 'कृष्ण' : 'शुक्ल'} ${TITHIS[(p.tithi?.index ?? 1) - 1]?.hi ?? ''}`)}</b></span>
+        <span>योग <b>${esc(YOGAS[(p.yoga?.index ?? 1) - 1]?.hi ?? '')}</b></span>
+        <span>करण <b>${esc(KARANAS[p.karana?.numbers?.[0] ?? 0]?.hi ?? '')}</b></span></div>`
+    : ''
+  const chart = northChart({ size: 320, lagnaRashi: data.summary.lagnaRashi, planets: vizPlanets(data.planets), theme: 'dark' })
+  return `<section class="cover" id="cover">
+    ${starfield().outerHTML}
+    <div class="top"><div class="site">mybapuji.com</div><div class="om">॥ श्री गणेशाय नमः ॥</div></div>
+    <div class="chart">${chart.outerHTML}</div>
+    <h1>जन्म कुंडली फलादेश</h1>
+    <div class="sub">पराशरी पद्धति के अनुसार</div>
+    <div class="name">${esc(name)}</div>
+    <div class="birth">${esc(birth)}</div>
+    <div class="keys">
+      <div class="key"><img src="${rashiImg(data.summary.lagnaRashi)}" alt="" width="49" height="49"><div class="v">${esc(rashiHi(data.summary.lagnaRashi))}</div><div class="k">लग्न</div></div>
+      <div class="key"><img src="${rashiImg(data.summary.moonRashi)}" alt="" width="49" height="49"><div class="v">${esc(rashiHi(data.summary.moonRashi))}</div><div class="k">चंद्र राशि</div></div>
+      <div class="key" style="display:flex;flex-direction:column;justify-content:flex-end"><div class="v">${esc(data.summary.nakshatraName.hi)}</div><div class="k">नक्षत्र, ${esc(ordinalHi(data.summary.pada, 'चरण'))}</div></div>
+      <div class="key" style="display:flex;flex-direction:column;justify-content:flex-end"><div class="v">${esc(grahaHi(data.summary.mahadasha))}</div><div class="k">चल रही महादशा</div></div>
+    </div>
+    ${pan}
+    <div class="foot">यह फलादेश आपके ही फ़ोन या कंप्यूटर में बना है — जन्म-विवरण कहीं भेजा या सेव नहीं हुआ</div>
+  </section>`
 }
+const MONTHS = ['जनवरी', 'फ़रवरी', 'मार्च', 'अप्रैल', 'मई', 'जून', 'जुलाई', 'अगस्त', 'सितंबर', 'अक्टूबर', 'नवंबर', 'दिसंबर']
+const monthHi = (m) => MONTHS[(m - 1) % 12]
+function timeWords(h, min) {
+  const word = h < 4 ? 'रात' : h < 12 ? 'सुबह' : h < 16 ? 'दोपहर' : h < 20 ? 'शाम' : 'रात'
+  const h12 = h % 12 === 0 ? 12 : h % 12
+  return `${word} ${h12}:${String(min).padStart(2, '0')} बजे`
+}
+
+// --- साझा ------------------------------------------------------------------
+export function lordPlacements(planet) {
+  if (planet.key === 'rahu' || planet.key === 'ketu') return []
+  return (planet.owns ?? [])
+    .map((own) => ({ own, inHouse: planet.house, tx: TX.LORD_IN_HOUSE[own]?.[planet.house] ?? null }))
+    .filter((x) => x.tx)
+}
+const DIG_WORDS = {
+  exalted: 'उच्च', debilitated: 'नीच', own: 'स्वराशि', moolatrikona: 'मूलत्रिकोण', adhimitra: 'अतिमित्र',
+  mitra: 'मित्र', sama: 'सम', shatru: 'शत्रु', adhishatru: 'अधिशत्रु', none: '—',
+}
+const digWord = (level) => DIG_WORDS[level] ?? '—'
+const digWordCls = (level) => (['exalted', 'moolatrikona', 'own', 'adhimitra', 'mitra'].includes(level) ? 'up' : ['debilitated', 'shatru', 'adhishatru'].includes(level) ? 'dn' : 'eq')
+
+function table(headers, rows) {
+  return `<table><thead><tr>${headers.map((h) => `<th>${esc(h)}</th>`).join('')}</tr></thead>
+    <tbody>${rows.map((r) => `<tr>${r.map((c) => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`
+}
+
+const CH = [
+  { id: 's2', num: 2, title: 'आपकी कुंडली एक नज़र में', intro: 'पूरी report का सार एक पन्ने पर: लग्न, मन (चंद्र), चल रही दशा, ग्रहों का बल और मुख्य योग।', body: glance },
+  { id: 's3', num: 3, title: 'जन्म-विवरण, पंचांग और अवकहड़ा', intro: TX.CHAPTER_INTRO.panchang, body: details },
+  { id: 's4', num: 4, title: 'मुख्य कुंडलियाँ', intro: TX.CHAPTER_INTRO.sudarshan, body: charts },
+  { id: 's5', num: 5, title: 'ग्रह और उनकी स्थिति', intro: 'हर ग्रह अपने रंग से पहचाना गया है। यही रंग पूरी report के चार्ट, ग्राफ़ और दशा-पट्टी में भी है।', body: planets },
+  { id: 's6', num: 6, title: 'बारह भाव', intro: TX.CHAPTER_INTRO.bhav, body: houses },
+  { id: 's7', num: 7, title: 'षोडश वर्ग', intro: TX.CHAPTER_INTRO.vargas, body: vargas },
+  { id: 's8', num: 8, title: 'षष्ट्यंश (D60)', intro: TX.CHAPTER_INTRO.d60, body: d60 },
+  { id: 's9', num: 9, title: 'योग और दोष', intro: TX.CHAPTER_INTRO.yogas, body: yogas },
+  { id: 's10', num: 10, title: 'विंशोत्तरी दशा', intro: TX.CHAPTER_INTRO.dasha, body: dasha },
+  { id: 's11', num: 11, title: 'साढ़ेसाती, ढैया और आज का गोचर', intro: TX.CHAPTER_INTRO.gochar, body: sadesati },
+  { id: 's12', num: 12, title: 'अष्टकवर्ग', intro: TX.CHAPTER_INTRO.ashtakavarga, body: ashtakavarga },
+  { id: 's13', num: 13, title: 'उपाय और रत्न', intro: TX.CHAPTER_INTRO.upaya, body: upaya },
+  { id: 's14', num: 14, title: 'शब्दकोश और गणना-पद्धति', intro: TX.CHAPTER_INTRO.shabdkosh, body: glossary },
+]
+
+// पूरा पन्ना (print/PDF और /kundli-phal/)
+// छवियों का loading-गुण (print में lazy नहीं, वरना print से पहले load नहीं होतीं)
+let LAZY = ' loading="lazy"'
+
+export function renderReport(data, { lazyImages = true } = {}) {
+  LAZY = lazyImages ? ' loading="lazy"' : ''
+  if (!data || data.error) return '<p class="msg">कुंडली नहीं बन सकी — जन्म-विवरण जाँचें।</p>'
+  const chapters = CH.map((c) => `<section class="ch" id="${c.id}">
+    <header class="chap"><div class="num">${dev(c.num)}</div><h2>${esc(c.title)}</h2>
+      <p class="intro">${esc(c.intro)}</p></header>
+    ${c.body(data)}</section>`).join('\n')
+  return `${cover(data)}\n${contents()}\n${chapters}`
+}
+
+// kundli पेज का online section — अध्याय <details> में, पहले दो खुले
+export function renderOnline(data) {
+  if (!data || data.error) return '<p class="muted">फलादेश नहीं बन सका।</p>'
+  const chips = CH.map((c) => `<a class="po-chip" href="#po-${c.id}">${esc(c.title)}</a>`).join('')
+  const body = CH.map((c, i) => `<details id="po-${c.id}" ${i < 2 ? 'open' : ''}>
+      <summary><span class="n">${dev(c.num)}</span>${esc(c.title)}<span class="arrow">›</span></summary>
+      <div class="po-body"><p class="muted">${esc(c.intro)}</p>${c.body(data)}</div>
+    </details>`).join('')
+  return `<div class="po-chips">${chips}</div>${body}`
+}
+
+export { CH as CHAPTERS, dev }
