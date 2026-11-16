@@ -392,11 +392,11 @@ function phalUrl(values, conversion, coords) {
 
 // विस्तृत फलादेश का online section — JS chunk तभी load होता है जब जातक यहाँ तक
 // scroll करे (देखें beginPhalOnline). जो वहाँ तक नहीं जाता, उसके लिए कुछ नहीं.
-let phalOnlineStarted = false
 function beginPhalOnline(host, values, conversion, coords) {
   const start = async () => {
-    if (phalOnlineStarted) return
-    phalOnlineStarted = true
+    // host के हिसाब से एक बार — page दोबारा render हो तो नया host ख़ुद mount होगा
+    if (host.dataset.phalMounted) return
+    host.dataset.phalMounted = '1'
     try {
       const { mountPhalOnline } = await import('./phal/online.js')
       await mountPhalOnline(host, {

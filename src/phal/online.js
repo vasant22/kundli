@@ -31,6 +31,7 @@ export async function mountPhalOnline(host, { search, pdfHref, name = '', hindiO
   }
   const { p, birth } = parsed
   const conversion = wallTimeToUtc(birth, p.tz)
+  if (!host.isConnected) return
   const data = buildPhalData(await initEphemeris(), {
     utc: conversion.utc,
     latitude: Number(p.lat),
@@ -41,6 +42,7 @@ export async function mountPhalOnline(host, { search, pdfHref, name = '', hindiO
     gender: p.gender || '',
     place: p.place || '',
   })
+  if (!host.isConnected) return
   host.innerHTML = `<div class="phal">
     <div class="po-head">
       <div><h2 class="po-title">विस्तृत फलादेश</h2>
