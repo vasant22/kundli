@@ -1007,3 +1007,11 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
   PDF 20 पन्ने · फलादेश chunk पहली load में नहीं (phone: +21 files/434.8 KB scroll पर) · console error नहीं।
 - **सीख:** kundli पेज दो बार render होता है — online section को हमेशा मौजूदा `#phal-online` में mount करें (पकड़ा host खो जाता है)।
 - `main` bundle 22.55 → **24.45 kB** (+1.9, सीमा +2 के भीतर)।
+
+### 2026-11-16 — फलादेश PDF / टास्क 06-ख (तीनों PDF बटन + कुंडली बनते ही पूरा फलादेश) ✅ लाइव
+- पहला बटन अब **"📄 फलादेश सहित PDF"** → `/kundli-phal/?…&print=1` (पहले सिर्फ़ कुंडली छापता था; पुराना code `printChartOnly()` में बचा, बटन से हटा);
+  `a.phal-btn` का link भी `print=1`; PNG/कॉपी अछूते — तीनों बटन एक ही फलादेश-PDF देते हैं।
+- फलादेश chunk **कुंडली बनते ही** load (IntersectionObserver हटा); **तेरहों अध्याय खुले** (दबाकर बंद किए जा सकते हैं); chips बरकरार; चित्र lazy।
+- `/kundli-phal/` का "तैयार हो रहा है…" report बनते ही छिपता है (`.phal-doc.ready .loading`).
+- Phone 390 पहली load: 36 unique files / **3055.9 KB**, इसमें फलादेश 19 files / **427.4 KB** (chunk 46 · CSS 4 · 12 चित्र 216 · 4 fonts 157)।
+- tests **1099 ✓** · commit `d129494` · deploy (backup `kundli-before-06b-20261116-023655`, 4.2 MB/64 files) · live PDF 20 पन्ने · बाक़ी pages 200।
