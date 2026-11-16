@@ -43,7 +43,7 @@ describe.skipIf(!hasApp)('संस्करण दिखना (राउंड
     expect(VER).toMatch(/^\d+\.\d+\.\d+$/)
     expect(b.textContent).toBe('v' + VER)
     expect(b.hidden).toBe(false)
-    expect(VER).toBe('1.0.3')                     // 1.0.3 (Claude, 12-11-2026: वक्री सदस्य हरा); संस्करण बदले तो यहाँ भी
+    expect(VER).toBe('1.0.4')                     // 1.0.4 (16-11-2026: देश/राज्य/शहर + टाइम-ज़ोन); संस्करण बदले तो यहाँ भी
     // शीर्षक (title) भी उसी स्रोत से
     expect(w.document.title).toBe('BNN Shakti ' + VER)
   })
@@ -52,14 +52,15 @@ describe.skipIf(!hasApp)('संस्करण दिखना (राउंड
     let w = await boot()
     expect(w.document.getElementById('brandVer').textContent).toBe('संस्करण ' + VER)
     w = await boot({ date: '2026-11-09' })
-    expect(w.document.getElementById('brandVer').textContent).toBe('संस्करण ' + VER + ' · 2026-11-09')
+    // 1.0.4: तारीख़ अब dd-mm-yyyy में (पहले yyyy-mm-dd थी)
+    expect(w.document.getElementById('brandVer').textContent).toBe('संस्करण ' + VER + ' · 09-11-2026')
   })
 
   it('भाषा बदलने पर badge व brand-पंक्ति बदलती है', async () => {
     const w = await boot({ date: '2026-11-09' })
     w.document.getElementById('btnLang').click()
     await new Promise((r) => setTimeout(r, 120))
-    expect(w.document.getElementById('brandVer').textContent).toBe('Version ' + VER + ' · 2026-11-09')
+    expect(w.document.getElementById('brandVer').textContent).toBe('Version ' + VER + ' · 09-11-2026')
     expect(w.document.getElementById('appVerBadge').textContent).toBe('v' + VER)
   })
 

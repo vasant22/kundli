@@ -1,0 +1,35 @@
+// BNN कुंडली — Papua New Guinea के शहर (GeoNames CC BY 4.0)
+// प्रारूप: s=[[admin1 कोड, राज्य/प्रांत का नाम]…] · p=[[शहर, admin1 कोड, अक्षांश, देशांतर, tz-सूची में क्रमांक]…]
+window.BNN_GEO_PLACES=window.BNN_GEO_PLACES||{};
+window.BNN_GEO_PLACES["PG"]={"s":[["02", "Gulf Province"], ["03", "Milne Bay Province"], ["04", "Oro Province"], ["05", "Southern Highlands Province"], ["06", "Western Province"], ["07", "Bougainville"], ["08", "Chimbu Province"], ["09", "Eastern Highlands Province"], ["10", "East New Britain Province"], ["11", "East Sepik Province"], ["12", "Madang Province"], ["13", "Manus Province"], ["14", "Morobe Province"], ["15", "New Ireland"], ["16", "Western Highlands Province"], ["17", "West New Britain Province"], ["18", "Sandaun Province"], ["19", "Enga Province"], ["20", "National Capital"], ["21", "Hela Province"], ["22", "Jiwaka Province"]],"p":[
+["Port Moresby","20",-9.4772,147.1509,364],
+["Lae","14",-6.7233,146.9961,364],
+["Arawa","07",-6.2298,155.566,340],
+["Mount Hagen","16",-5.8575,144.2306,364],
+["Popondetta","04",-8.7654,148.2325,364],
+["Madang","12",-5.2215,145.7869,364],
+["Kokopo","10",-4.3432,152.2687,364],
+["Mendi","05",-6.1475,143.6563,364],
+["Kimbe","17",-5.5508,150.1377,364],
+["Goroka","09",-6.085,145.3867,364],
+["Wewak","11",-3.5496,143.6323,364],
+["Bulolo","14",-7.2036,146.6401,364],
+["Daru","06",-9.0779,143.2089,364],
+["Wau","14",-7.342,146.724,364],
+["Kavieng","15",-2.5734,150.7952,364],
+["Kiunga","06",-6.1219,141.2906,364],
+["Vanimo","18",-2.6837,141.302,364],
+["Alotau","03",-10.3151,150.4574,364],
+["Kundiawa","08",-6.0197,144.9692,364],
+["Kainantu","09",-6.2887,145.8655,364],
+["Tari","21",-5.845,142.9467,364],
+["Rabaul","10",-4.2004,152.163,364],
+["Ialibu","05",-6.2821,143.9935,364],
+["Kokoda","04",-8.8778,147.7364,364],
+["Lorengau","13",-2.0341,147.2717,364],
+["Kerema","02",-7.9603,145.7728,364],
+["Aitape","18",-3.137,142.3491,364],
+["Wabag","19",-5.4912,143.7215,364],
+["Kurumul","22",-5.855,144.6311,364],
+["Buka","07",-5.4326,154.671,340]
+]};

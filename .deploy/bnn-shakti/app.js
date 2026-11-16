@@ -104,6 +104,10 @@
   }
   window.BNN_showUpdateBar = showUpdateBar;   // जाँच के लिए (नुक़सान नहीं)
   window.BNN_showStaleBar = showStaleBar;     // जाँच के लिए (नुक़सान नहीं)
+  // 1.0.4 / टास्क 02: जाँच के लिए — जो offset/dst अभी तय हुआ और कुंडली का record
+  window.BNN_offNow = function () { return OFF_NOW; };
+  window.BNN_gather = function () { return gather(); };
+  window.BNN_setTz = function (n) { setTz(n, true); return applyTzOffset(); };
 
   function setStatus() {
     var d = new Date();
@@ -191,7 +195,16 @@
     return isFinite(n) ? n : null;
   }
 
-  var COUNTRIES = [['India', 'भारत'], ['Nepal', 'नेपाल'], ['Sri Lanka', 'श्रीलंका'], ['UAE', 'संयुक्त अरब अमीरात'], ['USA', 'अमेरिका'], ['UK', 'यूनाइटेड किंगडम'], ['Canada', 'कनाडा'], ['Australia', 'ऑस्ट्रेलिया'], ['Other', 'अन्य']];
+  // ---------- 1.0.4 / टास्क 02: सारे देश + अपने-आप टाइम-ज़ोन ----------
+  // देश-सूची app/geo.js से (251 देश, क्रम वहाँ तय: भारत, पड़ोसी/प्रवासी देश, बाक़ी A–Z)।
+  // geo.js न मिले (पुरानी build) तो पुरानी नौ देश ही चलेंगी — कोई गड़बड़ नहीं।
+  var GEO_C = (window.BNN_GEO_COUNTRIES || []);
+  var GEO_TZ = (window.BNN_GEO_TZ || []);
+  var ISO_BY_VAL = {}, GEO_BY_ISO = {};
+  GEO_C.forEach(function (c) { ISO_BY_VAL[c[3]] = c[0]; GEO_BY_ISO[c[0]] = c; });
+  var COUNTRIES = GEO_C.length
+    ? GEO_C.map(function (c) { return [c[3], c[2] || c[1]]; })          // [विकल्प-मान, हिंदी]
+    : [['India', 'भारत'], ['Nepal', 'नेपाल'], ['Sri Lanka', 'श्रीलंका'], ['UAE', 'संयुक्त अरब अमीरात'], ['USA', 'अमेरिका'], ['UK', 'यूनाइटेड किंगडम'], ['Canada', 'कनाडा'], ['Australia', 'ऑस्ट्रेलिया'], ['Other', 'अन्य']];
   var STATES = [['Andaman & Nicobar', 'अंडमान व निकोबार'], ['Arunachal Pradesh', 'अरुणाचल प्रदेश'], ['Assam', 'असम'], ['Andhra Pradesh', 'आंध्र प्रदेश'], ['Bihar', 'बिहार'], ['Chandigarh', 'चंडीगढ़'], ['Chhattisgarh', 'छत्तीसगढ़'], ['Dadra & Nagar Haveli', 'दादरा व नगर हवेली'], ['Daman & Diu', 'दमन-दीव'], ['Delhi', 'दिल्ली'], ['Goa', 'गोवा'], ['Gujarat', 'गुजरात'], ['Haryana', 'हरियाणा'], ['Himachal Pradesh', 'हिमाचल प्रदेश'], ['Jammu & Kashmir', 'जम्मू-कश्मीर'], ['Jharkhand', 'झारखंड'], ['Karnataka', 'कर्नाटक'], ['Kerala', 'केरल'], ['Ladakh', 'लद्दाख'], ['Lakshadweep', 'लक्षद्वीप'], ['Madhya Pradesh', 'मध्य प्रदेश'], ['Maharashtra', 'महाराष्ट्र'], ['Manipur', 'मणिपुर'], ['Meghalaya', 'मेघालय'], ['Mizoram', 'मिज़ोरम'], ['Nagaland', 'नागालैंड'], ['Odisha', 'ओडिशा'], ['Puducherry', 'पुदुचेरी'], ['Punjab', 'पंजाब'], ['Rajasthan', 'राजस्थान'], ['Sikkim', 'सिक्किम'], ['Tamil Nadu', 'तमिलनाडु'], ['Telangana', 'तेलंगाना'], ['Tripura', 'त्रिपुरा'], ['Uttarakhand', 'उत्तराखंड'], ['Uttar Pradesh', 'उत्तर प्रदेश'], ['West Bengal', 'पश्चिम बंगाल']];
   function hiOfEn(pairs, en) { for (var i = 0; i < pairs.length; i++) if (pairs[i][0] === en) return pairs[i][1]; return en || ''; }
   function enOfHiP(pairs, hi) { for (var i = 0; i < pairs.length; i++) if (pairs[i][1] === hi) return pairs[i][0]; return hi || ''; }
@@ -235,30 +248,124 @@
     return out;
   })();
 
-  function fillCountries() {
-    var sel = $('fCountry'); sel.innerHTML = '';
-    COUNTRIES.forEach(function (c) { var o = document.createElement('option'); o.value = c[0]; o.textContent = c[0]; sel.appendChild(o); });
-    sel.value = 'India';
+  // देश का विकल्प-मान → iso2 ('USA' → 'US'); 'Other' → ''
+  function isoOfVal(val) {
+    if (!val || val === 'Other') return '';
+    if (ISO_BY_VAL[val]) return ISO_BY_VAL[val];
+    if (GEO_BY_ISO[val]) return val;
+    for (var i = 0; i < GEO_C.length; i++) if (GEO_C[i][1] === val) return GEO_C[i][0];
+    return '';
   }
+  function geoRowOf(val) { var iso = isoOfVal(val); return iso ? GEO_BY_ISO[iso] : null; }
+  function countryLabelOf(val) { var g = geoRowOf(val); return g ? (g[2] || g[1]) : (val || ''); }
+
+  // देश-सूची — टाइप करते ही छन जाती है (नाम/हिंदी/iso, सब पर मिलान)
+  function fillCountries(q) {
+    var sel = $('fCountry'); if (!sel) return;
+    var keep = sel.value || 'India';
+    var s = String(q || '').trim().toLowerCase();
+    sel.innerHTML = '';
+    var first = null;
+    GEO_C.forEach(function (c) {
+      var hay = (c[1] + ' ' + (c[2] || '') + ' ' + c[0] + ' ' + c[3]).toLowerCase();
+      if (s && hay.indexOf(s) < 0) return;
+      var o = document.createElement('option');
+      o.value = c[3]; o.textContent = c[2] || c[1]; o.title = c[1] + (c[2] ? ' · ' + c[2] : '');
+      sel.appendChild(o); if (!first) first = c[3];
+    });
+    var oo = document.createElement('option'); oo.value = 'Other'; oo.textContent = L('अन्य', 'Other'); sel.appendChild(oo);
+    if (!GEO_C.length) {   // पुरानी नौ देशों वाला रास्ता (geo.js नहीं मिला)
+      COUNTRIES.forEach(function (c) {
+        var hay = (c[0] + ' ' + c[1]).toLowerCase();
+        if (s && hay.indexOf(s) < 0) return;
+        var o = document.createElement('option'); o.value = c[0]; o.textContent = c[1] || c[0]; sel.appendChild(o); if (!first) first = c[0];
+      });
+    }
+    var has = false;
+    for (var i = 0; i < sel.options.length; i++) if (sel.options[i].value === keep) { has = true; break; }
+    sel.value = has ? keep : (first || 'India');
+  }
+  // 1.0.4 / टास्क 02: हर देश के राज्य/प्रांत (admin1) — भारत की सूची पहले जैसी
   function rebuildStates(pick) {
     var country = $('fCountry').value;
     var sel = $('fState'), txt = $('fStateTxt');
-    if (country === 'India') {
+    if (country === 'India' || !isoOfVal(country)) {
       txt.hidden = true; sel.hidden = false;
       sel.innerHTML = '';
       STATES.forEach(function (s) { var o = document.createElement('option'); o.value = s[0]; o.textContent = s[0]; sel.appendChild(o); });
       var ok = false;
       if (pick) { for (var i = 0; i < sel.options.length; i++) if (sel.options[i].value === pick) ok = true; }
       sel.value = ok ? pick : 'Maharashtra';
-    } else {
-      sel.hidden = true; txt.hidden = false;
-      txt.value = pick || '';
+      return;
     }
+    var iso = isoOfVal(country);
+    sel.hidden = false; txt.hidden = true;
+    sel.innerHTML = '<option value="">' + L('लोड हो रहा है…', 'Loading…') + '</option>';
+    loadCountryPlaces(iso, function () {
+      if ($('fCountry').value !== country) return;      // इस बीच देश बदल गया
+      var f = (window.BNN_GEO_PLACES || {})[iso];
+      sel.innerHTML = '';
+      var any = document.createElement('option');
+      any.value = ''; any.textContent = L('— राज्य / प्रांत —', '— State / Province —');
+      sel.appendChild(any);
+      ((f && f.s) || []).forEach(function (st) {
+        var o = document.createElement('option'); o.value = st[1]; o.textContent = st[1]; sel.appendChild(o);
+      });
+      var oth = document.createElement('option');
+      oth.value = '__other__'; oth.textContent = L('✍️ ख़ुद लिखें…', '✍️ Type it yourself…');
+      sel.appendChild(oth);
+      if (pick) { for (var i = 0; i < sel.options.length; i++) if (sel.options[i].value === pick) { sel.value = pick; break; } }
+      txt.hidden = sel.value !== '__other__';
+      if (!txt.hidden) txt.value = (pick && pick !== '__other__') ? pick : '';
+      renderSugg($('fPlace').value);
+    });
+  }
+
+  // ---------- देश के शहर (माँगने पर लोड; file:// में भी script-टैग चलता है) ----------
+  var PLACE_LOADING = {};
+  function loadCountryPlaces(iso, cb) {
+    var store = (window.BNN_GEO_PLACES = window.BNN_GEO_PLACES || {});
+    if (!iso || iso === 'IN' || store[iso]) { if (cb) cb(); return; }
+    if (PLACE_LOADING[iso]) { if (cb) PLACE_LOADING[iso].push(cb); return; }
+    PLACE_LOADING[iso] = cb ? [cb] : [];
+    var s = document.createElement('script');
+    s.src = 'places/' + iso + '.js';
+    s.onload = s.onerror = function () {
+      var list = PLACE_LOADING[iso] || [];
+      delete PLACE_LOADING[iso];
+      for (var i = 0; i < list.length; i++) { try { list[i](); } catch (e) {} }
+    };
+    document.head.appendChild(s);
+  }
+  function stateNameOf(f, code) {
+    if (!f || !f.s) return '';
+    for (var i = 0; i < f.s.length; i++) if (f.s[i][0] === code) return f.s[i][1];
+    return code || '';
+  }
+  // अभी चुने देश की शहर-सूची (भारत वाली पहले जैसी)
+  function currentPlaces() {
+    var val = $('fCountry').value || 'India';
+    if (val === 'India' || !isoOfVal(val)) {
+      for (var i = 0; i < PLACES.length; i++) if (!PLACES[i].tz) PLACES[i].tz = 'Asia/Kolkata';
+      return PLACES;
+    }
+    var iso = isoOfVal(val);
+    var f = (window.BNN_GEO_PLACES || {})[iso];
+    if (!f) { loadCountryPlaces(iso, function () { renderSugg($('fPlace').value); }); return []; }
+    if (!f._rows) {
+      var out = [];
+      for (var j = 0; j < f.p.length; j++) {
+        var r = f.p[j], stn = stateNameOf(f, r[1]);
+        out.push({ en: r[0], n: r[0], se: stn, s: stn, sc: r[1], lat: r[2], lon: r[3], tz: GEO_TZ[r[4]] || '', alt: '' });
+      }
+      f._rows = out;
+    }
+    return f._rows;
   }
   var SUGG_ITEMS = [];
   function placeItems(q) {
     var stEN = ($('fCountry').value === 'India') ? $('fState').value : '';
-    var list = PLACES.slice();
+    var list = currentPlaces().slice();
     q = (q || '').trim(); var ql = q.toLowerCase();
     if (q) {
       list = list.filter(function (p) {
@@ -287,18 +394,20 @@
   function hideSugg() { $('placeSugg').hidden = true; }
   function pickPlace(p) {
     $('fPlace').value = p.en;
-    if (p.se && $('fCountry').value === 'India') {
-      var sel = $('fState');
-      for (var i = 0; i < sel.options.length; i++) if (sel.options[i].value === p.se) sel.value = p.se;
+    var sel = $('fState');
+    var want = (p.sc || p.se || '');
+    if (want && sel && !sel.hidden) {
+      for (var i = 0; i < sel.options.length; i++) if (sel.options[i].value === want) { sel.value = want; break; }
     }
     $('fLat').value = p.lat; $('fLon').value = p.lon;
-    $('fGmt').value = 5.5; $('fDstChk').checked = false;
-    GMT_AUTO = true;                 // सूची से चुना → offset हमारा (1906 से पहले हो तो LMT)
-    hideSugg(); updateFormOk(); maybeLmt();
+    if (p.tz) setTz(p.tz, true);
+    GMT_AUTO = true; GMT_TYPED = false; SAVED_DST = 0;   // सूची से चुना → offset टाइम-ज़ोन से
+    hideSugg(); updateFormOk(); applyTzOffset();
   }
   function applyPlace() {
     var v = $('fPlace').value.trim();
-    for (var i = 0; i < PLACES.length; i++) { if (PLACES[i].en === v || PLACES[i].n === v) { pickPlace(PLACES[i]); return; } }
+    var list = currentPlaces();
+    for (var i = 0; i < list.length; i++) { if (list[i].en === v || list[i].n === v) { pickPlace(list[i]); return; } }
   }
 
   function renderGroups() {
@@ -378,6 +487,23 @@
     setStatus();
   }
 
+  // 1.0.4 / टास्क 02: सहेजी कुंडली का offset — छेड़े बिना, जैसा सहेजा था वैसा ही
+  function showSavedOffset(r) {
+    var note = tzNoteBox(''); if (!note) return;
+    var T = window.BNNTz || null;
+    var gmt = Number(r.gmt), dst = Number(r.dst) || 0;
+    if (!isFinite(gmt)) gmt = 5.5;
+    var offMin = Math.round((gmt + dst) * 60);
+    var txt = (T ? T.fmt(offMin) : fmtOffsetHours(gmt + dst));
+    var line = '';
+    if (r.tz && T && T.valid(r.tz)) line += '<b>' + esc(r.tz) + '</b> · ';
+    line += txt + (dst ? ' ' + L('(इसमें ' + dstText(dst) + ' DST शामिल)', ' (includes ' + dstText(dst) + ' DST)') : '');
+    line += ' ' + L('<span class="tzx">(सहेजे हुए मान)</span>', '<span class="tzx">(saved value)</span>');
+    if (!r.tz) line += '<span class="tzx">' + L('तारीख़/समय या स्थान बदलेंगे तो offset टाइम-ज़ोन से नया बनेगा।', 'If you change the date/time or place, the offset will be computed again from the time zone.') + '</span>';
+    note.className = 'tznote saved';
+    note.innerHTML = line;
+  }
+
   function loadRecord(id) {
     var r = null;
     for (var i = 0; i < state.records.length; i++) if (state.records[i].id === id) r = state.records[i];
@@ -400,8 +526,14 @@
     for (var pj = 0; pj < PLACES.length; pj++) { if (PLACES[pj].n === plv) { plv = PLACES[pj].en; break; } }
     $('fPlace').value = plv; hideSugg();
     $('fLat').value = r.lat != null ? r.lat : ''; $('fLon').value = r.lon != null ? r.lon : '';
-    $('fGmt').value = r.gmtText || (r.gmt != null ? r.gmt : 5.5); $('fDstChk').checked = Number(r.dst) > 0;
+    setTz(r.tz || '', false);
+    $('fGmt').value = r.gmtText || (r.gmt != null ? r.gmt : 5.5);
+    DST_PICK = (r.dstPick === 'second') ? 'second' : 'first';
     GMT_AUTO = false;   // सहेजी कुंडली का offset कभी अपने-आप न बदले
+    GMT_TYPED = false;
+    SAVED_DST = Number(r.dst) || 0;
+    GMT_AUTO_TEXT = String($('fGmt').value || '').trim();
+    showSavedOffset(r); // 1.0.4: “(सहेजे हुए मान)” की पंक्ति
     refreshFormTitle();
     clearErr(); updateHour12(); updateFormOk(); renderList();
     toast(L('कुंडली खोल दी — संदर्भ ', 'Kundli opened — Ref ') + r.ref);
@@ -432,40 +564,170 @@
     var c = $('fCountry');
     return !c || c.value === 'India' || $('fCountry').value === '';
   }
-  function maybeLmt() {
-    var hint = $('hGmt'); if (!hint) return;
-    hint.textContent = ''; hint.className = 'hint';
-    var d = vDate($('fDate').value);
-    if (!d) return;
-    var y = +d.slice(-4), md = d.slice(3);     // 'MM-YYYY'
-    var before = (y < 1906);
-    var lon = vNum($('fLon').value);
-    var place = String($('fPlace').value || '');
-    // (क) 1906 से पहले + भारत + निर्देशांक मौजूद + offset हमारा → LMT भरो
-    if (before && isIndia() && lon !== null && GMT_AUTO) {
-      var l = lmtOf(lon);
-      $('fGmt').value = l.text;              // '+05:31:57' — पूरे सेकंड (टास्क 08)
-      hint.textContent = L('1906 से पहले का जन्म — स्थानीय समय (LMT) ' + l.text + ' लगाया गया (देशांतर ' + Number(lon).toFixed(2) + '°); चाहें तो बदल सकते हैं।',
-        'Birth before 1906 — local mean time (LMT) ' + l.text + ' filled in (longitude ' + Number(lon).toFixed(2) + '°); you may change it.');
-      hint.className = 'hint lmt';
-      return;
-    }
-    // (ख) बॉम्बे / कलकत्ता — सिर्फ़ सूचना (offset अपने-आप नहीं बदलता)
-    var isBom = /mumbai|bombay|मुंबई|बॉम्बे/i.test(place);
-    var isCal = /kolkata|calcutta|कोलकाता|कलकत्ता/i.test(place);
-    if (isBom && y >= 1906 && y <= 1955) {
-      hint.textContent = L('उस समय बॉम्बे-समय (+04:51) चलता था। ऐप offset अपने-आप नहीं बदलता — जानकारी के लिए लिखा है।',
-        'Bombay Time (+04:51) was in use then. The app does not change the offset automatically — shown for information.');
-      hint.className = 'hint lmt';
-    } else if (isCal && y >= 1906 && y <= 1948) {
-      hint.textContent = L('उस समय कलकत्ता-समय (+05:53:20) चलता था। ऐप offset अपने-आप नहीं बदलता — जानकारी के लिए लिखा है।',
-        'Calcutta Time (+05:53:20) was in use then. The app does not change the offset automatically — shown for information.');
-      hint.className = 'hint lmt';
-    }
+  // ---------- 1.0.4 / टास्क 02: टाइम-ज़ोन से offset अपने-आप ----------
+  // नियम: rec.gmt = उस साल का मानक offset, rec.dst = असली − मानक (कभी ऋणात्मक नहीं),
+  // यानी gmt + dst = IANA का offset, पूरा। 1906 से पहले का भारत और LMT-युग के देश
+  // देशांतर से स्थानीय (सूर्य) समय लेते हैं — पहले जैसा।
+  var TZ_AUTO = true;          // टाइम-ज़ोन खाना हमने भरा (user ने बदला तो नहीं)
+  var GMT_TYPED = false;       // user ने GMT ख़ुद लिखा → कभी अपने-आप न बदलो
+  var GMT_AUTO_TEXT = '';      // हमने GMT-खाने में जो लिखा (इससे अलग मिले तो user का लिखा मानो)
+  var SAVED_DST = 0;           // सहेजी कुंडली में जो DST था (पुरानी कुंडलियाँ बदलें नहीं)
+  var DST_PICK = 'first';      // जो समय दो बार आया — 'first' (DST) या 'second' (मानक)
+  var OFF_NOW = null;          // {gmt, dst, off, kind}
+  var TZ_ERR = '';             // 'gap' = वह समय उस दिन नहीं आया
+  function tzOf() { var el = $('fTz'); return el ? String(el.value || '').trim() : ''; }
+  function setTz(name, auto) {
+    var el = $('fTz'); if (!el) return;
+    if (name !== undefined) el.value = name || '';
+    if (auto) TZ_AUTO = true;
   }
-
+  function defaultTzOfCountry() {
+    var g = geoRowOf($('fCountry').value);
+    if (g && g[4] >= 0 && GEO_TZ[g[4]]) return GEO_TZ[g[4]];
+    return isIndia() ? 'Asia/Kolkata' : '';
+  }
+  function fillTzList() {
+    var dl = $('tzDL'); if (!dl || dl.options.length) return;
+    var html = '';
+    for (var i = 0; i < GEO_TZ.length; i++) html += '<option value="' + esc(GEO_TZ[i]) + '"></option>';
+    dl.innerHTML = html;
+  }
+  function dstText(dst) {
+    var h = Math.round(dst * 60) / 60;
+    if (h === 1) return L('1 घंटा', '1 hour');
+    if (h === 0.5) return L('30 मिनट', '30 minutes');
+    if (h === 2) return L('2 घंटे', '2 hours');
+    return (Math.round(h * 100) / 100) + L(' घंटे', ' hours');
+  }
+  function tzNoteBox(kind) {
+    var note = $('tzNote'); if (!note) return null;
+    note.className = 'tznote' + (kind ? ' ' + kind : '');
+    return note;
+  }
+  function applyTzOffset() {
+    var note = tzNoteBox(''); if (!note) return true;
+    OFF_NOW = null; TZ_ERR = '';
+    note.innerHTML = ''; fillTzList();
+    var hg0 = $('hGmt'); if (hg0) { hg0.textContent = ''; hg0.className = 'hint'; }
+    var tz = tzOf();
+    var d = vDate($('fDate').value), t = vTime($('fTime').value);
+    var lon = vNum($('fLon').value);
+    var iso = isoOfVal($('fCountry').value) || 'IN';
+    var y = d ? +d.slice(-4) : 0;
+    var place = String($('fPlace').value || '');
+    var T = window.BNNTz;
+    // (क) भारत — 01-01-1906 से पहले घड़ी स्थानीय (सूर्य) समय पर थी
+    if (d && iso === 'IN' && y < 1906 && lon !== null) {
+      var l = lmtOf(lon);
+      if (GMT_AUTO) { $('fGmt').value = l.text; GMT_AUTO_TEXT = l.text; }
+      OFF_NOW = { gmt: Math.round(Number(lon) / 15 * 60) / 60, dst: 0, off: Math.round(Number(lon) / 15 * 60), kind: 'lmt' };
+      var hg = $('hGmt');
+      if (hg && GMT_AUTO) {
+        hg.textContent = L('1906 से पहले का जन्म — स्थानीय समय (LMT) ' + l.text + ' लगाया गया (देशांतर ' + Number(lon).toFixed(2) + '°); चाहें तो बदल सकते हैं।',
+          'Birth before 1906 — local mean time (LMT) ' + l.text + ' filled in (longitude ' + Number(lon).toFixed(2) + '°); you may change it.');
+        hg.className = 'hint lmt';
+      }
+      if (!GMT_AUTO) return true;               // हाथ से लिखा offset अछूता
+      note.className = 'tznote lmt';
+      note.innerHTML = L('1906 से पहले का जन्म — स्थानीय समय (LMT) <b>' + l.text + '</b> लगाया गया (देशांतर ' + Number(lon).toFixed(2) + '°); चाहें तो बदल सकते हैं।',
+        'Birth before 1906 — local mean time (LMT) <b>' + l.text + '</b> filled in (longitude ' + Number(lon).toFixed(2) + '°); you may change it.');
+      return true;
+    }
+    if (!GMT_AUTO) {                  // user ने GMT ख़ुद लिखा — कभी न बदलो
+      var man = vGmt($('fGmt').value);
+      if (man !== null) {
+        OFF_NOW = { gmt: man, dst: 0, off: Math.round(man * 60), kind: 'manual' };
+        note.className = 'tznote manual';
+        note.innerHTML = L('GMT हाथ से भरा — <b>' + fmtOffsetHours(man) + '</b> (DST इसी में शामिल माना गया)', 'GMT typed by hand — <b>' + fmtOffsetHours(man) + '</b> (DST is taken as included)');
+      }
+      return true;
+    }
+    if (!tz || !T || !T.valid(tz)) {
+      note.innerHTML = L('टाइम ज़ोन अपने-आप नहीं तय हो सका — नीचे GMT खाने में offset लिखें (DST उसी में जोड़ लें)।',
+        'Time zone could not be set automatically — type the offset in the GMT box (include DST in it).');
+      note.className = 'tznote warn';
+      return true;
+    }
+    if (!d) {
+      note.innerHTML = '<b>' + esc(tz) + '</b> · ' + L('जन्म की तारीख़ भरते ही offset अपने-आप तय होगा।', 'the offset is fixed as soon as the birth date is filled.');
+      return true;
+    }
+    // समय नहीं भरा तो दोपहर 12:00 मानकर offset तय करो (वैसे भी दिन में offset नहीं बदलता;
+    // घड़ी बदलने वाले दिन user समय भरते ही साफ़ चेतावनी पाएगा)
+    var tm = t ? t.split(':') : ['12', '00', '00'];
+    var info = T.wallInfo(y, +d.slice(3, 5), +d.slice(0, 2), +tm[0], +tm[1], +(tm[2] || 0), tz);
+    if (t && info.kind === 'gap') {
+      TZ_ERR = 'gap';
+      note.className = 'tznote bad';
+      note.innerHTML = L('⚠️ यह समय उस दिन <b>नहीं आया</b> — ' + esc(tz) + ' में उस रात घड़ी आगे बढ़ी थी। जन्म-समय जाँचें (या एक घंटा आगे/पीछे देखें)।',
+        '⚠️ This time <b>did not exist</b> that day — the clock moved forward in ' + esc(tz) + '. Please check the birth time.');
+      return false;
+    }
+    var off = info.off;
+    var rep = !!(t && info.kind === 'repeat');
+    if (rep) off = (DST_PICK === 'second') ? info.off2 : info.off;
+    // LMT-युग: जिस तारीख़ का offset 15 मिनट का गुणज नहीं (यानी घड़ी अभी मानक नहीं थी)
+    if (off % 15 !== 0 && lon !== null) {
+      var l2 = lmtOf(lon);
+      var m2 = Math.round(Number(lon) / 15 * 60);
+      OFF_NOW = { gmt: m2 / 60, dst: 0, off: m2, kind: 'lmt' };
+      if (GMT_AUTO) { $('fGmt').value = l2.text; GMT_AUTO_TEXT = l2.text; }
+      var hg2 = $('hGmt');
+      if (hg2) {
+        hg2.textContent = L('उस समय उस देश में मानक समय नहीं था — स्थानीय समय (LMT) ' + l2.text + ' लगाया गया (देशांतर ' + Number(lon).toFixed(2) + '°); चाहें तो बदल सकते हैं।',
+          'Standard time was not in use there then — local mean time (LMT) ' + l2.text + ' filled in (longitude ' + Number(lon).toFixed(2) + '°); you may change it.');
+        hg2.className = 'hint lmt';
+      }
+      note.className = 'tznote lmt';
+      note.innerHTML = L('उस समय उस देश में मानक समय नहीं था — स्थानीय समय (LMT) <b>' + l2.text + '</b> लगाया गया (देशांतर ' + Number(lon).toFixed(2) + '°); चाहें तो बदल सकते हैं।',
+        'Standard time was not in use there then — local mean time (LMT) <b>' + l2.text + '</b> filled in (longitude ' + Number(lon).toFixed(2) + '°); you may change it.');
+      return true;
+    }
+    var std = T.stdOffsetOfYear(tz, y);
+    if (std === null || off < std) std = off;
+    var dst = (off - std) / 60;
+    OFF_NOW = { gmt: std / 60, dst: dst, off: off, kind: 'ok' };
+    if (GMT_AUTO) { $('fGmt').value = T.fmt(std); GMT_AUTO_TEXT = T.fmt(std); }
+    var line = '<b>' + esc(tz) + '</b> · ' + T.fmt(off);
+    if (dst > 0) {
+      line += ' — ' + L(T.fmt(std) + ' मानक + ' + dstText(dst) + ' DST = ' + T.fmt(off) + ' (अपने-आप)',
+        T.fmt(std) + ' standard + ' + dstText(dst) + ' DST = ' + T.fmt(off) + ' (automatic)');
+    } else {
+      line += ' · ' + L('DST लागू नहीं', 'no DST');
+    }
+    var extra = '';
+    if (iso === 'IN' && off === 390 && y >= 1942 && y <= 1945) extra += '<span class="tzx">' + L('युद्ध-काल का समय +06:30 (अपने-आप)', 'War-time clock +06:30 (automatic)') + '</span>';
+    var isBom = /mumbai|bombay|मुंबई|बॉम्बे/i.test(place), isCal = /kolkata|calcutta|कोलकाता|कलकत्ता/i.test(place);
+    var hgB = $('hGmt');
+    if (iso === 'IN' && isBom && y >= 1906 && y <= 1955) {
+      var tb = L('उस समय बॉम्बे-समय (+04:51) चलता था — जानकारी के लिए (ऐप offset अपने-आप नहीं बदलता)।', 'Bombay Time (+04:51) was in use then — for information (the app does not change the offset by itself).');
+      extra += '<span class="tzx">' + tb + '</span>';
+      if (hgB) { hgB.textContent = tb; hgB.className = 'hint lmt'; }
+    } else if (iso === 'IN' && isCal && y >= 1906 && y <= 1948) {
+      var tc = L('उस समय कलकत्ता-समय (+05:53:20) चलता था — जानकारी के लिए (ऐप offset अपने-आप नहीं बदलता)।', 'Calcutta Time (+05:53:20) was in use then — for information (the app does not change the offset by itself).');
+      extra += '<span class="tzx">' + tc + '</span>';
+      if (hgB) { hgB.textContent = tc; hgB.className = 'hint lmt'; }
+    }
+    if (y && y < 1970 && ['IN', 'NP', 'LK'].indexOf(iso) < 0) extra += '<span class="tzx">' + L('1970 से पहले — पुरानी घड़ी का हिसाब कुछ देशों में अधूरा है, offset एक बार जाँच लें।', 'Before 1970 — old clock history is incomplete for some countries; please check the offset once.') + '</span>';
+    if (rep) {
+      extra += '<span class="tzpick">' + L('यह समय उस दिन दो बार आया —', 'This time came twice that day —') + ' '
+        + '<button type="button" class="tzb' + (DST_PICK === 'first' ? ' on' : '') + '" data-pick="first">' + L('पहली बार (DST)', 'first (DST)') + '</button>'
+        + '<button type="button" class="tzb' + (DST_PICK === 'second' ? ' on' : '') + '" data-pick="second">' + L('दूसरी बार (मानक)', 'second (standard)') + '</button></span>';
+    }
+    note.innerHTML = line + extra;
+    return true;
+  }
+  // पुराना नाम — बाक़ी जगहों से अभी भी बुलाया जाता है
+  function maybeLmt() { return applyTzOffset(); }
   function gather() {
     var errs = []; clearErr();
+    // 1.0.4 / टास्क 02: offset पहले ताज़ा करो — तभी नीचे की जाँचें अपने संदेश लिख सकें
+    var dst = 0, tzUse = '';
+    // GMT-खाने में जो हमने नहीं लिखा, वह user का लिखा है (चाहे उसने event न भेजा हो)
+    var gmtField = String($('fGmt').value || '').trim();
+    if (GMT_AUTO && gmtField !== GMT_AUTO_TEXT) { GMT_AUTO = false; GMT_TYPED = true; SAVED_DST = 0; }
+    applyTzOffset();
+    var gapErr = (TZ_ERR === 'gap');
     // राउंड 65 / टास्क 09-घ: अधूरा मान (जैसे 14:4 या 04-11-1YYY) कभी गणना तक न पहुँचे
     if ($('fDate').__mask) $('fDate').__mask.commit({ requireFull: true });
     if ($('fTime').__mask) $('fTime').__mask.commit({ requireFull: true });
@@ -493,12 +755,24 @@
       var hG = $('hGmt');
       if (hG) { hG.textContent = L('GMT ऐसे लिखें: +05:30 या +05:31:57 (या सादा 5.5) — घंटा 0–14, मिनट/सेकंड 0–59', 'Write GMT like +05:30 or +05:31:57 (or plain 5.5) — hours 0–14, minutes/seconds 0–59'); hG.className = 'hint err'; }
     }
-    gmt = (gmt === null) ? 5.5 : Math.round(gmt * 3600) / 3600;   // सेकंड तक साफ़
-    var dst = $('fDstChk').checked ? 1 : 0;
+    // ---------- 1.0.4 / टास्क 02: offset टाइम-ज़ोन से ----------
+    // GMT_AUTO = हमने भरा (टाइम-ज़ोन से) · false = user ने ख़ुद लिखा → वही रहेगा, DST उसी में माना जाएगा
+    if (gapErr) {
+      errs.push(L('जन्म समय', 'Time of Birth')); $('fTime').classList.add('err');
+    }
+    if (GMT_AUTO && OFF_NOW) {
+      gmt = Math.round(OFF_NOW.gmt * 3600) / 3600;
+      dst = Math.round(OFF_NOW.dst * 3600) / 3600;
+      tzUse = tzOf();
+    } else {
+      gmt = (gmt === null) ? 5.5 : Math.round(gmt * 3600) / 3600;   // सेकंड तक साफ़
+      dst = GMT_TYPED ? 0 : SAVED_DST;   // सहेजी कुंडली का DST ज्यों का त्यों
+    }
     var placeRaw = $('fPlace').value.trim();
     if (!placeRaw) { errs.push(L('जन्म स्थान', 'Birth Place')); $('fPlace').classList.add('err'); }
     var placeHI = placeRaw, placeEN = placeRaw;
-    for (var pi = 0; pi < PLACES.length; pi++) { if (PLACES[pi].en === placeRaw || PLACES[pi].n === placeRaw) { placeHI = PLACES[pi].n; placeEN = PLACES[pi].en; break; } }
+    var curList = currentPlaces();
+    for (var pi = 0; pi < curList.length; pi++) { if (curList[pi].en === placeRaw || curList[pi].n === placeRaw) { placeHI = curList[pi].n; placeEN = curList[pi].en; break; } }
     // राउंड 64 / चरण 3: लिंग का कोई default नहीं — engine में gender से ग्रह-क्रम बदलता है
     // (ORDER_M / ORDER_F), इसलिए गलत default ख़तरनाक था।
     var gender = null;
@@ -506,14 +780,19 @@
     for (var j = 0; j < gs.length; j++) if (gs[j].checked) gender = gs[j].value;
     if (!gender) errs.push(L('कृपया पुरुष या स्त्री चुनें', 'Please choose Male or Female'));
     var countryEN = $('fCountry').value || 'India';
-    var stateENv = ($('fCountry').value === 'India') ? $('fState').value : $('fStateTxt').value.trim();
+    var isInd = (countryEN === 'India');
+    var stateENv = isInd ? $('fState').value : ($('fState').value === '__other__' ? $('fStateTxt').value.trim() : $('fState').value);
     var rec = {
       name: $('fName').value.trim(), group: $('fGroup').value || state.groups[0], gender: gender,
       mobile: $('fMobile').value.trim(), date: date || $('fDate').value.trim(), time: time || $('fTime').value.trim(),
       country: hiOfEn(COUNTRIES, countryEN), countryEN: countryEN,
-      state: hiOfEn(STATES, stateENv), stateEN: stateENv, place: placeHI, placeEN: placeEN,
+      state: isInd ? hiOfEn(STATES, stateENv) : stateENv, stateEN: stateENv, place: placeHI, placeEN: placeEN,
       lat: lat, lon: lon, gmt: gmt, gmtText: fmtOffsetHours(gmt), dst: dst
     };
+    if (tzUse) {                     // टाइम-ज़ोन सिर्फ़ तब सहेजें जब offset उसी से बना हो
+      rec.tz = tzUse;
+      if (DST_PICK === 'second') rec.dstPick = 'second';
+    }
     return { rec: rec, errs: errs };
   }
 
@@ -590,7 +869,10 @@
     $('fName').value = ''; $('fMobile').value = '';
     $('fDate').value = ''; $('fTime').value = '';
     $('fCountry').value = 'India'; rebuildStates('Maharashtra'); $('fPlace').value = ''; hideSugg();
-    $('fLat').value = ''; $('fLon').value = ''; $('fGmt').value = 5.5; $('fDstChk').checked = false; GMT_AUTO = true;
+    $('fLat').value = ''; $('fLon').value = ''; $('fGmt').value = 5.5; GMT_AUTO_TEXT = '5.5';
+    setTz(defaultTzOfCountry(), true); OFF_NOW = null; TZ_ERR = ''; DST_PICK = 'first';
+    if ($('tzNote')) { $('tzNote').className = 'tznote'; $('tzNote').innerHTML = ''; }
+    GMT_AUTO = true; GMT_TYPED = false; SAVED_DST = 0;
     applyDefaultPlace();
     var gs = document.getElementsByName('gender');
     for (var j = 0; j < gs.length; j++) gs[j].checked = false;   // चरण 3: पहले से कुछ चुना न हो
@@ -668,7 +950,11 @@
     var b = $('appVerBadge');
     if (b) { b.textContent = APP_VER ? 'v' + APP_VER : ''; b.hidden = !APP_VER; }
     var v = $('brandVer');
-    if (v) v.textContent = APP_VER ? (L('संस्करण ', 'Version ') + APP_VER + (BUILD_DATE ? ' · ' + BUILD_DATE : '')) : '';
+    // 1.0.4: build की तारीख़ dd-mm-yyyy में (पहले yyyy-mm-dd दिखती थी)
+    var bd = String(BUILD_DATE || '');
+    var bm = /^(\d{4})-(\d{2})-(\d{2})$/.exec(bd);
+    if (bm) bd = bm[3] + '-' + bm[2] + '-' + bm[1];
+    if (v) v.textContent = APP_VER ? (L('संस्करण ', 'Version ') + APP_VER + (bd ? ' · ' + bd : '')) : '';
   }
   var SHORT = { sun: 'SUN', moon: 'MOO', mars: 'MAR', mercury: 'MER', jupiter: 'JUP', venus: 'VEN', saturn: 'SAT', rahu: 'RAH', ketu: 'KET' }; // राउंड 11: बड़े code (website जैसे)
   var RASHIS = ['मेष', 'वृष', 'मिथुन', 'कर्क', 'सिंह', 'कन्या', 'तुला', 'वृश्चिक', 'धनु', 'मकर', 'कुम्भ', 'मीन'];
@@ -1594,17 +1880,33 @@
     var d = new Date(t);
     return pad2(d.getUTCDate()) + '-' + pad2(d.getUTCMonth() + 1) + '-' + d.getUTCFullYear();
   }
+  // 1.0.4 / टास्क 02: टाइम-ज़ोन वाली कुंडली में गोचर "अभी" उस पल के offset से
+  // (न्यूयॉर्क में जन्मा, सर्दी में देखा — पहले जन्म का +1 घंटा DST लग जाता था।)
+  function recForNow() {
+    var rec = RESULT_REC;
+    if (!rec || !rec.tz || !window.BNNTz) return rec;
+    var T = window.BNNTz, now = Date.now();
+    var off = T.offsetAt(now, rec.tz);
+    if (off === null) return rec;
+    var y = new Date(now + off * 60000).getUTCFullYear();
+    var std = T.stdOffsetOfYear(rec.tz, y);
+    if (std === null || off < std) std = off;
+    var c = {};
+    for (var k in rec) if (Object.prototype.hasOwnProperty.call(rec, k)) c[k] = rec[k];
+    c.gmt = std / 60; c.dst = (off - std) / 60;
+    return c;
+  }
   async function computeTransitAt(when, opts) {
     if (!RESULT || !RESULT_REC) return;
     try {
-      var t = await window.BNNEngine.transitNow(RESULT_REC, when);
+      var t = await window.BNNEngine.transitNow(recForNow(), when);
       RESULT.transit = t.snapshot; RESULT.transitWall = t.wall;
       if (!(opts && opts.keepField)) { $('gocharTime').value = fmtWall(t.wall); $('gocharTime').dispatchEvent(new Event('dtsetgood')); } // राउंड 36: लिखते समय न छेड़ें · 64-ख: आख़िरी सही मान
       $('rGocharWhen').textContent = fmtWall(t.wall);
       renderChart();
       if (RTRANSIT) {
         // गोचर मोड: वही debounce — तालिकाएँ भी नई गोचर तिथि से बनें
-        var tt = await window.BNNEngine.transitTables(RESULT_REC, t.wall);
+        var tt = await window.BNNEngine.transitTables(recForNow(), t.wall);
         RESULT.trTables = tt;
         renderBhava(); renderPlanet();
       }
@@ -1981,13 +2283,26 @@
     lines.forEach(function (t) { h += '<div class="pRunLine">' + esc(t) + '</div>'; });
     return h + '</div>';
   }
+  // 1.0.4 / टास्क 02: जो offset लगा वही छपे — साथ में टाइम-ज़ोन और DST/युद्ध-काल की बात
+  function offsetLineText(rec) {
+    var T = window.BNNTz;
+    var gmt = Number(rec.gmt), dst = Number(rec.dst) || 0;
+    if (!isFinite(gmt)) gmt = 5.5;
+    var off = Math.round((gmt + dst) * 60);
+    var out = T ? T.fmt(off) : fmtOffsetHours(gmt + dst);
+    if (rec.tz) out += ' · ' + rec.tz;
+    if (dst) out += L(' (मानक ' + (T ? T.fmt(Math.round(gmt * 60)) : fmtOffsetHours(gmt)) + ' + ' + dstText(dst) + ' DST)',
+      ' (standard ' + (T ? T.fmt(Math.round(gmt * 60)) : fmtOffsetHours(gmt)) + ' + ' + dstText(dst) + ' DST)');
+    return out;
+  }
+
   function buildPrintSheet() {
     var sheet = $('printSheet');
     if (!sheet) { sheet = document.createElement('div'); sheet.id = 'printSheet'; document.body.appendChild(sheet); }
     var rec = RESULT_REC, b = RESULT.bnn, a = SETTINGS.astro;
     var age = ageFrom(rec.date);
     var meta = L('संदर्भ क्रमांक: ', 'Ref No.: ') + rec.ref + L(' · नाम: ', ' · Name: ') + esc(rec.name || '—') + ' · ' + esc(genderName(rec.gender)) + (age !== '' ? L(' · आयु ', ' · Age ') + age + L(' वर्ष', ' yrs') : '') + '<br>'
-      + L('जन्म: ', 'Birth: ') + esc(rec.date) + ' ' + esc(rec.time) + (RESULT.offsetText ? ' (' + esc(RESULT.offsetText) + ')' : '') + L(' · स्थान: ', ' · Place: ') + esc(recPlace(rec)) + (recState(rec) ? ', ' + esc(recState(rec)) : '') + L(' · लग्न: ', ' · Lagna: ') + rashiName(b.ascendant.rashi)
+      + L('जन्म: ', 'Birth: ') + esc(rec.date) + ' ' + esc(rec.time) + ' (' + esc(offsetLineText(rec)) + ')' + L(' · स्थान: ', ' · Place: ') + esc(recPlace(rec)) + (recState(rec) ? ', ' + esc(recState(rec)) : '') + L(' · लग्न: ', ' · Lagna: ') + rashiName(b.ascendant.rashi)
 ;   // user 2026-10-20: page-1 par dasha/bhukti nahi
     var isSouth = (typeof RCHART !== 'undefined' && RCHART === 'south');
     var chartSvg = isSouth ? southSvgString() : northSvgString();   // राउंड 66-ग: पेटी अलग HTML में (नीचे)
@@ -2083,7 +2398,10 @@
       ctx.fillText('mybapuji.com · BNN चार्ट', W - M, 44);
       ctx.fillStyle = '#6b5b3a'; ctx.font = '14px sans-serif';
       ctx.fillText(L('गोचर / Transit: ', 'गोचर / Transit: ') + (RESULT.transitWall ? fmtWall(RESULT.transitWall) : '—'), W - M, 68);
-      var cx = M, cy = 96;
+      // 1.0.4 / टास्क 02: जन्म-विवरण + जो offset लगा — PNG में भी
+      ctx.fillStyle = '#5c4a24'; ctx.font = '15px sans-serif'; ctx.textAlign = 'left';
+      ctx.fillText(rec.date + ' ' + rec.time + ' · ' + (recPlace(rec) || '') + (recState(rec) ? ', ' + recState(rec) : '') + ' · GMT ' + offsetLineText(rec), M, 96);
+      var cx = M, cy = 118;
       var chH = isSouthPng ? Math.round(CH * 706 / 740) : CH;
       ctx.drawImage(nImg, cx, cy, CH, chH);
       if (RESULT.exchanges.length) {
@@ -2948,9 +3266,10 @@
     $('fPlace').value = d.place;
     if (d.lat !== '' && d.lat != null) $('fLat').value = d.lat;
     if (d.lon !== '' && d.lon != null) $('fLon').value = d.lon;
-    if (d.gmt !== '' && d.gmt != null) $('fGmt').value = d.gmt;
-    $('fDstChk').checked = Number(d.dst) > 0;
+    if (d.gmt !== '' && d.gmt != null) { $('fGmt').value = d.gmt; GMT_AUTO_TEXT = String(d.gmt); }
+    if (d.tz) setTz(d.tz, true);
     if (d.state) rebuildStates(enOfHiP(STATES, d.state));
+    applyTzOffset();
   }
   function renderStLogo() { var img = $('stLogoImg'); if (SETTINGS.logo) { img.src = SETTINGS.logo; img.hidden = false; } else { img.hidden = true; img.removeAttribute('src'); } }
   function updatePrintPreview() {
@@ -2971,7 +3290,8 @@
     $('stAddr1').value = a.addr1 || ''; $('stAddr2').value = a.addr2 || ''; $('stCity').value = a.city || '';
     $('stPin').value = a.pin || ''; $('stPhone').value = a.phone || ''; $('stEmail').value = a.email || ''; $('stWeb').value = a.website || '';
     $('stPlace').value = d.place || ''; $('stState').value = d.state || '';
-    $('stLat').value = d.lat || ''; $('stLon').value = d.lon || ''; $('stGmt').value = d.gmt || ''; $('stDstChk').checked = Number(d.dst) > 0;
+    $('stLat').value = d.lat || ''; $('stLon').value = d.lon || ''; $('stGmt').value = d.gmt || '';
+    if ($('stTz')) $('stTz').value = d.tz || '';
     $('stAyan').value = SETTINGS.ayanamsa || 'KP_NEW';
     $('stNext').value = state.nextRef;
     renderStLogo();
@@ -2986,7 +3306,8 @@
     a.pin = $('stPin').value.trim(); a.phone = $('stPhone').value.trim(); a.email = $('stEmail').value.trim(); a.website = $('stWeb').value.trim();
     var d = SETTINGS.defaultPlace;
     d.place = $('stPlace').value.trim(); d.state = $('stState').value.trim();
-    d.lat = $('stLat').value.trim(); d.lon = $('stLon').value.trim(); d.gmt = $('stGmt').value.trim(); d.dst = $('stDstChk').checked ? '1' : '0';
+    d.lat = $('stLat').value.trim(); d.lon = $('stLon').value.trim(); d.gmt = $('stGmt').value.trim();
+    d.dst = '0'; d.tz = $('stTz') ? $('stTz').value.trim() : '';   // 1.0.4: DST की जगह टाइम-ज़ोन
     SETTINGS.ayanamsa = $('stAyan').value;
     var n = parseInt($('stNext').value, 10);
     if (isFinite(n) && n >= 1) { SETTINGS.nextRef = n; state.nextRef = n; saveState(); if (!currentId) $('fRef').value = state.nextRef; }
@@ -3100,7 +3421,8 @@
 
   function init() {
     setLangFromStorage();
-    fillCountries(); rebuildStates('Maharashtra'); loadAppSettings(); loadState(); renderGroups(); renderList();
+    fillCountries(); rebuildStates('Maharashtra'); fillTzList(); setTz('Asia/Kolkata', true);
+    loadAppSettings(); loadState(); renderGroups(); renderList();
     $('fRef').value = state.nextRef; setStatus();
     applyDefaultPlace();
     ['fDate', 'fTime', 'fLat', 'fLon', 'fGmt', 'fPlace'].forEach(function (id) {
@@ -3126,8 +3448,34 @@
     $('openQ').addEventListener('input', renderOpenList);
     $('openClose').addEventListener('click', closeOpenModal);
     $('openModal').addEventListener('mousedown', function (ev) { if (ev.target === this) closeOpenModal(); });
-    $('fCountry').addEventListener('change', function () { rebuildStates(''); renderSugg($('fPlace').value); });
-    $('fState').addEventListener('change', function () { if (!$('placeSugg').hidden) renderSugg($('fPlace').value); });
+    // 1.0.4 / टास्क 02: देश बदला → उसका राज्य-खाना + उसका डिफ़ॉल्ट टाइम-ज़ोन
+    $('fCountry').addEventListener('change', function () {
+      rebuildStates('');
+      var dtz = defaultTzOfCountry();
+      if (!GMT_TYPED) { if (dtz) setTz(dtz, true); GMT_AUTO = true; SAVED_DST = 0; }
+      renderSugg($('fPlace').value);
+      applyTzOffset();
+    });
+    if ($('fCountryQ')) $('fCountryQ').addEventListener('input', function () {
+      fillCountries(this.value);
+      var sel = $('fCountry');
+      if (sel.options.length === 1) { sel.value = sel.options[0].value; sel.dispatchEvent(new Event('change')); }
+    });
+    $('fState').addEventListener('change', function () {
+      if ($('fStateTxt')) $('fStateTxt').hidden = this.value !== '__other__';
+      if (!$('placeSugg').hidden) renderSugg($('fPlace').value);
+    });
+    if ($('fStateTxt')) $('fStateTxt').addEventListener('input', updateFormOk);
+    if ($('fTz')) $('fTz').addEventListener('input', function () { TZ_AUTO = true; GMT_AUTO = true; applyTzOffset(); });
+    if ($('fTz')) $('fTz').addEventListener('change', function () { TZ_AUTO = true; GMT_AUTO = true; applyTzOffset(); updateFormOk(); });
+    if ($('tzNote')) $('tzNote').addEventListener('click', function (ev) {
+      var b = ev.target.closest ? ev.target.closest('.tzb') : null;
+      if (!b) return;
+      ev.preventDefault();
+      DST_PICK = b.getAttribute('data-pick') === 'second' ? 'second' : 'first';
+      GMT_AUTO = true;
+      applyTzOffset();
+    });
     $('btnPlace').addEventListener('click', function () { $('fPlace').focus(); renderSugg(''); });
     $('fPlace').addEventListener('focus', function () { renderSugg(this.value); });
     $('fPlace').addEventListener('input', function () { renderSugg(this.value); });
@@ -3146,12 +3494,20 @@
     $('fTime').addEventListener('input', updateHour12);
     $('fTime').addEventListener('blur', updateHour12);
     $('fDate').addEventListener('blur', function () { var v = vDate(this.value); if (v) this.value = v; });
-    // राउंड 65 / टास्क 07-ग: 1906 से पहले का LMT अपने-आप
-    $('fGmt').addEventListener('input', function () { GMT_AUTO = false; maybeLmt(); });
-    $('fDate').addEventListener('change', maybeLmt);
-    $('fLat').addEventListener('input', maybeLmt);
-    $('fLon').addEventListener('input', maybeLmt);
-    $('fPlace').addEventListener('change', maybeLmt);
+    // 1.0.4 / टास्क 02: offset अपने-आप — GMT ख़ुद लिखने पर हम कभी नहीं बदलते
+    $('fGmt').addEventListener('input', function () { GMT_AUTO = false; GMT_TYPED = true; SAVED_DST = 0; applyTzOffset(); updateFormOk(); });
+    // तारीख़/समय बदला (पुरानी कुंडली हो तो भी) → अब offset टाइम-ज़ोन से नया बनेगा
+    function onDateEdit() {
+      if (GMT_TYPED) { applyTzOffset(); return; }
+      if (!tzOf()) setTz(defaultTzOfCountry(), true);
+      GMT_AUTO = true; SAVED_DST = 0;
+      applyTzOffset();
+    }
+    $('fDate').addEventListener('change', onDateEdit);
+    $('fTime').addEventListener('change', onDateEdit);
+    $('fLat').addEventListener('input', function () { applyTzOffset(); });
+    $('fLon').addEventListener('input', function () { applyTzOffset(); });
+    $('fPlace').addEventListener('change', function () { applyTzOffset(); });
     $('fTime').addEventListener('blur', function () { var v = vTime(this.value); if (v) this.value = v; });
 
     document.querySelectorAll('.chip').forEach(function (c) {

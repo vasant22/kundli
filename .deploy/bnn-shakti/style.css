@@ -430,7 +430,13 @@ body{min-width:980px}
 .tbl{overflow-x:auto}
 .mbody{max-width:100%;overflow-x:auto}
 @media (max-width:1180px){ .rcolL,.rcolR{flex:1 1 100%} }
-@media (min-width:1900px){ .shell{max-width:1860px;margin:0 auto} }
+/* सुधार-राउंड 30 का वह नियम हटा (1.0.4 / टास्क 01): `.shell{max-width:1860px;margin:0 auto}`
+   से 1900px से चौड़ी खिड़की पर पूरा ढाँचा बीच में बैठ जाता था — बाईं पट्टी के बाएँ एक चौड़ी
+   क्रीम पट्टी दिखती थी (और भाषा बदलने पर चौड़ाई भी बदलती थी)। अब .shell हर चौड़ाई पर पूरी
+   चौड़ाई लेता है, बाईं पट्टी बाएँ किनारे से चिपकी और पूरी ऊँचाई। बहुत चौड़ी screen पर
+   सिर्फ़ फ़ॉर्म का अंदरूनी हिस्सा एक सीध में (बाएँ से) — .main की क्रीम पृष्ठभूमि वही रहती है,
+   इसलिए कोई डिब्बा/किनारा दिखता नहीं। 1900px से नीचे कुछ नहीं बदला (1366/1600 हूबहू)। */
+@media (min-width:1900px){ .main>*{max-width:1400px} }
 @media (min-height:1100px){ .nchart{width:720px} }
 
 /* सुधार-राउंड 31: परिवर्तन न हो → ख़ाली शांत घेरा (pulse बंद) */
@@ -575,3 +581,16 @@ body{min-width:980px}
 /* web पर पुरानी files दिखें तो वही पट्टी, पर “ताज़ा करें” के साथ */
 .updbar.stale{background:#3f2f0b}
 .updbar.stale .updGo{background:#fbbf24}
+
+/* ---------- 1.0.4 / टास्क 02: देश-खोज + टाइम-ज़ोन की नोट-पंक्ति ---------- */
+.inp.mini{height:32px;font-size:13.5px;padding:0 9px}
+.tznote{margin:12px 0 2px;font-size:13.5px;line-height:1.65;color:#6b6252;max-width:1400px}
+.tznote b{color:#3f3627;font-weight:800}
+.tznote.lmt,.tznote.warn{color:#8a5a12}
+.tznote.bad{color:#b91c1c;font-weight:700}
+.tznote.saved{color:#4b5563}
+.tznote .tzx{display:block;font-size:12.5px;color:#8a7a5a;margin-top:2px;font-weight:500}
+.tznote .tzpick{display:flex;gap:8px;align-items:center;margin-top:7px;flex-wrap:wrap;color:#8a5a12}
+.tzb{font-family:inherit;font-size:12.5px;font-weight:700;padding:4px 11px;border-radius:999px;border:1px solid #c9a24a;background:#fff8e6;color:#7a5a22;cursor:pointer}
+.tzb:hover{background:#fdf0d5}
+.tzb.on{background:#d97706;border-color:#d97706;color:#fff}
