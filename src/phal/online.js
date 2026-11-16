@@ -10,6 +10,7 @@ import { parseBirthParams } from '../prefill.js'
 import { wallTimeToUtc } from '../timeutil.js'
 import { buildPhalData } from './index.js'
 import { renderOnline } from './report.js'
+import { hideBrokenImages } from './viz.js'
 
 function readBirth(search) {
   const p = parseBirthParams(search)
@@ -24,6 +25,7 @@ function readBirth(search) {
 }
 
 export async function mountPhalOnline(host, { search, pdfHref, name = '', hindiOnlyNote = '', hint = '' }) {
+  hideBrokenImages()
   const parsed = readBirth(search)
   if (!parsed) {
     host.innerHTML = '<p class="po-note">फलादेश के लिए जन्म-विवरण पूरा भरें।</p>'

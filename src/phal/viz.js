@@ -464,3 +464,12 @@ export function sadesatiChart({ cycles = [], dhaiya = [], fromMs, toMs, nowMs, l
   svg.appendChild(el('line', { x1: 0, x2: W, y1: 30.5, y2: 30.5, stroke: '#E6E2EE', 'stroke-width': 0.3 }))
   return svg
 }
+
+// अगर कोई चित्र न मिले (जैसे CI/साफ़ clone में राशि-चित्र नहीं), तो टूटी-image का
+// निशान न दिखे — .phal के अंदर के img छिप जाएँ (एक ही capture-सुनने वाला).
+export function hideBrokenImages(root = document) {
+  root.addEventListener('error', (ev) => {
+    const el = ev.target
+    if (el && el.tagName === 'IMG' && el.closest('.phal')) el.style.visibility = 'hidden'
+  }, true)
+}

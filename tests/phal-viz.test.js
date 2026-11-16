@@ -9,6 +9,12 @@ import { renderReport, renderOnline } from '../src/phal/report.js'
 import { chartLayout, northChart, southChart, southLayout, dashaTimeline, savBars, bavHeatmap, vimshopakaBars, HOUSE_POLYS, RASHI_NUM_AT, GRAHA_AB, sadesatiChart } from '../src/phal/viz.js'
 import { CHARTS as CALIB_CHARTS } from '../scripts/phal-calib/phal-charts.mjs'
 
+// राशि-चित्र निजी licence वाले हैं — repo में नहीं (टास्क 05-ख)। CI/साफ़ clone पर
+// folder नहीं होगा, इसलिए सिर्फ़ file-मौजूदगी वाली जाँच वहाँ छूटती है;
+// HTML (alt/width/height) की जाँच हर हाल में चलती है.
+const RASHI_DIR = path.resolve(__dirname, '../public/rashi')
+const hasRashiFiles = fs.existsSync(RASHI_DIR) && fs.readdirSync(RASHI_DIR).some((f) => f.endsWith('.webp'))
+
 let swe, data
 beforeAll(async () => {
   swe = await initEphemeris()
@@ -141,11 +147,14 @@ describe('design की पक्की बातें', () => {
     expect(found).toEqual([])
   })
 
-  it('राशि-चित्र: 12 files, हर img पर alt="" और width/height', () => {
+  it.skipIf(!hasRashiFiles)('राशि-चित्र: 12 files (Mac पर; CI पर निजी होने से छूटी)', () => {
     for (let i = 1; i <= 12; i++) {
       const f = path.resolve(__dirname, `../public/rashi/rashi-${String(i).padStart(2, '0')}.webp`)
       expect(fs.existsSync(f), f).toBe(true)
     }
+  })
+
+  it('राशि-चित्र: हर img पर alt="" और width/height (हर हाल में)', () => {
     const html = renderReport(data)
     const imgs = html.match(/<img[^>]*>/g) ?? []
     expect(imgs.length).toBeGreaterThan(10)

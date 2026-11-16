@@ -10,8 +10,10 @@ import { parseBirthParams } from '../prefill.js'
 import { wallTimeToUtc } from '../timeutil.js'
 import { buildPhalData } from './index.js'
 import { renderReport } from './report.js'
+import { hideBrokenImages } from './viz.js'
 
 document.body.classList.add('phal-doc')
+hideBrokenImages()
 
 const app = document.querySelector('#phal-app')
 const report = document.querySelector('#report')
