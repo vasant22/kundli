@@ -17,10 +17,26 @@ describe('lazy-load — section तक scroll से पहले कुछ न�
     expect(main).toContain("import('./phal/online.js')")
   })
 
-  it('IntersectionObserver, rootMargin 600px', () => {
-    expect(main).toContain('IntersectionObserver')
-    expect(main).toContain("rootMargin: '600px'")
-    expect(main).toContain('io.disconnect()')
+  it('कुंडली बनते ही फलादेश load — scroll का इंतज़ार नहीं (टास्क 06-ख)', () => {
+    // अब observer नहीं: beginPhalOnline का अंत सीधे start() से होता है
+    expect(main).not.toContain('IntersectionObserver')
+    expect(main).not.toContain('rootMargin')
+    expect(main).toMatch(/\/\/ टास्क 06-ख[\s\S]*start\(\)\n\}/)
+  })
+
+  it('तीनों PDF बटन एक ही फलादेश-PDF देते हैं (print=1)', () => {
+    // (क) पहला बटन (window.open) (ख) phal-btn का link (ग) online section का pdfHref
+    const hits = (main.match(/&print=1/g) ?? []).length
+    expect(hits).toBeGreaterThanOrEqual(2)
+    expect(main).toContain("window.open(`${phalUrl(values, phalConv, phalCoords)}&print=1`")
+    expect(main).toContain('phalLink.href = `${phalUrl(values, phalConv, phalCoords)}&print=1`')
+    expect(main).toContain("pdfHref: `${phalUrl(values, conversion, coords)}&print=1`")
+    expect(main).toContain("t('btn.phalPdfSave')")
+  })
+
+  it('/kundli-phal/ पर report बनते ही "तैयार हो रहा है…" छिपता है', () => {
+    const css = read('src/phal/phal.css')
+    expect(css).toContain('.phal-doc.ready .loading { display: none; }')
   })
 
   it('report/viz/text का भारी code online chunk में ही है', () => {

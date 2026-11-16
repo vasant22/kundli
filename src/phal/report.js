@@ -578,7 +578,8 @@ export function renderReport(data, { lazyImages = true } = {}) {
 export function renderOnline(data) {
   if (!data || data.error) return '<p class="muted">फलादेश नहीं बन सका।</p>'
   const chips = CH.map((c) => `<a class="po-chip" href="#po-${c.id}">${esc(c.title)}</a>`).join('')
-  const body = CH.map((c, i) => `<details id="po-${c.id}" ${i < 2 ? 'open' : ''}>
+  // सब अध्याय पहले से खुले (टास्क 06-ख) — शीर्षक दबाकर बंद किए जा सकते हैं
+  const body = CH.map((c, i) => `<details id="po-${c.id}" open>
       <summary><span class="n">${dev(i + 1)}</span>${esc(c.title)}<span class="arrow">›</span></summary>
       <div class="po-body"><p class="muted">${esc(c.intro)}</p>${c.body(data)}</div>
     </details>`).join('')

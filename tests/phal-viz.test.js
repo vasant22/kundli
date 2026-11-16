@@ -161,10 +161,10 @@ describe('design की पक्की बातें', () => {
     expect(html).not.toContain('0° 00′')
   })
 
-  it('online section: 13 अध्याय details में, पहले दो खुले, chips भी 13', () => {
+  it('online section: 13 अध्याय details में, सब खुले, chips भी 13', () => {
     const html = renderOnline(data)
     expect((html.match(/<details/g) ?? []).length).toBe(13)
-    expect((html.match(/<details[^>]*open/g) ?? []).length).toBe(2)
+    expect((html.match(/<details[^>]*open/g) ?? []).length).toBe(13)
     expect((html.match(/class="po-chip"/g) ?? []).length).toBe(13)
   })
 })

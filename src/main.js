@@ -389,6 +389,10 @@ function phalQuery(values, conversion, coords) {
 function phalUrl(values, conversion, coords) {
   return `../kundli-phal/?${phalQuery(values, conversion, coords).toString()}`
 }
+// पुरानी सिर्फ़-कुंडली छपाई — अब किसी बटन से नहीं जुड़ी (टास्क 06-ख), पर code बचा है
+function printChartOnly() {
+  window.print()
+}
 
 // विस्तृत फलादेश का online section — JS chunk तभी load होता है जब जातक यहाँ तक
 // scroll करे (देखें beginPhalOnline). जो वहाँ तक नहीं जाता, उसके लिए कुछ नहीं.
@@ -416,20 +420,8 @@ function beginPhalOnline(host, values, conversion, coords) {
       target.innerHTML = '<p class="po-note">विस्तृत फलादेश यहाँ नहीं खुल सका — ऊपर दिए बटन से PDF खोलें।</p>'
     }
   }
-  // पहले कभी खुल चुका है (chunk cache में) → तुरंत खोलो
-  if (globalThis.__phalOnlineReady) { start(); return }
-  const near = () => {
-    const r = host.getBoundingClientRect()
-    return r.top < window.innerHeight + 600 && r.bottom > -600
-  }
-  if (typeof IntersectionObserver === 'undefined') { start(); return }
-  const io = new IntersectionObserver((entries) => {
-    if (entries.some((e) => e.isIntersecting)) { io.disconnect(); window.removeEventListener('scroll', onScroll); start() }
-  }, { rootMargin: '600px' })
-  const onScroll = () => { if (!near()) return; window.removeEventListener('scroll', onScroll); io.disconnect(); start() }
-  io.observe(host)
-  // page दोबारा render होने पर observer कभी नहीं चलता — सीधे भी जाँचें
-  if (near()) { io.disconnect(); start() } else window.addEventListener('scroll', onScroll, { passive: true })
+  // टास्क 06-ख: कुंडली बनते ही पूरा फलादेश नीचे खुला दिखे — scroll का इंतज़ार नहीं।
+  start()
 }
 
 function buildDetailsText(values) {
@@ -779,6 +771,10 @@ function showSummary(values, scroll) {
       card.append(dashaTitle, dashaWrap, nowLine, adTitle, adWrap, dashaBasis)
     }
 
+    // फलादेश के params (तीनों PDF बटन इसी का इस्तेमाल करते हैं)
+    const phalCoords = resolveCoordinates(values)
+    const phalConv = computeConversion(values)
+
     // Actions: PNG / Print / Copy details (Phase 8).
     const actions = document.createElement('div')
     actions.className = 'actions'
@@ -801,8 +797,15 @@ function showSummary(values, scroll) {
     printBtn.type = 'button'
     printBtn.className = 'secondary'
     printBtn.dataset.action = 'print'
-    printBtn.textContent = t('btn.print')
-    printBtn.addEventListener('click', () => window.print())
+    printBtn.textContent = t('btn.phalPdfSave')
+    // पहला बटन अब वही देता है जो बाक़ी दो: फलादेश सहित PDF (नई tab, print=1)
+    printBtn.addEventListener('click', () => {
+      if (phalCoords && phalConv) {
+        window.open(`${phalUrl(values, phalConv, phalCoords)}&print=1`, '_blank', 'noopener')
+      } else {
+        printChartOnly()
+      }
+    })
     const copyBtn = document.createElement('button')
     copyBtn.type = 'button'
     copyBtn.className = 'secondary'
@@ -825,8 +828,7 @@ function showSummary(values, scroll) {
     card.append(actions)
 
     // 📄 विस्तृत फलादेश (PDF) — नई tab में पूरा पराशरी फलादेश
-    const phalCoords = resolveCoordinates(values)
-    if (phalCoords && computeConversion(values)) {
+    if (phalCoords && phalConv) {
       const phalBox = document.createElement('div')
       phalBox.className = 'phal-cta'
       const phalLink = document.createElement('a')
@@ -834,7 +836,7 @@ function showSummary(values, scroll) {
       phalLink.dataset.action = 'phal'
       phalLink.target = '_blank'
       phalLink.rel = 'noopener'
-      phalLink.href = phalUrl(values, computeConversion(values), phalCoords)
+      phalLink.href = `${phalUrl(values, phalConv, phalCoords)}&print=1`
       phalLink.textContent = t('btn.phal')
       const phalHint = document.createElement('p')
       phalHint.className = 'note phal-hint'
