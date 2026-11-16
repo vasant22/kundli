@@ -150,7 +150,8 @@ describe('योग-text — शर्त पर ही (टास्क 03-ख 
     expect(base).toHaveLength(1)
     const weak = yogaTextParts({ id: 'gajakesari', detail: { weak: true, debilitated: true, combust: false } })
     expect(weak).toHaveLength(2)
-    expect(weak[1].t).toContain('इस कुंडली में गुरु नीच है')
+    expect(weak[1].t).toContain('पर गुरु नीच है')
+    expect(weak[1].t).toContain('यह योग बनता है')
   })
 
   it('बुधादित्य: बुध अस्त हो तभी वह वाक्य', () => {
@@ -171,7 +172,8 @@ describe('योग-text — शर्त पर ही (टास्क 03-ख 
   it('1985 में गजकेसरी कमज़ोर है — रिपोर्ट में कारण छपता है', () => {
     const html = renderReport(buildPhalData(swe, BIRTH_1985, { nowMs: Date.UTC(2026, 10, 11) }))
     expect(html).toContain('गजकेसरी')
-    expect(html).toContain('इस कुंडली में गुरु नीच है')
+    expect(html).toContain('पर गुरु नीच है')
+    expect(html).toContain('इस कुंडली में यह योग बनता है')
   })
 
   it('योग-तालिका में सिर्फ़ बने योग खुलकर; बाक़ी एक पंक्ति', () => {

@@ -129,12 +129,19 @@
 
 /* ---------- भाव-कार्ड ---------- */
 .phal .bhavgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3mm; }
+.phal .bhavgrid.g4 { grid-template-columns: repeat(4, 1fr); }
+.phal .bhavgrid.g2 { grid-template-columns: 1fr 1fr; }
+.phal .bhavgrid.g4 .bcard .hd { flex-wrap: wrap; gap: 1mm; }
+.phal .bhavgrid.g4 .bcard .sav { margin-left: 0 !important; font-size: 7pt; }
 .phal .bcard { border: 1px solid var(--line); border-radius: 3mm; padding: 3mm; background: #fff; break-inside: avoid; }
 .phal .bcard .hd { display: flex; align-items: center; gap: 2mm; }
 .phal .bcard .bno { font-family: var(--font-head); font-weight: 800; font-size: 13pt; color: #fff; background: var(--nisha); width: 8mm; height: 8mm; border-radius: 2mm; display: grid; place-items: center; }
 .phal .bcard .rashi { font-weight: 600; color: var(--nisha); font-size: 9pt; }
 .phal .bcard .pips { display: flex; flex-wrap: wrap; gap: 1mm; margin: 1.5mm 0; }
 .phal .bcard .sav { font-size: 7.5pt; background: var(--sky); border-radius: 1.5mm; padding: .2mm 1.6mm; display: inline-flex; align-items: center; gap: 1mm; }
+.phal .dhaiya-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1mm 6mm; }
+.phal table.tight td { padding: 2.5px 6px; }
+.phal .dhaiya-grid .drow { font-size: 8pt; line-height: 1.42; border-bottom: 1px solid var(--line); padding-bottom: .5mm; break-inside: avoid; }
 .phal .split-tables { display: flex; gap: 6mm; align-items: flex-start; }
 .phal .split-tables table { flex: 1; }
 .phal .bcard p { font-size: 8.4pt; line-height: 1.45; margin: 1mm 0 0; }
@@ -234,7 +241,7 @@
   .phal .cover .pan { flex-wrap: wrap; gap: 2mm 4mm; padding: 0 6mm; }
   .phal .tiles { grid-template-columns: repeat(2, 1fr); }
   .phal .two, .phal .remedy, .phal .vargagrid, .phal .chartrow, .phal .chartrow.three { grid-template-columns: 1fr; }
-  .phal .bhavgrid { grid-template-columns: 1fr 1fr; }
+  .phal .bhavgrid, .phal .bhavgrid.g4, .phal .bhavgrid.g2 { grid-template-columns: 1fr 1fr; }
   .phal .glossary { grid-template-columns: 1fr; }
   .phal .chap h2 { font-size: 18pt; }
   .phal .chap .num { width: 12mm; height: 12mm; font-size: 24pt; }

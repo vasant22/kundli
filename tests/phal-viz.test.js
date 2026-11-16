@@ -6,7 +6,7 @@ import { beforeAll, describe, expect, it } from 'vitest'
 import { initEphemeris } from '../src/astro.js'
 import { buildPhalData } from '../src/phal/index.js'
 import { renderReport, renderOnline } from '../src/phal/report.js'
-import { chartLayout, northChart, dashaTimeline, savBars, bavHeatmap, vimshopakaBars, HOUSE_POLYS, RASHI_NUM_AT, GRAHA_AB, sadesatiChart } from '../src/phal/viz.js'
+import { chartLayout, northChart, southChart, southLayout, dashaTimeline, savBars, bavHeatmap, vimshopakaBars, HOUSE_POLYS, RASHI_NUM_AT, GRAHA_AB, sadesatiChart } from '../src/phal/viz.js'
 import { CHARTS as CALIB_CHARTS } from '../scripts/phal-calib/phal-charts.mjs'
 
 let swe, data
@@ -21,6 +21,23 @@ beforeAll(async () => {
 }, 30000)
 
 const planetsForChart = (d) => d.planets.map((p) => ({ key: p.key, ab: GRAHA_AB[p.key], rashi: p.rashi, retro: p.retro }))
+
+// बिंदु से रेखा-खंड की लंबवत दूरी (टास्क 05-ग §3)
+function distToSegment(px, py, [ax, ay], [bx, by]) {
+  const dx = bx - ax, dy = by - ay
+  const len2 = dx * dx + dy * dy
+  const t = len2 ? Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / len2)) : 0
+  return Math.hypot(px - (ax + t * dx), py - (ay + t * dy))
+}
+
+// दक्षिण चार्ट की कोशिका (4×4, मीन से शुरू)
+const SOUTH_CELLS = [11, 0, 1, 2, 10, -1, -1, 3, 9, -1, -1, 4, 8, 7, 6, 5]
+function SOUTH_CELL_OF(rashi, S) {
+  const i = SOUTH_CELLS.indexOf(rashi)
+  const c = S / 4
+  const x = (i % 4) * c, y = Math.floor(i / 4) * c
+  return [[x, y], [x + c, y], [x + c, y + c], [x, y + c]]
+}
 
 function pointInPoly(x, y, poly) {
   let inside = false
@@ -205,7 +222,23 @@ describe('10 कुंडलियों में badge कहीं नही�
     const SIZE = 300
     const polys = HOUSE_POLYS(SIZE)
     const nums = RASHI_NUM_AT(SIZE)
-    for (const c of CALIB_CHARTS.slice(0, 10)) {
+    // 1985 (जहाँ बु का badge दिखा था) + कैलिबरेशन की 9 (कालसर्प सहित) = 10 कुंडलियाँ
+    const charts = [null, ...CALIB_CHARTS.slice(0, 9)]
+    for (const c of charts) {
+      if (!c) {
+        // 1985 वाली कुंडली (data ऊपर से)
+        const list85 = chartLayout({ size: SIZE, lagnaRashi: data.summary.lagnaRashi, planets: planetsForChart(data) })
+        for (const b of list85) {
+          const poly85 = polys[b.house]
+          for (let k = 0; k < poly85.length; k++) {
+            const dd = distToSegment(b.x, b.y, poly85[k], poly85[(k + 1) % poly85.length])
+            expect(dd, `1985/${b.key} रेखा ${k}`).toBeGreaterThanOrEqual(b.r + 1.5)
+          }
+          const [nx5, ny5] = nums[b.house]
+          expect(Math.hypot(b.x - nx5, b.y - ny5), `1985/${b.key} अंक`).toBeGreaterThanOrEqual(b.r)
+        }
+        continue
+      }
       const d = buildPhalData(swe, {
         utc: c.utc, latitude: c.lat, longitude: c.lon,
         local: { year: +c.dob.slice(0, 4), month: +c.dob.slice(5, 7), day: +c.dob.slice(8, 10), hour: +c.tob.slice(0, 2), minute: +c.tob.slice(3, 5), second: 0 },
@@ -214,16 +247,40 @@ describe('10 कुंडलियों में badge कहीं नही�
       const list = chartLayout({ size: SIZE, lagnaRashi: d.summary.lagnaRashi, planets: planetsForChart(d) })
       for (const b of list) {
         expect(pointInPoly(b.x, b.y, polys[b.house]), `${c.id}/${b.key}`).toBe(true)
-        // पूरा badge (गोला) भाव के अंदर — किनारे की रेखा को न छुए
-        for (let k = 0; k < 16; k++) {
-          const a = (k / 16) * Math.PI * 2
-          const px = b.x + Math.cos(a) * b.r
-          const py = b.y + Math.sin(a) * b.r
-          expect(pointInPoly(px, py, polys[b.house]), `${c.id}/${b.key} किनारा ${k}`).toBe(true)
+        // badge के केंद्र से भाव की हर रेखा की लंबवत दूरी ≥ त्रिज्या + 1.5
+        const poly = polys[b.house]
+        for (let k = 0; k < poly.length; k++) {
+          const a = poly[k]
+          const bb = poly[(k + 1) % poly.length]
+          const d = distToSegment(b.x, b.y, a, bb)
+          expect(d, `${c.id}/${b.key} रेखा ${k}`).toBeGreaterThanOrEqual(b.r + 1.5)
         }
         const [nx, ny] = nums[b.house]
         expect(Math.hypot(b.x - nx, b.y - ny), `${c.id}/${b.key} अंक`).toBeGreaterThanOrEqual(b.r)
       }
+      // दक्षिण चार्ट: हर badge अपनी कोशिका में, किनारों से r+1.5 दूर
+      const south = southLayout({ size: SIZE, planets: planetsForChart(d) })
+      for (const b of south) {
+        const cell = SOUTH_CELL_OF(b.rashi, SIZE)
+        for (let k = 0; k < 4; k++) {
+          const dd = distToSegment(b.x, b.y, cell[k], cell[(k + 1) % 4])
+          expect(dd, `${c.id}/${b.key} दक्षिण रेखा ${k}`).toBeGreaterThanOrEqual(b.r + 1.5)
+        }
+      }
+      // सोलहों वर्ग: वही नियम
+      for (const n of d.vargas.order) {
+        const vh = d.vargas.charts[n]
+        const vp = d.planets.map((x) => ({ key: x.key, ab: GRAHA_AB[x.key], rashi: vh.planets[x.key] }))
+        const vl = chartLayout({ size: SIZE, lagnaRashi: vh.lagna, planets: vp })
+        for (const b of vl) {
+          const poly = HOUSE_POLYS(SIZE)[b.house]
+          for (let k = 0; k < poly.length; k++) {
+            const dd = distToSegment(b.x, b.y, poly[k], poly[(k + 1) % poly.length])
+            expect(dd, `${c.id}/D${n}/${b.key}`).toBeGreaterThanOrEqual(b.r + 1.5)
+          }
+        }
+      }
+
       // एक ही भाव के badges एक-दूसरे से न टकराएँ
       const byHouse = {}
       for (const b of list) (byHouse[b.house] = byHouse[b.house] || []).push(b)

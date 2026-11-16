@@ -397,28 +397,26 @@ function sadesati(data) {
   const phaseName = (ph) => (ph === 12 ? 'पहला चरण' : ph === 1 ? 'दूसरा चरण' : 'तीसरा चरण')
   const DAY = 86400000
 
-  // हर चक्र: एक पंक्ति + भीतर तीनों चरणों की तारीख़ें + वक्री-वापसी का नोट
+  // हर चक्र: एक पंक्ति + तीनों चरणों की तारीख़ें + शनि के लौटने का नोट
+  const noteText = (n, kindName) => {
+    const r = rashiHi(n.rashi)
+    if (n.dir === 'back') return `बीच में ${dateHi(n.fromMs)} से ${dateHi(n.toMs)} शनि पीछे ${r} में लौटा`
+    if (n.dir === 'forward') return `बीच में ${dateHi(n.fromMs)} से ${dateHi(n.toMs)} शनि आगे ${r} में गया, फिर लौटा (${kindName} में थोड़ा विराम)`
+    return `बीच में ${dateHi(n.fromMs)} से ${dateHi(n.toMs)} शनि ${r} में रहा (थोड़ा विराम)`
+  }
   const cycleRows = cycles.map((c, i) => {
-    const phases = [...(c.phases ?? [])].sort((a, b) => a.fromMs - b.fromMs)
-    const byPhase = new Map()
-    for (const ph of phases) {
-      const cur = byPhase.get(ph.phase)
-      if (!cur) byPhase.set(ph.phase, { phase: ph.phase, fromMs: ph.fromMs, toMs: ph.toMs })
-      else cur.toMs = Math.max(cur.toMs, ph.toMs)
-    }
-    const phaseTxt = [...byPhase.values()].sort((a, b) => a.fromMs - b.fromMs)
+    const phaseTxt = (c.phases ?? [])
       .map((p) => `${phaseName(p.phase)} ${dateHi(p.fromMs)} – ${dateHi(p.toMs)}`).join(' · ')
-    const gaps = []
-    for (let k = 1; k < phases.length; k++) {
-      const gap = phases[k].fromMs - phases[k - 1].toMs
-      if (gap > 30 * DAY) gaps.push(`${dateHi(phases[k - 1].toMs)} से ${dateHi(phases[k].fromMs)}`)
-    }
-    const gapTxt = gaps.length ? `<br><small class="muted">बीच में ${esc(gaps.join(' · '))} शनि पीछे लौटा</small>` : ''
+    const noteTxt = (c.notes ?? []).map((n) => noteText(n, 'साढ़ेसाती')).join(' · ')
     return `<tr><td><b>साढ़ेसाती ${dev(i + 1)}</b><br><small>${dateHi(c.fromMs)} से ${dateHi(c.toMs)}</small></td>
-      <td><small>${esc(phaseTxt)}</small>${gapTxt}</td></tr>`
+      <td><small>${esc(phaseTxt)}</small>${noteTxt ? `<br><small class="muted">${esc(noteTxt)}</small>` : ''}</td></tr>`
   }).join('')
-  const dhaiyaRows = dhaiya.map((d) => `<tr><td><b>ढैया</b><br><small>${dateHi(d.fromMs)} से ${dateHi(d.toMs)}</small></td>
-      <td><small>शनि जन्म-चंद्र से ${H(d.phases?.[0]?.phase ?? 4)}</small></td></tr>`).join('')
+  // ढैया: दो-स्तंभ में (पन्ना बचे)
+  const dhaiyaItems = dhaiya.map((d) => {
+    const notes = (d.notes ?? []).map((n) => noteText(n, 'ढैया')).join(' · ')
+    return `<div class="drow"><b>ढैया</b> <small>${dateHi(d.fromMs)} से ${dateHi(d.toMs)}</small>
+      <br><small class="muted">शनि जन्म-चंद्र से ${H(d.phases?.[0]?.phase ?? 4)}${notes ? ` · ${esc(notes)}` : ''}</small></div>`
+  }).join('')
 
   const g = data.gochar
   const cards = Object.keys(g.main).map((k) => {
@@ -433,8 +431,9 @@ function sadesati(data) {
     <h3>साढ़ेसाती और ढैया — पूरा जीवन</h3>
     ${sadesatiChart({ cycles, dhaiya, fromMs: birthMs, toMs: endMs, nowMs: data.meta.nowMs }).outerHTML}
     <div class="legend"><span><i style="background:#8E9AC9"></i>पहला चरण</span><span><i style="background:#3949AB"></i>दूसरा चरण</span><span><i style="background:#5C6BC0"></i>तीसरा चरण</span><span><i style="background:#C3CAE8"></i>ढैया</span></div>
-    <table style="margin-top:2mm"><tbody>${cycleRows}${dhaiyaRows}</tbody></table>
-    <h3>आज का गोचर (जन्म-चंद्र से)</h3><div class="bhavgrid" style="grid-template-columns:1fr 1fr">${cards}</div>`
+    <table class="tight" style="margin-top:2mm"><tbody>${cycleRows}</tbody></table>
+    ${dhaiyaItems ? `<h3 style="margin-top:3mm">ढैया</h3><div class="dhaiya-grid">${dhaiyaItems}</div>` : ''}
+    <h3>आज का गोचर (जन्म-चंद्र से)</h3><div class="bhavgrid g4">${cards}</div>`
 }
 
 // --- अध्याय 12: अष्टकवर्ग ---------------------------------------------------

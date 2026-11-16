@@ -134,10 +134,53 @@ export function computeSadesati(swe, { moonRashi, birthMs, years = 100, stepDays
     return out
   }
 
+  // चक्र के चरण: हर चरण = शनि का उस राशि में **पहला प्रवेश** → अगली राशि में
+  // **पहला प्रवेश** (टास्क 05-ग). इसलिए चरण कभी overlap नहीं करते; वक्री से
+  // लौटना अलग `notes` में जाता है, चरण की तारीख़ में नहीं.
+  const cleanCycle = (c) => {
+    const runs = raw
+      .map((r) => ({ ...r, fromMs: jdToMs(r.fromJd), toMs: jdToMs(r.toJd) }))
+      .filter((r) => r.toMs > c.fromMs + 1 && r.fromMs < c.toMs - 1)
+      .sort((a, b) => a.fromMs - b.fromMs)
+    const kindRuns = runs.filter((r) => r.key === c.kind)
+    const order = c.kind === 'sadesati' ? SADESATI_HOUSES : [c.phases[0].phase]
+    const present = new Set(kindRuns.map((r) => r.phase))
+    const firstPhase = kindRuns[0]?.phase ?? c.phases[0].phase
+    const seq = order.filter((ph) => present.has(ph))
+    const use = seq.slice(Math.max(0, seq.indexOf(firstPhase)))
+    const firstEntry = (phase) => kindRuns.find((r) => r.phase === phase)?.fromMs ?? null
+    const phases = []
+    for (let i = 0; i < use.length; i++) {
+      const start = i === 0 ? c.fromMs : firstEntry(use[i])
+      const next = use[i + 1] ? firstEntry(use[i + 1]) : null
+      const end = next && next > start ? next : c.toMs
+      if (!(end > start)) continue
+      phases.push({ phase: use[i], fromMs: start, toMs: end, hi: runHi(c.kind, use[i]).hi, en: runHi(c.kind, use[i]).en })
+    }
+    // अंतराल (शनि बाहर): "पीछे लौटा" या "आगे गया, फिर लौटा" — राशि से तय
+    const trio = c.kind === 'sadesati'
+      ? [(moonRashi + 11) % 12, moonRashi, (moonRashi + 1) % 12]
+      : [(moonRashi + c.phases[0].phase - 1) % 12]
+    const first = trio[0], last = trio[trio.length - 1]
+    const notes = []
+    for (let i = 1; i < kindRuns.length; i++) {
+      const gap = kindRuns[i].fromMs - kindRuns[i - 1].toMs
+      if (gap <= 30 * MS_DAY) continue
+      const rashi = saturnRashiAt(swe, msToJd((kindRuns[i - 1].toMs + kindRuns[i].fromMs) / 2))
+      const dir = rashi === (first + 11) % 12 ? 'back' : rashi === (last + 1) % 12 ? 'forward' : 'pause'
+      notes.push({ fromMs: kindRuns[i - 1].toMs, toMs: kindRuns[i].fromMs, rashi, dir })
+    }
+    return { ...c, phases, notes }
+  }
+  const runHi = (kind, phase) => {
+    if (kind === 'sadesati') return saturnPhase(phase, moonRashi)
+    return saturnPhase(phase, moonRashi)
+  }
+
   const sadesati = periods.filter((p) => p.kind === 'sadesati')
   const dhaiya = periods.filter((p) => p.kind === 'dhaiya')
-  const sadesatiCycles = cycleOf(sadesati)
-  const dhaiyaCycles = cycleOf(dhaiya)
+  const sadesatiCycles = cycleOf(sadesati).map(cleanCycle)
+  const dhaiyaCycles = cycleOf(dhaiya).map(cleanCycle)
   const running = periods.find((p) => nowMs >= p.fromMs && nowMs < p.toMs) ?? null
   const upcoming = periods.find((p) => p.fromMs > nowMs) ?? null
 

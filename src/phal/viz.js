@@ -75,10 +75,54 @@ export const RASHI_NUM_AT = (S) => {
 
 const houseOfRashi = (rashi, lagnaRashi) => ((rashi - lagnaRashi + 12) % 12) + 1
 
+// बिंदु से रेखा-खंड की दूरी
+const distSeg = (px, py, [ax, ay], [bx, by]) => {
+  const dx = bx - ax, dy = by - ay
+  const l2 = dx * dx + dy * dy
+  const t = l2 ? Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / l2)) : 0
+  return Math.hypot(px - (ax + t * dx), py - (ay + t * dy))
+}
+// भाव के अंदर सबसे "खुली" जगह (हर रेखा से सबसे ज़्यादा दूरी) — ग्रिड-खोज
+function poleOfInaccessibility(poly, S) {
+  let best = { x: 0, y: 0, d: -1 }
+  const xs = poly.map((p) => p[0]), ys = poly.map((p) => p[1])
+  const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys)
+  const N = 24
+  for (let i = 0; i <= N; i++) {
+    for (let j = 0; j <= N; j++) {
+      const x = x0 + (x1 - x0) * i / N
+      const y = y0 + (y1 - y0) * j / N
+      if (!pointInPoly(x, y, poly)) continue
+      let d = Infinity
+      for (let k = 0; k < poly.length; k++) d = Math.min(d, distSeg(x, y, poly[k], poly[(k + 1) % poly.length]))
+      if (d > best.d) best = { x, y, d }
+    }
+  }
+  return best
+}
+export function pointInPoly(x, y, poly) {
+  let inside = false
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const [xi, yi] = poly[i]
+    const [xj, yj] = poly[j]
+    if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) inside = !inside
+  }
+  return inside
+}
+// किसी जगह पर रखे block के सारे badge भाव की रेखाओं से कम से कम r+1.5 दूर हैं?
+const blockFits = (poly, list) => list.every((b) => {
+  if (!pointInPoly(b.x, b.y, poly)) return false
+  for (let k = 0; k < poly.length; k++) {
+    if (distSeg(b.x, b.y, poly[k], poly[(k + 1) % poly.length]) < b.r + 1.5) return false
+  }
+  return true
+})
+
 // किस भाव में कौन-से ग्रह, और badge किस जगह पर — test भी यही इस्तेमाल करता है
 export function chartLayout({ size = 300, lagnaRashi, planets, theme = 'light' }) {
   const S = size
   const R = S * 0.032
+  const polys = HOUSE_POLYS(S)
   const centers = HOUSE_CENTERS(S)
   const VERT = [3, 5, 9, 11], HORZ = [2, 6, 8, 12]
   const byHouse = {}
@@ -89,26 +133,44 @@ export function chartLayout({ size = 300, lagnaRashi, planets, theme = 'light' }
   const out = []
   for (const hs of Object.keys(byHouse)) {
     const list = byHouse[hs]
-    const [cx, cy] = centers[hs]
+    const poly = polys[hs]
     const n = list.length
-    // अंश (degrees) सिर्फ़ खुले भावों में — 3+ ग्रह हों तो सिर्फ़ badge (वरना
-    // अंश पड़ोसी badge/राशि-अंक से टकराते हैं; अंश तालिका में हमेशा है).
+    // अंश (degrees) सिर्फ़ खुले भावों में — 3+ ग्रह हों तो सिर्फ़ badge
     const withDeg = theme !== 'dark' && n <= 2
-    // 5 या अधिक ग्रह: badge 80% — भाव की रेखा/राशि-अंक को न छुए
     const r = n >= 5 ? R * 0.8 : R
-    const gapX = r * (withDeg ? 3.6 : theme === 'dark' ? 2.2 : 2.45)
-    const gapY = r * (withDeg ? 3.6 : theme === 'dark' ? 2.2 : 2.45)
-    const cols = VERT.includes(+hs) ? (n > 3 ? 2 : 1) : HORZ.includes(+hs) ? Math.min(n, 3) : (n > 2 ? 2 : n)
-    const rows = Math.ceil(n / cols)
-    list.forEach((p, i) => {
-      const c = i % cols, rw = Math.floor(i / cols)
-      out.push({
-        key: p.key, ab: p.ab, house: +hs, withDeg,
-        x: cx + (c - (cols - 1) / 2) * gapX,
-        y: cy + (rw - (rows - 1) / 2) * gapY,
-        r,
+    const gapOf = (rr) => rr * (withDeg ? 3.6 : theme === 'dark' ? 2.2 : 2.45)
+    const anchor = centers[hs]
+    const best = poleOfInaccessibility(poly, S)
+
+    // क्रम: kit की जगह → भाव का सबसे खुला बिंदु; स्तंभ 3 → 2 → 1; gap थोड़ा कम
+    const colsOrder = n >= 3 ? [Math.min(n, HORZ.includes(+hs) ? 3 : 2), Math.min(n, 2), 1] : [n > 1 && VERT.includes(+hs) ? 1 : Math.min(n, 2), 1]
+    const place = (cx, cy, cols, gap) => {
+      const rows = Math.ceil(n / cols)
+      return list.map((p, i) => {
+        const col = i % cols, rw = Math.floor(i / cols)
+        return {
+          key: p.key, ab: p.ab, house: +hs, withDeg,
+          x: cx + (col - (cols - 1) / 2) * gap,
+          y: cy + (rw - (rows - 1) / 2) * gap,
+          r,
+        }
       })
-    })
+    }
+    let picked = null
+    for (const [cx, cy] of [[anchor[0], anchor[1]], [best.x, best.y]]) {
+      for (const cols of [...new Set(colsOrder)]) {
+        for (const mult of [1, 0.92, 0.84]) {
+          const gap = gapOf(r) * mult
+          if (gap < 2.02 * r) continue
+          const cand = place(cx, cy, cols, gap)
+          if (blockFits(poly, cand)) { picked = cand; break }
+        }
+        if (picked) break
+      }
+      if (picked) break
+    }
+    // कुछ भी न बैठे तो सबसे खुली जगह पर एक-के-नीचे-एक (कभी-कभी 5+ ग्रह)
+    out.push(...(picked ?? place(best.x, best.y, 1, Math.max(2.02 * r, gapOf(r) * 0.84))))
   }
   return out
 }
@@ -168,6 +230,36 @@ export function northChart({ size = 300, lagnaRashi, planets, theme = 'light', c
 
 // दक्षिण भारतीय चार्ट — वही रंग-भाषा (राशि-अंक + ग्रह-badge)
 const SOUTH_CELLS = [11, 0, 1, 2, 10, -1, -1, 3, 9, -1, -1, 4, 8, 7, 6, 5] // 4×4, मीन से शुरू
+
+// दक्षिण चार्ट में हर ग्रह की जगह — कोशिका के किनारों से r+1.5 दूरी रखते हुए
+export function southLayout({ size = 300, planets }) {
+  const S = size, c = S / 4
+  const out = []
+  SOUTH_CELLS.forEach((rashi, i) => {
+    if (rashi < 0) return
+    const list = planets.filter((p) => p.rashi === rashi)
+    if (!list.length) return
+    const n = list.length
+    const cols = Math.ceil(Math.sqrt(n))
+    const rows = Math.ceil(n / cols)
+    const margin = c * 0.1
+    const avail = c - 2 * margin
+    const step = Math.min(c * 0.3, avail / Math.max(cols, rows))
+    const r = Math.min(S * 0.028, step * 0.36, (avail - 2 * 1.5) / (2 * Math.max(cols, rows)))
+    const cx = (i % 4) * c + c / 2
+    const cy = Math.floor(i / 4) * c + c * 0.56
+    list.forEach((p, j) => {
+      const col = j % cols, row = Math.floor(j / cols)
+      out.push({
+        key: p.key, ab: p.ab, rashi: rashi, r,
+        x: cx + (col - (cols - 1) / 2) * step,
+        y: cy + (row - (rows - 1) / 2) * step,
+      })
+    })
+  })
+  return out
+}
+
 export function southChart({ size = 300, planets, theme = 'light' }) {
   const S = size
   const dark = theme === 'dark'
@@ -186,20 +278,14 @@ export function southChart({ size = 300, planets, theme = 'light' }) {
     if (rashi < 0) return
     const cx = (i % 4) * c, cy = Math.floor(i / 4) * c
     svg.appendChild(el('text', {
-      x: cx + c * 0.82, y: cy + c * 0.22, 'text-anchor': 'middle', 'font-size': S * 0.032,
+      x: cx + c * 0.8, y: cy + c * 0.24, 'text-anchor': 'middle', 'font-size': S * 0.032,
       'font-weight': 700, fill: num, 'font-family': HEAD,
     }, String(rashi + 1)))
-    const list = planets.filter((p) => p.rashi === rashi)
-    const cols = Math.min(list.length, 2)
-    list.forEach((p, j) => {
-      const col = j % (cols || 1), row = Math.floor(j / (cols || 1))
-      const R = S * 0.028
-      const x = cx + c * 0.5 + (col - ((cols || 1) - 1) / 2) * R * 2.3
-      const y = cy + c * 0.52 + (row - 0.5) * R * 2.3
-      svg.appendChild(el('circle', { cx: x, cy: y, r: R, fill: colorOf(p.key), stroke: dark ? '#fff' : 'none', 'stroke-width': 1 }))
-      svg.appendChild(el('text', { x, y: y + R * 0.42, 'text-anchor': 'middle', 'font-size': R * 1.05, 'font-weight': 800, fill: '#fff', 'font-family': HEAD }, p.ab))
-    })
   })
+  for (const b of southLayout({ size, planets })) {
+    svg.appendChild(el('circle', { cx: b.x, cy: b.y, r: b.r, fill: colorOf(b.key), stroke: dark ? '#fff' : 'none', 'stroke-width': 1 }))
+    svg.appendChild(el('text', { x: b.x, y: b.y + b.r * 0.42, 'text-anchor': 'middle', 'font-size': b.r * 1.05, 'font-weight': 800, fill: '#fff', 'font-family': HEAD }, b.ab))
+  }
   return svg
 }
 
@@ -316,7 +402,7 @@ const SA_SOFT = { 12: '#D3D9EE', 1: '#B7BFE4', 2: '#C4CCEB' }
 const SA_LABEL = { 12: '१', 1: '२', 2: '३' }
 
 export function sadesatiChart({ cycles = [], dhaiya = [], fromMs, toMs, nowMs, label = 'आप यहाँ हैं' }) {
-  const W = 178, H = 44
+  const W = 178, H = 36
   const x = (ms) => (ms - fromMs) / (toMs - fromMs) * W
   const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, width: '100%', class: 'phal-viz', role: 'img', 'aria-label': 'साढ़ेसाती और ढैया की पट्टी' })
 
@@ -365,16 +451,16 @@ export function sadesatiChart({ cycles = [], dhaiya = [], fromMs, toMs, nowMs, l
     if (mx < 4 || mx > W - 4) continue
     if (mx - lastX < 10) continue
     svg.appendChild(el('line', { x1: mx, x2: mx, y1: 16, y2: 18, stroke: '#D8D5E3', 'stroke-width': 0.3 }))
-    svg.appendChild(el('text', { x: mx, y: 33, 'text-anchor': 'middle', 'font-size': 2.7, fill: C.muted }, String(new Date(ms).getUTCFullYear())))
+    svg.appendChild(el('text', { x: mx, y: 29.5, 'text-anchor': 'middle', 'font-size': 2.7, fill: C.muted }, String(new Date(ms).getUTCFullYear())))
     lastX = mx
   }
   // "आप यहाँ हैं"
   const nx = x(nowMs)
   if (nx >= 0 && nx <= W) {
-    svg.appendChild(el('line', { x1: nx, x2: nx, y1: 2, y2: 38, stroke: C.nisha, 'stroke-width': 0.6 }))
+    svg.appendChild(el('line', { x1: nx, x2: nx, y1: 2, y2: 31.5, stroke: C.nisha, 'stroke-width': 0.6 }))
     svg.appendChild(el('path', { d: `M${nx - 1.6},1 L${nx + 1.6},1 L${nx},3.2 Z`, fill: C.marigold }))
-    svg.appendChild(el('text', { x: nx, y: 43, 'text-anchor': 'middle', 'font-size': 2.9, fill: C.marigold, 'font-weight': 800, 'font-family': HEAD }, label))
+    svg.appendChild(el('text', { x: nx, y: 35, 'text-anchor': 'middle', 'font-size': 2.9, fill: C.marigold, 'font-weight': 800, 'font-family': HEAD }, label))
   }
-  svg.appendChild(el('line', { x1: 0, x2: W, y1: 39.5, y2: 39.5, stroke: '#E6E2EE', 'stroke-width': 0.3 }))
+  svg.appendChild(el('line', { x1: 0, x2: W, y1: 32.5, y2: 32.5, stroke: '#E6E2EE', 'stroke-width': 0.3 }))
   return svg
 }
