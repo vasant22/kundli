@@ -997,3 +997,13 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - **गजकेसरी का वाक्य:** "इस कुंडली में यह योग बनता है, पर गुरु नीच है, इसलिए फल देर से…" (पहले उल्टा था)।
 - **ढैया दो-स्तंभ** + चारों गोचर-कार्ड एक पंक्ति → **PDF 20 पन्ने** (कालसर्प वाली 21)।
 - tests **1095 ✓** · deploy नहीं।
+
+### 2026-11-16 — फलादेश PDF / टास्क 06 (deploy) ✅ लाइव
+- **§0:** साढ़ेसाती के भीतर वक्री से लौटने के नोट (1985: "शनि फिर मिथुन में लौटा", "… कर्क में लौटा"); चरणों की तारीख़ें नहीं बदलीं; tests 1095 → **1097**; PDF 20/21 पन्ने।
+- **Deploy:** push `206194b..6091fdc` · server `/tmp/kundli-src` · assets पहले (`--delete --exclude rashi/`) फिर HTML (`kundli/`, नया `kundli-phal/`) ·
+  राशि-चित्र 12 webp base64 से अलग चढ़े (md5 12/12 मिले) · chown `my4bap21` · nginx cache 11 entries साफ़ · बाक़ी चारों pages अछूते।
+- **Backup:** `/home/my4bap21/backups/kundli-before-phal-20261116-015845` (3.3 MB, 32 files)।
+- **Live:** https://mybapuji.com/kundli-phal/ 200 · कुंडली पेज पर "विस्तृत फलादेश" (13 अध्याय, chips १…१३) · print=1 पर print ख़ुद खुलता है ·
+  PDF 20 पन्ने · फलादेश chunk पहली load में नहीं (phone: +21 files/434.8 KB scroll पर) · console error नहीं।
+- **सीख:** kundli पेज दो बार render होता है — online section को हमेशा मौजूदा `#phal-online` में mount करें (पकड़ा host खो जाता है)।
+- `main` bundle 22.55 → **24.45 kB** (+1.9, सीमा +2 के भीतर)।
