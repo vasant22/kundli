@@ -43,7 +43,7 @@ describe.skipIf(!hasApp)('संस्करण दिखना (राउंड
     expect(VER).toMatch(/^\d+\.\d+\.\d+$/)
     expect(b.textContent).toBe('v' + VER)
     expect(b.hidden).toBe(false)
-    expect(VER).toBe('1.0.4')                     // 1.0.4 (16-11-2026: देश/राज्य/शहर + टाइम-ज़ोन); संस्करण बदले तो यहाँ भी
+    expect(VER).toBe('1.0.5')                     // 1.0.5 (17-11-2026: बटन गाइड); संस्करण बदले तो यहाँ भी
     // शीर्षक (title) भी उसी स्रोत से
     expect(w.document.title).toBe('BNN Shakti ' + VER)
   })
