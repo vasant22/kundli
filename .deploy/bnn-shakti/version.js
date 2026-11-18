@@ -10,7 +10,7 @@
 
   // ऐप का संस्करण — **यही एक जगह** (राउंड 65 / टास्क 05)। बदलते समय यह भी बदलें:
   // desktop/package.json · build/version.json · CHANGELOG.md
-  var APP_VERSION = '1.0.5'
+  var APP_VERSION = '1.0.6'
 
   function parse(v) {
     var s = String(v == null ? '' : v).trim()
