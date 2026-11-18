@@ -604,3 +604,29 @@ body{min-width:980px}
 .sugg.full{width:100%}
 .topbar .btn .bi{vertical-align:-2px;margin-right:6px;opacity:.95}
 #fState:disabled{background:#f2ede2;color:#8a8070}
+
+/* ---- 1.0.5: बटन गाइड (guide.js) — Claude, 17-11-2026 ---- */
+.gdWrap{position:fixed;inset:0;z-index:120}
+.gdWrap[hidden]{display:none}
+.gdBlock{position:fixed;inset:0;background:transparent}
+.gdSpot{position:fixed;border-radius:8px;box-shadow:0 0 0 9999px rgba(18,14,6,.55);outline:3px solid #f59e0b;pointer-events:none;transition:left .18s ease,top .18s ease,width .18s ease,height .18s ease}
+.gdCard{position:fixed;width:380px;background:#fffdf6;color:#3f3627;border:1px solid #d9a95f;border-radius:10px;box-shadow:0 14px 40px rgba(20,12,0,.45);padding:12px 14px 10px;font-size:14px;line-height:1.5}
+.gdHead{display:flex;align-items:baseline;gap:8px;margin-bottom:6px;font-size:15.5px;color:#8f1d14}
+.gdNum{font-size:12px;color:#6b5b3a;background:#f3ead6;border-radius:10px;padding:1px 8px;white-space:nowrap}
+.gdBody ul{margin:4px 0 4px 18px;padding:0}
+.gdSee{margin-top:6px;color:#1d4e2a}
+.gdMore{margin-top:6px;font-size:12.5px;color:#6b5b3a}
+.gdFoot{display:flex;gap:6px;align-items:center;margin-top:10px}
+.gdFoot .sp{flex:1}
+.gdCard.gdNarrow{left:8px;right:8px;bottom:8px;top:auto;width:auto!important;max-height:46vh;overflow:auto}
+body.printing #gdWrap{display:none!important}
+.gdRef .gdStart{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}
+.gdRef .gdHint{font-size:12.5px;color:#6b5b3a}
+.gdRef h4{margin:14px 0 6px;color:#8f1d14}
+.gdTbl{width:100%;border-collapse:collapse;font-size:13px}
+.gdTbl th,.gdTbl td{border:1px solid #e6d9bd;padding:5px 7px;vertical-align:top;text-align:left}
+.gdTbl th{background:#f6efdd}
+.gdTbl ul{margin:3px 0 0 16px;padding:0}
+
+/* ---- 1.0.5: अपने-आप update की पट्टी (Claude, 17-11-2026) ---- */
+.updbar .updPct{display:inline-block;min-width:3.2em;font-weight:700;color:#fde68a}

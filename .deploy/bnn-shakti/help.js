@@ -19,9 +19,19 @@
       id: 'is-sanskar',
       title: 'इस संस्करण में नया' + (VER ? ' (' + VER + ')' : ''),
       lines: [
-        (VER ? 'संस्करण ' + VER + ' — ' : '') + 'नया “3-11” tab: ग्रह तालिका में SPECIAL और PRSSS के बीच; जो दो ग्रह 60° ±3° पर बैठे हों (तीसरे/ग्यारहवें), उनका संबंध — ये संशोधक ग्रह हैं।',
-        '“राहु-केतु मध्य बिंदु” की पेटी अब चार्ट के ऊपर-दाएँ बड़े रूप में (ग्रह न हों तो भी पूरा आकार, “—” सहित); उसके आमने-सामने “परिवर्तन” की बराबर बड़ी पेटी।',
-        'दोनों Print, PDF और ऑल चार्ट (PNG) में भी आते हैं। नया संस्करण आने पर ऊपर की पट्टी में उसका नाम दिखता है (web पर पुरानी files दिखें तो “ताज़ा करें” बटन)।'
+        (VER ? 'संस्करण ' + VER + ' — ' : '') + 'नया “🧭 बटन गाइड” (इसी सहायता का दूसरा विषय): दो बटन से गाइड स्क्रीन पर चलती है — बाक़ी screen धुँधली, एक-एक बटन चमकता है और बगल में लिखा आता है कि वह क्या करता है और दबाने पर क्या दिखता है (→ अगला, ← पिछला, Esc बंद)।',
+        'अपने-आप update: Windows में install (Setup) वाला software नया संस्करण पीछे-पीछे उतार लेता है — ऊपर पट्टी में “अभी update करें” दबाते ही बंद होकर नए संस्करण में खुल जाता है। Portable और Mac में “अभी डाउनलोड करें” से नई file software के भीतर से ही Downloads में आ जाती है।',
+        'उसी विषय में सारे बटनों की पूरी सूची भी है। कोई कुंडली खुली न हो तो कुंडली-screen की गाइड एक नमूना कुंडली पर चलती है — वह सहेजी नहीं जाती और गाइड बंद होते ही हट जाती है।',
+        '1.0.4 में: सारे देश, राज्य और शहर; टाइम-ज़ोन से GMT/DST अपने-आप (DST का टिक हटा); भारत का युद्ध-काल +06:30 अपने-आप; प्रिंट/PDF में परिवर्तन की पेटी; बड़ा ऑल चार्ट PNG।',
+        'पहले से: 3-11 tab, राहु-केतु मध्य बिंदु और परिवर्तन की पेटियाँ, वक्री ग्रह का हरा रंग। नया संस्करण आने पर ऊपर की पट्टी में उसका नाम दिखता है।'
+      ]
+    },
+    {
+      id: 'guide',
+      title: '🧭 बटन गाइड — कौन-सा बटन क्या करता है',
+      guide: true,
+      lines: [
+        'हर बटन क्या करता है और दबाने पर क्या दिखता है — स्क्रीन पर एक-एक करके।'
       ]
     },
     {
@@ -221,13 +231,19 @@
       kids[k].classList.toggle('on', on)
       kids[k].setAttribute('aria-selected', on ? 'true' : 'false')
     }
-    var html = '<h3>' + t.title + '</h3><ul>'
-    for (var j = 0; j < t.lines.length; j++) html += '<li>' + t.lines[j] + '</li>'
-    html += '</ul>'
+    var html = '<h3>' + t.title + '</h3>'
+    if (t.guide && window.BNNGuide && window.BNNGuide.refHtml) {
+      html += window.BNNGuide.refHtml()          // 1.0.5: बटन गाइड (guide.js) — सूची + शुरू करने के बटन
+    } else {
+      html += '<ul>'
+      for (var j = 0; j < t.lines.length; j++) html += '<li>' + t.lines[j] + '</li>'
+      html += '</ul>'
+    }
     if (COURSE_URL) html += '<div class="helpCourse">📘 <a href="' + COURSE_URL + '" id="helpCourseLink">BNN ज्योतिष सीखें — mybapuji.com पर निःशुल्क course</a></div>'
     html += '<div class="helpFoot">सहायता चाहिए? <a href="mailto:info@mybapuji.com" id="helpMailLink">info@mybapuji.com</a></div>'
     pane.innerHTML = html
     pane.scrollTop = 0
+    if (t.guide && window.BNNGuide && window.BNNGuide.wireRef) window.BNNGuide.wireRef(pane)
     var cl = document.getElementById('helpCourseLink')
     if (cl) cl.addEventListener('click', function (ev) { ev.preventDefault(); openExternal(COURSE_URL) })
     var ml = document.getElementById('helpMailLink')

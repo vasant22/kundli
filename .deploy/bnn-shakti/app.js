@@ -30,32 +30,97 @@
   // window.desktop ही नहीं होता, इसलिए यह पट्टी कभी नहीं दिखती (वहाँ हमेशा नया ही चलता है)।
   // कोई गड़बड़ (internet नहीं, file नहीं, JSON गलत) → चुपचाप कुछ नहीं।
   var UPD_SKIP_KEY = 'bnn_upd_skip_v1';
+  // 1.0.5 (Claude, 17-11-2026): अपने-आप update। main.js बताता है कि यह कौन-सी file है —
+  //   'auto' (Windows Setup) · 'portable' (Windows Portable) · 'mac' · 'none' (पुराना/जाँच वाला)
+  var UPD_MODE = 'none', UPD_U = null, UPD_AUTO = 'idle', UPD_HIDE_DL = false;
+  var DL_PAGE = 'https://mybapuji.com/free-bhrigu-nandi-nadi-jyotish-software-download/';
+  function updBar() {
+    var bar = document.getElementById('updBar');
+    if (!bar) { bar = document.createElement('div'); bar.id = 'updBar'; bar.className = 'updbar'; document.body.insertBefore(bar, document.body.firstChild); }
+    return bar;
+  }
+  function updClose() { var bar = document.getElementById('updBar'); if (bar && bar.parentNode) bar.parentNode.removeChild(bar); }
+  // text (HTML) + बटन [{id, label, fn}] + ✕ (onX)
+  function updShow(html, btns, onX) {
+    var bar = updBar(), h = '<span class="updTxt">' + html + '</span><span class="sp"></span>';
+    (btns || []).forEach(function (b) { h += '<button type="button" class="updGo" id="' + b.id + '">' + esc(b.label) + '</button>'; });
+    if (onX) h += '<button type="button" class="updX" id="updX" title="' + L('बंद करें', 'Close') + '" aria-label="' + L('बंद करें', 'Close') + '">✕</button>';
+    bar.innerHTML = h;
+    (btns || []).forEach(function (b) { var e = $(b.id); if (e) e.addEventListener('click', b.fn); });
+    if (onX) $('updX').addEventListener('click', function () { onX(); updClose(); });
+  }
+  function openDlPage(u) {
+    var url = (u && u.url) || DL_PAGE;
+    if (window.desktop && window.desktop.openExternal) window.desktop.openExternal(url);
+    else window.open(url, '_blank', 'noopener');
+  }
+  function verTxt(v) { return '<b>' + esc(v || '') + '</b>'; }
   function showUpdateBar(u) {
     if (!u || !u.version) return;
     var cmp = (window.BNNSemver && window.BNNSemver.compare) ? window.BNNSemver.compare(u.version, u.current) : 0;
     if (cmp <= 0) return;                        // नया नहीं है — कुछ न दिखाओ
     try { if (localStorage.getItem(UPD_SKIP_KEY) === u.version) return; } catch (e) {}
     if (document.getElementById('updBar')) return;
-    var bar = document.createElement('div');
-    bar.id = 'updBar';
-    bar.className = 'updbar';
-    bar.innerHTML =
-      '<span class="updTxt">' + L('BNN Shakti का नया संस्करण ', 'A newer version of BNN Shakti is available: ') +
-      '<b>' + esc(u.version) + '</b> ' + L('उपलब्ध है', 'is available') +
-      (u.note ? ' — ' + esc(u.note) : '') + '</span>' +
-      '<span class="sp"></span>' +
-      '<button type="button" class="updGo" id="updGo">' + L('डाउनलोड करें', 'Download') + '</button>' +
-      '<button type="button" class="updX" id="updX" title="' + L('बंद करें', 'Close') + '" aria-label="' + L('बंद करें', 'Close') + '">✕</button>';
-    document.body.insertBefore(bar, document.body.firstChild);
-    $('updGo').addEventListener('click', function () {
-      var url = u.url || 'https://mybapuji.com/free-bhrigu-nandi-nadi-jyotish-software-download/';
-      if (window.desktop && window.desktop.openExternal) window.desktop.openExternal(url);
-      else window.open(url, '_blank', 'noopener');
-    });
-    $('updX').addEventListener('click', function () {
-      try { localStorage.setItem(UPD_SKIP_KEY, u.version); } catch (e) {}
-      if (bar.parentNode) bar.parentNode.removeChild(bar);
-    });
+    UPD_U = u;
+    var sha = (u.sha512 && (UPD_MODE === 'portable' || UPD_MODE === 'mac')) ? u.sha512[UPD_MODE] : '';
+    var inApp = !!(sha && window.desktop && window.desktop.updDownload);
+    updShow(L('BNN Shakti का नया संस्करण ', 'A newer version of BNN Shakti is available: ') + verTxt(u.version) + ' ' + L('उपलब्ध है', 'is available') +
+      (u.note ? ' — ' + esc(u.note) : ''),
+      [{ id: 'updGo', label: inApp ? L('अभी डाउनलोड करें', 'Download now') : L('डाउनलोड करें', 'Download'),
+         fn: function () { if (inApp) startDownload(u, sha); else openDlPage(u); } }],
+      function () { try { localStorage.setItem(UPD_SKIP_KEY, u.version); } catch (e) {} });
+  }
+  function startDownload(u, sha) {
+    updShow(L('नया संस्करण ', 'Downloading version ') + verTxt(u.version) + L(' उतर रहा है… ', '… ') + '<span class="updPct" id="updPct">0%</span>', [], null);
+    window.desktop.updDownload(u.version, sha).then(function (r) {
+      if (!r || !r.ok) updFail(u);
+    }).catch(function () { updFail(u); });
+  }
+  function updFail(u) {
+    updShow(L('नया संस्करण ऐप के भीतर से उतर नहीं सका (internet जाँचें)।', 'The new version could not be downloaded inside the app (check the internet).'),
+      [{ id: 'updPage', label: L('website से डाउनलोड करें', 'Download from website'), fn: function () { openDlPage(u || UPD_U); } }], function () {});
+  }
+  function onUpdStatus(st) {
+    if (!st || !st.state) return;
+    if (st.state === 'downloading') {
+      var pc = $('updPct');
+      if (pc) { pc.textContent = (st.percent || 0) + '%'; return; }
+      if (UPD_MODE === 'auto') {
+        UPD_AUTO = 'downloading';
+        if (UPD_HIDE_DL) return;                 // ✕ दबाया — उतरना पीछे चलता रहे, पट्टी नहीं
+        updShow(L('नया संस्करण ', 'New version ') + verTxt(st.version) + L(' पीछे-पीछे उतर रहा है — आप काम करते रहिए… ', ' is downloading in the background — keep working… ') +
+          '<span class="updPct" id="updPct">' + (st.percent || 0) + '%</span>', [], function () { UPD_HIDE_DL = true; });
+      }
+      return;
+    }
+    if (st.state === 'ready' && UPD_MODE === 'auto') {
+      UPD_AUTO = 'ready';
+      updShow(L('नया संस्करण ', 'New version ') + verTxt(st.version) + L(' तैयार है। “अभी update करें” दबाइए — software बंद होकर नए संस्करण में अपने-आप खुल जाएगा (आपकी कुंडलियाँ सुरक्षित रहती हैं)।',
+        ' is ready. Press “Update now” — the software closes and reopens in the new version (your kundlis stay safe).'),
+        [{ id: 'updNow', label: L('अभी update करें', 'Update now'), fn: function () {
+          updShow(L('update लग रहा है… software अभी फिर खुलेगा।', 'Updating… the software will reopen in a moment.'), [], null);
+          window.desktop.updInstall().then(function (ok) { if (!ok) updFail(UPD_U); }).catch(function () { updFail(UPD_U); });
+        } }],
+        function () { toast(L('ठीक है — software बंद करते समय update अपने-आप लग जाएगा।', 'OK — the update will be applied when you close the software.')); });
+      return;
+    }
+    if (st.state === 'saved') {
+      if (UPD_MODE === 'mac') {
+        updShow(L('नया संस्करण ', 'New version ') + verTxt(st.version) + L(' की dmg Downloads में उतरकर खुल गई है — BNN Shakti को Applications में खींचिए (पुराने को बदल दें), फिर यह software बंद करके नया खोलिए।',
+          ' dmg is in Downloads and opened — drag BNN Shakti to Applications (replace the old one), then close this and open the new one.'), [], function () {});
+      } else {
+        updShow(L('नई Portable file ', 'The new Portable file ') + '<b>' + esc(st.file || '') + '</b>' + L(' Downloads में रख दी गई है (folder खुल गया)। यह software बंद करके नई file चलाइए — कुंडलियाँ वही रहेंगी। अपने-आप update चाहिए तो Setup वाली file लगाइए।',
+          ' is saved in Downloads (folder opened). Close this and run the new file — your kundlis stay the same. For automatic updates, install the Setup file.'), [], function () {});
+      }
+      return;
+    }
+    if (st.state === 'error') {
+      if (UPD_MODE === 'auto') {
+        UPD_AUTO = 'error';
+        if (UPD_U && !document.getElementById('updBar')) showUpdateBar(UPD_U);   // अपने-आप नहीं हुआ → पुराना रास्ता (website)
+        else if (document.getElementById('updPct')) updFail(UPD_U);
+      } else if (document.getElementById('updPct')) updFail(UPD_U);
+    }
   }
   // राउंड 67 / टास्क 12: web पर पुरानी files दिख रही हों (browser cache) तो पतली पट्टी +
   // “ताज़ा करें” बटन। desktop पर यह नहीं — वहाँ डाउनलोड वाला सूचना-रास्ता ही रहता है।
@@ -92,17 +157,30 @@
       }, 1200);
       return;
     }
+    // 1.0.5: पहले जानो कि यह कौन-सी file है, और main.js की update-ख़बरें सुनो
+    try {
+      if (window.desktop.onUpdStatus) window.desktop.onUpdStatus(onUpdStatus);
+      if (window.desktop.updInfo) window.desktop.updInfo().then(function (i) {
+        if (!i) return;
+        UPD_MODE = i.mode || 'none';
+        if (i.status) onUpdStatus(i.status);
+      }).catch(function () {});
+    } catch (e) {}
     setTimeout(function () {
       try {
         window.desktop.checkUpdate().then(function (u) {
           if (!u) return;                 // बंद/विफल — चुपचाप
           applyCourseUrl(u.courseUrl);    // भरा हो तभी link दिखेगा
+          UPD_U = u;
+          // Setup वाली file: update GitHub से अपने-आप आता है — पट्टी तभी, जब वह रास्ता विफल हो
+          if (UPD_MODE === 'auto' && UPD_AUTO !== 'error') return;
           showUpdateBar(u);
         }).catch(function () {});
       } catch (e) { /* चुपचाप */ }
     }, 5000);
   }
   window.BNN_showUpdateBar = showUpdateBar;   // जाँच के लिए (नुक़सान नहीं)
+  window.BNN_updTest = { setMode: function (m) { UPD_MODE = m; }, status: onUpdStatus };   // 1.0.5: जाँच के लिए
   window.BNN_showStaleBar = showStaleBar;     // जाँच के लिए (नुक़सान नहीं)
   // 1.0.4 / टास्क 02: जाँच के लिए — जो offset/dst अभी तय हुआ और कुंडली का record
   window.BNN_offNow = function () { return OFF_NOW; };
@@ -3951,6 +4029,36 @@
     }
     if (location.hash === '#demo' && state.records.length) { openResult(state.records[0]); }
   }
+
+  // ---------- 1.0.5: बटन गाइड (guide.js) के लिए छोटा API — Claude, 17-11-2026 ----------
+  // नमूना कुंडली केवल गाइड के लिए: न सूची में सहेजी जाती, न Ref बढ़ता; गाइड बंद होते ही हटती है।
+  var GUIDE_DEMO = null;
+  function guideDemoRec() {
+    return {
+      ref: '—', name: L('नमूना कुंडली', 'Sample Kundli'), group: '', gender: 'पुरुष', mobile: '',
+      date: '15-08-1990', time: '10:30:00',
+      country: 'भारत', countryEN: 'India', state: 'महाराष्ट्र', stateEN: 'Maharashtra', place: 'बोईसर', placeEN: 'Boisar',
+      lat: 19.8036, lon: 72.756, gmt: 5.5, gmtText: '+05:30', dst: 0, tz: 'Asia/Kolkata', guideDemo: true
+    };
+  }
+  window.BNNApp = {
+    lang: function () { return LANG; },
+    hasResult: function () { return !!RESULT; },
+    showView: function (w) { showView(w === 'result' && RESULT ? 'result' : 'form'); },
+    openDemo: async function () {
+      if (RESULT) return true;
+      GUIDE_DEMO = guideDemoRec();
+      await openResult(GUIDE_DEMO);
+      return !!RESULT && RESULT_REC === GUIDE_DEMO;
+    },
+    closeDemo: function () {
+      if (GUIDE_DEMO && RESULT_REC === GUIDE_DEMO) {
+        RESULT = null; RESULT_REC = null; window.BNN_LAST = null; RTRANSIT = false;
+        showView('form');
+      }
+      GUIDE_DEMO = null;
+    }
+  };
 
   document.addEventListener('DOMContentLoaded', init);
 })();

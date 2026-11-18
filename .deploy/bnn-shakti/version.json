@@ -1,7 +1,11 @@
 {
-  "version": "1.0.4",
-  "date": "2026-11-16",
-  "note": "सारे देश, राज्य और शहर; टाइम-ज़ोन से GMT/DST अपने-आप (DST का टिक हटा); भारत का युद्ध-काल +06:30 अपने-आप; प्रिंट/PDF/PNG में tz और offset",
+  "version": "1.0.5",
+  "date": "2026-11-17",
+  "note": "नया 🧭 बटन गाइड (सहायता में): स्क्रीन पर एक-एक बटन चमकाकर बताता है कि वह क्या करता है और क्या दिखाता है; सारे बटनों की सूची भी",
   "courseUrl": "",
-  "url": "https://mybapuji.com/free-bhrigu-nandi-nadi-jyotish-software-download/"
+  "url": "https://mybapuji.com/free-bhrigu-nandi-nadi-jyotish-software-download/",
+  "sha512": {
+    "portable": "oj0DPPdSD/IVHm0b2zAAZ+UiUQjPmoX4H3Rh4A2V9Iuqe3WaB/3r6dkvXhmkrtO2O6nA+jKftMUG0rHNUdXInQ==",
+    "mac": "3m8JBFtvrT3ITPykdUVxwXPaWVVVTi3NJH29t/0TD/tWvBKEhQMLxXvuvdOqD8BYZZA46rzX6eyQCe2+q7IMQg=="
+  }
 }
