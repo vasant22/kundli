@@ -15,16 +15,16 @@ const html = read('ank/index.html');
 
 describe('ank page — SEO', () => {
   it('title, description, keywords, canonical, robots, OG', () => {
-    expect(html).toContain('<title>अंक ज्योतिष — मूलांक, भाग्यांक, नामांक कैलकुलेटर | Free Numerology in Hindi</title>');
+    expect(html).toContain('<title>Name Numerology Calculator Hindi | अंक ज्योतिष, मूलांक, लो-शू ग्रिड — Free</title>');
     expect(html).toMatch(/name="description"/);
     expect(html).toMatch(/name="keywords"/);
-    expect(html).toMatch(/name="robots" content="index, follow"/);
+    expect(html).toMatch(/name="robots" content="index, follow[^"]*"/);
     expect(html).toContain('rel="canonical" href="https://mybapuji.com/ank-jyotish-numerology/"');
     expect(html).toContain('property="og:title"');
     expect(html).toContain('property="og:url" content="https://mybapuji.com/ank-jyotish-numerology/"');
   });
 
-  it('JSON-LD: WebApplication + FAQPage, छह प्रश्न', () => {
+  it('JSON-LD: WebApplication + FAQPage, सारे प्रश्न', () => {
     const m = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
     expect(m).toBeTruthy();
     const data = JSON.parse(m[1]);
@@ -32,7 +32,7 @@ describe('ank page — SEO', () => {
     expect(types).toContain('WebApplication');
     expect(types).toContain('FAQPage');
     const faq = data['@graph'].find((x) => x['@type'] === 'FAQPage');
-    expect(faq.mainEntity.length).toBe(6);
+    expect(faq.mainEntity.length).toBe(T.FAQ.length);
     const app = data['@graph'].find((x) => x['@type'] === 'WebApplication');
     expect(app.inLanguage).toBe('hi-IN');
     expect(app.isAccessibleForFree).toBe(true);
@@ -365,5 +365,37 @@ describe('एक ही CSS file', () => {
     expect(js).not.toMatch(/import ['"]\.\.\/fonts\.css['"]/);
     expect(css).toMatch(/noto-sans-devanagari-devanagari\.woff2/);
     expect(css).toMatch(/noto-sans-devanagari-latin\.woff2/);
+  });
+});
+describe('SEO भाग (Claude, 19-11)', () => {
+  const html = _rf(new URL('../ank/index.html', import.meta.url), 'utf8');
+  const ld = JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
+  it('JSON-LD में BreadcrumbList और FAQ = page के प्रश्न', () => {
+    const types = ld['@graph'].map((x) => x['@type']);
+    expect(types).toEqual(expect.arrayContaining(['WebApplication', 'BreadcrumbList', 'FAQPage']));
+    const faq = ld['@graph'].find((x) => x['@type'] === 'FAQPage');
+    for (const q of faq.mainEntity) expect(html).toContain(q.name.replace(/&/g, '&amp;').replace(/"/g, '&quot;'));
+  });
+  it('title में मुख्य keyword, लेख के खंड, tools/किताबें/Sponsored', () => {
+    expect(html).toMatch(/<title>Name Numerology Calculator/);
+    for (const h of ['मूलांक कैसे निकाले', 'Name Numerology Calculator', 'Lo Shu Grid', 'Numerology Name Correction', 'Mobile Number Numerology']) expect(html).toContain(h);
+    expect(html).toContain('/bnn-shakti/');
+    expect(html).toContain('/free-bhrigu-nandi-nadi-jyotish-software-download/');
+    expect(html).toMatch(/rel="nofollow sponsored noopener"/);
+    expect(html).toContain('tag=krishna220af-21');
+  });
+  it('Amazon links हमेशा nofollow sponsored', () => {
+    const amz = html.match(/<a [^>]*amazon\.in[^>]*>/g) || [];
+    expect(amz.length).toBe(6);
+    for (const a of amz) expect(a).toMatch(/rel="nofollow sponsored noopener"/);
+  });
+});
+describe('share-image', () => {
+  it('og:image file public/ में है और layout उसे kundli-assets में ले जाता है', async () => {
+    const { existsSync } = await import('node:fs');
+    const html = _rf(new URL('../ank/index.html', import.meta.url), 'utf8');
+    expect(html).toContain('property="og:image" content="https://mybapuji.com/kundli-assets/ank-og.jpg"');
+    expect(existsSync(new URL('../public/ank-og.jpg', import.meta.url))).toBe(true);
+    expect(_rf(new URL('../scripts/build-server-layout.mjs', import.meta.url), 'utf8')).toContain("['ank-og.jpg', 'kundli-assets/ank-og.jpg']");
   });
 });

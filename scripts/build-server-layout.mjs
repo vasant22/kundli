@@ -43,6 +43,7 @@ const MAP = [
   ['rashi', 'kundli-assets/rashi'],
   ['favicon-32.png', 'kundli-assets/favicon-32.png'],
   ['favicon.png', 'kundli-assets/favicon.png'],
+  ['ank-og.jpg', 'kundli-assets/ank-og.jpg'],
 ]
 
 // NOT copied: dist/robots.txt — robots.txt is only read at a domain root and
