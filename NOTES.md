@@ -1023,3 +1023,9 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 - साथ में `hideBrokenImages()` (`viz.js`): `.phal` के अंदर कोई चित्र न मिले तो टूटी-image का निशान नहीं दिखता (capture-phase `error`)।
 - **साफ़ clone जाँच** (`/tmp/kundli-ci-check`, बिना private-assets): `npm ci` ✓ · `npm test` → **0 fail** (65 files pass, 14 skip — BNN-app वाली जो repo के बाहर की build माँगती हैं; 1015 pass, 103 skip) · `npm run build` ✓।
 - GitHub run `692184f` → **success** (https://github.com/vasant22/kundli/actions/runs/43817829610)।
+
+### 2026-11-19 — अंक ज्योतिष / टास्क 01 (गणना-engine) ✅ local
+- नया `src/ank/` (core · name · loshu · time · match · remedy · index): मूलांक/भाग्यांक, नामांक + नाम-स्कोर (0–10, breakdown keys),
+  spelling-सुझाव, नए नाम, लो-शू + कुआ, व्यक्तिगत वर्ष/मास (10 वर्ष/12 महीने), जीवनसाथी-मिलान %, मोबाइल, व्यापार-नाम, उपाय-संकेत।
+- तीन नई test-फ़ाइलें (196 जाँचें): 81-कोठरी मैत्री truth-table, 10–52 की 43 श्रेणियाँ, 5 स्वीकृति-उदाहरण, 1000 यादृच्छिक input (NaN/crash नहीं), गति 0.05 ms/input।
+- oracle-मिलान **1360/1360 = 100%** (40 नाम+तिथियाँ); suite **1341 ✓ + 3 todo**; build ✓; engine का bundle 6.5 KB gzip (सीमा 45)। page/CSS अभी नहीं (टास्क 02)।
