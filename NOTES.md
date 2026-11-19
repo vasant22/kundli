@@ -1040,3 +1040,7 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
   20 अब मिश्र (शुभ 20 · मिश्र 8 · चुनौती 15); शुभ दिन अंक से (4 रवि+शनि, 7 सोम+रवि) — power/care उसी से।
 - प्रभाव: PRIYA स्कोर −3 → 0 · AMIT 2.2 कमज़ोर · RAHUL के सुझाव 3 → 2 (RAHULL अब मौजूदा स्कोर के बराबर) · दिसंबर की तारीख़ें भी बदलीं (6→7,9 अब मित्र)।
 - suite **1343 ✓ + 3 todo** · build ✓ · oracle **1317/1317 (100%)**, संयुक्त-20 के 3 मामले जान-बूझकर अलग।
+
+
+### अंक ज्योतिष — टास्क 02 पूरा (Claude, 19-11-2026)
+/ank-jyotish/ page + PDF तैयार (local, deploy नहीं)। Print की सीख: इस page पर body ही `.ank` है — print selectors `body.ank-doc .wrap` लिखें, `body.ank-doc .ank .wrap` नहीं (वरना कवर अंदर सिकुड़ जाता है)। अगला: टास्क 03 (deploy, सिर्फ़ Vas22 जी के "deploy भी करो" पर)।

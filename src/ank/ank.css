@@ -215,7 +215,10 @@
 
 /* कवर सिर्फ़ PDF में */
 @media print{
-  body.ank-doc{background:none}
+  html,body.ank-doc{margin:0!important;padding:0!important;background:none!important}
+  body.ank-doc,body.ank-doc .site{background:none!important}
+  body.ank-doc .wrap{padding:0!important;margin:0!important;max-width:none!important}
+  body.ank-doc .result{margin:0!important}
   .ank .mb-strip,.ank .hero,.ank .chipbar,.ank .pdfrow,.ank .privacy,.ank .seo,.ank .foot-note{display:none!important}
   .ank .cover{display:flex!important;position:relative;width:210mm;height:297mm;max-height:297mm;overflow:hidden;break-after:page;margin:0;padding:0}
   .ank .umbrella{display:none}
@@ -227,6 +230,7 @@
   .ank .summary{break-inside:avoid;border-radius:4mm;background:radial-gradient(130% 120% at 85% 0%,var(--nisha-2),var(--nisha) 60%)!important;-webkit-print-color-adjust:exact}
   .ank .keys,.ank .row2,.ank .loshu-wrap,.ank .year,.ank .week{break-inside:avoid}
   .ank .months{grid-template-columns:repeat(4,1fr)!important}
+  .ank .week{grid-template-columns:repeat(4,1fr)!important}
   .ank .key,.ank .yr,.ank .mo,.ank .day,.ank .sg,.ank .bd li,.ank .box{break-inside:avoid}
   .ank tr{break-inside:avoid}
   .ank thead{display:table-header-group}

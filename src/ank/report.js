@@ -11,6 +11,8 @@ const esc = (s) =>
 const TONE_CLASS = { shubh: 's', mishr: 'm', savdhan: 'c' };
 /** tone हमेशा रंग + शब्द दोनों */
 const tone = (t) => `<span class="tone ${TONE_CLASS[t] || 's'}">${esc(T.TONE[t] || T.TONE.shubh)}</span>`;
+// निर्णय (उत्तम/अच्छा/सामान्य/…): रंग tone से, शब्द निर्णय का अपना label
+const decTone = (dec) => `<span class="tone ${TONE_CLASS[dec.tone] || 'm'}">${esc(dec.label || '')}</span>`;
 const clsTone = (cls) => tone((T.CLS[cls] || {}).tone || 'shubh');
 const clsLabel = (cls) => (T.CLS[cls] || {}).label || '';
 
@@ -19,7 +21,8 @@ function fill(str, v) {
   return String(str || '').replace(/\{(n|m|b|t|f)\}/g, (_, k) => (v[k] === undefined || v[k] === null ? '' : String(v[k])));
 }
 
-const digitsHi = (s) => String(s).replace(/[0-9]/g, (d) => '०१२३४५६७८९'[Number(d)]);
+// अंक हर जगह अंग्रेज़ी (0-9) में — orb, form और तालिकाएँ एक-से दिखें; देवनागरी अंक सिर्फ़ अध्याय-क्रम और पृष्ठ-संख्या में।
+const digitsHi = (s) => String(s);
 const hiDate = (iso) => {
   const [y, m, d] = String(iso || '').split('-').map(Number);
   if (!y) return '';
@@ -74,10 +77,11 @@ const suggestHtml = (d) => {
   const s = d.name.score;
   if (!list.length) {
     const msg = s.score10 >= 8 ? T.SUGGEST.notNeeded : T.SUGGEST.none;
-    return `<p class="txt">${esc(msg)}</p><p class="txt"><small>${esc(T.SCORE_NOTE)}</small></p>`;
+    return `<p class="txt">${esc(msg)}</p>`;
   }
   return `<p class="txt">${esc(T.SUGGEST.intro)}</p>
-    <div class="sugg">${list.map((x) => `<div class="sg"><div class="nm">${esc(x.full)}</div><div class="hi">योग ${x.total} · नामांक ${x.single}</div><div class="sc">${x.score10}<small>${esc((T.NAME_DECISION[x.decision] || {}).label || '')}</small></div></div>`).join('')}</div>`;
+    <div class="sugg">${list.map((x) => `<div class="sg"><div class="nm">${esc(x.full)}</div><div class="hi">योग ${x.total} · नामांक ${x.single}</div><div class="sc">${x.score10}<small>${esc((T.NAME_DECISION[x.decision] || {}).label || '')}</small></div></div>`).join('')}</div>
+    <div class="box dawn" style="margin-top:10px">${esc(T.SUGGEST.caution)}</div>`;
 };
 
 const newNamesHtml = (d) => {
@@ -94,9 +98,10 @@ const planesHtml = (d) => T.LOSHU_PLANES
     const full = line ? line.complete : false;
     const empty = line ? line.present === 0 : false;
     let note = '';
-    if (full) note = ` ${tone('shubh')} <span style="font-size:12.5px">${esc(txt.complete)}</span>`;
-    else if (empty && txt.empty) note = ` <span style="font-size:12.5px">${esc(txt.empty)}</span>`;
-    return `<li><span class="dots">${line.digits.map((x) => `<i class="${d.loshu.counts[x] ? '' : 'off'}" style="background:${NC(x)}">${x}</i>`).join('')}</span><span>${esc(line.hi)}${note}</span></li>`;
+    let label = esc(line.hi);
+    if (full) { label = `${esc(line.hi)} ${tone('shubh')}`; note = `<br><span style="font-size:12.5px">${esc(txt.complete)}</span>`; }
+    else if (empty && txt.empty) note = `<br><span style="font-size:12.5px">${esc(txt.empty)}</span>`;
+    return `<li><span class="dots">${line.digits.map((x) => `<i class="${d.loshu.counts[x] ? '' : 'off'}" style="background:${NC(x)}">${x}</i>`).join('')}</span><span>${label}${note}</span></li>`;
   }).join('')
   : '';
 
@@ -160,7 +165,7 @@ const partnerHtml = (d) => {
   return `<div class="box"><b class="h">${esc(T.PARTNER.title)}: ${esc(p.name || '')}</b>
     <div style="display:grid;grid-template-columns:auto 1fr;gap:5mm;align-items:center;margin-top:2mm">
       <div>${ringSvg(p.percent)}</div>
-      <div>${tone(dec.tone)} <p class="txt" style="margin-top:2mm">${esc(dec.t)}</p></div>
+      <div>${decTone(dec)} <p class="txt" style="margin-top:2mm">${esc(dec.t)}</p></div>
     </div>
     <table style="margin-top:3mm"><thead><tr><th>जोड़ी</th><th>अंक</th></tr></thead><tbody>${rows}</tbody></table>
     <p class="txt" style="margin-top:2mm"><small>${esc(T.PARTNER.intro)} ${esc(T.PARTNER.note)}</small></p>
@@ -172,7 +177,7 @@ const mobileHtml = (d) => {
   if (!m) return '';
   if (m.error) return `<p class="txt">${esc(T.ERR.mobileLength)}</p>`;
   const dec = T.MOBILE_DECISION[m.decision] || T.MOBILE_DECISION.samanya;
-  return `<div class="box"><b class="h">${esc(T.MOBILE.title)}: ${esc(m.number)} → योग ${m.total} → ${m.single} ${tone(dec.tone)}</b>
+  return `<div class="box"><b class="h">${esc(T.MOBILE.title)}: ${esc(m.number)} → योग ${m.total} → ${m.single} ${decTone(dec)}</b>
     <p class="txt">${esc(dec.t)}</p><p class="txt"><small>${esc(T.MOBILE.intro)} ${esc(T.MOBILE.pick)}</small></p></div>`;
 };
 
@@ -184,7 +189,7 @@ const businessHtml = (d) => {
     ${list.map((b) => {
       if (b.error) return `<tr><td>${esc(b.input)}</td><td colspan="4">${esc(T.ERR.romanName)}</td></tr>`;
       const dec = T.NAME_DECISION[b.decision] || T.NAME_DECISION.samanya;
-      return `<tr><td><b>${esc(b.name)}</b></td><td>${b.total}</td><td>${b.single}</td><td>${b.score10}</td><td>${tone(dec.tone)}</td></tr>
+      return `<tr><td><b>${esc(b.name)}</b></td><td>${b.total}</td><td>${b.single}</td><td>${b.score10}</td><td>${decTone(dec)}</td></tr>
         <tr><td colspan="5"><small>${esc(T.BUSINESS.nature[b.single] || '')}</small></td></tr>`;
     }).join('')}
     </tbody></table>`;
@@ -271,7 +276,7 @@ export function renderResult(d, opts = {}) {
     <div class="letters">${lettersHtml(d)}</div>
     <div class="eq">${d.name.chaldean.words.map((w) => w.total).join(' + ')} = <span class="big">${d.name.chaldean.total}</span> → ${orb(d.name.chaldean.namank, 'xs')} नामांक ${clsTone(d.name.chaldean.cls)}</div>
     <p class="txt" style="margin-top:14px">${d.name.chaldean.total < 10 ? esc(T.SINGLE_TOTAL) : `<b>संयुक्त अंक ${d.name.chaldean.compound}:</b> ${esc(T.COMPOUND[d.name.chaldean.compound] || '')}`}</p>
-    <h3>स्कोर का हिसाब — ${s.score10} / 10 ${tone((T.NAME_DECISION[s.decision] || {}).tone)}</h3>
+    <h3>स्कोर का हिसाब — ${s.score10} / 10 <span class="tone ${TONE_CLASS[(T.NAME_DECISION[s.decision] || {}).tone] || 'm'}">${esc((T.NAME_DECISION[s.decision] || {}).label || '')}</span></h3>
     ${breakdownHtml(d)}
     <p class="txt" style="margin-top:8px"><small>${esc(T.SCORE_NOTE)}</small></p>
     <p class="txt"><small>${esc(T.LETTER_TABLE_NOTE)}</small></p>`));
@@ -311,6 +316,9 @@ export function renderResult(d, opts = {}) {
 
   chapters.push(chapter('ratna', d, `
     ${gemsHtml(d)}
+    <h3>${esc(T.LUCKY.numbers)} · ${esc(T.LUCKY.colors)} · ${esc(T.LUCKY.days)}</h3>
+    ${luckyChips(d)}
+    <p class="txt" style="margin-top:6px"><small>${esc(T.LUCKY.numbersNote)}</small></p>
     <h3>${esc(T.LUCKY.goodDates)}</h3>
     <div class="chips-l">${d.remedy.goodDates.map((x) => `<span class="chip-n good">${digitsHi(x)}</span>`).join('')}</div>
     <h3>${esc(T.LUCKY.careDates)}</h3>

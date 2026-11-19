@@ -182,7 +182,13 @@ function boot() {
   }
   $('#ank-form').addEventListener('submit', (e) => {
     e.preventDefault();
-    render(readForm());
+    if (render(readForm())) {
+      // बटन दबाने पर फल तक ले चलें (phone पर form लंबा है, वरना फल नीचे छिपा रहता है)।
+      // URL से खुलने पर scroll नहीं — तब page ऊपर ही रहे।
+      const top = $('#result');
+      const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (top && top.scrollIntoView) top.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    }
   });
   if (full) render(readForm());
   // gender के तीनों बटन — दिखने में segmented

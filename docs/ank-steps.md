@@ -60,3 +60,15 @@
 - [ ] **बाक़ी:** phone 390 पर पहली load का कुल KB + "बटन से result तक" का समय नापना
 - [ ] **बाक़ी:** kit की `kit-namuna.pdf` से पन्ने-दर-पन्ने तुलना लिखना; रिपोर्ट `reports/2026-11-19-ank-02-page.md` पूरी करना
 - [ ] **छोटी गड़बड़ी:** अक्षर-पट्टी में शब्द का "= 17" अगले शब्द के अक्षरों के नीचे आ जाता है
+
+## टास्क 02 — Claude ने पूरा किया (19-11-2026, AutoClaw के points ख़त्म)
+- [x] कवर full-bleed: जड़ कारण — body ही `.ank` है, इसलिए `body.ank-doc .ank .wrap` selector लगता ही नहीं था; अब `body.ank-doc .wrap{padding:0}` + `.result{margin:0}` → कवर पूरे पन्ने पर (Chrome PDF में पुष्ट)
+- [x] print में सप्ताह 4 स्तंभ (7 स्तंभ में text बहुत सिकुड़ता था)
+- [x] अंक हर जगह अंग्रेज़ी digits (orb और तालिका एक-से); देवनागरी सिर्फ़ अध्याय-क्रम/पृष्ठ-संख्या
+- [x] स्कोर-शीर्षक और मिलान/मोबाइल/व्यापार के pill में निर्णय का शब्द (सामान्य/कमज़ोर…), tone का शब्द नहीं (`decTone`)
+- [x] लो-शू रेखा: नाम + "शुभ" pill, नीचे विवरण (नाम दो बार नहीं)
+- [x] spelling-सुझाव के नीचे `SUGGEST.caution`; बिना सुझाव के SCORE_NOTE दोबारा नहीं
+- [x] रत्न-अध्याय में शुभ अंक/रंग/दिन + `LUCKY.numbersNote`
+- [x] "अंक फल देखें" दबाने पर फल तक smooth scroll (URL से खुलने पर नहीं; reduced-motion का सम्मान)
+- [x] नाप: phone 390 पहली load 10 files (fonts वही जो kundli pages के — cache से), ank JS 35.4 KB gzip, CSS 4.9, HTML 3.9; बटन → फल 387 ms (CPU 4× धीमा करके), console error 0
+- [x] tests: 1242 ✓ (+7 नए), build ✓; RAHUL PDF 15 पन्ने, PRIYA 14

@@ -312,3 +312,40 @@ describe('text-hi की हर ज़रूरी entry कहीं छपत�
     expect(() => renderResult(bad)).not.toThrow();
   });
 });
+
+// Claude, 19-11-2026: टास्क 02 के बचे सुधार
+import { readFileSync as _rf } from 'node:fs';
+describe('अंक page — Claude के अंतिम सुधार', () => {
+  const css = _rf(new URL('../src/ank/ank.css', import.meta.url), 'utf8');
+  const js = _rf(new URL('../src/ank/main.js', import.meta.url), 'utf8');
+  const rep = _rf(new URL('../src/ank/report.js', import.meta.url), 'utf8');
+  it('print में wrapper की padding हटती है, ताकि कवर पूरे पन्ने पर आए (body ही .ank है)', () => {
+    expect(css).toMatch(/body\.ank-doc \.wrap\{padding:0!important/);
+    expect(css).not.toMatch(/body\.ank-doc \.ank \.wrap/);
+  });
+  it('print में सप्ताह 4 स्तंभ, महीने 4 स्तंभ', () => {
+    expect(css).toMatch(/\.ank \.week\{grid-template-columns:repeat\(4,1fr\)!important\}/);
+    expect(css).toMatch(/\.ank \.months\{grid-template-columns:repeat\(4,1fr\)!important\}/);
+  });
+  it('बटन दबाने पर फल तक scroll; report में अंक अंग्रेज़ी digits में', () => {
+    expect(js).toMatch(/scrollIntoView/);
+    expect(rep).toMatch(/const digitsHi = \(s\) => String\(s\);/);
+  });
+  it('स्कोर-शीर्षक में निर्णय का label (उत्तम/अच्छा/सामान्य/कमज़ोर), tone का शब्द नहीं', () => {
+    expect(rep).toMatch(/NAME_DECISION\[s\.decision\] \|\| \{\}\)\.label/);
+  });
+});
+describe('निर्णय-pill में निर्णय का शब्द', () => {
+  const rep = _rf(new URL('../src/ank/report.js', import.meta.url), 'utf8');
+  it('मिलान/मोबाइल/व्यापार में tone(dec.tone) नहीं, decTone(dec)', () => {
+    expect(rep).not.toMatch(/tone\(dec\.tone\)/);
+    expect((rep.match(/decTone\(dec\)/g) || []).length).toBe(3);
+  });
+});
+describe('spelling-सुझाव के साथ सावधानी', () => {
+  const rep = _rf(new URL('../src/ank/report.js', import.meta.url), 'utf8');
+  it('SUGGEST.caution छपता है; बिना सुझाव के SCORE_NOTE दोबारा नहीं', () => {
+    expect(rep).toMatch(/T\.SUGGEST\.caution/);
+    expect((rep.match(/T\.SCORE_NOTE/g) || []).length).toBe(1);
+  });
+});

@@ -29,7 +29,7 @@ describe('SEO essentials — कुंडली / मिलान / पंचा
     expect(robots).toMatch(/Sitemap: https:\/\/mybapuji\.com\/kundli\/sitemap\.xml/)
   })
 
-  it('sitemap.xml lists all four pages', () => {
+  it('sitemap.xml lists all pages', () => {
     const sitemap = read('public/sitemap.xml')
     for (const url of PAGES.map((p) => p.canonical)) {
       expect(sitemap).toContain(`<loc>${url}</loc>`)

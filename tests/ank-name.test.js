@@ -206,6 +206,17 @@ describe('spelling-सुझाव', () => {
     }
   });
 
+  it('किसी भी सुझाव में "HH" नहीं (कहीं भी)', () => {
+    for (const [nm, m, b] of [
+      ['RAHUL SHARMA', 6, 1],
+      ['ANITA', 3, 5],
+      ['VIKRAM JOSHI', 1, 9],
+      ['SHEETAL', 4, 8],
+    ]) {
+      for (const x of suggestSpellings(nm, m, b)) expect(x.name.includes('HH')).toBe(false);
+    }
+  });
+
   it('कोई सुझाव न मिले तो ख़ाली सूची (crash नहीं)', () => {
     expect(Array.isArray(suggestSpellings('PRIYA VERMA', 3, 9))).toBe(true);
     expect(suggestSpellings('राम', 1, 1)).toEqual([]);
@@ -220,29 +231,38 @@ describe('spelling-सुझाव', () => {
     const anita = suggestSpellings('ANITA', 3, 5).map((s) => s.name);
     expect(anita).not.toContain('AANITAAH');
     for (const n of anita) expect(/(AAH|EEH|OOH|YH|HH)$/.test(n)).toBe(false);
-    // 01-ग की नई तालिका से RAHULL का स्कोर 5.6 = मौजूदा नाम के बराबर हो गया, इसलिए अब 2 सुझाव बचते हैं
-    // (नियम नहीं बदले — रिपोर्ट में दर्ज)। कम से कम 2 तो बनने ही चाहिए।
-    expect(suggestSpellings('RAHUL SHARMA', 6, 1).length).toBeGreaterThanOrEqual(2);
+    // 01-ग/02: RAHULL जैसे "HH" रूप हटे; "मौजूदा से बड़ा" नियम के बाद RAHOOL (7.2) ही बचता है
+    const rahul = suggestSpellings('RAHUL SHARMA', 6, 1).map((x) => x.name);
+    expect(rahul.length).toBeGreaterThanOrEqual(1);
+    expect(rahul).toContain('RAHOOL');
+    expect(rahul).not.toContain('RAHHULL');
+    for (const x of suggestSpellings('RAHUL SHARMA', 6, 1)) expect(x.name.includes('HH')).toBe(false);
   });
 });
 
 describe('नए नाम और check-spellings', () => {
   it('लिंग के हिसाब से छँटाई; पहले 6+ और मौजूदा से बड़े, वरना 5 का fallback', () => {
     const list = newNames('SHARMA', 'm', 1, 9);
-    expect(list.length).toBeGreaterThan(0);
+    expect(list.length).toBeGreaterThan(3);
     for (const n of list) {
       expect(n.gender === 'u' || n.gender === 'm').toBe(true);
       expect(n.full.endsWith('SHARMA')).toBe(true);
-      expect(Number.isFinite(n.score10)).toBe(true);
+      expect(n.score10).toBeGreaterThanOrEqual(6);
+      expect(n.fallback).toBe(false);
     }
+    expect(list.length).toBeLessThanOrEqual(10);
     expect(list[0].score10).toBeGreaterThanOrEqual(list[list.length - 1].score10);
     const f = newNames('SHARMA', 'f', 1, 9);
     for (const n of f) expect(n.gender === 'u' || n.gender === 'f').toBe(true);
 
-    // 3 से कम बचे → 5 सबसे अच्छे, fallback: true
-    const few = newNames('SHARMA', 'm', 6, 1, 5.6);
+    // 3 से कम बचे → 5 सबसे अच्छे, fallback: true (यहाँ 10 से बड़ा आधार असंभव है)
+    const few = newNames('SHARMA', 'm', 6, 1, 10);
     expect(few.length).toBe(5);
     for (const n of few) expect(n.fallback).toBe(true);
+
+    // मौजूदा पहला शब्द दोबारा नहीं सुझाया जाता
+    expect(newNames('VERMA', 'f', 3, 9, 0, 10, 'PRIYA').map((x) => x.name)).not.toContain('PRIYA');
+    expect(newNames('SHARMA', 'm', 6, 1, 5.6, 10, 'RAHUL').map((x) => x.name)).not.toContain('RAHUL');
 
     // बिना आधार-स्कोर के भी चलता है
     expect(newNames('', 'u', 1, 1).length).toBeGreaterThan(0);
