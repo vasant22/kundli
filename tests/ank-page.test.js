@@ -358,3 +358,12 @@ describe('font-files सब मौजूद', () => {
     for (const f of files) expect(existsSync(new URL(`../public/fonts/${f}`, import.meta.url)), f).toBe(true);
   });
 });
+describe('एक ही CSS file', () => {
+  it('ank page अलग fonts.css import नहीं करता; Noto की @font-face ank.css में है', () => {
+    const js = _rf(new URL('../src/ank/main.js', import.meta.url), 'utf8');
+    const css = _rf(new URL('../src/ank/ank.css', import.meta.url), 'utf8');
+    expect(js).not.toMatch(/import ['"]\.\.\/fonts\.css['"]/);
+    expect(css).toMatch(/noto-sans-devanagari-devanagari\.woff2/);
+    expect(css).toMatch(/noto-sans-devanagari-latin\.woff2/);
+  });
+});

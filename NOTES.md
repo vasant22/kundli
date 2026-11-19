@@ -1044,3 +1044,5 @@ Spec: `docs/bnn-guide.txt` (+ `docs/Kundli_BNN_Project_Guide.docx`, संस्
 
 ### अंक ज्योतिष — टास्क 02 पूरा (Claude, 19-11-2026)
 /ank-jyotish/ page + PDF तैयार (local, deploy नहीं)। Print की सीख: इस page पर body ही `.ank` है — print selectors `body.ank-doc .wrap` लिखें, `body.ank-doc .ank .wrap` नहीं (वरना कवर अंदर सिकुड़ जाता है)। अगला: टास्क 03 (deploy, सिर्फ़ Vas22 जी के "deploy भी करो" पर)।
+
+- **Cloudflare का cached 404 (19-11-2026):** deploy से पहले किसी नई asset-URL को curl/खोलना नहीं — Cloudflare 404 को ~24 दिन cache कर लेता है (fonts-DSKgHU8t.css के साथ यही हुआ)। इसलिए ank page की Noto @font-face अब ank.css में है। अगर किसी page का build फिर `fonts-DSKgHU8t.css` माँगे, तो पहले Cloudflare में उस URL को purge करें।

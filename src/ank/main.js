@@ -1,7 +1,7 @@
 // अंक ज्योतिष page का चालक — form, URL params, result render, PDF (print=1)।
 // सारी गणना browser में; कोई request, cookie या server नहीं।
 
-import '../fonts.css';
+// Noto fonts की @font-face ank.css में ही है (अलग fonts-*.css chunk नहीं — 19-11 को Cloudflare ने उसका 404 cache कर लिया था)
 import './ank.css';
 import { buildAnkData } from './index.js';
 import * as T from './text-hi.js';
