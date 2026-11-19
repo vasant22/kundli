@@ -67,7 +67,7 @@ function validate(input) {
 function urlFor(input, print) {
   const q = new URLSearchParams();
   if (input.name) q.set('name', input.name);
-  const [, m, d, y] = /^(\d{4})-(\d{2})-(\d{2})$/.exec(input.dob) || [];
+  const [, y, m, d] = /^(\d{4})-(\d{2})-(\d{2})$/.exec(input.dob) || []; // dob = YYYY-MM-DD
   if (y) {
     q.set('d', String(Number(d)));
     q.set('m', String(Number(m)));
