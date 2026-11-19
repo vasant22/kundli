@@ -1,0 +1,245 @@
+@font-face { font-family: "Baloo 2"; font-weight: 600; font-display: swap; src: url(/kundli-assets/fonts/baloo-2-devanagari-600-normal.woff2) format("woff2"); unicode-range: U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9, U+25CC, U+A830-A839, U+A8E0-A8FF; }
+@font-face { font-family: "Baloo 2"; font-weight: 700; font-display: swap; src: url(/kundli-assets/fonts/baloo-2-devanagari-700-normal.woff2) format("woff2"); unicode-range: U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9, U+25CC, U+A830-A839, U+A8E0-A8FF; }
+@font-face { font-family: "Baloo 2"; font-weight: 800; font-display: swap; src: url(/kundli-assets/fonts/baloo-2-devanagari-800-normal.woff2) format("woff2"); unicode-range: U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9, U+25CC, U+A830-A839, U+A8E0-A8FF; }
+@font-face { font-family: "Baloo 2"; font-weight: 600; font-display: swap; src: url(/kundli-assets/fonts/baloo-2-latin-600-normal.woff2) format("woff2"); unicode-range: U+0000-00FF, U+2000-206F; }
+@font-face { font-family: "Baloo 2"; font-weight: 700; font-display: swap; src: url(/kundli-assets/fonts/baloo-2-latin-700-normal.woff2) format("woff2"); unicode-range: U+0000-00FF, U+2000-206F; }
+@font-face { font-family: "Baloo 2"; font-weight: 800; font-display: swap; src: url(/kundli-assets/fonts/baloo-2-latin-800-normal.woff2) format("woff2"); unicode-range: U+0000-00FF, U+2000-206F; }
+
+/* अंक ज्योतिष page — design-kit (19-11-2026) के tokens और components हूबहू।
+   सारी CSS `.ank` के अंदर scoped; print-नियम सिर्फ़ `body.ank-doc` पर (kundli page वाली सीख)।
+   Fonts अलग `fonts.css` से (वही /kundli-assets/fonts/)। */
+
+:root{--nisha:#1C2452; --nisha-2:#2B3672; --gold:#E9B949; --marigold:#EF7D1A;
+  --dawn:#FFF4E8; --sky:#EEF1FB; --paper:#FFFFFF; --ink:#24273A; --muted:#6B6F85; --line:#E6E2EE;
+  --shubh:#2C8C5A; --shubh-bg:#E6F4EC; --mishr:#C77A0A; --mishr-bg:#FDF1DC; --savdhan:#B5522B; --savdhan-bg:#FBE9E2;
+  
+  --n1:#E4572E; --n2:#8E9AAF; --n3:#E0A100; --n4:#56657A; --n5:#2E9E5B; --n6:#D0629B; --n7:#8D6E63; --n8:#3949AB; --n9:#C62828;
+  --font-head:"Baloo 2","Noto Sans Devanagari",sans-serif;
+  --font-body:"Noto Sans Devanagari",system-ui,sans-serif;
+  --r:14px;}
+.ank,.ank *{box-sizing:border-box;margin:0;padding:0}
+.ank{font-family:var(--font-body);color:var(--ink);line-height:1.6;-webkit-print-color-adjust:exact;print-color-adjust:exact;background:#D9DCE6}
+.ank .orb{--c:var(--n1);display:inline-grid;place-items:center;width:58px;height:58px;border-radius:50%;background:var(--c);color:#fff;position:relative;flex:none;
+  box-shadow:inset 0 -4px 0 rgba(0,0,0,.12)}
+.ank .orb b{font:800 30px/1 var(--font-head);padding-top:4px}
+.ank .orb i{position:absolute;bottom:-6px;right:-6px;font:800 11px/1 var(--font-head);font-style:normal;background:#fff;color:var(--c);border:2px solid var(--c);
+  width:22px;height:22px;border-radius:50%;display:grid;place-items:center;padding-top:2px}
+.ank .orb.sm{width:34px;height:34px}
+.ank .orb.sm b{font-size:18px;padding-top:3px}
+.ank .orb.sm i{display:none}
+.ank .orb.xs{width:24px;height:24px;box-shadow:none}
+.ank .orb.xs b{font-size:13px;padding-top:2px}
+.ank .orb.xs i{display:none}
+.ank .tone{display:inline-flex;align-items:center;gap:6px;font:600 12px/1 var(--font-body);padding:5px 10px 4px;border-radius:99px;white-space:nowrap}
+.ank .tone::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.ank .tone.s{color:var(--shubh);background:var(--shubh-bg)}
+.ank .tone.m{color:var(--mishr);background:var(--mishr-bg)}
+.ank .tone.c{color:var(--savdhan);background:var(--savdhan-bg)}
+.ank .keys{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.ank .key{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:14px 14px 12px;display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center}
+.ank .key .k{font-size:12px;color:var(--muted);line-height:1.3}
+.ank .key .v{font:800 18px/1.25 var(--font-head);color:var(--nisha)}
+.ank .key .d{font-size:12px;color:var(--ink)}
+.ank .gauge{display:grid;justify-items:center;text-align:center}
+.ank .gauge .lbl{font-size:12px;color:var(--muted);margin-top:-6px}
+.ank .chap{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;margin-bottom:14px}
+.ank .chap .num{font:800 28px/1 var(--font-head);color:#fff;background:var(--marigold);width:46px;height:46px;border-radius:12px;display:grid;place-items:center;padding-top:5px}
+.ank .chap h2{font:800 24px/1.15 var(--font-head);color:var(--nisha)}
+.ank .chap p{grid-column:1/-1;font-size:13px;color:var(--muted);border-left:3px solid var(--gold);padding:4px 0 4px 10px;background:linear-gradient(90deg,var(--dawn),transparent)}
+.ank h3{font:700 17px/1.3 var(--font-head);color:var(--nisha);margin:18px 0 8px}
+.ank p.txt{font-size:14.5px;line-height:1.75;margin-bottom:8px}
+.ank .letters{display:flex;flex-wrap:wrap;gap:30px 14px;align-items:flex-end}
+.ank .word{display:flex;gap:3px;align-items:flex-end;padding-bottom:6px;border-bottom:2px solid var(--line);position:relative}
+.ank .word .sum{position:absolute;right:0;bottom:-22px;font:700 12px/1 var(--font-body);color:var(--muted)}
+.ank .lt{display:grid;grid-template-rows:auto auto;justify-items:center;width:30px}
+.ank .lt b{font:800 20px/1 var(--font-head);color:var(--nisha);padding-top:3px}
+.ank .lt span{font:800 12px/1 var(--font-head);color:#fff;width:22px;height:22px;border-radius:6px;display:grid;place-items:center;padding-top:2px;margin-top:4px}
+.ank .eq{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:30px;font:700 15px/1 var(--font-body);color:var(--muted)}
+.ank .eq .big{font:800 26px/1 var(--font-head);color:var(--nisha);padding-top:4px}
+.ank .bd{list-style:none;display:grid;gap:6px}
+.ank .bd li{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;font-size:13.5px;padding:8px 12px;border-radius:10px;background:#FBFAFD;border:1px solid var(--line)}
+.ank .bd li em{font:800 14px/1 var(--font-head);font-style:normal;padding:5px 9px 3px;border-radius:8px;min-width:44px;text-align:center}
+.ank .bd li em.p{background:var(--shubh-bg);color:var(--shubh)}
+.ank .bd li em.n{background:var(--savdhan-bg);color:var(--savdhan)}
+.ank .bd li em.z{background:#F0F0F5;color:var(--muted)}
+.ank .sugg{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}
+.ank .sg{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff;display:grid;grid-template-columns:1fr auto;gap:2px 8px;align-items:center;break-inside:avoid}
+.ank .sg .nm{font:800 16px/1.2 var(--font-head);color:var(--nisha);letter-spacing:.02em}
+.ank .sg .hi{font-size:12px;color:var(--muted)}
+.ank .sg .sc{grid-row:1/3;grid-column:2;font:800 18px/1 var(--font-head);color:var(--shubh);background:var(--shubh-bg);border-radius:10px;padding:8px 8px 5px;text-align:center;min-width:48px}
+.ank .sg .sc small{display:block;font:600 10px/1 var(--font-body);margin-top:2px}
+.ank .loshu-wrap{display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:start}
+.ank .planes{list-style:none;display:grid;gap:6px}
+.ank .planes li{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;font-size:13.5px}
+.ank .planes .dots{display:flex;gap:3px}
+.ank .planes .dots i{width:20px;height:20px;border-radius:6px;font:800 11px/20px var(--font-head);font-style:normal;color:#fff;text-align:center;padding-top:1px}
+.ank .planes .dots i.off{background:#fff!important;color:#B9BCCB;border:1.5px dashed #C9CCDA;line-height:17px}
+.ank .years{display:grid;grid-template-columns:repeat(10,1fr);gap:6px}
+.ank .yr{border-radius:12px;padding:8px 4px 8px;text-align:center;background:#fff;border:1px solid var(--line);position:relative;break-inside:avoid}
+.ank .yr .y{font:700 12px/1 var(--font-body);color:var(--muted)}
+.ank .yr .n{font:800 26px/1 var(--font-head);color:#fff;width:40px;height:40px;border-radius:50%;margin:6px auto 4px;display:grid;place-items:center;padding-top:4px}
+.ank .yr .l{font-size:10.5px;line-height:1.25;color:var(--ink);min-height:26px}
+.ank .yr .a{font-size:10px;color:var(--muted)}
+.ank .yr.now{border:2px solid var(--marigold);background:var(--dawn);padding-top:14px}
+.ank .yr.now::after{content:"यह वर्ष";position:absolute;top:-9px;left:50%;transform:translateX(-50%);font:700 10px/1 var(--font-body);background:var(--marigold);color:#fff;padding:4px 7px 3px;border-radius:99px;white-space:nowrap}
+.ank .months{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.ank .mo{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center;border-radius:10px;padding:7px 8px;background:#FBFAFD;border:1px solid var(--line);font-size:11.5px;line-height:1.3;break-inside:avoid}
+.ank .mo b{display:block;font-weight:700;color:var(--nisha);font-size:12px}
+.ank .week{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+.ank .day{border-radius:12px;background:#fff;border:1px solid var(--line);border-top:5px solid var(--c,#ccc);padding:10px 9px;display:grid;gap:6px;align-content:start;break-inside:avoid}
+.ank .day .dn{font:800 15px/1.1 var(--font-head);color:var(--nisha)}
+.ank .day .tone{justify-self:start;font-size:11px;padding:4px 8px 3px}
+.ank .day p{font-size:11.5px;line-height:1.45}
+.ank .day .mz{font-size:11px;line-height:1.4;background:var(--dawn);border-radius:8px;padding:6px 7px;color:#7A4A12}
+.ank .day.power{background:linear-gradient(180deg,var(--shubh-bg),#fff 60%)}
+.ank .box{border-radius:var(--r);padding:14px 16px;background:var(--sky);font-size:13.5px;line-height:1.65}
+.ank .box.dawn{background:var(--dawn);border:1px dashed #E9B98A}
+.ank .box b.h{display:block;font:800 16px/1.3 var(--font-head);color:var(--nisha);margin-bottom:4px}
+.ank .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.ank .chips-l{display:flex;flex-wrap:wrap;gap:6px}
+.ank .chip-n{font:700 13px/1 var(--font-body);padding:6px 10px 5px;border-radius:8px;background:#fff;border:1px solid var(--line)}
+.ank .chip-n.good{background:var(--shubh-bg);border-color:transparent;color:var(--shubh)}
+.ank .chip-n.care{background:var(--savdhan-bg);border-color:transparent;color:var(--savdhan)}
+.ank table{width:100%;border-collapse:collapse;font-size:13px}
+.ank th{text-align:left;font-weight:700;color:var(--nisha);font-size:12px;padding:8px 10px;border-bottom:2px solid var(--marigold)}
+.ank td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+.ank tr:nth-child(even) td{background:#FBFAFD}
+.ank .gem{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center}
+.ank .gem .stone{width:34px;height:34px;transform:rotate(45deg);border-radius:7px;margin:6px;box-shadow:inset -6px -6px 0 rgba(255,255,255,.35),inset 4px 4px 0 rgba(0,0,0,.08)}
+.ank .site{background:#F7F5F1}
+.ank .mb-strip{height:56px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 20px;font:700 14px var(--font-body);color:var(--muted)}
+.ank .mb-strip b{color:var(--marigold);margin-right:8px}
+.ank .wrap{max-width:980px;margin:0 auto;padding:28px 18px 60px}
+.ank .hero h1{font:800 34px/1.15 var(--font-head);color:var(--nisha)}
+.ank .hero h1 span{color:var(--marigold)}
+.ank .hero .lead{font-size:15px;color:var(--muted);max-width:720px;margin:8px 0 18px}
+.ank .form{background:#fff;border-radius:18px;border:1px solid var(--line);padding:20px;box-shadow:0 6px 24px rgba(28,36,82,.06)}
+.ank .f-grid{display:grid;grid-template-columns:1.4fr 1fr .9fr;gap:14px}
+.ank .fld label{display:block;font:700 13px/1.3 var(--font-body);color:var(--nisha);margin-bottom:6px}
+.ank .fld small{display:block;font-size:11.5px;color:var(--muted);margin-top:4px}
+.ank .inp{width:100%;height:46px;border:1.5px solid #D9D6E3;border-radius:12px;padding:0 14px;font:500 15px var(--font-body);color:var(--ink);background:#fff}
+.ank .inp:focus{outline:none;border-color:var(--marigold);box-shadow:0 0 0 3px rgba(239,125,26,.18)}
+.ank .dob{display:grid;grid-template-columns:1fr 1.3fr 1.2fr;gap:6px}
+.ank .seg{display:grid;grid-template-columns:repeat(3,1fr);border:1.5px solid #D9D6E3;border-radius:12px;overflow:hidden;height:46px}
+.ank .seg span{display:grid;place-items:center;font:600 13.5px var(--font-body);color:var(--muted);border-right:1px solid #E6E3EE}
+.ank .seg span:last-child{border-right:0}
+.ank .seg span.on{background:var(--nisha);color:#fff}
+.ank details.more{margin-top:14px;border-top:1px dashed var(--line);padding-top:12px}
+.ank details.more summary{cursor:pointer;font:700 13.5px var(--font-body);color:var(--marigold);list-style:none}
+.ank details.more summary::before{content:"＋ "}
+.ank details.more[open] summary::before{content:"－ "}
+.ank .f-actions{display:flex;align-items:center;gap:14px;margin-top:16px;flex-wrap:wrap}
+.ank .btn{height:50px;padding:0 26px;border:0;border-radius:14px;background:var(--marigold);color:#fff;font:800 18px/1 var(--font-head);padding-top:3px;cursor:pointer;box-shadow:0 4px 0 #C9620B}
+.ank .btn:active{transform:translateY(2px);box-shadow:0 2px 0 #C9620B}
+.ank .btn.ghost{background:#fff;color:var(--nisha);border:1.5px solid var(--nisha);box-shadow:none;font-size:15px;height:44px}
+.ank .privacy{font-size:12px;color:var(--muted)}
+.ank .privacy::before{content:"🔒 "}
+.ank .result{margin-top:26px}
+.ank .chipbar{position:sticky;top:0;z-index:5;background:rgba(247,245,241,.94);backdrop-filter:blur(6px);display:flex;gap:6px;overflow-x:auto;padding:10px 0;scrollbar-width:none}
+.ank .chipbar a{flex:none;font:600 13px/1 var(--font-body);padding:9px 12px 8px;border-radius:99px;background:#fff;border:1px solid var(--line);color:var(--nisha);text-decoration:none}
+.ank .chipbar a.on{background:var(--nisha);color:#fff;border-color:var(--nisha)}
+.ank .summary{background:radial-gradient(130% 120% at 85% 0%,var(--nisha-2),var(--nisha) 60%);color:#fff;border-radius:22px;padding:22px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;position:relative;overflow:hidden}
+.ank .summary .nm{font:800 28px/1.15 var(--font-head)}
+.ank .summary .dt{color:#C9CEE8;font-size:13.5px}
+.ank .summary .trio{display:flex;gap:22px;margin-top:16px;flex-wrap:wrap}
+.ank .summary .trio div{display:grid;justify-items:center;gap:8px;font-size:12px;color:#C9CEE8}
+.ank .summary .pdfrow{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.ank .summary .btn{height:44px;font-size:15px}
+.ank .summary .btn.ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.5)}
+.ank details.ch{background:#fff;border:1px solid var(--line);border-radius:18px;margin-top:14px;overflow:hidden}
+.ank details.ch>summary{list-style:none;cursor:pointer;padding:16px 18px;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center}
+.ank details.ch>summary .num{font:800 20px/1 var(--font-head);color:#fff;background:var(--marigold);width:36px;height:36px;border-radius:10px;display:grid;place-items:center;padding-top:4px}
+.ank details.ch>summary b{font:800 19px/1.2 var(--font-head);color:var(--nisha)}
+.ank details.ch>summary::after{content:"";width:10px;height:10px;border-right:2.5px solid var(--muted);border-bottom:2.5px solid var(--muted);transform:rotate(45deg);margin:-4px 6px 0}
+.ank details.ch[open]>summary::after{transform:rotate(-135deg);margin-top:6px}
+.ank details.ch .body{padding:0 18px 20px}
+@media (max-width:640px){
+  .ank .wrap{padding:18px 14px 50px}
+  .ank .hero h1{font-size:27px}
+  .ank .f-grid{grid-template-columns:1fr}
+  .ank .keys{grid-template-columns:1fr}
+  .ank .summary{grid-template-columns:1fr;padding:18px}
+  .ank .summary .gauge{justify-self:start}
+  .ank .loshu-wrap{grid-template-columns:1fr;justify-items:center}
+  .ank .years{grid-template-columns:repeat(5,1fr)}
+  .ank .months{grid-template-columns:repeat(2,1fr)}
+  .ank .week{grid-template-columns:1fr 1fr}
+  .ank .row2{grid-template-columns:1fr}
+}
+
+/* ---------- कवर (PDF का पहला पन्ना) ---------- */
+.ank .cover{background:radial-gradient(120% 80% at 50% 40%,var(--nisha-2) 0%,var(--nisha) 55%,#141A3E 100%);color:#fff;padding:0;display:flex;flex-direction:column;align-items:center;text-align:center}
+.ank .cover .stars{position:absolute;inset:0;width:100%;height:100%}
+.ank .cover{justify-content:center}
+.ank .cover .top{position:absolute;top:13mm;left:0;right:0}
+.ank .cover .top .csite{font-weight:700;letter-spacing:.08em;color:var(--marigold);font-size:10.5pt}
+.ank .cover .top .om{font:700 12.5pt/1.4 var(--font-head);color:var(--gold);margin-top:1mm}
+.ank .cover .yantra{position:relative;margin-top:14mm}
+.ank .cover h1{font:800 40pt/1.1 var(--font-head);margin-top:6mm;position:relative}
+.ank .cover .sub{color:var(--gold);font-size:11.5pt;font-weight:600;position:relative}
+.ank .cover .name{font:800 27pt/1.2 var(--font-head);margin-top:5mm;position:relative;letter-spacing:.02em}
+.ank .cover .birth{color:#C9CEE8;font-size:10.5pt;position:relative}
+.ank .cover .ckeys{display:grid;grid-template-columns:repeat(4,1fr);gap:3mm;width:160mm;margin-top:7mm;position:relative}
+.ank .cover .ck{border:1px solid rgba(233,185,73,.45);border-radius:3mm;padding:3mm 2mm 2.5mm;background:rgba(255,255,255,.05);display:grid;justify-items:center;gap:2mm}
+.ank .cover .ck .k{font-size:8.5pt;color:#AEB4D6}
+.ank .cover .ck .score{font:800 22pt/1 var(--font-head);color:var(--gold);padding-top:2mm}
+.ank .cover .foot{position:absolute;bottom:9mm;left:0;right:0;font-size:8pt;color:#9AA0C6}
+
+/* ---------- mybapuji top strip (kundli page वाला ही component) ---------- */
+.ank .mb-strip{background:#ffdc91;border-bottom:1px solid #e8c56a}
+.ank .mb-strip .in{max-width:1080px;margin:0 auto;padding:7px 1rem;display:flex;flex-wrap:wrap;align-items:center;column-gap:4px;row-gap:4px}
+.ank .mb-strip .brand{color:#fff;font-weight:800;font-size:.95rem;text-decoration:none;background:#0f5132;padding:7px 13px;border-radius:12px;margin-right:8px;line-height:1.2}
+.ank .mb-strip .brand:hover{background:#0b3d26}
+.ank .mb-strip .mb-link{color:#1f2937;font-weight:600;font-size:.92rem;text-decoration:none;padding:8px 12px;border-radius:9px;line-height:1.2}
+.ank .mb-strip .mb-link:hover{background:#f4f1ea;color:#0f5132;text-decoration:none}
+
+/* ---------- छोटी मरम्मत जो production में ज़रूरी है ---------- */
+.ank a{color:inherit}
+.ank .site{background:#F7F5F1}
+.ank .result{scroll-margin-top:56px}
+.ank .err{display:none;margin-top:10px;border-radius:12px;background:var(--savdhan-bg);color:var(--savdhan);font-size:13.5px;padding:10px 14px;border:1px solid #F0C7B6}
+.ank .err.on{display:block}
+.ank .seg label{display:grid;place-items:center;cursor:pointer}
+.ank .seg input{position:absolute;opacity:0;pointer-events:none}
+.ank .seg label:has(input:checked){background:var(--nisha);color:#fff}
+.ank .chk-lbl{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--ink)}
+.ank .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.ank .cover{display:none}
+.ank .foot-note{font-size:12px;color:var(--muted);margin-top:18px;line-height:1.6}
+.ank .seo{max-width:980px;margin:26px auto 0;padding:0 18px 40px}
+.ank .seo h2{font:800 21px/1.3 var(--font-head);color:var(--nisha);margin:22px 0 8px}
+.ank .seo details{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:8px}
+.ank .seo summary{cursor:pointer;font:700 14.5px/1.4 var(--font-body);color:var(--nisha)}
+.ank .seo p{font-size:14px;line-height:1.7;color:var(--ink);margin-top:6px}
+.ank .seo .what p{margin:0 0 10px}
+
+/* कवर सिर्फ़ PDF में */
+@media print{
+  body.ank-doc{background:none}
+  .ank .mb-strip,.ank .hero,.ank .chipbar,.ank .pdfrow,.ank .privacy,.ank .seo,.ank .foot-note{display:none!important}
+  .ank .cover{display:flex!important;position:relative;width:210mm;height:297mm;max-height:297mm;overflow:hidden;break-after:page;margin:0;padding:0}
+  .ank .umbrella{display:none}
+  .ank details.ch{border:0;border-radius:0;margin:0;overflow:visible;break-before:page}
+  .ank details.ch>summary{padding:0 0 6mm;break-after:avoid;pointer-events:none}
+  .ank details.ch>summary::after{content:none}
+  .ank details.ch .body{padding:0}
+  .ank details.ch:first-of-type{break-before:auto}
+  .ank .summary{break-inside:avoid;border-radius:4mm;background:radial-gradient(130% 120% at 85% 0%,var(--nisha-2),var(--nisha) 60%)!important;-webkit-print-color-adjust:exact}
+  .ank .keys,.ank .row2,.ank .loshu-wrap,.ank .year,.ank .week{break-inside:avoid}
+  .ank .months{grid-template-columns:repeat(4,1fr)!important}
+  .ank .key,.ank .yr,.ank .mo,.ank .day,.ank .sg,.ank .bd li,.ank .box{break-inside:avoid}
+  .ank tr{break-inside:avoid}
+  .ank thead{display:table-header-group}
+  .ank h3{break-after:avoid}
+}
+
+@page{
+  size:A4; margin:16mm 16mm 18mm;
+  @top-left{content:"mybapuji.com · अंक ज्योतिष";font:600 7.5pt "Noto Sans Devanagari";color:#6B6F85}
+  @bottom-right{content:counter(page, devanagari);font:800 10pt "Baloo 2";color:#1C2452}
+  @bottom-left{content:"mybapuji.com";font:600 7pt "Noto Sans Devanagari";color:#9AA0C6}
+}
+@page :first{
+  margin:0;
+  @top-left{content:none} @bottom-right{content:none} @bottom-left{content:none}
+}

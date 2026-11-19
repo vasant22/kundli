@@ -28,6 +28,10 @@ export default defineConfig({
     // Bundles land in kundli-assets/js/ (see the note above about the WASM).
     assetsDir: 'js',
 
+    // बहु-पेज build में Vite एक modulepreload-polyfill चंक जोड़ देता है; उसकी ज़रूरत
+    // आधुनिक browser में नहीं है और मौजूदा पन्नों के bundle में एक भी बाइट न बढ़े।
+    modulePreload: { polyfill: false },
+
     // Multi-page build: the Kundli page, the Kundli Matching page, the full
     // Panchang page, the BNN (भृगु नंदी नाड़ी) chart page and the three homepage
     // mini-widgets (Kundli, Matching, Panchang) — all reusing the same modules.
@@ -43,6 +47,7 @@ export default defineConfig({
         'match-widget': page('widgets/match/index.html'),
         bnn: page('bnn/index.html'),
         phal: page('phal/index.html'),
+        ank: page('ank/index.html'),
       },
     },
   },

@@ -32,6 +32,7 @@ const MAP = [
   ['panchang/index.html', 'panchang/index.html'],
   ['bnn/index.html', 'bnn-chart/index.html'],
   ['phal/index.html', 'kundli-phal/index.html'],
+  ['ank/index.html', 'ank-jyotish/index.html'],
   ['widgets/kundli/index.html', 'kundli/widget/index.html'],
   ['widgets/match/index.html', 'kundli-milan/widget/index.html'],
   ['panchang-widget/index.html', 'panchang/widget/index.html'],
@@ -173,8 +174,8 @@ async function main() {
   for f in ~/.openclaw-autoclaw/workspace/private-assets/rashi/*.webp; do cp -a "$f" "$D/kundli-assets/rashi/"; done
 
   # 4. ownership + permissions
-  chown -R my4bap21:my4bap21 $D/kundli $D/kundli-milan $D/kundli-phal $D/panchang $D/bnn-chart $D/kundli-assets
-  find $D/kundli $D/kundli-milan $D/kundli-phal $D/panchang $D/bnn-chart $D/kundli-assets \\
+  chown -R my4bap21:my4bap21 $D/kundli $D/kundli-milan $D/kundli-phal $D/ank-jyotish $D/panchang $D/bnn-chart $D/kundli-assets
+  find $D/kundli $D/kundli-milan $D/kundli-phal $D/ank-jyotish $D/panchang $D/bnn-chart $D/kundli-assets \\
        -type d -exec chmod 755 {} + -o -type f -exec chmod 644 {} +
 
   # 5. verify public_html itself was NOT touched

@@ -44,3 +44,19 @@
 ## टास्क 03 — जाँच + deploy ("deploy भी करो" पर)
 
 (अभी शुरू नहीं)
+
+## टास्क 02 — page + PDF (रुका हुआ, 19-11-2026)
+
+- [x] Step 0 — HH कहीं नहीं, नए नामों में मौजूदा पहला शब्द नहीं, "3+ सुझाव" शर्त हटी (RAHUL पर RAHOOL ही बचता है)
+- [x] Step 1 — `ank/index.html`, `src/ank/{main,report,viz,ank.css}`, `text-hi.js` + `names.js` (हूबहू copy, md5 मिला)
+- [x] Step 2 — kit हूबहू: strip, hero+form, 12–13 अध्याय `<details open>`, chips, summary + gauge; URL params; नरम संदेश
+- [x] Step 3 — PDF मोड (`print=1`), कवर, margin-boxes, देवनागरी पृष्ठ-संख्या
+- [x] Step 3-ख — text-hi के सारे खंड जुड़े (BREAKDOWN/MB_PAIR/LOSHU_*/KUA/COMPOUND/GEM/…)
+- [x] Step 4 — कोई WASM/astro import नहीं; **JS 35.27 KB gzip · CSS 4.81 KB gzip · HTML 3.74 KB gzip** (सीमा 45/9)
+- [x] Step 5 — SEO: title/meta/canonical/OG/robots + JSON-LD (@graph: WebApplication + FAQPage) + sitemap.xml में URL
+- [x] Step 6 — tests: `ank-page` (18) + `ank-print` (3); पूरा suite **1365 ✓ + 3 todo**
+- [x] Step 7 (आधा) — `reports/img/ank-02/`: desktop-form/result/naam, phone-form/result, `ank-rahul-print.pdf` (14 पन्ने), `ank-priya.pdf` (13), `p-01…p-14.png`
+- [ ] **बाक़ी:** PDF में **कवर का पूरा-पन्ना (full-bleed)** — CDP `Page.printToPDF` में `@page :first{margin:0}` लागू नहीं हो रहा (कवर 16mm अंदर, नीचे से कटा); असली browser-print में यह लागू होना चाहिए — जाँचना बाक़ी
+- [ ] **बाक़ी:** phone 390 पर पहली load का कुल KB + "बटन से result तक" का समय नापना
+- [ ] **बाक़ी:** kit की `kit-namuna.pdf` से पन्ने-दर-पन्ने तुलना लिखना; रिपोर्ट `reports/2026-11-19-ank-02-page.md` पूरी करना
+- [ ] **छोटी गड़बड़ी:** अक्षर-पट्टी में शब्द का "= 17" अगले शब्द के अक्षरों के नीचे आ जाता है

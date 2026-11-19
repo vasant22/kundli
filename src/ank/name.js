@@ -207,6 +207,8 @@ export function plausible(word, baseLength) {
   if (/^([^AEIOU])\1/.test(word)) return false;
   if (/[^AEIOU]{4}/.test(word)) return false;
   if (word.length > baseLength + 3) return false;
+  // "HH" कहीं भी — मानवीय नहीं (RAHHULL जैसे रूप)
+  if (word.includes('HH')) return false;
   // दो बार "AA" — मानवीय नहीं
   if ((word.match(/AA/g) || []).length >= 2) return false;
   // AAH / EEH / OOH / YH / HH पर अंत — मानवीय नहीं
@@ -298,12 +300,22 @@ export function suggestSpellings(name, mulank, bhagyank, limit = 10) {
  * नए नाम: सूची से लिंग के हिसाब से छाँटो। पहले वे जिनका स्कोर 6+ है और मौजूदा नाम से बड़ा है;
  * ऐसे 3 से कम मिलें तो सबसे अच्छे 5 (स्कोर कितना भी हो) `fallback: true` के साथ।
  */
-export function newNames(surname, gender, mulank, bhagyank, baseScore = null, limit = 10) {
+export function newNames(
+  surname,
+  gender,
+  mulank,
+  bhagyank,
+  baseScore = null,
+  limit = 10,
+  currentFirst = ''
+) {
   const g = gender === 'm' || gender === 'f' ? gender : null;
+  const skip = String(currentFirst || '').toUpperCase();
   const all = [];
   for (const entry of NAMES) {
     const name = String(entry.n || '').toUpperCase();
     if (!name) continue;
+    if (skip && name === skip) continue; // जो नाम पहले से है, उसे सुझाओ मत
     const eg = entry.g || 'u';
     if (g && eg !== 'u' && eg !== g) continue;
     const full = surname ? `${name} ${surname}` : name;
@@ -311,6 +323,7 @@ export function newNames(surname, gender, mulank, bhagyank, baseScore = null, li
     if (s.error) continue;
     all.push({
       name,
+      hi: entry.hi || '',
       full,
       gender: eg,
       total: s.total,

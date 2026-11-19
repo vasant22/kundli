@@ -40,6 +40,7 @@ export function buildAnkData(input, opts = {}) {
         mulankBhagyank: relation(dob.mulank, dob.bhagyank),
         bhagyankMulank: relation(dob.bhagyank, dob.mulank),
       },
+      gender,
       dob: {
         iso: dob.iso,
         day: dob.d,
@@ -49,6 +50,7 @@ export function buildAnkData(input, opts = {}) {
       },
     }
     : {
+      gender,
       mulank: null,
       bhagyank: null,
       chains: null,
@@ -73,12 +75,13 @@ export function buildAnkData(input, opts = {}) {
     nameBlock.score = scoreName(nameIn, mulank, bhagyank);
     nameBlock.suggestions = suggestSpellings(nameIn, mulank, bhagyank, 10);
     nameBlock.newNames = newNames(
-      c0.words.slice(1).join(' '),
+      c0.words.slice(1).map((w) => w.text).join(' '),
       gender,
       mulank,
       bhagyank,
       nameBlock.score.score10,
-      10
+      10,
+      c0.words[0].text
     );
   }
   if (Array.isArray(src.check) && src.check.length) {
