@@ -18,17 +18,18 @@ import {
   daysInMonth,
 } from '../src/ank/core.js';
 
-/* अपेक्षित मैत्री-तालिका (पंक्ति base, स्तंभ other) — m मित्र · s सम · x शत्रु */
+/* अपेक्षित मैत्री-तालिका (पंक्ति base, स्तंभ other) — m मित्र · s सम · x शत्रु.
+   राहु (4) और केतु (7): मित्र 5,6,8 · शत्रु 1,2,9 (प्रकाशित भारतीय अंक-ज्योतिष)। */
 const EXPECTED = [
-  'mmmxsxmxm',
-  'mmssmssss',
+  'mmmxsxxxm',
+  'mmsxmsxss',
   'mmmsxxmsm',
-  'xxsmmmxmx',
-  'mxssmmsss',
-  'xxsmmmsms',
-  'mmmsxsmsm',
-  'xxsmmmxmx',
-  'mmmsxsmsm',
+  'xxsmmmsmx',
+  'mxsmmmmss',
+  'xxsmmmmms',
+  'xxssmmmmx',
+  'xxsmmmmmx',
+  'mmmxxsxsm',
 ];
 
 describe('अंक घटाना', () => {
@@ -102,13 +103,21 @@ describe('मैत्री-तालिका — 81 कोठरियाँ,
     for (let n = 1; n <= 9; n += 1) expect(relation(n, n)).toBe('m');
   });
 
-  it('राहु शनिवत् और केतु मंगलवत्', () => {
-    for (let n = 1; n <= 9; n += 1) {
-      expect(relation(4, n)).toBe(relation(8, n));
-      expect(relation(n, 4)).toBe(relation(n, 8));
-      expect(relation(7, n)).toBe(relation(9, n));
-      expect(relation(n, 7)).toBe(relation(n, 9));
+  it('राहु (4) और केतु (7) — मित्र 5,6,8 · शत्रु 1,2,9', () => {
+    for (const n of [1, 2, 5, 6, 8, 9]) expect(relation(4, n)).toBe(relation(7, n));
+    for (const n of [5, 6, 8]) {
+      expect(relation(4, n)).toBe('m');
+      expect(relation(7, n)).toBe('m');
     }
+    for (const n of [1, 2, 9]) {
+      expect(relation(4, n)).toBe('x');
+      expect(relation(7, n)).toBe('x');
+    }
+    // 4→3 और 7→3 दोनों सम; 4→4 मित्र, पर 7→4 सम (अपना-अपना अंक अलग)
+    expect(relation(4, 3)).toBe('s');
+    expect(relation(7, 3)).toBe('s');
+    expect(relation(7, 4)).toBe('s');
+    expect(relation(4, 7)).toBe('s');
   });
 
   it('तालिका एक-तरफ़ा है — उलटा नहीं माना जाता', () => {
@@ -155,15 +164,16 @@ describe('कैल्डियन अक्षर-मान', () => {
 });
 
 describe('संयुक्त अंक की श्रेणी (10–52)', () => {
-  const SHUBH = [10, 15, 17, 19, 20, 21, 23, 24, 25, 27, 32, 33, 34, 36, 37, 41, 42, 45, 46, 50, 51];
-  const MISHR = [14, 30, 31, 39, 40, 48, 49];
+  const SHUBH = [10, 15, 17, 19, 21, 23, 24, 25, 27, 32, 33, 34, 36, 37, 41, 42, 45, 46, 50, 51];
+  const MISHR = [14, 20, 30, 31, 39, 40, 48, 49];
   const CHUNAUTI = [11, 12, 13, 16, 18, 22, 26, 28, 29, 35, 38, 43, 44, 47, 52];
 
   it.each(SHUBH)('%i शुभ है', (n) => expect(classOf(n)).toBe('g'));
   it.each(MISHR)('%i मिश्र है', (n) => expect(classOf(n)).toBe('m'));
   it.each(CHUNAUTI)('%i चुनौती है', (n) => expect(classOf(n)).toBe('c'));
 
-  it('10–52 की हर संख्या ठीक एक श्रेणी में — कुल 43', () => {
+  it('10–52 की हर संख्या ठीक एक श्रेणी में — कुल 43 (शुभ 20, मिश्र 8, चुनौती 15)', () => {
+    expect([SHUBH.length, MISHR.length, CHUNAUTI.length]).toEqual([20, 8, 15]);
     expect(SHUBH.length + MISHR.length + CHUNAUTI.length).toBe(43);
     const all = [...SHUBH, ...MISHR, ...CHUNAUTI].sort((a, b) => a - b);
     expect(all).toEqual(Array.from({ length: 43 }, (_, i) => i + 10));
@@ -174,6 +184,11 @@ describe('संयुक्त अंक की श्रेणी (10–52)', 
     expect([1, 3, 5, 6].every((n) => classOf(n) === 'g')).toBe(true);
     expect([2, 7, 9].every((n) => classOf(n) === 'm')).toBe(true);
     expect([4, 8].every((n) => classOf(n) === 'c')).toBe(true);
+  });
+
+  it('20 अब मिश्र है (Cheiro: सांसारिक सफलता के लिए संदिग्ध)', () => {
+    expect(classOf(20)).toBe('m');
+    expect(classOf(21)).toBe('g');
   });
 
   it('52 से बड़ा योग — 9 घटाते जाओ', () => {

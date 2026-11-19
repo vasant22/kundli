@@ -40,7 +40,7 @@ export function kuaNumber(year, gender) {
 
 /**
  * लो-शू हिसाब। `dob` = core.parseDob का नतीजा, `gender` = 'm' | 'f' | null।
- * भरने वाले अंक: DDMMYYYY के सारे अशून्य अंक + मूलांक (दिन ≥ 10 पर) + भाग्यांक + कुआ।
+ * भरने वाले अंक: DDMMYYYY के सारे अशून्य अंक + मूलांक (दिन ≥ 10 पर) + भाग्यांक। कुआ अलग मान है, ग्रिड में नहीं।
  */
 export function loShu(dob, gender) {
   const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 };
@@ -57,8 +57,8 @@ export function loShu(dob, gender) {
   }
   if (dob.d >= 10) add(dob.mulank, 'mulank');
   add(dob.bhagyank, 'bhagyank');
+  // कुआ ग्रिड में नहीं जुड़ता (भारतीय लो-शू पद्धति) — वह अलग मान है, वास्तु/दिशा के लिए
   const kua = kuaNumber(dob.y, gender);
-  if (kua) add(kua, 'kua');
 
   const missing = [];
   const repeated = [];

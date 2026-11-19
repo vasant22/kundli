@@ -37,6 +37,30 @@ export function luckyNumbers(mulank, bhagyank) {
   return out;
 }
 
+/** भारतीय अंक-ज्योतिष के शुभ दिन (अंक के अनुसार); सूची का पहला = मुख्य दिन। */
+export const LUCKY_DAYS = {
+  1: ['sun'],
+  2: ['mon'],
+  3: ['thu'],
+  4: ['sun', 'sat'],
+  5: ['wed'],
+  6: ['fri'],
+  7: ['mon', 'sun'],
+  8: ['sat'],
+  9: ['tue'],
+};
+
+/** अंक के शुभ दिन (वार-keys, पहला = मुख्य)। */
+export function luckyDays(n) {
+  return (LUCKY_DAYS[n] || []).slice();
+}
+
+/** वार-key का हिंदी नाम। */
+export function dayHiOf(key) {
+  const d = WEEKDAYS.find((w) => w.key === key);
+  return d ? d.hi : null;
+}
+
 /** मूलांक जिन अंकों को शत्रु मानता है (क्रम से)। */
 export function enemyNumbers(mulank) {
   return NUMBERS.filter((n) => relation(mulank, n) === 'x');
@@ -58,9 +82,11 @@ export function remedyBlock(mulank, bhagyank, missing = []) {
   const wear = { number: mulank, planet: planetOf(mulank), ...GEMS[mulank] };
   const avoid = enemies.map((n) => ({ number: n, planet: planetOf(n), ...GEMS[n] }));
 
-  const powerKeys = [...new Set([mulank, bhagyank].map(remedyDayOf).filter(Boolean))];
-  const careNumber = enemies.find((n) => !powerKeys.includes(remedyDayOf(n))) ?? null;
-  const careDayKey = careNumber ? remedyDayOf(careNumber) : null;
+  // power-दिन = मूलांक और भाग्यांक के शुभ दिनों का मेल (दोहराव हटाकर)
+  const powerKeys = [...new Set([...luckyDays(mulank), ...luckyDays(bhagyank)])];
+  // सावधानी-दिन = पहला शत्रु-अंक जिसका मुख्य शुभ दिन किसी power-दिन से अलग हो
+  const careNumber = enemies.find((n) => !powerKeys.includes(luckyDays(n)[0])) ?? null;
+  const careDayKey = careNumber ? luckyDays(careNumber)[0] : null;
 
   const weekly = WEEKDAYS.map((d) => {
     const isPower = powerKeys.includes(d.key);
@@ -81,7 +107,7 @@ export function remedyBlock(mulank, bhagyank, missing = []) {
     };
   });
 
-  const powerDays = WEEKDAYS.filter((d) => powerKeys.includes(d.key)).map((d) => d.hi);
+  const powerDays = powerKeys.map(dayHiOf).filter(Boolean);
 
   const goodDates = [];
   const careDates = [];
@@ -99,7 +125,7 @@ export function remedyBlock(mulank, bhagyank, missing = []) {
     stones: { wear, avoid },
     weekly,
     powerDays,
-    careDay: careDayKey ? PLANETS[careNumber].dayHi : null,
+    careDay: careDayKey ? dayHiOf(careDayKey) : null,
     careNumber,
     enemyNumbers: enemies,
     goodDates,

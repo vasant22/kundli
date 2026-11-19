@@ -8,7 +8,7 @@
 //
 // मिलान सिर्फ़ इन खंडों में (बाक़ी जान-बूझकर नहीं — वे हमारी अपनी पद्धति हैं):
 //   मूलांक · भाग्यांक · कैल्डियन कुल/संयुक्त/एकल/श्रेणी · पहले नाम का योग ·
-//   लो-शू गिनती/खाली/कुआ · व्यक्तिगत वर्ष · व्यक्तिगत मास · मूलांक-भाग्यांक संबंध
+//   लो-शू गिनती/खाली (बिना gender) · कुआ (gender के साथ) · व्यक्तिगत वर्ष · व्यक्तिगत मास
 
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
@@ -70,8 +70,6 @@ const CASES = [
   ['PADMA', '1987-05-25', 'f'],
 ];
 
-const ORACLE_REL = { friend: 'm', neutral: 's', enemy: 'x' };
-
 function ensureOracle() {
   if (!existsSync(SRC)) {
     if (!existsSync(ZIP)) throw new Error(`oracle zip नहीं मिला: ${ZIP}`);
@@ -82,26 +80,23 @@ function ensureOracle() {
 }
 
 function runOracle(name, dob, gender, file) {
-  execFileSync(
-    PY,
-    [
-      'numerology/scripts/numerology.py',
-      '--name',
-      name,
-      '--dob',
-      dob,
-      '--gender',
-      gender,
-      '--system',
-      'parashara',
-      '--suggest',
-      '0',
-      '--no-new-names',
-      '--out',
-      file,
-    ],
-    { cwd: WORK, stdio: ['ignore', 'ignore', 'ignore'] }
-  );
+  // gender न दें तो oracle लो-शू में कुआ नहीं जोड़ता — गिनती/खाली उसी से मिलाते हैं
+  const args = [
+    'numerology/scripts/numerology.py',
+    '--name',
+    name,
+    '--dob',
+    dob,
+    '--system',
+    'parashara',
+    '--suggest',
+    '0',
+    '--no-new-names',
+    '--out',
+    file,
+  ];
+  if (gender) args.splice(5, 0, '--gender', gender);
+  execFileSync(PY, args, { cwd: WORK, stdio: ['ignore', 'ignore', 'ignore'] });
   return JSON.parse(readFileSync(file, 'utf8'));
 }
 
@@ -113,6 +108,7 @@ function main() {
   const rows = [];
   const totals = new Map();
   const fail = [];
+  const exempt = [];
 
   const check = (section, label, ours, theirs, ctx) => {
     const key = `${section}`;
@@ -126,8 +122,10 @@ function main() {
   };
 
   CASES.forEach(([name, dob, gender], i) => {
-    const file = join(WORK, `case-${String(i + 1).padStart(2, '0')}.json`);
-    const o = runOracle(name, dob, gender, file);
+    const n0 = String(i + 1).padStart(2, '0');
+    // बिना gender: लो-शू गिनती/खाली (कुआ नहीं) · gender के साथ: कुआ अलग
+    const o = runOracle(name, dob, null, join(WORK, `case-${n0}.json`));
+    const og = runOracle(name, dob, gender, join(WORK, `case-${n0}-g.json`));
     const d = buildAnkData({ name, dob, gender }, { nowMs });
     const ctx = { case: i + 1, name, dob, gender };
 
@@ -136,13 +134,15 @@ function main() {
     check('नाम कुल योग', name, d.name.chaldean.total, o.chaldean_name.total, ctx);
     check('नाम संयुक्त', name, d.name.chaldean.compound, o.chaldean_name.compound, ctx);
     check('नामांक (एकल)', name, d.name.chaldean.namank, o.chaldean_name.single, ctx);
-    check('नाम श्रेणी', name, d.name.chaldean.cls, o.chaldean_name.class, ctx);
+    // 20 की श्रेणी हमने जान-बूझकर मिश्र रखी है (Cheiro) — oracle उसे शुभ कहता है; यही एक अपवाद है
+    if (d.name.chaldean.compound === 20) exempt.push({ name, dob, compound: 20 });
+    else check('नाम श्रेणी', name, d.name.chaldean.cls, o.chaldean_name.class, ctx);
     check('पहले नाम का योग', name, d.name.first.total, o.chaldean_first_name.total, ctx);
     check('लो-शू गिनती', name, d.loshu.counts, o.lo_shu.counts, ctx);
     check('लो-शू खाली', name, d.loshu.missing, o.lo_shu.missing, ctx);
-    check('कुआ', name, d.loshu.kua, o.lo_shu.kua, ctx);
+    check('कुआ', name, d.loshu.kua, og.lo_shu.kua, ctx);
     check('व्यक्तिगत वर्ष', name, d.time.personalYear, o.personal_year_now, ctx);
-    check('संबंध', name, d.core.relation.mulankBhagyank, ORACLE_REL[o.vedic.mulank_bhagyank_relation], ctx);
+    // मूलांक-भाग्यांक संबंध अब नहीं मिलाया — वह हमारी अपनी तालिका है (01-ग)
 
     const yOurs = new Map(d.time.forecast10.map((y) => [y.year, y.personalYear]));
     for (const y of o.year_forecast) {
@@ -168,6 +168,9 @@ function main() {
   }
   const pct = ((ok / (ok + bad)) * 100).toFixed(2);
   console.log(`\nकुल: ${ok}/${ok + bad} — ${pct}%`);
+  if (exempt.length) {
+    console.log(`अपवाद (जान-बूझकर): संयुक्त 20 की श्रेणी — ${exempt.length} मामले (हम मिश्र, oracle शुभ) · ${exempt.map((e) => e.name).join(', ')}`);
+  }
 
   if (fail.length) {
     console.log('\nअंतर (पहले 20):');

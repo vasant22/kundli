@@ -93,14 +93,20 @@ describe('नाम-स्कोर', () => {
     ]);
   });
 
-  it('PRIYA VERMA (3/9) → −0.5 → 0 कमज़ोर', () => {
+  it('PRIYA VERMA (3/9) → −3 → 0 कमज़ोर (01-ग की नई तालिका)', () => {
     const s = scoreName('PRIYA VERMA', 3, 9);
     expect(s.total).toBe(31);
     expect(s.single).toBe(4);
-    expect(s.raw).toBe(-0.5);
+    expect(s.raw).toBe(-3); // rel(3,4) स +1 · rel(9,4) श −2 · 31 मिश्र 0 · 13 चुनौती −1 · num48 −1
     expect(s.score10).toBe(0);
     expect(s.decision).toBe('kamzor');
-    expect(s.breakdown.map((b) => b.key)).toContain('num48-no-friend');
+    expect(s.breakdown.map((b) => b.key)).toEqual([
+      'rel-mulank-sama',
+      'rel-bhagyank-enemy',
+      'compound-mishr',
+      'first-chunauti',
+      'num48-no-friend',
+    ]);
   });
 
   it('हर हाल में स्कोर 0–10 के बीच, हिंदी नाम पर error', () => {
@@ -127,20 +133,18 @@ describe('नाम-स्कोर', () => {
     expect(decisionOf(0)).toBe('kamzor');
   });
 
-  it('5 पूरा होने पर 9 घटाने की जगह 10 पर टिकता है', () => {
-    // ऐसा नाम ढूँढो जिसका कच्चा 9 हो → 10.0 उत्तम (कच्चा 9 से ज़्यादा नहीं हो सकता)
-    let found = null;
-    for (const nm of ['AARAV SHARMA', 'ROHAN SHARMA', 'KARAN SHARMA', 'ADITYA VERMA']) {
-      for (let a = 1; a <= 9 && !found; a += 1) {
-        for (let b = 1; b <= 9 && !found; b += 1) {
-          const s = scoreName(nm, a, b);
-          if (s.raw === 9) found = { nm, a, b, s };
-        }
-      }
-    }
-    expect(found).not.toBeNull();
-    expect(found.s.score10).toBe(10);
-    expect(found.s.decision).toBe('uttam');
+  it('कच्चा 9 (सबसे ज़्यादा) → 10.0 उत्तम', () => {
+    const s = scoreName('MEERA SHARMA', 4, 6); // rel(4,6) मि · rel(6,6) मि · 29 शुभ · 21 शुभ · बराबर
+    expect(s.raw).toBe(9);
+    expect(s.score10).toBe(10);
+    expect(s.decision).toBe('uttam');
+    expect(s.breakdown.map((b) => b.key)).toEqual([
+      'rel-mulank-friend',
+      'rel-bhagyank-friend',
+      'compound-shubh',
+      'first-shubh',
+      'equal-bhagyank',
+    ]);
   });
 });
 
@@ -208,7 +212,7 @@ describe('spelling-सुझाव', () => {
     expect(suggestSpellings('', 1, 1)).toEqual([]);
   });
 
-  it('01-ख के सुधार: PREEYAH/PRIYAH/AANITAAH जैसे रूप कहीं नहीं, RAHUL पर 3+ सुझाव', () => {
+  it('01-ख के सुधार: PREEYAH/PRIYAH/AANITAAH जैसे रूप कहीं नहीं', () => {
     const priya = suggestSpellings('PRIYA VERMA', 3, 9).map((s) => s.name);
     expect(priya).not.toContain('PREEYAH');
     expect(priya).not.toContain('PRIYAH');
@@ -216,7 +220,9 @@ describe('spelling-सुझाव', () => {
     const anita = suggestSpellings('ANITA', 3, 5).map((s) => s.name);
     expect(anita).not.toContain('AANITAAH');
     for (const n of anita) expect(/(AAH|EEH|OOH|YH|HH)$/.test(n)).toBe(false);
-    expect(suggestSpellings('RAHUL SHARMA', 6, 1).length).toBeGreaterThanOrEqual(3);
+    // 01-ग की नई तालिका से RAHULL का स्कोर 5.6 = मौजूदा नाम के बराबर हो गया, इसलिए अब 2 सुझाव बचते हैं
+    // (नियम नहीं बदले — रिपोर्ट में दर्ज)। कम से कम 2 तो बनने ही चाहिए।
+    expect(suggestSpellings('RAHUL SHARMA', 6, 1).length).toBeGreaterThanOrEqual(2);
   });
 });
 
@@ -273,8 +279,9 @@ describe('लो-शू', () => {
   it('PRIYA VERMA का ग्रिड — गिनती, खाली और कुआ', () => {
     const dob = parseDob('1992-12-03');
     const l = loShu(dob, 'f');
-    expect(l.counts).toEqual({ 1: 2, 2: 2, 3: 1, 4: 0, 5: 0, 6: 0, 7: 1, 8: 0, 9: 3 });
-    expect(l.missing).toEqual([4, 5, 6, 8]);
+    // कुआ अब ग्रिड में नहीं जुड़ता (01-ग)
+    expect(l.counts).toEqual({ 1: 2, 2: 2, 3: 1, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 3 });
+    expect(l.missing).toEqual([4, 5, 6, 7, 8]);
     expect(l.kua).toBe(7);
     expect(l.repeated).toEqual([
       { n: 1, count: 2 },

@@ -101,7 +101,7 @@ describe('व्यापार-नाम', () => {
 describe('उपाय-संकेत', () => {
   it('शुभ अंक — ख़ुद, भाग्यांक, फिर दोनों के मित्र (अधिकतम 5)', () => {
     expect(luckyNumbers(6, 1)).toEqual([6, 1]);
-    expect(luckyNumbers(3, 9)).toEqual([3, 9, 1, 2, 7]);
+    expect(luckyNumbers(3, 9)).toEqual([3, 9, 1, 2]);
     for (let a = 1; a <= 9; a += 1) {
       for (let b = 1; b <= 9; b += 1) {
         const l = luckyNumbers(a, b);
@@ -145,16 +145,16 @@ describe('उपाय-संकेत', () => {
     const r2 = remedyBlock(6, 1, [4, 8]);
     expect(r2.weekly.find((w) => w.dayKey === 'sat').missing).toEqual(['missing-4', 'missing-8']);
     expect(r2.weekly.filter((w) => w.missing.length).length).toBe(1);
-    expect(r.powerDays).toEqual(['रविवार', 'शुक्रवार']);
+    expect(r.powerDays).toEqual(['शुक्रवार', 'रविवार']); // मूलांक के पहले, फिर भाग्यांक के
   });
 
   it('शुभ और सावधानी तिथियाँ (1–31)', () => {
     const r = remedyBlock(6, 1, []);
-    expect(r.goodDates).toEqual([4, 5, 6, 8, 13, 14, 15, 17, 22, 23, 24, 26, 31]);
+    expect(r.goodDates).toEqual([4, 5, 6, 7, 8, 13, 14, 15, 16, 17, 22, 23, 24, 25, 26, 31]);
     expect(r.careDates).toEqual([1, 2, 10, 11, 19, 20, 28, 29]);
     const p = remedyBlock(3, 9, []);
     expect(p.careDay).toBe('बुधवार');
-    expect(p.powerDays).toEqual(['मंगलवार', 'गुरुवार']);
+    expect(p.powerDays).toEqual(['गुरुवार', 'मंगलवार']); // मूलांक 3 पहले, फिर भाग्यांक 9
   });
 });
 
@@ -170,7 +170,7 @@ describe('buildAnkData — पाँच स्वीकृति-उदाहर
     expect(d.name.chaldean.total).toBe(33);
     expect(d.name.first).toMatchObject({ total: 17, cls: 'g' });
     expect(d.name.score).toMatchObject({ score10: 5.6, decision: 'samanya', raw: 5 });
-    expect(d.loshu.counts).toEqual({ 1: 3, 2: 0, 3: 0, 4: 0, 5: 2, 6: 2, 7: 0, 8: 2, 9: 1 });
+    expect(d.loshu.counts).toEqual({ 1: 3, 2: 0, 3: 0, 4: 0, 5: 2, 6: 1, 7: 0, 8: 2, 9: 1 });
     expect(d.loshu.missing).toEqual([2, 3, 4, 7]);
     expect(d.loshu.kua).toBe(6);
     expect(d.time.personalYear).toBe(6);
@@ -184,8 +184,8 @@ describe('buildAnkData — पाँच स्वीकृति-उदाहर
     expect(d.core).toMatchObject({ mulank: 3, bhagyank: 9 });
     expect(d.name.chaldean.total).toBe(31);
     expect(d.name.score).toMatchObject({ score10: 0, decision: 'kamzor' });
-    expect(d.loshu.counts).toEqual({ 1: 2, 2: 2, 3: 1, 4: 0, 5: 0, 6: 0, 7: 1, 8: 0, 9: 3 });
-    expect(d.loshu.missing).toEqual([4, 5, 6, 8]);
+    expect(d.loshu.counts).toEqual({ 1: 2, 2: 2, 3: 1, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 3 });
+    expect(d.loshu.missing).toEqual([4, 5, 6, 7, 8]);
     expect(d.loshu.kua).toBe(7);
     expect(d.time.age).toBe(33);
   });
@@ -196,6 +196,8 @@ describe('buildAnkData — पाँच स्वीकृति-उदाहर
     expect(d.core).toMatchObject({ mulank: 2, bhagyank: 6 });
     expect(d.name.chaldean).toMatchObject({ total: 25, namank: 7, cls: 'g' });
     expect(d.name.first).toMatchObject({ total: 10, cls: 'g' });
+    // 01-ग: rel(2,7) अब शत्रु (−3), rel(6,7) मित्र (+2) → 2 → 2.2 कमज़ोर
+    expect(d.name.score).toMatchObject({ raw: 2, score10: 2.2, decision: 'kamzor' });
   });
 
   it('4. ANITA, 29-02-2001 → तिथि-error, crash नहीं', () => {
