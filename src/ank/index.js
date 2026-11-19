@@ -72,7 +72,14 @@ export function buildAnkData(input, opts = {}) {
   if (!c0.error && mulank) {
     nameBlock.score = scoreName(nameIn, mulank, bhagyank);
     nameBlock.suggestions = suggestSpellings(nameIn, mulank, bhagyank, 10);
-    nameBlock.newNames = newNames(c0.words.slice(1).join(' '), gender, mulank, bhagyank, 10);
+    nameBlock.newNames = newNames(
+      c0.words.slice(1).join(' '),
+      gender,
+      mulank,
+      bhagyank,
+      nameBlock.score.score10,
+      10
+    );
   }
   if (Array.isArray(src.check) && src.check.length) {
     nameBlock.checked = mulank ? checkSpellings(src.check, mulank, bhagyank) : [];

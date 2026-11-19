@@ -25,20 +25,19 @@ describe('जीवनसाथी-मिलान', () => {
   const A = { mulank: 6, bhagyank: 1 };
   const B = { mulank: 3, bhagyank: 9 };
 
-  it('एक ही तिथि के दो लोग, मूलांक-भाग्यांक आपस में मित्र = 100% उत्तम', () => {
+  it('सूत्र वही (01-ख): 28-08-1991 की दो कॉपी = 100, 15-08-1985 की दो कॉपी = 60', () => {
     // 28-08-1991 → मूलांक 1, भाग्यांक 2; 1↔2 दोनों तरफ़ मित्र
     const S = { mulank: 1, bhagyank: 2 };
     const m = partnerMatch(S, { ...S });
     expect(m.percent).toBe(100);
     expect(m.decision).toBe('uttam');
     expect(m.parts).toEqual({ mulankMulank: 4, bhagyankBhagyank: 4, mulankBhagyank: 4, bhagyankMulank: 4 });
-  });
 
-  it('एक ही तिथि, पर मूलांक-भाग्यांक आपस में शत्रु — सूत्र से 60% (खुले प्रश्न में दर्ज)', () => {
-    const m = partnerMatch(A, { ...A }); // 6 और 1 दोनों तरफ़ शत्रु → दो पार-जोड़ी 0
-    expect(m.parts).toEqual({ mulankMulank: 4, bhagyankBhagyank: 4, mulankBhagyank: 0, bhagyankMulank: 0 });
-    expect(m.percent).toBe(60);
-    expect(m.decision).toBe('achha');
+    // 15-08-1985 → 6 और 1 दोनों तरफ़ शत्रु, इसलिए दो पार-जोड़ी 0
+    const r = partnerMatch(A, { ...A });
+    expect(r.parts).toEqual({ mulankMulank: 4, bhagyankBhagyank: 4, mulankBhagyank: 0, bhagyankMulank: 0 });
+    expect(r.percent).toBe(60);
+    expect(r.decision).toBe('achha');
   });
 
   it('A↔B उलटने पर प्रतिशत बराबर', () => {
@@ -121,8 +120,8 @@ describe('उपाय-संकेत', () => {
     expect(GEMS[9].metalHi).toBe('ताँबा');
   });
 
-  it('साप्ताहिक 7 दिन, power/care, खाली अंक का उपाय', () => {
-    const r = remedyBlock(6, 1, [2, 7]);
+  it('साप्ताहिक 7 दिन, power/care और खाली अंकों के उपाय (01-ख)', () => {
+    const r = remedyBlock(6, 1, [2, 3, 4, 7]);
     expect(r.weekly.length).toBe(7);
     expect(r.weekly.map((w) => w.dayShort)).toEqual([
       'रवि', 'सोम', 'मंगल', 'बुध', 'गुरु', 'शुक्र', 'शनि',
@@ -130,19 +129,23 @@ describe('उपाय-संकेत', () => {
     expect(r.weekly.filter((w) => w.kind === 'power').map((w) => w.dayHi)).toEqual([
       'रविवार', 'शुक्रवार',
     ]);
-    // रविवार power भी है और सावधानी का दिन भी — दोनों बातें अलग-अलग बताई जाती हैं
-    expect(r.weekly.find((w) => w.care).dayHi).toBe('रविवार');
-    expect(r.weekly.find((w) => w.dayKey === 'sat').care).toBe(false);
-    // खाली अंक 2 = सोमवार (उस दिन का अपना ग्रह चंद्र); 7 केतु का है, मंगलवार का अपना ग्रह मंगल (9)
-    expect(r.weekly.map((w) => w.remedyKey)).toEqual([
-      null, 'missing-2', null, null, null, null, null,
+    // सावधानी-दिन अब power से नहीं टकराता: शत्रु 1 का दिन रवि (power) है, इसलिए छोड़कर 2 → सोमवार
+    expect(r.careDay).toBe('सोमवार');
+    expect(r.careNumber).toBe(2);
+    expect(r.weekly.find((w) => w.care).dayHi).toBe('सोमवार');
+    expect(r.weekly.find((w) => w.kind === 'care').dayHi).toBe('सोमवार');
+    for (const w of r.weekly) {
+      if (w.care) expect(w.kind).toBe('care'); // care कभी power दिन पर नहीं
+    }
+    // उपाय-दिन अंक के ग्रह से: 2 सोम, 7 मंगल, 3 गुरु, 4 शनि
+    expect(r.weekly.map((w) => w.missing)).toEqual([
+      [], ['missing-2'], ['missing-7'], [], ['missing-3'], [], ['missing-4'],
     ]);
-    const r2 = remedyBlock(6, 1, [9, 8]);
-    expect(r2.weekly.map((w) => w.remedyKey)).toEqual([
-      null, null, 'missing-9', null, null, null, 'missing-8',
-    ]);
+    // एक वार पर दो खाली अंक — 4 और 8 दोनों शनिवार
+    const r2 = remedyBlock(6, 1, [4, 8]);
+    expect(r2.weekly.find((w) => w.dayKey === 'sat').missing).toEqual(['missing-4', 'missing-8']);
+    expect(r2.weekly.filter((w) => w.missing.length).length).toBe(1);
     expect(r.powerDays).toEqual(['रविवार', 'शुक्रवार']);
-    expect(r.careDay).toBe('रविवार');
   });
 
   it('शुभ और सावधानी तिथियाँ (1–31)', () => {

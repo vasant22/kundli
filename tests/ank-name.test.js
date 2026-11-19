@@ -150,12 +150,28 @@ describe('spelling-सुझाव', () => {
   it('एक-बदलाव रूप बनते हैं और गंदे रूप छँटते हैं', () => {
     const v = oneChangeVariants('RAHUL');
     expect(v).toContain('RAAHUL');
-    expect(v).toContain('RAHULH');
-    expect(v).toContain('RAHULA');
+    expect(v).toContain('RAHULA'); // व्यंजन पर ख़त्म → +A चलता है
+    expect(v).not.toContain('RAHULH'); // +H हट गया
+    expect(v).not.toContain('RAHULY'); // +Y हट गया
+    expect(oneChangeVariants('PRIYA')).not.toContain('PRIYAA'); // स्वर पर ख़त्म → +A नहीं
     expect(plausible('AAA', 5)).toBe(false); // तीन एक जैसे
     expect(plausible('RRAMA', 5)).toBe(false); // शुरू में दुगना व्यंजन
     expect(plausible('ASTRH', 5)).toBe(false); // 4+ व्यंजन
     expect(plausible('RAHULSHARMA', 5)).toBe(false); // 3 से ज़्यादा लंबा
+    expect(plausible('AANITAAH', 6)).toBe(false); // AAH पर अंत
+    expect(plausible('PRIYAAH', 5)).toBe(false); // AAH पर अंत
+    expect(plausible('AARAVH', 5)).toBe(true); // एक ही AA, VH पर अंत — चलता है
+    expect(plausible('AARAAVAA', 5)).toBe(false); // दो बार AA
+  });
+
+  it('दो-बदलाव वाले रूप में कम से कम एक व्यंजन-बदलाव रहता है', () => {
+    const twoChange = suggestSpellings('ANITA', 3, 5).filter((s) => s.changes === 2);
+    expect(twoChange.length).toBeGreaterThan(0);
+    for (const s of twoChange) {
+      // सिर्फ़ स्वर-खिंचाव वाला जोड़ा कभी नहीं (जैसे ANEETAA)
+      const bare = s.name.replace(/A/g, '').replace(/E/g, '').replace(/I/g, '');
+      expect(bare).not.toBe(oneChangeVariants('ANITA')[0].replace(/A/g, '').replace(/E/g, '').replace(/I/g, ''));
+    }
   });
 
   it('हर सुझाव नियम पर खरा: उपनाम वही, स्कोर 6+, मौजूदा से बड़ा, कुल योग पर 2', () => {
@@ -191,20 +207,39 @@ describe('spelling-सुझाव', () => {
     expect(suggestSpellings('राम', 1, 1)).toEqual([]);
     expect(suggestSpellings('', 1, 1)).toEqual([]);
   });
+
+  it('01-ख के सुधार: PREEYAH/PRIYAH/AANITAAH जैसे रूप कहीं नहीं, RAHUL पर 3+ सुझाव', () => {
+    const priya = suggestSpellings('PRIYA VERMA', 3, 9).map((s) => s.name);
+    expect(priya).not.toContain('PREEYAH');
+    expect(priya).not.toContain('PRIYAH');
+    for (const n of priya) expect(/(AAH|EEH|OOH|YH|HH)$/.test(n)).toBe(false);
+    const anita = suggestSpellings('ANITA', 3, 5).map((s) => s.name);
+    expect(anita).not.toContain('AANITAAH');
+    for (const n of anita) expect(/(AAH|EEH|OOH|YH|HH)$/.test(n)).toBe(false);
+    expect(suggestSpellings('RAHUL SHARMA', 6, 1).length).toBeGreaterThanOrEqual(3);
+  });
 });
 
 describe('नए नाम और check-spellings', () => {
-  it('लिंग के हिसाब से छँटाई, स्कोर 7+', () => {
+  it('लिंग के हिसाब से छँटाई; पहले 6+ और मौजूदा से बड़े, वरना 5 का fallback', () => {
     const list = newNames('SHARMA', 'm', 1, 9);
     expect(list.length).toBeGreaterThan(0);
     for (const n of list) {
-      expect(n.score10).toBeGreaterThanOrEqual(7);
       expect(n.gender === 'u' || n.gender === 'm').toBe(true);
       expect(n.full.endsWith('SHARMA')).toBe(true);
+      expect(Number.isFinite(n.score10)).toBe(true);
     }
     expect(list[0].score10).toBeGreaterThanOrEqual(list[list.length - 1].score10);
     const f = newNames('SHARMA', 'f', 1, 9);
     for (const n of f) expect(n.gender === 'u' || n.gender === 'f').toBe(true);
+
+    // 3 से कम बचे → 5 सबसे अच्छे, fallback: true
+    const few = newNames('SHARMA', 'm', 6, 1, 5.6);
+    expect(few.length).toBe(5);
+    for (const n of few) expect(n.fallback).toBe(true);
+
+    // बिना आधार-स्कोर के भी चलता है
+    expect(newNames('', 'u', 1, 1).length).toBeGreaterThan(0);
   });
 
   it('1–5 spellings का स्कोर, हिंदी पर error', () => {

@@ -131,52 +131,73 @@ export function decisionOf(score10) {
 const VOWELS = 'AEIOU';
 const isVowel = (ch) => VOWELS.includes(ch);
 
-/** एक बदलाव वाले रूप (सिर्फ़ पहले शब्द पर)। */
-export function oneChangeVariants(word) {
+/** शब्द के भीतर के 'A' को 'AA' करो; अंत का A वैसा ही रहता है। */
+function stretchA(w) {
+  let out = '';
+  for (let i = 0; i < w.length; i += 1) {
+    const ch = w[i];
+    const isLast = i === w.length - 1;
+    out += ch === 'A' && !isLast && w[i + 1] !== 'A' ? 'AA' : ch;
+  }
+  return out;
+}
+
+/**
+ * एक बदलाव वाले रूप (सिर्फ़ पहले शब्द पर), साथ में बदलाव का भेद:
+ * `v` = स्वर-खिंचाव · `c` = व्यंजन-बदलाव · `s` = अंत में +A.
+ */
+export function variantList(word) {
   const w = String(word).toUpperCase();
-  const out = [];
-  const add = (v) => {
-    if (v && v !== w && /^[A-Z]+$/.test(v)) out.push(v);
+  const map = new Map();
+  const add = (v, kind) => {
+    if (!v || v === w || !/^[A-Z]+$/.test(v)) return;
+    const prev = map.get(v);
+    if (prev === 'c') return;
+    map.set(v, kind === 'c' || !prev ? kind : prev);
   };
 
   // स्वर-जोड़े (सब बड़े अक्षरों में — छोटा अक्षर आया तो रूप बेकार है)
-  add(w.replace(/A(?!A)/g, 'AA'));
-  add(w.replace(/AA/g, 'A'));
-  add(w.replace(/I(?!E)/g, 'EE'));
-  add(w.replace(/EE/g, 'I'));
-  add(w.replace(/U(?!O)/g, 'OO'));
-  add(w.replace(/OO/g, 'U'));
-  add(w.replace(/E(?!E)/g, 'EE'));
+  // अंत का A नहीं खिंचता — PRIYA → PRIYAA नहीं बनता
+  add(stretchA(w), 'v');
+  add(w.replace(/AA/g, 'A'), 'v');
+  add(w.replace(/I(?!E)/g, 'EE'), 'v');
+  add(w.replace(/EE/g, 'I'), 'v');
+  add(w.replace(/U(?!O)/g, 'OO'), 'v');
+  add(w.replace(/OO/g, 'U'), 'v');
+  add(w.replace(/E(?!E)/g, 'EE'), 'v');
 
   // व्यंजन-जोड़े
-  add(w.replace(/T(?!H)/g, 'TH'));
-  add(w.replace(/D(?!H)/g, 'DH'));
-  add(w.replace(/S(?!H)/g, 'SH'));
-  add(w.replace(/C/g, 'K'));
-  add(w.replace(/K/g, 'C'));
-  add(w.replace(/V/g, 'W'));
-  add(w.replace(/W/g, 'V'));
-  add(w.replace(/PH/g, 'F'));
-  add(w.replace(/F/g, 'PH'));
+  add(w.replace(/T(?!H)/g, 'TH'), 'c');
+  add(w.replace(/D(?!H)/g, 'DH'), 'c');
+  add(w.replace(/S(?!H)/g, 'SH'), 'c');
+  add(w.replace(/C/g, 'K'), 'c');
+  add(w.replace(/K/g, 'C'), 'c');
+  add(w.replace(/V/g, 'W'), 'c');
+  add(w.replace(/W/g, 'V'), 'c');
+  add(w.replace(/PH/g, 'F'), 'c');
+  add(w.replace(/F/g, 'PH'), 'c');
 
-  // अंत के जोड़
-  add(`${w}A`);
-  add(`${w}H`);
-  add(`${w}Y`);
+  // अंत में +A — सिर्फ़ जब शब्द व्यंजन पर ख़त्म हो (RAHUL → RAHULA; PRIYA → कुछ नहीं)
+  if (!isVowel(w[w.length - 1])) add(`${w}A`, 's');
 
-  // अंत का i → ee / y
+  // अंत का I → EE / Y
   if (w.endsWith('I')) {
-    add(`${w.slice(0, -1)}EE`);
-    add(`${w.slice(0, -1)}Y`);
+    add(`${w.slice(0, -1)}EE`, 'v');
+    add(`${w.slice(0, -1)}Y`, 'k');
   }
 
   // स्वर के बाद व्यंजन दुगना (हर जगह अलग-अलग)
   for (let i = 1; i < w.length; i += 1) {
     if (!isVowel(w[i]) && isVowel(w[i - 1])) {
-      add(w.slice(0, i + 1) + w[i] + w.slice(i + 1));
+      add(w.slice(0, i + 1) + w[i] + w.slice(i + 1), 'c');
     }
   }
-  return [...new Set(out)];
+  return [...map.entries()].map(([v, kind]) => ({ w: v, kind }));
+}
+
+/** सिर्फ़ रूपों की सूची (पुराने रास्ते के लिए)। */
+export function oneChangeVariants(word) {
+  return variantList(word).map((v) => v.w);
 }
 
 /** रूप ठीक है? तीन एक जैसे अक्षर, शुरू में दुगना व्यंजन, 4+ व्यंजन, 3 से ज़्यादा लंबा — हटाओ। */
@@ -186,6 +207,10 @@ export function plausible(word, baseLength) {
   if (/^([^AEIOU])\1/.test(word)) return false;
   if (/[^AEIOU]{4}/.test(word)) return false;
   if (word.length > baseLength + 3) return false;
+  // दो बार "AA" — मानवीय नहीं
+  if ((word.match(/AA/g) || []).length >= 2) return false;
+  // AAH / EEH / OOH / YH / HH पर अंत — मानवीय नहीं
+  if (/(AAH|EEH|OOH|YH|HH)$/.test(word)) return false;
   return true;
 }
 
@@ -225,7 +250,8 @@ export function suggestSpellings(name, mulank, bhagyank, limit = 10) {
   const byName = new Map();
 
   const take = (list, changes) => {
-    for (const variant of list) {
+    for (const v of list) {
+      const variant = v.w;
       if (!plausible(variant, first.length)) continue;
       if (byName.has(variant)) continue;
       const c = candidate(variant, surname, mulank, bhagyank, changes);
@@ -233,14 +259,18 @@ export function suggestSpellings(name, mulank, bhagyank, limit = 10) {
     }
   };
 
-  const firstPass = oneChangeVariants(first);
-  take(firstPass, 1);
+  take(variantList(first), 1);
 
+  // दूसरा बदलाव: दोनों सिर्फ़ स्वर-खिंचाव न हों — कम से कम एक व्यंजन-बदलाव रहे
   const best = [...byName.values()]
     .sort((a, b) => b.score10 - a.score10 || a.total - b.total || a.name.localeCompare(b.name))
     .slice(0, 30);
   for (const b of best) {
-    take(oneChangeVariants(b.name), 2);
+    const firstKind = variantList(first).find((v) => v.w === b.name)?.kind || 'c';
+    for (const v of variantList(b.name)) {
+      if (firstKind !== 'c' && v.kind !== 'c') continue;
+      take([v], 2);
+    }
   }
 
   const sorted = [...byName.values()].sort(
@@ -264,10 +294,13 @@ export function suggestSpellings(name, mulank, bhagyank, limit = 10) {
   return kept;
 }
 
-/** नए नाम: सूची से लिंग के हिसाब से छाँटो, स्कोर 7+, सबसे अच्छे सबसे पहले। */
-export function newNames(surname, gender, mulank, bhagyank, limit = 10) {
+/**
+ * नए नाम: सूची से लिंग के हिसाब से छाँटो। पहले वे जिनका स्कोर 6+ है और मौजूदा नाम से बड़ा है;
+ * ऐसे 3 से कम मिलें तो सबसे अच्छे 5 (स्कोर कितना भी हो) `fallback: true` के साथ।
+ */
+export function newNames(surname, gender, mulank, bhagyank, baseScore = null, limit = 10) {
   const g = gender === 'm' || gender === 'f' ? gender : null;
-  const out = [];
+  const all = [];
   for (const entry of NAMES) {
     const name = String(entry.n || '').toUpperCase();
     if (!name) continue;
@@ -275,8 +308,8 @@ export function newNames(surname, gender, mulank, bhagyank, limit = 10) {
     if (g && eg !== 'u' && eg !== g) continue;
     const full = surname ? `${name} ${surname}` : name;
     const s = scoreName(full, mulank, bhagyank);
-    if (s.error || s.score10 < 7) continue;
-    out.push({
+    if (s.error) continue;
+    all.push({
       name,
       full,
       gender: eg,
@@ -286,10 +319,14 @@ export function newNames(surname, gender, mulank, bhagyank, limit = 10) {
       cls: s.cls,
       score10: s.score10,
       decision: s.decision,
+      fallback: false,
     });
   }
-  out.sort((a, b) => b.score10 - a.score10 || a.total - b.total || a.name.localeCompare(b.name));
-  return out.slice(0, limit);
+  all.sort((a, b) => b.score10 - a.score10 || a.total - b.total || a.name.localeCompare(b.name));
+
+  const primary = all.filter((n) => n.score10 >= 6 && (baseScore === null || n.score10 > baseScore));
+  if (primary.length >= 3) return primary.slice(0, limit);
+  return all.slice(0, 5).map((n) => ({ ...n, fallback: true }));
 }
 
 /** उपयोगकर्ता की दी हुई 1–5 spellings का स्कोर। */

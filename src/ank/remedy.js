@@ -42,8 +42,14 @@ export function enemyNumbers(mulank) {
   return NUMBERS.filter((n) => relation(mulank, n) === 'x');
 }
 
+/** अंक → उपाय का वार (उस ग्रह का दिन): 4 → शनिवार, 7 → मंगलवार। */
+export function remedyDayOf(n) {
+  return PLANETS[n] ? PLANETS[n].dayKey : null;
+}
+
 /**
  * उपाय-संकेत। `missing` = लो-शू के खाली अंक।
+ * power-दिन = मूलांक/भाग्यांक के ग्रह के वार; सावधानी-दिन = पहला शत्रु-अंक जिसका वार power से अलग हो।
  */
 export function remedyBlock(mulank, bhagyank, missing = []) {
   const lucky = luckyNumbers(mulank, bhagyank);
@@ -52,12 +58,12 @@ export function remedyBlock(mulank, bhagyank, missing = []) {
   const wear = { number: mulank, planet: planetOf(mulank), ...GEMS[mulank] };
   const avoid = enemies.map((n) => ({ number: n, planet: planetOf(n), ...GEMS[n] }));
 
-  const powerNumbers = [mulank, bhagyank];
-  const careNumber = enemies.length ? enemies[0] : null;
-  const careDayKey = careNumber ? PLANETS[careNumber].dayKey : null;
+  const powerKeys = [...new Set([mulank, bhagyank].map(remedyDayOf).filter(Boolean))];
+  const careNumber = enemies.find((n) => !powerKeys.includes(remedyDayOf(n))) ?? null;
+  const careDayKey = careNumber ? remedyDayOf(careNumber) : null;
 
   const weekly = WEEKDAYS.map((d) => {
-    const isPower = powerNumbers.includes(d.number);
+    const isPower = powerKeys.includes(d.key);
     const isCare = careDayKey === d.key;
     return {
       dayKey: d.key,
@@ -68,11 +74,14 @@ export function remedyBlock(mulank, bhagyank, missing = []) {
       // एक दिन पर दोनों बातें आ सकती हैं — तब 'power' का दर्जा ऊपर, और `care` अलग बताया जाता है
       kind: isPower ? 'power' : isCare ? 'care' : 'normal',
       care: isCare,
-      remedyKey: missing.includes(d.number) ? `missing-${d.number}` : null,
+      // उस वार के ग्रह वाले सारे खाली अंक (4 और 8 दोनों शनिवार पर आ सकते हैं)
+      missing: missing
+        .filter((n) => remedyDayOf(n) === d.key)
+        .map((n) => `missing-${n}`),
     };
   });
 
-  const powerDays = WEEKDAYS.filter((d) => powerNumbers.includes(d.number)).map((d) => d.hi);
+  const powerDays = WEEKDAYS.filter((d) => powerKeys.includes(d.key)).map((d) => d.hi);
 
   const goodDates = [];
   const careDates = [];
