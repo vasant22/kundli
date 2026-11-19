@@ -13,8 +13,8 @@ beforeAll(async () => {
     configurable: true,
     value: {
       search: '?name=RAHUL+SHARMA&d=15&m=8&y=1985&g=m&print=1',
-      pathname: '/ank-jyotish/',
-      href: 'https://mybapuji.com/ank-jyotish/?name=RAHUL+SHARMA&print=1',
+      pathname: '/ank-jyotish-numerology/',
+      href: 'https://mybapuji.com/ank-jyotish-numerology/?name=RAHUL+SHARMA&print=1',
     },
   });
   window.print = vi.fn();

@@ -5,7 +5,7 @@
      bnn/index.html — see tests/seo.test.js, which fails if they drift. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://mybapuji.com/ank-jyotish/</loc>
+    <loc>https://mybapuji.com/ank-jyotish-numerology/</loc>
     <lastmod>2026-11-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>

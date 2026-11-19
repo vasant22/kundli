@@ -19,9 +19,9 @@ describe('ank page — SEO', () => {
     expect(html).toMatch(/name="description"/);
     expect(html).toMatch(/name="keywords"/);
     expect(html).toMatch(/name="robots" content="index, follow"/);
-    expect(html).toContain('rel="canonical" href="https://mybapuji.com/ank-jyotish/"');
+    expect(html).toContain('rel="canonical" href="https://mybapuji.com/ank-jyotish-numerology/"');
     expect(html).toContain('property="og:title"');
-    expect(html).toContain('property="og:url" content="https://mybapuji.com/ank-jyotish/"');
+    expect(html).toContain('property="og:url" content="https://mybapuji.com/ank-jyotish-numerology/"');
   });
 
   it('JSON-LD: WebApplication + FAQPage, छह प्रश्न', () => {
@@ -49,7 +49,7 @@ describe('ank page — SEO', () => {
   });
 
   it('sitemap.xml में नया URL', () => {
-    expect(read('public/sitemap.xml')).toContain('<loc>https://mybapuji.com/ank-jyotish/</loc>');
+    expect(read('public/sitemap.xml')).toContain('<loc>https://mybapuji.com/ank-jyotish-numerology/</loc>');
   });
 
   it('form HTML में ही है (SEO) — नाम, तिथि, लिंग, बटन', () => {
@@ -347,5 +347,14 @@ describe('spelling-सुझाव के साथ सावधानी', () =
   it('SUGGEST.caution छपता है; बिना सुझाव के SCORE_NOTE दोबारा नहीं', () => {
     expect(rep).toMatch(/T\.SUGGEST\.caution/);
     expect((rep.match(/T\.SCORE_NOTE/g) || []).length).toBe(1);
+  });
+});
+describe('font-files सब मौजूद', () => {
+  it('ank.css का हर woff2 public/fonts में है (कोई 404 नहीं)', async () => {
+    const { existsSync } = await import('node:fs');
+    const css = _rf(new URL('../src/ank/ank.css', import.meta.url), 'utf8');
+    const files = [...css.matchAll(/\/kundli-assets\/fonts\/([^)]+\.woff2)/g)].map((m) => m[1]);
+    expect(files.length).toBeGreaterThan(0);
+    for (const f of files) expect(existsSync(new URL(`../public/fonts/${f}`, import.meta.url)), f).toBe(true);
   });
 });
